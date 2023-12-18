@@ -1,6 +1,4 @@
 # Crescendo-2024
-[![Build](https://github.com/team4099/Crescendo-2024/actions/workflows/gradle.yml/badge.svg?event=push)](https://github.com/team4099/Crescendo-2024/blob/main/.github/workflows/gradle.yml)
-
 
 ![Crescendo-2024](./assets/crescendo_logo.png)
 
