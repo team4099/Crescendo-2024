@@ -50,14 +50,14 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
   val driveMotorSim: FlywheelSim =
     FlywheelSim(
       DCMotor.getNEO(1),
-      1 / DrivetrainConstants.DRIVE_SENSOR_GEAR_RATIO,
+      1 / DrivetrainConstants.NeoConstants.DRIVE_SENSOR_GEAR_RATIO,
       DrivetrainConstants.DRIVE_WHEEL_INERTIA.inKilogramsMeterSquared
     )
 
   val steerMotorSim =
     FlywheelSim(
       DCMotor.getNEO(1),
-      1 / DrivetrainConstants.STEERING_SENSOR_GEAR_RATIO,
+      1 / DrivetrainConstants.NeoConstants.STEERING_SENSOR_GEAR_RATIO,
       DrivetrainConstants.STEERING_WHEEL_INERTIA.inKilogramsMeterSquared
     )
 

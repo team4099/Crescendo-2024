@@ -6,7 +6,6 @@ import com.team4099.lib.trajectory.CustomTrajectoryGenerator
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.AllianceFlipUtil
 import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -244,11 +243,10 @@ class DrivePathCommand(
       Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position)
     )
 
-    drivetrain.currentRequest =
-      Request.DrivetrainRequest.ClosedLoop(
-        nextDriveState,
-        ChassisAccels(xAccel, yAccel, 0.0.radians.perSecond.perSecond).chassisAccelsWPILIB
-      )
+    drivetrain.setClosedLoop(
+      nextDriveState,
+      ChassisAccels(xAccel, yAccel, 0.0.radians.perSecond.perSecond).chassisAccelsWPILIB
+    )
 
     Logger.recordOutput("Pathfollow/thetaPIDPositionErrorRadians", thetaPID.error.inRadians)
 
@@ -310,18 +308,12 @@ class DrivePathCommand(
     Logger.recordOutput("ActiveCommands/DrivePathCommand", false)
     if (interrupted) {
       // Stop where we are if interrupted
-      drivetrain.currentRequest =
-        Request.DrivetrainRequest.OpenLoop(
-          0.degrees.perSecond, Pair(0.meters.perSecond, 0.meters.perSecond)
-        )
+      drivetrain.setOpenLoop(0.degrees.perSecond, Pair(0.meters.perSecond, 0.meters.perSecond))
     } else {
       // Execute one last time to end up in the final state of the trajectory
       // Since we weren't interrupted, we know curTime > endTime
       execute()
-      drivetrain.currentRequest =
-        Request.DrivetrainRequest.OpenLoop(
-          0.degrees.perSecond, Pair(0.meters.perSecond, 0.meters.perSecond)
-        )
+      drivetrain.setOpenLoop(0.degrees.perSecond, Pair(0.meters.perSecond, 0.meters.perSecond))
     }
   }
 }

@@ -28,10 +28,18 @@ import org.team4099.lib.units.perSecond
 import kotlin.math.sqrt
 
 object DrivetrainConstants {
-  const val FOC_ENABLED = false
-  const val MINIMIZE_SKEW = false
+  object NeoConstants {
+    const val DRIVE_SENSOR_GEAR_RATIO = 4.71
+    const val STEERING_SENSOR_GEAR_RATIO = 9423.0 / 203.0
+    var DRIVE_SETPOINT_MAX = 15.6.feet.perSecond
+  }
 
-  const val OMOMETRY_UPDATE_FREQUENCY = 250.0
+  object FalconConstants {
+    const val DRIVE_SENSOR_GEAR_RATIO = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0)
+    const val STEERING_SENSOR_GEAR_RATIO = 7.0 / 150.0
+  }
+
+  const val MINIMIZE_SKEW = false
 
   const val WHEEL_COUNT = 4
   val WHEEL_DIAMETER = 3.827.inches
@@ -65,9 +73,7 @@ object DrivetrainConstants {
 
   const val DRIVE_SENSOR_CPR = 2048
   const val STEERING_SENSOR_CPR = 2048
-
-  const val DRIVE_SENSOR_GEAR_RATIO = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0)
-  const val STEERING_SENSOR_GEAR_RATIO = 7.0 / 150.0
+  const val STEERING_THROUGH_BORE_CPR = 8192
 
   val ALLOWED_STEERING_ANGLE_ERROR = 1.degrees
 
@@ -76,14 +82,16 @@ object DrivetrainConstants {
   val DRIVE_THRESHOLD_CURRENT_LIMIT = 60.0.amps
   val DRIVE_TRIGGER_THRESHOLD_TIME = 0.1.seconds
 
-  val DRIVE_STATOR_CURRENT_LIMIT = 65.0.amps
+  val STEERING_STATOR_CURRENT_LIMIT = 25.amps
+  val DRIVE_STATOR_CURRENT_LIMIT = 60.0.amps
+
   val DRIVE_STATOR_THRESHOLD_CURRENT_LIMIT = 80.0.amps
   val DRIVE_STATOR_TRIGGER_THRESHOLD_TIME = 1.0.seconds
 
-  val FRONT_LEFT_MODULE_ZERO = 1.3.radians + 180.degrees
-  val FRONT_RIGHT_MODULE_ZERO = 4.49.radians + 180.degrees
-  val BACK_LEFT_MODULE_ZERO = 3.22.radians + 180.degrees
-  val BACK_RIGHT_MODULE_ZERO = 0.99.radians - 180.degrees
+  val FRONT_LEFT_MODULE_ZERO = 1.33.radians
+  val FRONT_RIGHT_MODULE_ZERO = 4.51.radians
+  val BACK_LEFT_MODULE_ZERO = 3.20.radians
+  val BACK_RIGHT_MODULE_ZERO = 0.94.radians
 
   val STEERING_COMPENSATION_VOLTAGE = 10.volts
   val DRIVE_COMPENSATION_VOLTAGE = 12.volts
@@ -120,15 +128,15 @@ object DrivetrainConstants {
 
     val AUTO_THETA_ALLOWED_ERROR = 3.degrees
 
-    val AUTO_THETA_PID_KP = 1.degrees.perSecond / 1.degrees
+    val AUTO_THETA_PID_KP = 10.degrees.perSecond / 1.degrees
     val AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val AUTO_THETA_PID_KD =
-      (0.1.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (0.0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
-    val SIM_AUTO_THETA_PID_KP = 15.degrees.perSecond / 1.degrees
+    val SIM_AUTO_THETA_PID_KP = 7.degrees.perSecond / 1.degrees
     val SIM_AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val SIM_AUTO_THETA_PID_KD =
-      (0.0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (0.5.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val AUTO_LEVEL_KP = 1.meters.perSecond / 1.0.degrees // tune this
     val AUTO_LEVEL_KI = 0.0.meters.perSecond / (1.0.degrees * 1.seconds) // tune this

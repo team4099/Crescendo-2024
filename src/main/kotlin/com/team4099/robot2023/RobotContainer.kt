@@ -9,10 +9,9 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOReal
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
-import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
+import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIONavx
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
-import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.util.driver.Ryan
@@ -30,7 +29,7 @@ object RobotContainer {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
-      drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
+      drivetrain = Drivetrain(GyroIONavx, DrivetrainIOReal)
       vision =
         Vision(
           //          object: CameraIO {}
@@ -86,7 +85,7 @@ object RobotContainer {
   }
 
   fun zeroSensors() {
-    drivetrain.currentRequest = Request.DrivetrainRequest.ZeroSensors()
+    drivetrain.zeroSensors()
   }
 
   fun zeroAngle(toAngle: Angle) {

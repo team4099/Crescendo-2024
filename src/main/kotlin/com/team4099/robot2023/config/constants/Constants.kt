@@ -78,7 +78,7 @@ object Constants {
       REV_NEO
     }
 
-    val DRIVETRAIN_TYPE = DrivetrainType.PHOENIX_TALON
+    val DRIVETRAIN_TYPE = DrivetrainType.REV_NEO
 
     const val FRONT_LEFT_DRIVE_ID = 11
     const val FRONT_LEFT_STEERING_ID = 21

@@ -3,7 +3,6 @@ package com.team4099.robot2023.commands.drivetrain
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.superstructure.Request
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.CommandBase
 import org.littletonrobotics.junction.Logger
@@ -92,10 +91,9 @@ class GoToAngle(val drivetrain: Drivetrain) : CommandBase() {
 
     val thetaFeedback = thetaPID.calculate(drivetrain.odometryPose.rotation, desiredAngle)
 
-    drivetrain.currentRequest =
-      Request.DrivetrainRequest.OpenLoop(
-        thetaFeedback, Pair(0.0.meters.perSecond, 0.0.meters.perSecond), fieldOriented = true
-      )
+    drivetrain.setOpenLoop(
+      thetaFeedback, Pair(0.0.meters.perSecond, 0.0.meters.perSecond), fieldOriented = true
+    )
 
     Logger.recordOutput("AutoLevel/CurrentYawDegrees", drivetrain.odometryPose.rotation.inDegrees)
     Logger.recordOutput("AutoLevel/DesiredYawDegrees", desiredAngle.inDegrees)
@@ -109,9 +107,6 @@ class GoToAngle(val drivetrain: Drivetrain) : CommandBase() {
   }
 
   override fun end(interrupted: Boolean) {
-    drivetrain.currentRequest =
-      Request.DrivetrainRequest.OpenLoop(
-        0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
-      )
+    drivetrain.setOpenLoop(0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond))
   }
 }
