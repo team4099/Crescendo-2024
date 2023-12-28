@@ -5,7 +5,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
-import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.ProfiledPIDController
 import org.team4099.lib.controller.TrapezoidProfile
@@ -23,7 +23,7 @@ import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.perSecond
 
-class GyroAutoLevel(val drivetrain: Drivetrain) : CommandBase() {
+class GyroAutoLevel(val drivetrain: Drivetrain) : Command() {
   private val gyroPID: ProfiledPIDController<Radian, Velocity<Meter>>
 
   var alignmentAngle = drivetrain.odometryPose.rotation

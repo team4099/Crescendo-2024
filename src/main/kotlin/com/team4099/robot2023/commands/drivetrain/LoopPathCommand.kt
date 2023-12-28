@@ -1,7 +1,7 @@
 package com.team4099.robot2023.commands.drivetrain
 
 // class LoopPathCommand(val drivetrain: Drivetrain, vararg trajectories: Trajectory) :
-// CommandBase() {
+// Command() {
 //  private val loopedDriveCommands = trajectories.map { DrivePathCommand(drivetrain, it) }
 //  private var pathIndex = 0
 //

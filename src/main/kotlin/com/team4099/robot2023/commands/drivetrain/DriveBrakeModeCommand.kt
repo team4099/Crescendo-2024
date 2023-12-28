@@ -2,12 +2,12 @@ package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
-import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.Command
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.perSecond
 
-class DriveBrakeModeCommand(val drivetrain: Drivetrain) : CommandBase() {
+class DriveBrakeModeCommand(val drivetrain: Drivetrain) : Command() {
   init {
     addRequirements(drivetrain)
   }

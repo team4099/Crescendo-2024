@@ -5,7 +5,7 @@ import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
 import edu.wpi.first.wpilibj.RobotBase
-import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.ProfiledPIDController
 import org.team4099.lib.controller.TrapezoidProfile
@@ -26,7 +26,7 @@ import org.team4099.lib.units.inDegreesPerSecond
 import org.team4099.lib.units.perSecond
 import kotlin.math.PI
 
-class GoToAngle(val drivetrain: Drivetrain) : CommandBase() {
+class GoToAngle(val drivetrain: Drivetrain) : Command() {
   private val thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
 
   val thetakP =
