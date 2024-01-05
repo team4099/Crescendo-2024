@@ -6,10 +6,10 @@ package com.team4099.robot2023
 const val MAVEN_GROUP = ""
 const val MAVEN_NAME = "Crescendo-2024"
 const val VERSION = "unspecified"
-const val GIT_REVISION = 6
-const val GIT_SHA = "1b4825a71500a81c9a5987fe217e6c6f16561a77"
-const val GIT_DATE = "2023-12-17T21:03:20Z"
+const val GIT_REVISION = 7
+const val GIT_SHA = "0d5918fec05cabe491bf2b62dde138740e3798ad"
+const val GIT_DATE = "2023-12-26T22:20:54Z"
 const val GIT_BRANCH = "neo-drive"
-const val BUILD_DATE = "2023-12-26T18:57:49Z"
-const val BUILD_UNIX_TIME = 1703635069187L
+const val BUILD_DATE = "2024-01-03T17:45:41Z"
+const val BUILD_UNIX_TIME = 1704321941049L
 const val DIRTY = 1

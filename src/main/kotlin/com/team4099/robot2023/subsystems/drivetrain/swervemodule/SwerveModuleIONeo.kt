@@ -1,6 +1,7 @@
 package com.team4099.robot2023.subsystems.drivetrain.swervemodule
 
 import com.revrobotics.CANSparkMax
+import com.revrobotics.SparkMaxAbsoluteEncoder
 import com.revrobotics.SparkMaxPIDController
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import org.team4099.lib.units.LinearAcceleration
@@ -42,9 +43,9 @@ class SwerveModuleIONeo(
       DrivetrainConstants.DRIVE_COMPENSATION_VOLTAGE
     )
   private val throughBoreEncoder =
-    steeringMotor.getAlternateEncoder(
-      DrivetrainConstants.STEERING_THROUGH_BORE_CPR
-    ) // TODO: Integrate into FalconUtils
+    steeringMotor.getAbsoluteEncoder(
+      SparkMaxAbsoluteEncoder.Type.kDutyCycle
+    )
 
   private val potentiometerOutput: Angle
     get() {

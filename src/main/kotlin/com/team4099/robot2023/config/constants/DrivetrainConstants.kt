@@ -29,8 +29,8 @@ import kotlin.math.sqrt
 
 object DrivetrainConstants {
   object NeoConstants {
-    const val DRIVE_SENSOR_GEAR_RATIO = 4.71
-    const val STEERING_SENSOR_GEAR_RATIO = 9423.0 / 203.0
+    const val DRIVE_SENSOR_GEAR_RATIO = 1/4.71
+    const val STEERING_SENSOR_GEAR_RATIO = 203.0 / 9423.0
     var DRIVE_SETPOINT_MAX = 15.6.feet.perSecond
   }
 
@@ -42,7 +42,7 @@ object DrivetrainConstants {
   const val MINIMIZE_SKEW = false
 
   const val WHEEL_COUNT = 4
-  val WHEEL_DIAMETER = 3.827.inches
+  val WHEEL_DIAMETER = 3.0.inches
   val DRIVETRAIN_LENGTH = 22.750.inches
   val DRIVETRAIN_WIDTH = 22.750.inches
 
@@ -88,10 +88,10 @@ object DrivetrainConstants {
   val DRIVE_STATOR_THRESHOLD_CURRENT_LIMIT = 80.0.amps
   val DRIVE_STATOR_TRIGGER_THRESHOLD_TIME = 1.0.seconds
 
-  val FRONT_LEFT_MODULE_ZERO = 1.33.radians
-  val FRONT_RIGHT_MODULE_ZERO = 4.51.radians
-  val BACK_LEFT_MODULE_ZERO = 3.20.radians
-  val BACK_RIGHT_MODULE_ZERO = 0.94.radians
+  val FRONT_LEFT_MODULE_ZERO = 6.24.radians
+  val FRONT_RIGHT_MODULE_ZERO = 3.114.radians
+  val BACK_LEFT_MODULE_ZERO = 6.19.radians
+  val BACK_RIGHT_MODULE_ZERO = 1.599.radians
 
   val STEERING_COMPENSATION_VOLTAGE = 10.volts
   val DRIVE_COMPENSATION_VOLTAGE = 12.volts
