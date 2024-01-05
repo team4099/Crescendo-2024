@@ -11,12 +11,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package com.team4099.robot2023.subsystems.drivetrain.swervemodule.threads;
+package com.team4099.utils.threads;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.ParentDevice;
-import com.ctre.phoenix6.unmanaged.Unmanaged;
+import com.ctre.phoenix6.CANBus;
 import com.team4099.robot2023.config.constants.DrivetrainConstants;
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain;
 
@@ -58,7 +58,7 @@ public class PhoenixOdometryThread extends Thread {
     }
 
     public Queue<Double> registerSignal(ParentDevice device, StatusSignal<Double> signal) {
-        isCANFD = Unmanaged.isNetworkFD(device.getNetwork());
+        isCANFD = CANBus.isNetworkFD(device.getNetwork());
         Queue<Double> queue = new ArrayBlockingQueue<>(100);
         signalsLock.lock();
         try {

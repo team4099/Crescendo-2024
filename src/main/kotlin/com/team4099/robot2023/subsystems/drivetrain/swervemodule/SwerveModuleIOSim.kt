@@ -3,6 +3,7 @@ package com.team4099.robot2023.subsystems.drivetrain.swervemodule
 import com.team4099.lib.math.clamp
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
+import com.team4099.utils.threads.SimOdometryThread
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
 import com.team4099.robot2023.subsystems.falconspin.SimulatedMotor
@@ -40,9 +41,11 @@ import org.team4099.lib.units.derived.inVoltsPerDegree
 import org.team4099.lib.units.derived.inVoltsPerDegreePerSecond
 import org.team4099.lib.units.derived.inVoltsPerDegreeSeconds
 import org.team4099.lib.units.derived.radians
+import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.perSecond
+import java.util.Queue
 import kotlin.random.Random
 
 class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
@@ -113,9 +116,25 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
       Constants.Universal.LOOP_PERIOD_TIME
     )
 
+  val drivePositionQueue: Queue<Double>
+  val steeringPositionQueue: Queue<Double>
+
   init {
     steeringFeedback.enableContinuousInput(-Math.PI.radians, Math.PI.radians)
     steeringFeedback.errorTolerance = DrivetrainConstants.ALLOWED_STEERING_ANGLE_ERROR
+
+    drivePositionQueue =
+      SimOdometryThread.getInstance().registerSignal {
+        (driveMotorSim.angularVelocityRadPerSec * Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
+          .radians
+          .inRotations
+      }
+    steeringPositionQueue =
+      SimOdometryThread.getInstance().registerSignal {
+        (steerMotorSim.angularVelocityRadPerSec * Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
+          .radians
+          .inRotations
+      }
   }
 
   override fun updateInputs(inputs: SwerveModuleIO.SwerveModuleIOInputs) {
@@ -174,6 +193,26 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
 
     inputs.driveTemp = (-1337).celsius
     inputs.steeringTemp = (-1337).celsius
+
+    inputs.odometryDrivePositions =
+      drivePositionQueue
+        .map { value: Double ->
+          (
+                  DrivetrainConstants.WHEEL_DIAMETER * 2 * Math.PI * value /
+                          DrivetrainConstants.DRIVE_SENSOR_GEAR_RATIO
+                  )
+        }
+        .toTypedArray()
+
+    inputs.odometrySteeringPositions =
+      steeringPositionQueue
+      .map { value: Double ->
+        (value / DrivetrainConstants.STEERING_SENSOR_GEAR_RATIO).rotations
+      }
+      .toTypedArray()
+
+    drivePositionQueue.clear()
+    steeringPositionQueue.clear()
 
     inputs.steeringAppliedVoltage = (-1337).volts
     inputs.steeringSupplyCurrent = steerMotorSim.currentDrawAmps.amps
@@ -262,6 +301,10 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
   }
 
   override fun setDriveBrakeMode(brake: Boolean) {
+    println("Can't set brake mode in simulation")
+  }
+
+  override fun setSteeringBrakeMode(brake: Boolean) {
     println("Can't set brake mode in simulation")
   }
 

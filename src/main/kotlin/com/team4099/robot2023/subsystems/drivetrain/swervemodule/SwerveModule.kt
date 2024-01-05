@@ -121,12 +121,12 @@ class SwerveModule(val io: SwerveModuleIO) {
   }
 
   fun periodic() {
-    io.updateInputs(inputs)
+    updateInputs()
 
     val deltaCount =
-      Math.min(inputs.odometryDrivePositions.size, inputs.odometrySteeringPositions.size)
+      inputs.odometryDrivePositions.size.coerceAtMost(inputs.odometrySteeringPositions.size)
 
-    for (i in 0..deltaCount) {
+    for (i in 0 until deltaCount) {
       val newDrivePosition = inputs.odometryDrivePositions[i]
       val newSteeringAngle = inputs.odometrySteeringPositions[i]
       positionDeltas.add(

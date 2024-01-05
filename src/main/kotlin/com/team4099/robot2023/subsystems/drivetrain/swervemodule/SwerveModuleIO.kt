@@ -118,29 +118,35 @@ interface SwerveModuleIO {
 
   val label: String
 
-  fun updateInputs(inputs: SwerveModuleIOInputs) {}
+  abstract fun updateInputs(inputs: SwerveModuleIOInputs)
 
-  fun setSteeringSetpoint(angle: Angle) {}
-  fun setClosedLoop(steering: Angle, speed: LinearVelocity, acceleration: LinearAcceleration) {}
-  fun setOpenLoop(steering: Angle, speed: LinearVelocity) {}
+  abstract fun setSteeringSetpoint(angle: Angle)
+  abstract fun setClosedLoop(
+    steering: Angle,
+    speed: LinearVelocity,
+    acceleration: LinearAcceleration
+  )
+  abstract fun setOpenLoop(steering: Angle, speed: LinearVelocity)
 
-  fun resetModuleZero() {}
-  fun zeroSteering() {}
-  fun zeroDrive() {}
+  abstract fun resetModuleZero()
+  abstract fun zeroSteering()
+  abstract fun zeroDrive()
 
-  fun setDriveBrakeMode(brake: Boolean) {}
+  abstract fun setDriveBrakeMode(brake: Boolean)
 
-  fun setSteeringBrakeMode(brake: Boolean) {}
+  abstract fun setSteeringBrakeMode(brake: Boolean)
 
-  fun configureDrivePID(
+  abstract fun configureDrivePID(
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
     kD: DerivativeGain<Velocity<Meter>, Volt>
-  ) {}
-  fun configureSteeringPID(
+  )
+
+  abstract fun configureSteeringPID(
     kP: ProportionalGain<Radian, Volt>,
     kI: IntegralGain<Radian, Volt>,
     kD: DerivativeGain<Radian, Volt>
-  ) {}
-  fun configureSteeringMotionMagic(maxVel: AngularVelocity, maxAccel: AngularAcceleration) {}
+  )
+
+  abstract fun configureSteeringMotionMagic(maxVel: AngularVelocity, maxAccel: AngularAcceleration)
 }

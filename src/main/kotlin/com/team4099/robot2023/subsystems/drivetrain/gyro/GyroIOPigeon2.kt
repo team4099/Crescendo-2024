@@ -5,8 +5,8 @@ import com.ctre.phoenix6.hardware.Pigeon2
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.config.constants.GyroConstants
-import com.team4099.robot2023.subsystems.drivetrain.swervemodule.threads.PhoenixOdometryThread
-import com.team4099.robot2023.subsystems.drivetrain.swervemodule.threads.SparkMaxOdometryThread
+import com.team4099.utils.threads.PhoenixOdometryThread
+import com.team4099.utils.threads.SparkMaxOdometryThread
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.derived.Angle

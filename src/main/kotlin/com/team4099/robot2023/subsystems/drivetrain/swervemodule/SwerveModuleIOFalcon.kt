@@ -12,7 +12,7 @@ import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.NeutralModeValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
-import com.team4099.robot2023.subsystems.drivetrain.swervemodule.threads.PhoenixOdometryThread
+import com.team4099.utils.threads.PhoenixOdometryThread
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
@@ -276,23 +276,19 @@ class SwerveModuleIOFalcon(
 
     inputs.odometryDrivePositions =
       drivePositionQueue
-      .stream()
-      .map { value: Double ->
-        (
-          DrivetrainConstants.WHEEL_DIAMETER * 2 * Math.PI * value /
-            DrivetrainConstants.DRIVE_SENSOR_GEAR_RATIO
-          )
-      }
-      .toArray() as
-      Array<Length>
+        .map { value: Double ->
+          (
+            DrivetrainConstants.WHEEL_DIAMETER * 2 * Math.PI * value /
+                    DrivetrainConstants.DRIVE_SENSOR_GEAR_RATIO
+            )
+        }
+        .toTypedArray()
     inputs.odometrySteeringPositions =
       steeringPositionQueue
-      .stream()
       .map { value: Double ->
         (value / DrivetrainConstants.STEERING_SENSOR_GEAR_RATIO).rotations
       }
-      .toArray() as
-      Array<Angle>
+      .toTypedArray()
     drivePositionQueue.clear()
     steeringPositionQueue.clear()
 

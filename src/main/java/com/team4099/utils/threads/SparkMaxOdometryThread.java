@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package com.team4099.robot2023.subsystems.drivetrain.swervemodule.threads;
+package com.team4099.utils.threads;
 
 import com.team4099.robot2023.config.constants.DrivetrainConstants;
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain;

@@ -28,93 +28,93 @@ import org.team4099.lib.units.perSecond
 import kotlin.math.PI
 import kotlin.math.tan
 
-
 class TargetPoseCommand(val drivetrain: Drivetrain, val targetPose: Pose2d) : Command() {
-    private val thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
+  private val thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
 
-    val thetakP =
-        LoggedTunableValue(
-            "Pathfollow/thetakP",
-            Pair({ it.inDegreesPerSecondPerDegree }, { it.degrees.perSecond.perDegree })
-        )
-    val thetakI =
-        LoggedTunableValue(
-            "Pathfollow/thetakI",
-            Pair(
-                { it.inDegreesPerSecondPerDegreeSeconds }, { it.degrees.perSecond.perDegreeSeconds }
-            )
-        )
-    val thetakD =
-        LoggedTunableValue(
-            "Pathfollow/thetakD",
-            Pair(
-                { it.inDegreesPerSecondPerDegreePerSecond },
-                { it.degrees.perSecond.perDegreePerSecond }
-            )
-        )
+  val thetakP =
+    LoggedTunableValue(
+      "Pathfollow/thetakP",
+      Pair({ it.inDegreesPerSecondPerDegree }, { it.degrees.perSecond.perDegree })
+    )
+  val thetakI =
+    LoggedTunableValue(
+      "Pathfollow/thetakI",
+      Pair(
+        { it.inDegreesPerSecondPerDegreeSeconds }, { it.degrees.perSecond.perDegreeSeconds }
+      )
+    )
+  val thetakD =
+    LoggedTunableValue(
+      "Pathfollow/thetakD",
+      Pair(
+        { it.inDegreesPerSecondPerDegreePerSecond },
+        { it.degrees.perSecond.perDegreePerSecond }
+      )
+    )
 
-    val thetaMaxVel =
-        LoggedTunableValue("Pathfollow/thetaMaxVel", DrivetrainConstants.PID.MAX_AUTO_ANGULAR_VEL)
-    val thetaMaxAccel =
-        LoggedTunableValue("Pathfollow/thetaMaxAccel", DrivetrainConstants.PID.MAX_AUTO_ANGULAR_ACCEL)
-    var desiredAngle: Angle = 0.0.degrees
+  val thetaMaxVel =
+    LoggedTunableValue("Pathfollow/thetaMaxVel", DrivetrainConstants.PID.MAX_AUTO_ANGULAR_VEL)
+  val thetaMaxAccel =
+    LoggedTunableValue("Pathfollow/thetaMaxAccel", DrivetrainConstants.PID.MAX_AUTO_ANGULAR_ACCEL)
+  var desiredAngle: Angle = 0.0.degrees
 
-    init {
-        addRequirements(drivetrain)
+  init {
+    addRequirements(drivetrain)
 
-        if (RobotBase.isReal()) {
-            thetakP.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KP)
-            thetakI.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KI)
-            thetakD.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KD)
-        } else {
-            thetakP.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP)
-            thetakI.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI)
-            thetakD.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD)
-        }
-
-        thetaPID =
-            ProfiledPIDController(
-                thetakP.get(),
-                thetakI.get(),
-                thetakD.get(),
-                TrapezoidProfile.Constraints(thetaMaxVel.get(), thetaMaxAccel.get())
-            )
-        thetaPID.enableContinuousInput(-PI.radians, PI.radians)
+    if (RobotBase.isReal()) {
+      thetakP.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KP)
+      thetakI.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KI)
+      thetakD.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KD)
+    } else {
+      thetakP.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP)
+      thetakI.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI)
+      thetakD.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD)
     }
 
-    override fun initialize() {
-        thetaPID.reset(drivetrain.odometryPose.rotation)
-    }
+    thetaPID =
+      ProfiledPIDController(
+        thetakP.get(),
+        thetakI.get(),
+        thetakD.get(),
+        TrapezoidProfile.Constraints(thetaMaxVel.get(), thetaMaxAccel.get())
+      )
+    thetaPID.enableContinuousInput(-PI.radians, PI.radians)
+  }
 
-    override fun execute() {
-        Logger.recordOutput("ActiveCommands/TargetPoseCommand", true)
+  override fun initialize() {
+    thetaPID.reset(drivetrain.odometryPose.rotation)
+  }
 
-        val currentPose = drivetrain.odometryPose
-        desiredAngle = tan((currentPose.y - targetPose.y).inMeters / (currentPose.x - targetPose.x).inMeters).radians
-        val thetaFeedback = thetaPID.calculate(
-            currentPose.rotation,
-            desiredAngle
-        )
+  override fun execute() {
+    Logger.recordOutput("ActiveCommands/TargetPoseCommand", true)
 
-        drivetrain.currentRequest =
-            Request.DrivetrainRequest.OpenLoop(
-                thetaFeedback, Pair(drivetrain.fieldVelocity.x, drivetrain.fieldVelocity.y), fieldOriented = true
-            )
+    val currentPose = drivetrain.odometryPose
+    desiredAngle =
+      tan((currentPose.y - targetPose.y).inMeters / (currentPose.x - targetPose.x).inMeters)
+        .radians
+    val thetaFeedback = thetaPID.calculate(currentPose.rotation, desiredAngle)
 
-        Logger.recordOutput("AutoLevel/CurrentYawDegrees", drivetrain.odometryPose.rotation.inDegrees)
-        Logger.recordOutput("AutoLevel/DesiredYawDegrees", desiredAngle.inDegrees)
-        Logger.recordOutput("AutoLevel/thetaFeedbackDPS", thetaFeedback.inDegreesPerSecond)
-    }
+    drivetrain.currentRequest =
+      Request.DrivetrainRequest.OpenLoop(
+        thetaFeedback,
+        Pair(drivetrain.fieldVelocity.x, drivetrain.fieldVelocity.y),
+        fieldOriented = true
+      )
 
-    override fun isFinished(): Boolean {
-        return (drivetrain.odometryPose.rotation - desiredAngle).absoluteValue <
-                DrivetrainConstants.PID.AUTO_THETA_ALLOWED_ERROR
-    }
+    Logger.recordOutput("AutoLevel/CurrentYawDegrees", drivetrain.odometryPose.rotation.inDegrees)
+    Logger.recordOutput("AutoLevel/DesiredYawDegrees", desiredAngle.inDegrees)
+    Logger.recordOutput("AutoLevel/thetaFeedbackDPS", thetaFeedback.inDegreesPerSecond)
+  }
 
-    override fun end(interrupted: Boolean) {
-        drivetrain.currentRequest =
-            Request.DrivetrainRequest.OpenLoop(
-                0.0.radians.perSecond, Pair(drivetrain.fieldVelocity.x, drivetrain.fieldVelocity.y)
-            )
-    }
+  override fun isFinished(): Boolean {
+    return (drivetrain.odometryPose.rotation - desiredAngle).absoluteValue <
+      DrivetrainConstants.PID.AUTO_THETA_ALLOWED_ERROR
+  }
+
+  override fun end(interrupted: Boolean) {
+    drivetrain.currentRequest =
+      Request.DrivetrainRequest.OpenLoop(
+        0.0.radians.perSecond, Pair(drivetrain.fieldVelocity.x, drivetrain.fieldVelocity.y)
+      )
+  }
 }

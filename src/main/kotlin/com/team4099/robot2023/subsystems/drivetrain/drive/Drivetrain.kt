@@ -327,13 +327,13 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
     var deltaCount =
       if (gyroInputs.gyroConnected) gyroInputs.odometryYawPositions.size else Integer.MAX_VALUE
-    for (i in 0..4) {
-      deltaCount = Math.min(deltaCount, swerveModules[i].positionDeltas.size)
+    for (swerveModuleIndex in 0 until 4) {
+      deltaCount = deltaCount.coerceAtMost(swerveModules[swerveModuleIndex].positionDeltas.size)
     }
-    for (deltaIndex in 0..deltaCount) {
+    for (deltaIndex in 0 until deltaCount) {
       // Read wheel deltas from each module
       val wheelDeltas = arrayOfNulls<SwerveModulePosition>(4)
-      for (moduleIndex in 0..4) {
+      for (moduleIndex in 0 until 4) {
         wheelDeltas[moduleIndex] = swerveModules[moduleIndex].positionDeltas[deltaIndex]
       }
 
