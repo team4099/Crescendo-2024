@@ -316,6 +316,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     var desiredChassisSpeeds: ChassisSpeeds
 
     if (fieldOriented) {
+      Logger.recordOutput("drivetrain/isFieldOriented", true)
       desiredChassisSpeeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
           allianceFlippedDriveVector.first,
