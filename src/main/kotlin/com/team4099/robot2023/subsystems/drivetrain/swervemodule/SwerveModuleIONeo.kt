@@ -43,9 +43,7 @@ class SwerveModuleIONeo(
       DrivetrainConstants.DRIVE_COMPENSATION_VOLTAGE
     )
   private val throughBoreEncoder =
-    steeringMotor.getAbsoluteEncoder(
-      SparkMaxAbsoluteEncoder.Type.kDutyCycle
-    )
+    steeringMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
 
   private val potentiometerOutput: Angle
     get() {

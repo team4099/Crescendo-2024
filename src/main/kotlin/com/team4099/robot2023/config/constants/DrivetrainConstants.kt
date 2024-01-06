@@ -29,7 +29,7 @@ import kotlin.math.sqrt
 
 object DrivetrainConstants {
   object NeoConstants {
-    const val DRIVE_SENSOR_GEAR_RATIO = 1/4.71
+    const val DRIVE_SENSOR_GEAR_RATIO = 1 / 4.71
     const val STEERING_SENSOR_GEAR_RATIO = 203.0 / 9423.0
     var DRIVE_SETPOINT_MAX = 15.6.feet.perSecond
   }
