@@ -44,9 +44,9 @@ object ControlBoard {
 
   val prepScore = Trigger { operator.leftTriggerAxis > 0.5 }
 
-  val setArmCubeHybridPrep = Trigger { operator.leftShoulderButton && operator.aButton }
-  val setArmCubeMidPrep = Trigger { operator.leftShoulderButton && operator.bButton }
-  val setArmCubeHighPrep = Trigger { operator.leftShoulderButton && operator.yButton }
+  val spinUp = Trigger { driver.aButton }
+  val returnToIdle = Trigger { driver.bButton }
+  val openLoop = Trigger { driver.yButton }
 
   val setArmConeHybridPrep = Trigger { operator.rightShoulderButton && operator.aButton }
   val setArmConeMidPrep = Trigger { operator.rightShoulderButton && operator.bButton }

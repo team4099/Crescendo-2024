@@ -41,12 +41,10 @@ sealed interface Request {
   }
 
   // Implements RequestStructure to ensure standardized structure
-  sealed interface ManipulatorRequest : Request {
-    class TargetingPosition(val position: Length, val rollerVoltage: ElectricalPotential) :
-      ManipulatorRequest
-    class OpenLoop(val voltage: ElectricalPotential, val rollerVoltage: ElectricalPotential) :
-      ManipulatorRequest
-    class Home() : ManipulatorRequest
+  sealed interface ShooterRequest : Request {
+    class TargettingSpeed(val speed: AngularVelocity) : ShooterRequest
+    class OpenLoop(val voltage: ElectricalPotential) : ShooterRequest
+    class Idle() : ShooterRequest
   }
 
   sealed interface ElevatorRequest : Request {

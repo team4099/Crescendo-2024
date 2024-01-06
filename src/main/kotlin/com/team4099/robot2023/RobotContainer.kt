@@ -12,6 +12,9 @@ import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIONavx
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
+import com.team4099.robot2023.subsystems.shooter.Shooter
+import com.team4099.robot2023.subsystems.shooter.ShooterIO
+import com.team4099.robot2023.subsystems.shooter.ShooterIONeo
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.util.driver.Ryan
@@ -19,12 +22,14 @@ import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.rotations
+import org.team4099.lib.units.perMinute
 
 object RobotContainer {
   private val drivetrain: Drivetrain
   private val vision: Vision
   private val limelight: LimelightVision
-
+  private val shooter: Shooter
   init {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
@@ -41,6 +46,7 @@ object RobotContainer {
           //        CameraIONorthstar("backward")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
+      shooter = Shooter(ShooterIONeo())
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
@@ -51,6 +57,7 @@ object RobotContainer {
           CameraIONorthstar("northstar_3"),
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
+      shooter = Shooter(object: ShooterIO {})
     }
 
     vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
@@ -67,17 +74,6 @@ object RobotContainer {
         { ControlBoard.slowMode },
         drivetrain
       )
-
-    /*
-    module steeing tuning
-
-    drivetrain.defaultCommand =
-      SwerveModuleTuningCommand(
-        drivetrain,
-        { (ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) * 180).degrees },
-      )
-
-     */
   }
 
   fun zeroSteering() {
@@ -109,6 +105,9 @@ object RobotContainer {
 
   fun mapTeleopControls() {
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
+    ControlBoard.spinUp.whileTrue(shooter.commandSpinUp())
+    ControlBoard.returnToIdle.whileTrue(shooter.returnToIdle())
+    ControlBoard.openLoop.whileTrue(shooter.commandOpenLoop())
     //    ControlBoard.autoLevel.whileActiveContinuous(
     //      GoToAngle(drivetrain).andThen(AutoLevel(drivetrain))
     //    )
