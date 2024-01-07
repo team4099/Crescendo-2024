@@ -12,9 +12,11 @@ import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIONavx
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
+import com.team4099.robot2023.subsystems.projectile.Projectile
 import com.team4099.robot2023.subsystems.shooter.Shooter
 import com.team4099.robot2023.subsystems.shooter.ShooterIO
 import com.team4099.robot2023.subsystems.shooter.ShooterIONeo
+import com.team4099.robot2023.subsystems.shooter.ShooterIOSim
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.util.driver.Ryan
@@ -30,6 +32,7 @@ object RobotContainer {
   private val vision: Vision
   private val limelight: LimelightVision
   private val shooter: Shooter
+  //private val projectile: Projectile
   init {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
@@ -47,6 +50,7 @@ object RobotContainer {
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
       shooter = Shooter(ShooterIONeo())
+      //projectile = Projectile()
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
@@ -57,11 +61,13 @@ object RobotContainer {
           CameraIONorthstar("northstar_3"),
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
-      shooter = Shooter(object: ShooterIO {})
+      shooter = Shooter(ShooterIOSim())
+      //projectile = Projectile()
     }
 
     vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
     limelight.poseSupplier = { drivetrain.odometryPose }
+    //projectile.setPoseSupplier({ drivetrain.odometryPose}, { drivetrain.fieldVelocity})
   }
 
   fun mapDefaultCommands() {
@@ -105,7 +111,8 @@ object RobotContainer {
 
   fun mapTeleopControls() {
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
-    ControlBoard.spinUp.whileTrue(shooter.commandSpinUp())
+    ControlBoard.spinUp.whileTrue(shooter.commandOpenLoop())
+    //ControlBoard.spinUp.whileTrue(shooter.commandSpinUp())
     ControlBoard.returnToIdle.whileTrue(shooter.returnToIdle())
     ControlBoard.openLoop.whileTrue(shooter.commandOpenLoop())
     //    ControlBoard.autoLevel.whileActiveContinuous(

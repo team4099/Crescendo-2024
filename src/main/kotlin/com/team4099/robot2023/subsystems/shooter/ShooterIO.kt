@@ -64,7 +64,7 @@ interface ShooterIO {
       table?.get("leaderTempInCelsius", leaderTemp.inCelsius)?.let { leaderTemp = it.celsius }
     }
   }
-  fun updateInputs(io: ShooterIOInputs) {}
+  fun updateInputs(inputs: ShooterIOInputs) {}
 
   fun configPID(
     kP: ProportionalGain<Velocity<Radian>, Volt>,

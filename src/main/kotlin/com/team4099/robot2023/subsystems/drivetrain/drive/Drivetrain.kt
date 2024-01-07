@@ -5,10 +5,7 @@ import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
-import com.team4099.robot2023.util.Alert
-import com.team4099.robot2023.util.FMSData
-import com.team4099.robot2023.util.PoseEstimator
-import com.team4099.robot2023.util.Velocity2d
+import com.team4099.robot2023.util.*
 import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry
@@ -220,7 +217,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     Logger.recordOutput("Drivetrain/ModuleStates", *measuredStates)
     Logger.recordOutput("Drivetrain/SetPointStates", *setPointStates.toTypedArray())
 
-    Logger.recordOutput(VisionConstants.POSE_TOPIC_NAME, odometryPose.pose2d)
+    Logger.recordOutput(VisionConstants.POSE_TOPIC_NAME, doubleArrayOf(odometryPose.x.inMeters, odometryPose.y.inMeters, odometryPose.rotation.inRadians))
     Logger.recordOutput(
       "Odometry/pose3d",
       Pose3d(

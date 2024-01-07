@@ -93,10 +93,16 @@ class Shooter(val io: ShooterIO) : SubsystemBase() {
 
     Logger.processInputs("Shooter", inputs)
 
+    Logger.recordOutput("Shooter/currentState", currentState.name)
+    Logger.recordOutput("Shooter/currentRequest", currentRequest.javaClass.name)
+    Logger.recordOutput("Shooter/targetVelInRPM", targetVelocity.inRotationsPerMinute)
+    Logger.recordOutput("Shooter/targetVoltage", targetVoltage.inVolts)
+
     var nextState = currentState
     when (currentState) {
       ShooterState.IDLE -> {
         // Outputs
+        setVoltage(0.0.volts)
 
         // Transition
         nextState =

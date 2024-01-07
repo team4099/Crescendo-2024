@@ -2,21 +2,16 @@ package com.team4099.robot2023.subsystems.shooter
 
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
+import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.ShooterConstants
+import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
-import org.team4099.lib.units.derived.DerivativeGain
-import org.team4099.lib.units.derived.ElectricalPotential
-import org.team4099.lib.units.derived.IntegralGain
-import org.team4099.lib.units.derived.ProportionalGain
-import org.team4099.lib.units.derived.Radian
-import org.team4099.lib.units.derived.Volt
-import org.team4099.lib.units.derived.inVolts
-import org.team4099.lib.units.derived.rotations
-import org.team4099.lib.units.derived.volts
+import org.team4099.lib.units.derived.*
 import org.team4099.lib.units.inRotationsPerMinute
 import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.sparkMaxAngularMechanismSensor
@@ -33,6 +28,30 @@ class ShooterIONeo : ShooterIO {
     sparkMaxAngularMechanismSensor(
       followerMotor, 1.0, ShooterConstants.SHOOTER_VOLTAGE_COMPENSATION
     )
+
+  private var shooterKS =
+    LoggedTunableValue(
+      "Shooter/shooterKS",
+      ShooterConstants.SHOOTER_KS,
+      Pair({ it.inVolts }, { it.volts })
+    )
+
+  private var shooterKV =
+    LoggedTunableValue(
+      "Shooter/shooterKV",
+      ShooterConstants.SHOOTER_KV,
+      Pair({ it.inVoltsPerRotationPerMinute }, { it.volts.perRotationPerMinute })
+    )
+
+  private var shooterKA =
+    LoggedTunableValue(
+      "Shooter/shooterKA",
+      ShooterConstants.SHOOTER_KA,
+      Pair({ it.inVoltsPerRotationsPerMinutePerSecond }, { it.volts.perRotationPerMinutePerSecond })
+    )
+
+  private var shooterFeedforward = SimpleMotorFeedforward(ShooterConstants.SHOOTER_KS, ShooterConstants.SHOOTER_KV, ShooterConstants.SHOOTER_KA)
+
   init {
     leaderMotor.restoreFactoryDefaults()
     leaderMotor.clearFaults()
@@ -58,18 +77,21 @@ class ShooterIONeo : ShooterIO {
   val leaderPIDController = leaderMotor.pidController
   val followerPIDController = followerMotor.pidController
 
-  override fun updateInputs(io: ShooterIO.ShooterIOInputs) {
-    io.leaderAppliedVoltage = leaderMotor.busVoltage.volts * leaderMotor.appliedOutput
-    io.leaderStatorCurrent = leaderMotor.outputCurrent.amps
-    io.leaderRPM = leaderMotor.encoder.velocity.rotations.perMinute
-    io.leaderTemp = leaderMotor.motorTemperature.celsius
+  override fun updateInputs(inputs: ShooterIO.ShooterIOInputs) {
+    inputs.leaderAppliedVoltage = leaderMotor.busVoltage.volts * leaderMotor.appliedOutput
+    inputs.leaderStatorCurrent = leaderMotor.outputCurrent.amps
+    inputs.leaderRPM = leaderMotor.encoder.velocity.rotations.perMinute
+    inputs.leaderTemp = leaderMotor.motorTemperature.celsius
 
-    io.followerAppliedVoltage = followerMotor.busVoltage.volts * followerMotor.appliedOutput
-    io.followerStatorCurrent = followerMotor.outputCurrent.amps
-    io.followerRPM = followerMotor.encoder.velocity.rotations.perMinute
-    io.followerTemp = followerMotor.motorTemperature.celsius
+    inputs.followerAppliedVoltage = followerMotor.busVoltage.volts * followerMotor.appliedOutput
+    inputs.followerStatorCurrent = followerMotor.outputCurrent.amps
+    inputs.followerRPM = followerMotor.encoder.velocity.rotations.perMinute
+    inputs.followerTemp = followerMotor.motorTemperature.celsius
 
     // no supply current bc im lazy
+    if (shooterKS.hasChanged() || shooterKV.hasChanged() || shooterKA.hasChanged()){
+      shooterFeedforward = SimpleMotorFeedforward(shooterKS.get(), shooterKV.get(), shooterKA.get())
+    }
   }
 
   override fun configPID(
@@ -87,8 +109,9 @@ class ShooterIONeo : ShooterIO {
   }
 
   override fun setVelocity(velocity: AngularVelocity) {
+    val ff = shooterFeedforward.calculate(leaderSensor.velocity, velocity, Constants.Universal.LOOP_PERIOD_TIME)
     leaderPIDController.setReference(
-      velocity.inRotationsPerMinute, CANSparkMax.ControlType.kVelocity, 0
+      velocity.inRotationsPerMinute, CANSparkMax.ControlType.kVelocity, 0, ff.inVolts
     )
   }
 
