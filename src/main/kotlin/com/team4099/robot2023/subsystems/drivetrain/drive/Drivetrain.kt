@@ -220,7 +220,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     Logger.recordOutput("Drivetrain/ModuleStates", *measuredStates)
     Logger.recordOutput("Drivetrain/SetPointStates", *setPointStates.toTypedArray())
 
-    Logger.recordOutput(VisionConstants.POSE_TOPIC_NAME, odometryPose.pose2d)
+    Logger.recordOutput(VisionConstants.POSE_TOPIC_NAME, doubleArrayOf(odometryPose.x.inMeters, odometryPose.y.inMeters, odometryPose.rotation.inRadians))
     Logger.recordOutput(
       "Odometry/pose3d",
       Pose3d(
