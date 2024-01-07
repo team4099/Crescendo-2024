@@ -63,6 +63,7 @@ object GyroIONavx : GyroIO {
     }
 
   override fun updateInputs(inputs: GyroIO.GyroIOInputs) {
+    inputs.rawGyroYaw = gyro.angle.degrees
     inputs.gyroYaw = gyro.angle.degrees
     inputs.gyroYaw = gyroYaw
     inputs.gyroYawRate = gyroYawRate
