@@ -42,7 +42,7 @@ sealed interface Request {
 
   // Implements RequestStructure to ensure standardized structure
   sealed interface ShooterRequest : Request {
-    class TargettingSpeed(val speed: AngularVelocity) : ShooterRequest
+    class TargettingSpeed(val feederSpeed: AngularVelocity, val shooterSpeed: AngularVelocity) : ShooterRequest
     class OpenLoop(val voltage: ElectricalPotential) : ShooterRequest
     class Idle() : ShooterRequest
   }

@@ -111,7 +111,7 @@ object RobotContainer {
 
   fun mapTeleopControls() {
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
-    ControlBoard.spinUp.whileTrue(shooter.commandOpenLoop())
+    ControlBoard.spinUp.whileTrue(shooter.commandSpinUp())
     //ControlBoard.spinUp.whileTrue(shooter.commandSpinUp())
     ControlBoard.returnToIdle.whileTrue(shooter.returnToIdle())
     ControlBoard.openLoop.whileTrue(shooter.commandOpenLoop())

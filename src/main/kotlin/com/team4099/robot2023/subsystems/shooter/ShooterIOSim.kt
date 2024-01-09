@@ -13,7 +13,6 @@ import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.*
 import org.team4099.lib.units.derived.*
 import org.team4099.lib.units.perMinute
-import org.team4099.lib.units.perSecond
 
 class ShooterIOSim: ShooterIO {
 
@@ -55,28 +54,39 @@ class ShooterIOSim: ShooterIO {
 
     private var shooterFeedforward = SimpleMotorFeedforward(0.0.volts, 0.0003.volts.perRotationPerMinute, 0.0001.volts.perRotationPerMinutePerSecond)
 
-    override fun setVelocity(velocity: AngularVelocity) {
+    override fun setShooterVelocity(velocity: AngularVelocity) {
         val feedback = leaderPIDControler.calculate(leaderMotorSim.angularVelocityRPM.rotations.perMinute, velocity)
         val ff = shooterFeedforward.calculate(leaderMotorSim.angularVelocityRPM.rotations.perMinute, velocity, Constants.Universal.LOOP_PERIOD_TIME)
         Logger.recordOutput("Shooter/feedback", feedback.inVolts)
         Logger.recordOutput("Shooter/ff", ff.inVolts)
-        setVoltage(ff + feedback)
+        setShooterVoltage(ff + feedback)
+    }
+
+    override fun setFeederVelocity(velocity: AngularVelocity) {
+        val feedback = followerPIDControler.calculate(followerMotorSim.angularVelocityRPM.rotations.perMinute, velocity)
+        val ff = shooterFeedforward.calculate(followerMotorSim.angularVelocityRPM.rotations.perMinute, velocity, Constants.Universal.LOOP_PERIOD_TIME)
+        Logger.recordOutput("Shooter/feedback", feedback.inVolts)
+        Logger.recordOutput("Shooter/ff", ff.inVolts)
+        setFeederVoltage(ff + feedback)
     }
 
     override fun updateInputs(inputs: ShooterIO.ShooterIOInputs) {
         leaderMotorSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
         followerMotorSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
 
-        inputs.leaderRPM = leaderMotorSim.angularVelocityRPM.rotations.perMinute
-        inputs.followerRPM = followerMotorSim.angularVelocityRPM.rotations.perMinute
+        inputs.shooterRPM = leaderMotorSim.angularVelocityRPM.rotations.perMinute
+        inputs.feederRPM = followerMotorSim.angularVelocityRPM.rotations.perMinute
 
         if (shooterKS.hasChanged() || shooterKV.hasChanged() || shooterKA.hasChanged()){
             shooterFeedforward = SimpleMotorFeedforward(shooterKS.get(), shooterKV.get(), shooterKA.get())
         }
     }
 
-    override fun setVoltage(voltage: ElectricalPotential) {
+    override fun setShooterVoltage(voltage: ElectricalPotential) {
         leaderMotorSim.setInputVoltage(voltage.inVolts)
+    }
+
+    override fun setFeederVoltage(voltage: ElectricalPotential) {
         followerMotorSim.setInputVoltage(voltage.inVolts)
     }
 

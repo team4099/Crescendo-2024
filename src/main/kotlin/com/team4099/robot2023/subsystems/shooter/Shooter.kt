@@ -17,7 +17,8 @@ class Shooter(val io: ShooterIO) : SubsystemBase() {
   val inputs = ShooterIO.ShooterIOInputs()
   var SHOOTER_TOLERANCE = 50.rotations.perMinute
 
-  private var medianFilter = MedianFilter(10)
+  private var shooterMedianFilter = MedianFilter(10)
+  private var feederMedianFilter = MedianFilter(10)
 
   private var shooterKP =
     LoggedTunableValue(
@@ -39,10 +40,17 @@ class Shooter(val io: ShooterIO) : SubsystemBase() {
       Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
     )
 
-  private var spinUpVel =
+  private var shooterSpinUpVel =
     LoggedTunableValue(
-      "Shooter/spinUpVelInRPM",
+      "Shooter/shooterSpinUpVelInRPM",
       1800.rotations.perMinute,
+      Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+    )
+
+  private var feederSpinUpVel =
+    LoggedTunableValue(
+      "Shooter/feederSpinUpVelInRPM",
+      600.rotations.perMinute,
       Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
     )
 
@@ -53,17 +61,35 @@ class Shooter(val io: ShooterIO) : SubsystemBase() {
       Pair({ it.inVolts }, { it.volts })
     )
 
-  var targetVelocity: AngularVelocity = 0.0.rotations.perMinute
-  var targetVoltage: ElectricalPotential = 0.0.volts
+  var shooterTargetVelocity: AngularVelocity = 0.0.rotations.perMinute
+  var shooterTargetVoltage: ElectricalPotential = 0.0.volts
 
-  var currentVelocity: AngularVelocity = 0.0.rotations.perMinute
-  var isAtTarget = false
+  var feederTargetVelocity: AngularVelocity = 0.0.rotations.perMinute
+  var feederTargetVoltage: ElectricalPotential = 0.0.volts
+
+  var shooterCurrentVelocity: AngularVelocity = 0.0.rotations.perMinute
+  var feederCurrentVelocity: AngularVelocity = 0.0.rotations.perMinute
+
+  var isFeederAtTarget: Boolean = false
+    get(){
+      return (feederCurrentVelocity - feederTargetVelocity).absoluteValue <= SHOOTER_TOLERANCE
+    }
+  var isShooterAtTarget = false
+    get(){
+      return (shooterCurrentVelocity - shooterTargetVelocity).absoluteValue <= SHOOTER_TOLERANCE
+    }
 
   var currentRequest: Request.ShooterRequest = Request.ShooterRequest.OpenLoop(0.0.volts)
     set(value) {
       when (value) {
-        is Request.ShooterRequest.OpenLoop -> targetVoltage = value.voltage
-        is Request.ShooterRequest.TargettingSpeed -> targetVelocity = value.speed
+        is Request.ShooterRequest.OpenLoop -> {
+          shooterTargetVoltage = value.voltage
+          feederTargetVoltage = value.voltage
+        }
+        is Request.ShooterRequest.TargettingSpeed -> {
+          shooterTargetVelocity = value.shooterSpeed
+          feederTargetVelocity = value.feederSpeed
+        }
         is Request.ShooterRequest.Idle -> {}
       }
       field = value
@@ -78,25 +104,29 @@ class Shooter(val io: ShooterIO) : SubsystemBase() {
     }
 
     if (filterSize.hasChanged()) {
-      medianFilter = MedianFilter(filterSize.get().toInt())
+      shooterMedianFilter = MedianFilter(filterSize.get().toInt())
+      feederMedianFilter = MedianFilter(filterSize.get().toInt())
     }
 
     if (shooterToleranceRPM.hasChanged()) {
       SHOOTER_TOLERANCE = shooterToleranceRPM.get()
     }
 
-    currentVelocity =
-      medianFilter.calculate(inputs.leaderRPM.inRotationsPerMinute).rotations.perMinute
-    isAtTarget =
-      (targetVelocity != 0.0.rotations.perMinute) &&
-      (currentVelocity - targetVelocity).absoluteValue <= SHOOTER_TOLERANCE
+    shooterCurrentVelocity =
+      shooterMedianFilter.calculate(inputs.shooterRPM.inRotationsPerMinute).rotations.perMinute
+
+    feederCurrentVelocity =
+      feederMedianFilter.calculate(inputs.feederRPM.inRotationsPerMinute).rotations.perMinute
 
     Logger.processInputs("Shooter", inputs)
 
     Logger.recordOutput("Shooter/currentState", currentState.name)
     Logger.recordOutput("Shooter/currentRequest", currentRequest.javaClass.name)
-    Logger.recordOutput("Shooter/targetVelInRPM", targetVelocity.inRotationsPerMinute)
-    Logger.recordOutput("Shooter/targetVoltage", targetVoltage.inVolts)
+    Logger.recordOutput("Shooter/shooterMotorAtTarget", isShooterAtTarget)
+    Logger.recordOutput("Shooter/feederMotorAtTarget", isFeederAtTarget)
+    Logger.recordOutput("Shooter/shooterTargetVelocityInRPM", shooterTargetVelocity.inRotationsPerMinute)
+    Logger.recordOutput("Shooter/feederTargetVelocityInRPM", feederTargetVelocity.inRotationsPerMinute)
+    Logger.recordOutput("Shooter/targetVoltage", shooterTargetVoltage.inVolts)
 
     var nextState = currentState
     when (currentState) {
@@ -114,7 +144,7 @@ class Shooter(val io: ShooterIO) : SubsystemBase() {
       }
       ShooterState.OPEN_LOOP -> {
         // Outputs
-        setVoltage(targetVoltage)
+        setVoltage(shooterTargetVoltage)
 
         // Transition
         nextState =
@@ -126,7 +156,10 @@ class Shooter(val io: ShooterIO) : SubsystemBase() {
       }
       ShooterState.TARGET_SPEED -> {
         // Outputs
-        setVelocity(targetVelocity)
+        setShooterVelocity(shooterTargetVelocity)
+        if (isShooterAtTarget){
+          setFeederVelocity(feederTargetVelocity)
+        }
 
         // Transitions
         nextState =
@@ -141,11 +174,15 @@ class Shooter(val io: ShooterIO) : SubsystemBase() {
   }
 
   fun setVoltage(voltage: ElectricalPotential) {
-    io.setVoltage(voltage)
+    io.setFeederVoltage(voltage)
+    io.setShooterVoltage(voltage)
   }
 
-  fun setVelocity(velocity: AngularVelocity) {
-    io.setVelocity(velocity)
+  fun setShooterVelocity(velocity: AngularVelocity){
+    io.setShooterVelocity(velocity)
+  }
+  fun setFeederVelocity(velocity: AngularVelocity) {
+    io.setFeederVelocity(velocity)
   }
 
   companion object {
@@ -157,7 +194,7 @@ class Shooter(val io: ShooterIO) : SubsystemBase() {
   }
 
   fun commandSpinUp(): Command{
-    return runOnce { currentRequest = Request.ShooterRequest.TargettingSpeed(spinUpVel.get())}
+    return runOnce { currentRequest = Request.ShooterRequest.TargettingSpeed(feederSpinUpVel.get(), shooterSpinUpVel.get())}
   }
 
   fun returnToIdle(): Command{

@@ -70,23 +70,21 @@ class ShooterIONeo : ShooterIO {
       ShooterConstants.SHOOTER_STATOR_CURRENT_LIMIT.inAmperes.toInt()
     )
     followerMotor.idleMode = CANSparkMax.IdleMode.kCoast
-
-    followerMotor.follow(leaderMotor)
   }
 
   val leaderPIDController = leaderMotor.pidController
   val followerPIDController = followerMotor.pidController
 
   override fun updateInputs(inputs: ShooterIO.ShooterIOInputs) {
-    inputs.leaderAppliedVoltage = leaderMotor.busVoltage.volts * leaderMotor.appliedOutput
-    inputs.leaderStatorCurrent = leaderMotor.outputCurrent.amps
-    inputs.leaderRPM = leaderMotor.encoder.velocity.rotations.perMinute
-    inputs.leaderTemp = leaderMotor.motorTemperature.celsius
+    inputs.shooterAppliedVoltage = leaderMotor.busVoltage.volts * leaderMotor.appliedOutput
+    inputs.shooterStatorCurrent = leaderMotor.outputCurrent.amps
+    inputs.shooterRPM = leaderMotor.encoder.velocity.rotations.perMinute
+    inputs.shooterTemp = leaderMotor.motorTemperature.celsius
 
-    inputs.followerAppliedVoltage = followerMotor.busVoltage.volts * followerMotor.appliedOutput
-    inputs.followerStatorCurrent = followerMotor.outputCurrent.amps
-    inputs.followerRPM = followerMotor.encoder.velocity.rotations.perMinute
-    inputs.followerTemp = followerMotor.motorTemperature.celsius
+    inputs.feederAppliedVoltage = followerMotor.busVoltage.volts * followerMotor.appliedOutput
+    inputs.feederStatorCurrent = followerMotor.outputCurrent.amps
+    inputs.feederRPM = followerMotor.encoder.velocity.rotations.perMinute
+    inputs.feederTemp = followerMotor.motorTemperature.celsius
 
     // no supply current bc im lazy
     if (shooterKS.hasChanged() || shooterKV.hasChanged() || shooterKA.hasChanged()){
@@ -108,14 +106,25 @@ class ShooterIONeo : ShooterIO {
     followerPIDController.d = followerSensor.derivativeVelocityGainToRawUnits(kD)
   }
 
-  override fun setVelocity(velocity: AngularVelocity) {
+  override fun setShooterVelocity(velocity: AngularVelocity) {
     val ff = shooterFeedforward.calculate(leaderSensor.velocity, velocity, Constants.Universal.LOOP_PERIOD_TIME)
     leaderPIDController.setReference(
       velocity.inRotationsPerMinute, CANSparkMax.ControlType.kVelocity, 0, ff.inVolts
     )
   }
 
-  override fun setVoltage(voltage: ElectricalPotential) {
+  override fun setFeederVelocity(velocity: AngularVelocity) {
+    val ff = shooterFeedforward.calculate(followerSensor.velocity, velocity, Constants.Universal.LOOP_PERIOD_TIME)
+    followerPIDController.setReference(
+      velocity.inRotationsPerMinute, CANSparkMax.ControlType.kVelocity, 0, ff.inVolts
+    )
+  }
+
+  override fun setShooterVoltage(voltage: ElectricalPotential) {
     leaderMotor.set(voltage / ShooterConstants.SHOOTER_VOLTAGE_COMPENSATION)
+  }
+
+  override fun setFeederVoltage(voltage: ElectricalPotential) {
+    followerMotor.set(voltage / ShooterConstants.SHOOTER_VOLTAGE_COMPENSATION)
   }
 }

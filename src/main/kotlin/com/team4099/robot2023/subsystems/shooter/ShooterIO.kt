@@ -22,47 +22,61 @@ import org.team4099.lib.units.perMinute
 
 interface ShooterIO {
   class ShooterIOInputs : LoggableInputs {
-    var leaderAppliedVoltage = 0.0.volts
-    var leaderStatorCurrent = 0.0.amps
-    var leaderSupplyCurrent = 0.0.amps
-    var leaderRPM = 0.0.rotations.perMinute
-    var leaderTemp = 0.0.celsius
+    var shooterAppliedVoltage = 0.0.volts
+    var shooterStatorCurrent = 0.0.amps
+    var shooterSupplyCurrent = 0.0.amps
+    var shooterRPM = 0.0.rotations.perMinute
+    var shooterTemp = 0.0.celsius
 
-    var followerAppliedVoltage = 0.0.volts
-    var followerStatorCurrent = 0.0.amps
-    var followerSupplyCurrent = 0.0.amps
-    var followerRPM = 0.0.rotations.perMinute
-    var followerTemp = 0.0.celsius
+    var feederAppliedVoltage = 0.0.volts
+    var feederStatorCurrent = 0.0.amps
+    var feederSupplyCurrent = 0.0.amps
+    var feederRPM = 0.0.rotations.perMinute
+    var feederTemp = 0.0.celsius
 
     override fun toLog(table: LogTable?) {
-      table?.put("leaderAppliedVoltageInVolts", leaderAppliedVoltage.inVolts)
-      table?.put("leaderStatorCurrentInAmps", leaderStatorCurrent.inAmperes)
-      table?.put("leaderSupplyCurrentInAmps", leaderSupplyCurrent.inAmperes)
-      table?.put("leaderRPMInRPM", leaderRPM.inRotationsPerMinute)
-      table?.put("leaderTempInCelsius", leaderTemp.inCelsius)
+      table?.put("shooterAppliedVoltageInVolts", shooterAppliedVoltage.inVolts)
+      table?.put("shooterStatorCurrentInAmps", shooterStatorCurrent.inAmperes)
+      table?.put("shooterSupplyCurrentInAmps", shooterSupplyCurrent.inAmperes)
+      table?.put("shooterRPMInRPM", shooterRPM.inRotationsPerMinute)
+      table?.put("shooterTempInCelsius", shooterTemp.inCelsius)
 
-      table?.put("followerAppliedVoltageInVolts", followerAppliedVoltage.inVolts)
-      table?.put("followerStatorCurrentInAmps", followerStatorCurrent.inAmperes)
-      table?.put("followerSupplyCurrentInAmps", followerSupplyCurrent.inAmperes)
-      table?.put("followerRPMInRPM", followerRPM.inRotationsPerMinute)
-      table?.put("followerTempInCelsius", followerTemp.inCelsius)
+      table?.put("feederAppliedVoltageInVolts", feederAppliedVoltage.inVolts)
+      table?.put("feederStatorCurrentInAmps", feederStatorCurrent.inAmperes)
+      table?.put("feederSupplyCurrentInAmps", feederSupplyCurrent.inAmperes)
+      table?.put("feederRPMInRPM", feederRPM.inRotationsPerMinute)
+      table?.put("feederTempInCelsius", feederTemp.inCelsius)
     }
 
     override fun fromLog(table: LogTable?) {
-      table?.get("leaderAppliedVoltageInVolts", leaderAppliedVoltage.inVolts)?.let {
-        leaderAppliedVoltage = it.volts
+      table?.get("shooterAppliedVoltageInVolts", shooterAppliedVoltage.inVolts)?.let {
+        shooterAppliedVoltage = it.volts
       }
-      table?.get("leaderStatorCurrentInAmps", leaderStatorCurrent.inAmperes)?.let {
-        leaderStatorCurrent = it.amps
+      table?.get("shooterStatorCurrentInAmps", shooterStatorCurrent.inAmperes)?.let {
+        shooterStatorCurrent = it.amps
       }
-      table?.get("leaderSupplyCurrentInAmps", leaderSupplyCurrent.inAmperes)?.let {
-        leaderSupplyCurrent = it.amps
+      table?.get("shooterSupplyCurrentInAmps", shooterSupplyCurrent.inAmperes)?.let {
+        shooterSupplyCurrent = it.amps
       }
-      table?.get("leaderRPMInRPM", leaderRPM.inRotationsPerMinute)?.let {
-        leaderRPM = it.rotations.perMinute
+      table?.get("shooterRPMInRPM", shooterRPM.inRotationsPerMinute)?.let {
+        shooterRPM = it.rotations.perMinute
       }
-      table?.get("leaderTempInCelsius", leaderTemp.inCelsius)?.let { leaderTemp = it.celsius }
+      table?.get("shooterTempInCelsius", shooterTemp.inCelsius)?.let { shooterTemp = it.celsius }
+
+    table?.get("feederAppliedVoltageInVolts", feederAppliedVoltage.inVolts)?.let {
+      feederAppliedVoltage = it.volts
     }
+    table?.get("feederStatorCurrentInAmps", feederStatorCurrent.inAmperes)?.let {
+      feederStatorCurrent = it.amps
+    }
+    table?.get("feederSupplyCurrentInAmps", feederSupplyCurrent.inAmperes)?.let {
+      feederSupplyCurrent = it.amps
+    }
+    table?.get("feederRPMInRPM", feederRPM.inRotationsPerMinute)?.let {
+      feederRPM = it.rotations.perMinute
+    }
+    table?.get("feederTempInCelsius", feederTemp.inCelsius)?.let { feederTemp = it.celsius }
+  }
   }
   fun updateInputs(inputs: ShooterIOInputs) {}
 
@@ -71,6 +85,10 @@ interface ShooterIO {
     kI: IntegralGain<Velocity<Radian>, Volt>,
     kD: DerivativeGain<Velocity<Radian>, Volt>
   ) {}
-  fun setVelocity(velocity: AngularVelocity) {}
-  fun setVoltage(voltage: ElectricalPotential) {}
+  fun setShooterVelocity(velocity: AngularVelocity) {}
+  fun setShooterVoltage(voltage: ElectricalPotential) {}
+
+  fun setFeederVoltage(voltage: ElectricalPotential) {}
+
+  fun setFeederVelocity(velocity: AngularVelocity){}
 }
