@@ -2,39 +2,34 @@ package com.team4099.robot2023.subsystems.vision.camera
 
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
-import org.team4099.lib.units.base.Time
+import org.team4099.lib.geometry.Pose3d
+import org.team4099.lib.geometry.Pose3dWPILIB
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.seconds
 
 interface CameraIO {
   class CameraInputs : LoggableInputs {
-    var timestamps = listOf<Time>()
-    var frames = listOf<DoubleArray>()
+    var timestamp = 0.0.seconds
+    var frame: Pose3d = Pose3d()
     var fps = 0.0
+    var usedTargets: List<Int> = listOf<Int>()
 
     override fun toLog(table: LogTable?) {
-      table?.put("timestampsSeconds", timestamps.map { it.inSeconds }.toDoubleArray())
-      table?.put("frameCount", frames.size.toDouble())
-      for (i in frames.indices) {
-        table?.put("Frame/$i", frames[i])
-      }
+      table?.put("timestampSeconds", timestamp.inSeconds)
+      table?.put("frame", frame.pose3d)
       table?.put("fps", fps)
+      table?.put("usedTargets", usedTargets)
     }
 
     override fun fromLog(table: LogTable?) {
-      table?.get("timestampsSeconds", timestamps.map { it.inSeconds }.toDoubleArray())?.let {
-        returnedTimestamps ->
-        timestamps = returnedTimestamps.map { it.seconds }
+      table?.get("timestampSeconds", 0.0)?.let {
+        timestamp = it.seconds
       }
-
-      val frameCount = table?.get("frameCount", 0.0)?.toInt() ?: 0
-      val tempFrames = mutableListOf<DoubleArray>()
-      for (i in 0 until frameCount) {
-        tempFrames.add(table?.get("Frame/$i", DoubleArray(0)) ?: DoubleArray(0))
+      table?.get("frame", Pose3dWPILIB())?.let {
+        frame = Pose3d(it)
       }
-      frames = tempFrames.toList()
-
-      table?.get("fps", fps)?.let { fps = it }
+      table?.get("fps", 0.0)
+      table?.get("usedTargets", listOf<Double>())
     }
   }
 
