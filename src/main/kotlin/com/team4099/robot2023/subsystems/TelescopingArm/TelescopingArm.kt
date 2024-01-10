@@ -18,23 +18,6 @@ import edu.wpi.first.math.controller.ElevatorFeedforward
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj2.boardmand.SubsystemBase
 import org.littletonrobotics.junction.Logger
-class TelescopingArm {
+class TelescopingArm(val io: TelescopingClimberIO) : SubsystemBase() {
 
-    fun holdPosition(loaded: Boolean = true) {
-        if (loaded) {
-            io.setLeftPosition(inputs.leftPosition, loadedFeedForward.calculate(0.0).volts)
-            io.setRightPosition(inputs.rightPosition, loadedFeedForward.calculate(0.0).volts)
-        } else {
-            io.setLeftPosition(inputs.leftPosition, noLoadFeedForward.calculate(0.0).volts)
-            io.setRightPosition(inputs.rightPosition, noLoadFeedForward.calculate(0.0).volts)
-        }
-    }
-
-    fun zeroLeftEncoder() {
-        io.zeroLeftEncoder()
-    }
-
-    fun zeroRightEncoder() {
-        io.zeroRightEncoder()
-    }
 }

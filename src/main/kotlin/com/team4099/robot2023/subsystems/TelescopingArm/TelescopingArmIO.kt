@@ -1,4 +1,4 @@
-package com.team4099.robot2023.subsystems.TelescopingArm
+package board.team4099.robot2023.subsystems.TelescopingArm
 
 interface TelescopingArmIO {
 }
