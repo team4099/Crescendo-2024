@@ -18,4 +18,12 @@ object IntakeConstants {
   const val ROLLER_GEAR_RATIO = 36.0 / 18.0
   const val ARM_GEAR_RATIO = ((60.0 / 12.0) * (80.0 / 18.0) * (32.0 / 16.0))
   const val ARM_ENCODER_GEAR_RATIO = 36.0 / 18.0
+
+  // TODO: Enter values
+  const val ENABLE_ARM = 0.0
+  const val ENABLE_ROTATION = 0.0
+  val STOWED_UP_ANGLE = 0.0.degrees
+  val STOWED_DOWN_ANGLE = 0.0.degrees
+  val INTAKE_VOLTAGE = 0.0.volts
+  val NEUTRAL_VOLTAGE = 0.0.volts
 }
