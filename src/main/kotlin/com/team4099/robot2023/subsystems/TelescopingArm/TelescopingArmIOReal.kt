@@ -15,6 +15,6 @@ import board.team4099.robot2022.config.constants.Constants
 import board.team4099.robot2022.config.constants.Constants.Universal.CANIVORE_NAME
 import board.team4099.robot2022.config.constants.TelescopingClimberConstants
 
-object TelescopingArmIOReal : TelescopingClimberIO {
+object TelescopingArmIOReal : TelescopingArmIO {
 
 }
