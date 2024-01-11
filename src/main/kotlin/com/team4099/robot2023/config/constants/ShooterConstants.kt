@@ -27,8 +27,8 @@ object ShooterConstants {
   val SHOOTER_VOLTAGE_COMPENSATION = 12.0.volts
   val SHOOTER_STATOR_CURRENT_LIMIT = 60.amps
 
-  val LEADER_ID = 11
-  val FOLLOWER_ID = 12
+  val LEADER_ID = 32
+  val FOLLOWER_ID = 31
 
   val SHOOTER_TRANSFORMATION = Transform3d(
     Translation3d(12.inches, 0.0.inches, 5.inches),

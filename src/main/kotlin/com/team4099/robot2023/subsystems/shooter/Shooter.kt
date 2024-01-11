@@ -144,7 +144,7 @@ class Shooter(val io: ShooterIO) : SubsystemBase() {
       }
       ShooterState.OPEN_LOOP -> {
         // Outputs
-        setVoltage(shooterTargetVoltage)
+        setFeederVoltage(12.volts)
 
         // Transition
         nextState =
@@ -156,10 +156,7 @@ class Shooter(val io: ShooterIO) : SubsystemBase() {
       }
       ShooterState.TARGET_SPEED -> {
         // Outputs
-        setShooterVelocity(shooterTargetVelocity)
-        if (isShooterAtTarget){
-          setFeederVelocity(feederTargetVelocity)
-        }
+        setShooterVoltage(12.volts)
 
         // Transitions
         nextState =
@@ -175,6 +172,14 @@ class Shooter(val io: ShooterIO) : SubsystemBase() {
 
   fun setVoltage(voltage: ElectricalPotential) {
     io.setFeederVoltage(voltage)
+    io.setShooterVoltage(voltage)
+  }
+
+  fun setFeederVoltage(voltage: ElectricalPotential) {
+    io.setFeederVoltage(voltage)
+  }
+
+  fun setShooterVoltage(voltage: ElectricalPotential) {
     io.setShooterVoltage(voltage)
   }
 
