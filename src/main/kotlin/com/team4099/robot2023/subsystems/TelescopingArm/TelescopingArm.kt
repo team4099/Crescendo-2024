@@ -1,75 +1,61 @@
 package com.team4099.robot2023.subsystems.TelescopingArm
 
-import com.team4099.lib.logging.TunableNumber
-import board.team4099.lib.units.base.Length
-import board.team4099.lib.units.base.inInches
-import board.team4099.lib.units.base.inMeters
-import board.team4099.lib.units.base.meters
-import board.team4099.lib.units.derived.inVolts
-import board.team4099.lib.units.derived.volts
-import board.team4099.lib.units.inMetersPerSecond
-import board.team4099.lib.units.inMetersPerSecondPerSecond
-import board.team4099.lib.units.perSecond
-import board.team4099.robot2022.config.constants.TelescopingClimberConstants
-import board.team4099.robot2022.config.constants.TelescopingClimberConstants.ActualTelescopeStates
-import board.team4099.robot2022.config.constants.TelescopingClimberConstants.DesiredTelescopeStates
-import board.team4099.robot2022.config.constants.TelescopingClimberConstants.telescopingTolerance
-import board.team4099.robot2022.subsystems.TelescopingArm.TelescopingArmIO
-import board.team4099.robot2023.subsystems.TelescopingArm.TelescopingArmIO
-import edu.wpi.first.math.controller.ElevatorFeedforward
-import edu.wpi.first.math.trajectory.TrapezoidProfile
-import edu.wpi.first.wpilibj2.boardmand.SubsystemBase
-import edu.wpi.first.wpilibj2.command.SubsystemBase
-import org.littletonrobotics.junction.Logger
-import org.team4099.lib.units.base.Length
-import org.team4099.lib.units.base.meters
-import org.team4099.lib.units.inMetersPerSecondPerSecond
-import org.team4099.lib.units.perSecond
-
 class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
     val inputs = TelescopingArmIO.TelescopingArmIOInputs()
 
     val loadedFeedforward: ElevatorFeedforward = ElevatorFeedforward(
-        TelescopingArmConstants.LOAD_kS,
-        TelescopingArmConstants.LOAD_kG,
-        TelescopingArmConstants.LOAD_kV,
-        TelescopingArmConstants.LOAD_kA
+        TelescopingArmConstants.LOAD_KS.inVolts,
+        TelescopingArmConstants.LOAD_KG.inVolts,
+        (1.meters.perSecond * TelescopingArmConstants.LOAD_KV).inVolts,
+        (1.meters.perSecond.perSecond * TelescopingArmConstants.LOAD_KA).inVolts
     )
 
-    val noLoadFeedforward: ElevatorFeedforward = ElevatorFeedforward(
-        TelescopingArmConstants.NO_LOAD_kS,
-        TelescopingArmConstants.NO_LOAD_kG,
-        TelescopingArmConstants.NO_LOAD_kV,
-        TelescopingArmConstants.NO_LOAD_kA
+    val noLoadFeedforward: ElevatorFeedforward =
+        ElevatorFeedforward(
+            TelescopingArmConstants.NO_LOAD_KS.inVolts,
+            TelescopingArmConstants.NO_LOAD_KG.inVolts,
+            (1.meters.perSecond * TelescopingArmConstants.NO_LOAD_KV).inVolts,
+            (1.meters.perSecond.perSecond * TelescopingArmConstants.NO_LOAD_KA).inVolts
     )
 
-    val activelyHold: Boolean = false
+    val activelyHold = false
 
-    //CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE
-    val kP = TunableNumber("TelescopingArm/kP", TelescopingArmConstants.kP)
-    val kI = TunableNumber("TelescopingArm/kI", TelescopingArmConstants.kI)
-    val kD = TunableNumber("TelescopingArm/kD", TelescopingArmConstants.kD)
+    private val kP = TunableNumber("TelescopingArm/kP", TelescopingArmConstants.KP)
+    private val kI = TunableNumber("TelescopingArm/kI", TelescopingArmConstants.KI)
+    private val kD = TunableNumber("TelescopingArm/kD", TelescopingArmConstants.KD)
 
-    val desiredState = DesiredTelescopeStates
-    val constraints = TrapezoidProfile.Constraints(
-        MAX_VELOCITY,
-        MAX_ACCELERATION
-    )
-    var leftSetpoint = TrapezoidProfile.State(
-        getCurrentPosition(),
-        getCurrentVelocity()
-    )
-    var rightSetpoint = TrapezoidProfile.State(
-        getCurrentPosition(),
-        getCurrentVelocity()
-    )
+    init{}
 
-    fun periodic() {
+    override fun periodic() {
         io.updateInputs(inputs)
 
         Logger.getInstance().processInputs("TelescopingArm", inputs)
-        //CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE
-        Logger.getInstance().recordOutput("TelescopingArm/")
+        Logger.getInstance().recordOutput("TelescopingArm/desiredState", desiredState.name)
+        Logger.getInstance().recordOutput("TelescopingArm/currentState", currentState.name)
+        Logger.getInstance()
+            .recordOutput(
+                "TelescopingArm/leftPositionSetpointInches", leftSetpoint.position.meters.inInches
+            )
+        Logger.getInstance()
+            .recordOutput("TelescopingArm/leftVelocitySetpointMetersPerSec", leftSetpoint.velocity)
+        Logger.getInstance()
+            .recordOutput(
+                "TelescopingArm/rightPositionSetpointInches",
+                rightSetpoint.position.meters.inInches
+            )
+        Logger.getInstance()
+            .recordOutput(
+                "TelescopingArm/rightVelocitySetpointMetersPerSec", rightSetpoint.velocity
+            )
+
+        Logger.getInstance()
+            .recordOutput("TelescopingArm/leftForwardLimitReached", leftForwardLimitReached)
+        Logger.getInstance()
+            .recordOutput("TelescopingArm/leftReverseLimitReached", leftReverseLimitReached)
+        Logger.getInstance()
+            .recordOutput("TelescopingArm/rightForwardLimitReached", rightForwardLimitReached)
+        Logger.getInstance()
+            .recordOutput("TelescopingArm/rightReverseLimitReached", rightReverseLimitReached)
 
         if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
             io.configPID(kP.value, kI.value, kD.value)
@@ -96,14 +82,34 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
                     TelescopingArmConstants.FORWARD_SOFT_LIMIT -
                     TelescopingArmConstants.SLOW_TELESCOPING_THRESHOLD
 
-    fun setOpenLoop(var leftPower: Double, var rightPower: Double, var useSoftLimits: Boolean = true) {
-        if useSoftLimits && (leftForwardLimitReached && leftPower > 0.0) || (leftReverseLimitReached && leftPower < 0.0) {
+    val leftForwardLimitReached: Boolean
+        get() = inputs.leftPosition > TelescopingArmConstants.FORWARD_SOFT_LIMIT
+    val leftReverseLimitReached: Boolean
+        get() = inputs.leftPosition < TelescopingArmConstants.REVERSE_SOFT_LIMIT
+    val leftForwardThresholdLimitReached: Boolean
+        get() =
+            inputs.leftPosition >
+                    TelescopingArmConstants.FORWARD_SOFT_LIMIT -
+                    TelescopingArmConstants.SLOW_TELESCOPING_THRESHOLD
+
+    val rightForwardLimitReached: Boolean
+        get() = inputs.rightPosition > TelescopingArmConstants.FORWARD_SOFT_LIMIT
+    val rightReverseLimitReached: Boolean
+        get() = inputs.rightPosition < TelescopingArmConstants.REVERSE_SOFT_LIMIT
+    val rightForwardThresholdLimitReached: Boolean
+        get() =
+            inputs.rightPosition >
+                    TelescopingArmConstants.FORWARD_SOFT_LIMIT -
+                    TelescopingArmConstants.SLOW_TELESCOPING_THRESHOLD
+
+    fun setOpenLoop(leftPower: Double, rightPower: Double, useSoftLimits: Boolean = true) {
+        if (useSoftLimits && ((leftForwardLimitReached && leftPower > 0.0) || (leftReverseLimitReached && leftPower < 0.0))) {
             io.setLeftOpenLoop(0.0)
         } else {
             io.setLeftOpenLoop(leftPower)
         }
 
-        if useSoftLimits && (rightForwardLimitReached && rightPower > 0.0) || (rightReverseLimitReached && rightPower < 0.0) {
+        if (useSoftLimits && ((rightForwardLimitReached && rightPower > 0.0) || (rightReverseLimitReached && rightPower < 0.0))) {
             io.setRightOpenLoop(0.0)
         } else {
             io.setRightOpenLoop(rightPower)
@@ -119,6 +125,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
             }
         }
 
+    val desiredState = DesiredTelescopeStates.START
     val currentState: ActualTelescopeStates
         get() {
             return when (currentPosition) {
@@ -160,6 +167,16 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
             }
         }
 
+    var constraints: TrapezoidProfile.Constraints =
+        TrapezoidProfile.Constraints(
+            TelescopingArmConstants.MAX_VELOCITY.inMetersPerSecond,
+            TelescopingArmConstants.MAX_ACCELERATION.inMetersPerSecondPerSecond
+        )
+    var leftSetpoint: TrapezoidProfile.State =
+        TrapezoidProfile.State(inputs.leftPosition.inMeters, inputs.leftVelocity.inMetersPerSecond)
+    var rightSetpoint: TrapezoidProfile.State =
+        TrapezoidProfile.State(inputs.rightPosition.inMeters, inputs.rightVelocity.inMetersPerSecond)
+
     fun setPosition(
         leftSetpoint: TrapezoidProfile.State,
         rightSetpoint: TrapezoidProfile.State,
@@ -182,7 +199,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
 
             Logger.getInstance()
                 .recordOutput(
-                    "TelescopingClimber/leftFeedForwardVolts",
+                    "TelescopingArm/leftFeedForwardVolts",
                     noLoadFeedForward.calculate(
                         leftSetpoint.velocity, leftAccel.inMetersPerSecondPerSecond
                     )
@@ -194,7 +211,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
             )
             Logger.getInstance()
                 .recordOutput(
-                    "TelescopingClimber/rightFeedForwardVolts",
+                    "TelescopingArm/rightFeedForwardVolts",
                     noLoadFeedForward.calculate(
                         rightSetpoint.velocity, rightAccel.inMetersPerSecondPerSecond
                     )
@@ -207,7 +224,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
             )
             Logger.getInstance()
                 .recordOutput(
-                    "TelescopingClimber/leftFeedForwardVolts",
+                    "TelescopingArm/leftFeedForwardVolts",
                     loadedFeedForward.calculate(
                         leftSetpoint.velocity, leftAccel.inMetersPerSecondPerSecond
                     )
@@ -218,7 +235,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
                     .volts
             )
             Logger.getInstance().recordOutput(
-                "TelescopingClimber/rightFeedForwardVolts",
+                "TelescopingArm/rightFeedForwardVolts",
                 loadedFeedForward.calculate(
                     rightSetpoint.velocity, rightAccel.inMetersPerSecondPerSecond
                 )
@@ -265,8 +282,8 @@ End Class
 
 extra copy:
 Class TelescopingArm
-    Define io as TelescopingClimberIO
-    Define inputs as TelescopingClimberIOInputs
+    Define io as TelescopingArmIO
+    Define inputs as TelescopingArmIOInputs
     Define loadedFeedForward as ElevatorFeedforward with load constants
     Define noLoadFeedForward as ElevatorFeedForward with no-load constants
     Define activelyHold as boolean, set initial value to false
