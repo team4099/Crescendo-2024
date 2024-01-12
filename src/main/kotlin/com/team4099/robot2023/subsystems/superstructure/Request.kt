@@ -13,11 +13,7 @@ import org.team4099.lib.units.derived.ElectricalPotential
 
 sealed interface Request {
 
-<<<<<<< HEAD
-=======
 
-
->>>>>>> c5552eb (fix shooter stuff)
   sealed interface DrivetrainRequest : Request {
     class OpenLoop(
       val angularVelocity: AngularVelocity,
