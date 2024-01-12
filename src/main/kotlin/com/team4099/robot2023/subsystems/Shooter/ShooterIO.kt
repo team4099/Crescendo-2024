@@ -48,7 +48,9 @@ interface ShooterIO {
         }
     }
 
-    fun updateInputs(inputs: ShooterIOInputs)
+    fun updateInputs(inputs: ShooterIOInputs){
+
+    }
     fun setRollerPower (voltage: ElectricalPotential){
 
     }
