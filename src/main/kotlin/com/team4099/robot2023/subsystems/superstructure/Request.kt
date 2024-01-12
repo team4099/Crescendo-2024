@@ -59,12 +59,15 @@ sealed interface Request {
     class Home() : ElevatorRequest
   }
 
-  sealed interface GroundIntakeRequest : Request {
+  sealed interface IntakeRequest : Request {
     class TargetingPosition(val position: Angle, val rollerVoltage: ElectricalPotential) :
-      GroundIntakeRequest
+      IntakeRequest
     class OpenLoop(val voltage: ElectricalPotential, val rollerVoltage: ElectricalPotential) :
-      GroundIntakeRequest
-    class ZeroArm() : GroundIntakeRequest
+      IntakeRequest
+    class ZeroArm() : 
+      IntakeRequest
+    class Idle() : 
+      IntakeRequest
   }
 
   sealed interface DrivetrainRequest : Request {

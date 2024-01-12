@@ -41,6 +41,8 @@ interface IntakeIO {
     var armStatorCurrent = 0.0.amps
     var armTemp = 0.0.celsius
 
+    var isSimulated = false
+
     override fun toLog(table: LogTable?) {
       table?.put("armPositionDegrees", armPosition.inDegrees)
       table?.put("armAbsoluteEncoderPositionDegrees", armAbsoluteEncoderPosition.inDegrees)
