@@ -7,7 +7,6 @@ import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.inches
-import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.perSecond
 
@@ -60,10 +59,8 @@ sealed interface Request {
   }
 
   sealed interface IntakeRequest : Request {
-    class OpenLoop(val rollerVoltage: ElectricalPotential) :
-      IntakeRequest
-    class Idle() : 
-      IntakeRequest
+    class OpenLoop(val rollerVoltage: ElectricalPotential) : IntakeRequest
+    class Idle() : IntakeRequest
   }
 
   sealed interface DrivetrainRequest : Request {
