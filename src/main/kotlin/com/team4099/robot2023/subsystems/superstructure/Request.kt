@@ -3,6 +3,12 @@ package com.team4099.robot2023.subsystems.superstructure
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearVelocity
+<<<<<<< HEAD
+=======
+import org.team4099.lib.units.Velocity
+import org.team4099.lib.units.base.Length
+import org.team4099.lib.units.base.inches
+>>>>>>> ec012fa (added feeder and wrist and did requests and started states)
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.ElectricalPotential
 
@@ -28,6 +34,7 @@ sealed interface Request {
     class ZeroSensors : DrivetrainRequest
     class Idle : DrivetrainRequest
   }
+<<<<<<< HEAD
   sealed interface WristRequest : Request {
     class OpenLoop(val wristVoltage : ElectricalPotential): WristRequest{}
     class TargetingPosition (val wristPosition : Angle): WristRequest{}
@@ -38,4 +45,16 @@ sealed interface Request {
     class OpenLoop (val leftFlywheelVoltage: ElectricalPotential, val rightFlywheelVoltage: ElectricalPotential): FlywheelRequest{}
     class TargetingVelocity (val leftFlywheelVelocity: AngularVelocity, val rightFlywheelVelocity: AngularVelocity) : FlywheelRequest{}
   }
+=======
+  sealed interface ShooterRequest : Request {
+    class OpenLoop(wristVoltage : ElectricalPotential,
+                   rollerVoltage: ElectricalPotential,
+                   feederVoltage: ElectricalPotential):ShooterRequest{}
+    class TargetingPosition (val wristPosition : Angle,
+                             val rollerVelocity: AngularVelocity,
+                              val feederVelocity: AngularVelocity
+                                                        ):ShooterRequest{}
+
+  }
+>>>>>>> ec012fa (added feeder and wrist and did requests and started states)
 }
