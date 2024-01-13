@@ -45,32 +45,32 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
     override fun periodic() {
         io.updateInputs(inputs)
 
-        Logger.getInstance().processInputs("TelescopingArm", inputs)
-        Logger.getInstance().recordOutput("TelescopingArm/desiredState", desiredState.name)
-        Logger.getInstance().recordOutput("TelescopingArm/currentState", currentState.name)
-        Logger.getInstance()
+        Logger.get().processInputs("TelescopingArm", inputs)
+        Logger.get().recordOutput("TelescopingArm/desiredState", desiredState.name)
+        Logger.get().recordOutput("TelescopingArm/currentState", currentState.name)
+        Logger.get()
             .recordOutput(
                 "TelescopingArm/leftPositionSetpointInches", leftSetpoint.position.meters.inInches
             )
-        Logger.getInstance()
+        Logger.get()
             .recordOutput("TelescopingArm/leftVelocitySetpointMetersPerSec", leftSetpoint.velocity)
-        Logger.getInstance()
+        Logger.get()
             .recordOutput(
                 "TelescopingArm/rightPositionSetpointInches",
                 rightSetpoint.position.meters.inInches
             )
-        Logger.getInstance()
+        Logger.get()
             .recordOutput(
                 "TelescopingArm/rightVelocitySetpointMetersPerSec", rightSetpoint.velocity
             )
 
-        Logger.getInstance()
+        Logger.get()
             .recordOutput("TelescopingArm/leftForwardLimitReached", leftForwardLimitReached)
-        Logger.getInstance()
+        Logger.get()
             .recordOutput("TelescopingArm/leftReverseLimitReached", leftReverseLimitReached)
-        Logger.getInstance()
+        Logger.get()
             .recordOutput("TelescopingArm/rightForwardLimitReached", rightForwardLimitReached)
-        Logger.getInstance()
+        Logger.get()
             .recordOutput("TelescopingArm/rightReverseLimitReached", rightReverseLimitReached)
 
         if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
@@ -213,7 +213,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
                     .volts
             )
 
-            Logger.getInstance()
+            Logger.get()
                 .recordOutput(
                     "TelescopingArm/leftFeedForwardVolts",
                     noLoadFeedForward.calculate(
@@ -225,7 +225,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
                 noLoadFeedForward.calculate(rightSetpoint.velocity, rightAccel.inMetersPerSecondPerSecond)
                     .volts
             )
-            Logger.getInstance()
+            Logger.get()
                 .recordOutput(
                     "TelescopingArm/rightFeedForwardVolts",
                     noLoadFeedForward.calculate(
@@ -238,7 +238,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
                 loadedFeedForward.calculate(leftSetpoint.velocity, leftAccel.inMetersPerSecondPerSecond)
                     .volts
             )
-            Logger.getInstance()
+            Logger.get()
                 .recordOutput(
                     "TelescopingArm/leftFeedForwardVolts",
                     loadedFeedForward.calculate(
@@ -250,7 +250,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
                 loadedFeedForward.calculate(rightSetpoint.velocity, rightAccel.inMetersPerSecondPerSecond)
                     .volts
             )
-            Logger.getInstance().recordOutput(
+            Logger.get().recordOutput(
                 "TelescopingArm/rightFeedForwardVolts",
                 loadedFeedForward.calculate(
                     rightSetpoint.velocity, rightAccel.inMetersPerSecondPerSecond
