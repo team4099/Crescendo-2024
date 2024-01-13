@@ -2,6 +2,9 @@ package com.team4099.robot2023.subsystems.TelescopingArm
 
 import com.team4099.lib.logging.TunableNumber
 import com.team4099.robot2023.config.constants.TelescopingArmConstants
+import com.team4099.robot2023.config.constants.TelescopingArmConstants.ActualTelescopeStates
+import com.team4099.robot2023.config.constants.TelescopingArmConstants.DesiredTelescopeStates
+import com.team4099.robot2023.config.constants.TelescopingArmConstants.telescopingTolerance
 import edu.wpi.first.math.controller.ElevatorFeedforward
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj2.command.SubsystemBase
