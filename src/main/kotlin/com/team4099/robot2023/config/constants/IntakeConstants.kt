@@ -7,9 +7,6 @@ import org.team4099.lib.units.derived.volts
 object IntakeConstants {
   val VOLTAGE_COMPENSATION = 12.0.volts
 
-  // TODO: Add value for encoder offset
-  val ABSOLUTE_ENCODER_OFFSET = 0.0.degrees
-
   // TODO: Change gear ratio according to robot
   val ROLLER_CURRENT_LIMIT = 50.0.amps
   const val ROLLER_MOTOR_INVERTED = true
