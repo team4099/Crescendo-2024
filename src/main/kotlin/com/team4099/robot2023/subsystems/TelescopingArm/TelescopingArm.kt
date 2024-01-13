@@ -1,6 +1,11 @@
 package com.team4099.robot2023.subsystems.TelescopingArm
 
 import com.team4099.lib.logging.TunableNumber
+import com.team4099.robot2023.config.constants.TelescopingArmConstants
+import edu.wpi.first.math.controller.ElevatorFeedforward
+import edu.wpi.first.math.trajectory.TrapezoidProfile
+import edu.wpi.first.wpilibj2.command.SubsystemBase
+import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.inInches
 import org.team4099.lib.units.base.inMeters
@@ -10,11 +15,6 @@ import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.inMetersPerSecondPerSecond
 import org.team4099.lib.units.perSecond
-import com.team4099.robot2023.config.constants.TelescopingArmConstants
-import edu.wpi.first.math.controller.ElevatorFeedforward
-import edu.wpi.first.math.trajectory.TrapezoidProfile
-import edu.wpi.first.wpilibj2.command.SubsystemBase
-import org.littletonrobotics.junction.Logger
 
 class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
     val inputs = TelescopingArmIO.TelescopingArmIOInputs()
@@ -277,65 +277,3 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
         io.zeroRightEncoder()
     }
 }
-
-/*
-Pseudocode:
-Class TelescopingArm
-    Method setPosition(leftSetpoint, rightSetpoint, isUnderLoad)
-        Calculate acceleration for left and right
-        Update setpoints
-        Set position with appropriate feedforward calculation based on load
-
-    Method holdPosition(loaded)
-        Set position for left and right with feedforward calculation for zero velocity
-
-    Method zeroLeftEncoder()
-        Zero the left encoder via IO
-
-    Method zeroRightEncoder()
-        Zero the right encoder via IO
-End Class
-
-extra copy:
-Class TelescopingArm
-    Define io as TelescopingArmIO
-    Define inputs as TelescopingArmIOInputs
-    Define loadedFeedForward as ElevatorFeedforward with load constants
-    Define noLoadFeedForward as ElevatorFeedForward with no-load constants
-    Define activelyHold as boolean, set initial value to false
-    Define PID constants (kP, kI, kD) with tunable numbers
-    Define desiredState as DesiredTelescopeStates
-    Define constraints as TrapezoidProfile.Constraints with max velocity and acceleration
-    Define leftSetpoint and rightSetpoint as TrapezoidProfile.State based on current positions and velocities
-
-    Method periodic()
-        Update inputs from IO
-        Log various inputs and states
-        If PID constants have changed, configure IO with new PID values
-
-    Define limit switch properties for left and right forward and reverse limits
-
-    Method setOpenLoop(leftPower, rightPower, useSoftLimits)
-        If using soft limits and limits are reached, set power to zero, else set provided power
-
-    Define currentPosition property
-        Return the greater of left or right position
-
-    Define currentState property
-        Determine current state based on the currentPosition within various ranges
-
-    Method setPosition(leftSetpoint, rightSetpoint, isUnderLoad)
-        Calculate acceleration for left and right
-        Update setpoints
-        Set position with appropriate feedforward calculation based on load
-
-    Method holdPosition(loaded)
-        Set position for left and right with feedforward calculation for zero velocity
-
-    Method zeroLeftEncoder()
-        Zero the left encoder via IO
-
-    Method zeroRightEncoder()
-        Zero the right encoder via IO
-End Class
- */

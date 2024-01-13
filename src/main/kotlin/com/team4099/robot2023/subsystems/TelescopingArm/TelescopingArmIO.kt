@@ -1,4 +1,4 @@
-package com.team4099.robot2022.subsystems.climber
+package com.team4099.robot2023.subsystems.TelescopingArm
 
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.amps
@@ -50,40 +50,40 @@ interface TelescopingArmIO {
         }
 
         override fun fromLog(table: LogTable?) {
-            table?.getDouble("leftPositionInches", leftPosition.inInches)?.let {
+            table?.get("leftPositionInches", leftPosition.inInches)?.let {
                 leftPosition = it.inches
             }
-            table?.getDouble("rightPositionInches", rightPosition.inInches)?.let {
+            table?.get("rightPositionInches", rightPosition.inInches)?.let {
                 rightPosition = it.inches
             }
-            table?.getDouble("leftVelocityMetersPerSec", leftVelocity.inMetersPerSecond)?.let {
+            table?.get("leftVelocityMetersPerSec", leftVelocity.inMetersPerSecond)?.let {
                 leftVelocity = it.meters.perSecond
             }
-            table?.getDouble("rightVelocityMetersPerSec", rightVelocity.inMetersPerSecond)?.let {
+            table?.get("rightVelocityMetersPerSec", rightVelocity.inMetersPerSecond)?.let {
                 rightVelocity = it.meters.perSecond
             }
-            table?.getDouble("leftStatorCurrentAmps", leftStatorCurrent.inAmperes)?.let {
+            table?.get("leftStatorCurrentAmps", leftStatorCurrent.inAmperes)?.let {
                 leftStatorCurrent = it.amps
             }
-            table?.getDouble("rightStatorCurrentAmps", rightStatorCurrent.inAmperes)?.let {
+            table?.get("rightStatorCurrentAmps", rightStatorCurrent.inAmperes)?.let {
                 rightStatorCurrent = it.amps
             }
-            table?.getDouble("leftSupplyCurrentAmps", leftSupplyCurrent.inAmperes)?.let {
+            table?.get("leftSupplyCurrentAmps", leftSupplyCurrent.inAmperes)?.let {
                 leftSupplyCurrent = it.amps
             }
-            table?.getDouble("rightSupplyCurrentAmps", rightSupplyCurrent.inAmperes)?.let {
+            table?.get("rightSupplyCurrentAmps", rightSupplyCurrent.inAmperes)?.let {
                 rightSupplyCurrent = it.amps
             }
-            table?.getDouble("leftOutputVoltage", leftOutputVoltage.inVolts)?.let {
+            table?.get("leftOutputVoltage", leftOutputVoltage.inVolts)?.let {
                 leftOutputVoltage = it.volts
             }
-            table?.getDouble("rightOutputVoltage", rightOutputVoltage.inVolts)?.let {
+            table?.get("rightOutputVoltage", rightOutputVoltage.inVolts)?.let {
                 rightOutputVoltage = it.volts
             }
-            table?.getDouble("leftTemperatureCelsius", leftTemperatureCelsius)?.let {
+            table?.get("leftTemperatureCelsius", leftTemperatureCelsius)?.let {
                 leftTemperatureCelsius = it
             }
-            table?.getDouble("rightTemperatureCelsius", leftTemperatureCelsius)?.let {
+            table?.get("rightTemperatureCelsius", leftTemperatureCelsius)?.let {
                 rightTemperatureCelsius = it
             }
         }
