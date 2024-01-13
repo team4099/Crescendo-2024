@@ -60,11 +60,7 @@ sealed interface Request {
   }
 
   sealed interface IntakeRequest : Request {
-    class TargetingPosition(val position: Angle, val rollerVoltage: ElectricalPotential) :
-      IntakeRequest
-    class OpenLoop(val voltage: ElectricalPotential, val rollerVoltage: ElectricalPotential) :
-      IntakeRequest
-    class ZeroArm() : 
+    class OpenLoop(val rollerVoltage: ElectricalPotential) :
       IntakeRequest
     class Idle() : 
       IntakeRequest

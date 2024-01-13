@@ -32,174 +32,32 @@ import org.team4099.lib.units.perSecond
 class Intake(private val io: IntakeIO) {
     val inputs = IntakeIO.IntakeIOInputs()
 
-    lateinit var armFeedforward: ArmFeedforward
-
-    private val kP = LoggedTunableValue("Intake/kP", Pair({it.inVoltsPerDegree}, {it.volts.perDegree}))
-    private val kI = LoggedTunableValue("Intake/kI", Pair({it.inVoltsPerDegreeSeconds}, {it.volts.perDegreeSeconds}))
-    private val kD = LoggedTunableValue("Intake/kD", Pair({it.inVoltsPerDegreePerSecond}, {it.volts.perDegreePerSecond}))
-
-    object TunableIntakeStates {
-        val enableArm =
-            LoggedTunableNumber(
-                "Intake/enableArmIntake",
-                IntakeConstants.ENABLE_ARM
-            )
-        val enableRotation =
-            LoggedTunableNumber(
-                "Intake/enableRotationIntake",
-                IntakeConstants.ENABLE_ROTATION
-            )
-        val intakeAngle =
-            LoggedTunableValue(
-                "Intake/intakeAngle",
-                IntakeConstants.INTAKE_ANGLE,
-                Pair({ it.inDegrees }, { it.degrees })
-            )
-        val outtakeAngle =
-            LoggedTunableValue(
-                "Intake/outtakeAngle",
-                IntakeConstants.OUTTAKE_ANGLE,
-                Pair({ it.inDegrees }, { it.degrees })
-            )
-        val stowedUpAngle =
-            LoggedTunableValue(
-                "Intake/stowedUpAngle",
-                IntakeConstants.STOWED_UP_ANGLE,
-                Pair({ it.inDegrees }, { it.degrees })
-            )
-        val stowedDownAngle =
-            LoggedTunableValue(
-                "Intake/stowedDownAngle",
-                IntakeConstants.STOWED_DOWN_ANGLE,
-                Pair({ it.inDegrees }, { it.degrees })
-            )
-        val intakeVoltage =
-            LoggedTunableValue(
-                "Intake/intakeVoltage",
-                IntakeConstants.INTAKE_VOLTAGE,
-                Pair({ it.inVolts }, { it.volts })
-            )
-        val neutralVoltage =
-            LoggedTunableValue(
-                "Intake/neutralVoltage",
-                IntakeConstants.NEUTRAL_VOLTAGE,
-                Pair({ it.inVolts }, { it.volts })
-            )
-        val outtakeVoltage =
-            LoggedTunableValue(
-                "Intake/outtakeVoltage",
-                IntakeConstants.OUTTAKE_VOLTAGE,
-                Pair({ it.inVolts }, { it.volts })
-            )
-    }
-
-    var armPositionTarget: Angle = 0.0.degrees
-    var armVoltageTarget: ElectricalPotential = 0.0.volts
     var rollerVoltageTarget: ElectricalPotential = 0.0.volts
 
     var isZeroed = false
 
-    private var lastArmPositionTarget: Angle = 0.0.degrees
-    private var lastArmVoltage: ElectricalPotential = 0.0.volts
-
-    val forwardLimitReached: Boolean
-        get() = inputs.armPosition >= IntakeConstants.ARM_MAX_ROTATION
-    val reverseLimitReached: Boolean
-        get() = inputs.armPosition <= IntakeConstants.ARM_MIN_ROTATION
-
     var lastIntakeRuntime = Clock.fpgaTime
     var currentState: IntakeStake = IntakeStake.UNINITIALIZED
 
-    var currentRequest: Request.IntakeRequest = Request.IntakeRequest.ZeroArm()
+    var currentRequest: Request.IntakeRequest = Request.IntakeRequest.Idle()
         set(value) {
-            when (value) {
+            rollerVoltageTarget = when (value) {
                 is Request.IntakeRequest.OpenLoop -> {
-                    armVoltageTarget = value.voltage
-                    rollerVoltageTarget = value.rollerVoltage
+                    value.rollerVoltage
                 }
 
-                is Request.IntakeRequest.TargetingPosition -> {
-                    armPositionTarget = value.position
-                    rollerVoltageTarget = value.rollerVoltage
+                is Request.IntakeRequest.Idle -> {
+                    IntakeConstants.IDLE_ROLLER_VOLTAGE
                 }
-
-                else -> {}
             }
 
             field = value
         }
 
-    private var armConstraints: TrapezoidProfile.Constraints<Radian> =
-        TrapezoidProfile.Constraints(
-            IntakeConstants.MAX_ARM_VELOCITY, IntakeConstants.MAX_ARM_ACCELERATION
-        )
-
-    private var armProfile =
-        TrapezoidProfile(
-            armConstraints,
-            TrapezoidProfile.State(armPositionTarget, 0.0.degrees.perSecond),
-            TrapezoidProfile.State(inputs.armPosition, inputs.armVelocity)
-        )
-
     private var timeProfileGeneratedAt = Clock.fpgaTime
-
-    private var prevArmSetpoint: TrapezoidProfile.State<Radian> =
-        TrapezoidProfile.State(inputs.armPosition, inputs.armVelocity)
-
-    val isAtTargetedPosition: Boolean
-        get() =
-            (
-                    currentState == IntakeStake.TARGETING_POSITION &&
-                            armProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
-                            (inputs.armPosition - armPositionTarget).absoluteValue <=
-                            IntakeConstants.ARM_TOLERANCE
-                    ) ||
-                    (TunableIntakeStates.enableArm.get() != 1.0)
-
-    val canContinueSafely: Boolean
-        get() =
-            currentRequest is Request.IntakeRequest.TargetingPosition &&
-                    (
-                            ((Clock.fpgaTime - timeProfileGeneratedAt) - armProfile.totalTime() < 1.0.seconds) ||
-                                    armProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt)
-                            ) &&
-                    (inputs.armPosition - armPositionTarget).absoluteValue <= 5.degrees
-
-    init {
-
-        if (RobotBase.isReal()) {
-            kP.initDefault(IntakeConstants.PID.NEO_KP)
-            kI.initDefault(IntakeConstants.PID.NEO_KI)
-            kD.initDefault(IntakeConstants.PID.NEO_KD)
-
-            armFeedforward =
-                ArmFeedforward(
-                    IntakeConstants.PID.ARM_KS,
-                    IntakeConstants.PID.ARM_KG,
-                    IntakeConstants.PID.ARM_KV,
-                    IntakeConstants.PID.ARM_KA
-                )
-        } else {
-            kP.initDefault(IntakeConstants.PID.SIM_KP)
-            kI.initDefault(IntakeConstants.PID.SIM_KI)
-            kD.initDefault(IntakeConstants.PID.SIM_KD)
-
-            armFeedforward =
-                ArmFeedforward(
-                    0.0.volts,
-                    IntakeConstants.PID.ARM_KG,
-                    IntakeConstants.PID.ARM_KV,
-                    IntakeConstants.PID.ARM_KA
-                )
-        }
-    }
 
     fun periodic() {
         io.updateInputs(inputs)
-
-        if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
-            io.configPID(kP.get(), kI.get(), kD.get())
-        }
 
         Logger.processInputs("GroundIntake", inputs)
 
@@ -207,30 +65,14 @@ class Intake(private val io: IntakeIO) {
 
         Logger.recordOutput("GroundIntake/requestedState", currentRequest.javaClass.simpleName)
 
-        Logger.recordOutput("GroundIntake/isAtTargetedPosition", isAtTargetedPosition)
-
-        Logger.recordOutput("Elevator/canContinueSafely", canContinueSafely)
-
         Logger.recordOutput("GroundIntake/isZeroed", isZeroed)
 
         if (Constants.Tuning.DEBUGING_MODE) {
-            Logger.recordOutput(
-                    "GroundIntake/isAtCommandedState", currentState.equivalentToRequest(currentRequest)
-                )
+            Logger.recordOutput("GroundIntake/isAtCommandedState", currentState.equivalentToRequest(currentRequest))
 
             Logger.recordOutput("GroundIntake/timeProfileGeneratedAt", timeProfileGeneratedAt.inSeconds)
 
-            Logger.recordOutput("GroundIntake/armPositionTarget", armPositionTarget.inDegrees)
-
-            Logger.recordOutput("GroundIntake/armVoltageTarget", armVoltageTarget.inVolts)
-
             Logger.recordOutput("GroundIntake/rollerVoltageTarget", rollerVoltageTarget.inVolts)
-
-            Logger.recordOutput("GroundIntake/lastCommandedAngle", lastArmPositionTarget.inDegrees)
-
-            Logger.recordOutput("GroundIntake/forwardLimitReached", forwardLimitReached)
-
-            Logger.recordOutput("GroundIntake/reverseLimitReached", reverseLimitReached)
         }
 
         var nextState = currentState
@@ -241,94 +83,19 @@ class Intake(private val io: IntakeIO) {
                 // loop cycle
 
                 // Transitions
-                nextState = IntakeStake.ZEROING_ARM
+                nextState = IntakeStake.IDLE
             }
-            IntakeStake.ZEROING_ARM -> {
-                zeroArm()
-
-                if (inputs.isSimulated ||
-                    (inputs.armPosition - inputs.armAbsoluteEncoderPosition).absoluteValue <= 1.degrees
-                ) {
-                    isZeroed = true
-                    lastArmPositionTarget = -1337.degrees
-                }
+            IntakeStake.IDLE -> {
+                setRollerVoltage(IntakeConstants.IDLE_ROLLER_VOLTAGE)
 
                 // Transitions
                 nextState = fromRequestToState(currentRequest)
             }
             IntakeStake.OPEN_LOOP_REQUEST -> {
-                // Outputs
-                if (armVoltageTarget != lastArmVoltage) {
-                    lastIntakeRuntime = Clock.fpgaTime
-                }
-
-                setArmVoltage(armVoltageTarget)
                 setRollerVoltage(rollerVoltageTarget)
 
                 // Transitions
                 nextState = fromRequestToState(currentRequest)
-
-                // See related comment in targeting position to see why we do this
-                if (!(currentState.equivalentToRequest(currentRequest))) {
-                    lastArmVoltage = -1337.volts
-                }
-            }
-            IntakeStake.TARGETING_POSITION -> {
-                // Outputs
-                if (armPositionTarget != lastArmPositionTarget) {
-                    val preProfileGenerate = Clock.realTimestamp
-                    armProfile =
-                        TrapezoidProfile(
-                            armConstraints,
-                            TrapezoidProfile.State(armPositionTarget, 0.0.degrees.perSecond),
-                            TrapezoidProfile.State(inputs.armPosition, 0.0.degrees.perSecond)
-                        )
-                    val postProfileGenerate = Clock.realTimestamp
-                    Logger
-                        .recordOutput(
-                            "/GroundIntake/ProfileGenerationMS",
-                            postProfileGenerate.inSeconds - preProfileGenerate.inSeconds
-                        )
-                    timeProfileGeneratedAt = Clock.fpgaTime
-
-                    // This statement is only run when the armPositionTarget is first noticed to be different
-                    // than the previous setpoint the arm went to.
-                    lastArmPositionTarget = armPositionTarget
-                    lastIntakeRuntime = Clock.fpgaTime
-                }
-
-                val timeElapsed = Clock.fpgaTime - timeProfileGeneratedAt
-
-                val profileOutput = armProfile.calculate(timeElapsed)
-
-                if (armProfile.isFinished(timeElapsed)) {
-                    setRollerVoltage(rollerVoltageTarget)
-                }
-
-                setArmPosition(profileOutput)
-
-                Logger
-                    .recordOutput("GroundIntake/completedMotionProfile", armProfile.isFinished(timeElapsed))
-
-                Logger
-                    .recordOutput("GroundIntake/profilePositionDegrees", profileOutput.position.inDegrees)
-                Logger
-                    .recordOutput(
-                        "GroundIntake/profileVelocityDegreesPerSecond",
-                        profileOutput.velocity.inDegreesPerSecond
-                    )
-
-                // Transitions
-                nextState = fromRequestToState(currentRequest)
-
-                // if we're transitioning out of targeting position, we want to make sure the next time we
-                // enter targeting position, we regenerate profile (even if the arm setpoint is the same as
-                // the previous time we ran it)
-                if (!(currentState.equivalentToRequest(currentRequest))) {
-                    // setting the last target to something unreasonable so the profile is generated next loop
-                    // cycle
-                    lastArmPositionTarget = (-1337).degrees
-                }
             }
         }
 
@@ -343,95 +110,27 @@ class Intake(private val io: IntakeIO) {
         io.setRollerVoltage(appliedVoltage)
     }
 
-    /**
-     * Sets the break/idle mode of the arm
-     *
-     * @param brake The value that break mode for the arm will be set as
-     */
-    fun setArmBrakeMode(brake: Boolean) {
-        io.setArmBrakeMode(brake)
-        Logger.recordOutput("GroundIntake/armBrakeModeEnabled", brake)
-    }
-
     fun zeroArm() {
         io.zeroEncoder()
-    }
-
-    fun regenerateProfileNextLoopCycle() {
-        lastArmVoltage = -3337.volts
-        lastArmPositionTarget = -3337.degrees
-        lastIntakeRuntime = -3337.seconds
-    }
-
-    fun setArmVoltage(voltage: ElectricalPotential) {
-        //    if ((openLoopForwardLimitReached && voltage > 0.0.volts) ||
-        //      (openLoopReverseLimitReached && voltage < 0.0.volts)
-        //    ) {
-        //      io.setArmVoltage(0.0.volts)
-        //    } else {
-        io.setArmVoltage(voltage)
-        //    }
-    }
-
-    /**
-     * Sets the arm position using the trapezoidal profile state
-     *
-     * @param setpoint.position Represents the position the arm should go to
-     * @param setpoint.velocity Represents the velocity the arm should be at
-     */
-    private fun setArmPosition(setpoint: TrapezoidProfile.State<Radian>) {
-
-        // Calculating the acceleration of the arm
-        val armAngularAcceleration =
-            (setpoint.velocity - prevArmSetpoint.velocity) / Constants.Universal.LOOP_PERIOD_TIME
-        prevArmSetpoint = setpoint
-
-        // Set up the feed forward variable
-        val feedforward =
-            armFeedforward.calculate(setpoint.position, setpoint.velocity, armAngularAcceleration)
-
-        // When the forward or reverse limit is reached, set the voltage to 0
-        // Else move the arm to the setpoint position
-        if (isOutOfBounds(setpoint.velocity)) {
-            io.setArmVoltage(armFeedforward.calculate(inputs.armPosition, 0.degrees.perSecond))
-        } else {
-            io.setArmPosition(setpoint.position, feedforward)
-        }
-
-        Logger
-            .recordOutput("GroundIntake/profileIsOutOfBounds", isOutOfBounds(setpoint.velocity))
-        Logger.recordOutput("GroundIntake/armFeedForward", feedforward.inVolts)
-        Logger.recordOutput("GroundIntake/armTargetPosition", setpoint.position.inDegrees)
-        Logger
-            .recordOutput("GroundIntake/armTargetVelocity", setpoint.velocity.inDegreesPerSecond)
-    }
-
-    private fun isOutOfBounds(velocity: AngularVelocity): Boolean {
-        return (velocity > 0.0.degrees.perSecond && forwardLimitReached) ||
-                (velocity < 0.0.degrees.perSecond && reverseLimitReached)
     }
 
     companion object {
         enum class IntakeStake {
             UNINITIALIZED,
             IDLE,
-            ZEROING_ARM,
-            TARGETING_POSITION,
             OPEN_LOOP_REQUEST;
 
             inline fun equivalentToRequest(request: Request.IntakeRequest): Boolean {
                 return (
                         (request is Request.IntakeRequest.OpenLoop && this == OPEN_LOOP_REQUEST) ||
-                                (request is Request.IntakeRequest.TargetingPosition && this == TARGETING_POSITION)
+                                (request is Request.IntakeRequest.Idle && this == IDLE)
                         )
             }
         }
 
         inline fun fromRequestToState(request: Request.IntakeRequest): IntakeStake {
             return when (request) {
-                is Request.IntakeRequest.TargetingPosition -> IntakeStake.TARGETING_POSITION
                 is Request.IntakeRequest.OpenLoop -> IntakeStake.OPEN_LOOP_REQUEST
-                is Request.IntakeRequest.ZeroArm -> IntakeStake.ZEROING_ARM
                 is Request.IntakeRequest.Idle -> IntakeStake.IDLE
             }
         }
