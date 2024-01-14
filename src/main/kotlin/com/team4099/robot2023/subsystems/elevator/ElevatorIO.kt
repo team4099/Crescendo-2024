@@ -20,7 +20,7 @@ import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inInchesPerSecond
 import org.team4099.lib.units.perSecond
 
-interface elevatorIO {
+interface ElevatorIO {
     class ElevatorInputs : LoggableInputs {
         var elevatorPosition = 0.0.inches
         var elevatorVelocity = 0.0.inches.perSecond
@@ -98,7 +98,8 @@ interface elevatorIO {
             table?.get("elevatorFollowerRawPosition", leaderRawPosition)?.let {
                 followerRawPosition = it
             }
-    }
+        }
+
         fun updateInputs(inputs: ElevatorInputs) {}
         fun setOutputVoltage(voltage: ElectricalPotential) {}
         fun setPosition(position: Length, feedForward: ElectricalPotential) {}
@@ -107,5 +108,7 @@ interface elevatorIO {
                 kP: ProportionalGain<Meter, Volt>,
                 kI: IntegralGain<Meter, Volt>,
                 kD: DerivativeGain<Meter, Volt>
-        ) {}
+        ) {
+        }
     }
+}
