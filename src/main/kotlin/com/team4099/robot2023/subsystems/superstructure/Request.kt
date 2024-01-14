@@ -41,6 +41,7 @@ sealed interface Request {
                              val rollerVelocity: AngularVelocity,
                               val feederVelocity: AngularVelocity
                                                         ):ShooterRequest{}
+    class Zero () : ShooterRequest{}
 
   }
 }
