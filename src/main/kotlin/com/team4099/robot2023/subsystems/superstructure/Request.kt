@@ -54,6 +54,7 @@ sealed interface Request {
                              val rollerVelocity: AngularVelocity,
                               val feederVelocity: AngularVelocity
                                                         ):ShooterRequest{}
+    class Zero () : ShooterRequest{}
 
   }
 >>>>>>> ec012fa (added feeder and wrist and did requests and started states)

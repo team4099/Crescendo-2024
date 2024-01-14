@@ -84,4 +84,5 @@ private val wristSparkMax = CANSparkMax(Constants.Shooter.SHOOTER_WRIST_MOTOR_ID
         inputs.feederTemperature = feederSparkMax.motorTemperature.celsius
     }
 
+
 }
