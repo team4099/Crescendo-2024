@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.team4099.lib.units.base.*
 import org.team4099.lib.units.derived.*
+import org.team4099.lib.units.inInchesPerSecond
 import org.team4099.lib.units.inRadiansPerSecond
 import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
@@ -17,6 +18,7 @@ interface ShooterIO {
         var rollerTempreature = 0.celsius
 
         var wristPostion = 0.degrees
+        var wristVelocity = 0.radians.perSecond
         var wristAppliedVoltage = 0.volts
         var wristStatorCurrent = 0.amps
         var wristSupplyCurrent = 0.amps
@@ -36,12 +38,13 @@ interface ShooterIO {
             table.put("rollerTempreature", rollerTempreature.inCelsius)
 
             table.put("wristPostion", wristPostion.inDegrees)
+            table.put("wristVelocityRPM", wristVelocity.inRadiansPerSecond)
             table.put("wristAppliedVoltage", wristAppliedVoltage.inVolts)
             table.put("wristStatorCurrent", wristStatorCurrent.inAmperes)
             table.put("wristSupplyCurrent", wristSupplyCurrent.inAmperes)
             table.put("wristTemperature", wristTemperature.inCelsius)
 
-            table.put("feederVelocity", feederVelocity.inRadiansPerSecond)
+            table.put("feederVelocityRPM", feederVelocity.inRadiansPerSecond)
             table.put("feederAppliedVoltage", feederAppliedVoltage.inVolts)
             table.put("feederStatorCurrent", feederStatorCurrent.inAmperes)
             table.put("feederSupplyCurrent", feederSupplyCurrent.inAmperes)
@@ -67,9 +70,15 @@ interface ShooterIO {
             table.get("rollerTempreature", rollerTempreature.inCelsius).let {
                 rollerTempreature = it.celsius
             }
+
+
+
 //wrist logs
             table.get("wristPostion", wristPostion.inDegrees).let {
                 wristPostion = it.degrees
+            }
+            table.get("wristVelocity", wristVelocity.inRadiansPerSecond).let {
+                wristVelocity = it.radians.perSecond
             }
             table.get("wristAppliedVoltage", wristAppliedVoltage.inVolts).let {
                 wristAppliedVoltage = it.volts
@@ -84,6 +93,9 @@ interface ShooterIO {
             table.get("wristTemperature", wristTemperature.inCelsius).let {
                 wristTemperature = it.celsius
             }
+
+
+
             //feeder
             table.get("feederVelocity", feederVelocity.inRadiansPerSecond).let {
                 feederVelocity = it.radians.perSecond
