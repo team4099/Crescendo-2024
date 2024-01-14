@@ -1,4 +1,4 @@
-package com.team4099.robot2022.subsystems.climber
+package com.team4099.robot2023.subsystems.TelescopingArm
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.revrobotics.CANSparkMax
@@ -13,7 +13,7 @@ import com.team4099.robot2023.subsystems.TelescopingArm.TelescopingArmIO
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.sparkMaxLinearMechanismSensor
 
-object TelescopingArmIOReal : TelescopingArmIO {
+object TelescopingArmIONeo : TelescopingArmIO {
     private val telescopingLeftArm: CANSparkMax = CANSparkMax(
         Constants.TelescopingArm.L_ARM_ID,
         CANSparkMaxLowLevel.MotorType.kBrushless

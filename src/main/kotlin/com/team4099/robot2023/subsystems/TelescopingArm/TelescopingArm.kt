@@ -22,14 +22,14 @@ import org.team4099.lib.units.perSecond
 class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
     val inputs = TelescopingArmIO.TelescopingArmIOInputs()
 
-    val loadedFeedforward: ElevatorFeedforward = ElevatorFeedforward(
+    val loadedFeedForward: ElevatorFeedforward = ElevatorFeedforward(
         TelescopingArmConstants.LOAD_KS.inVolts,
         TelescopingArmConstants.LOAD_KG.inVolts,
         (1.meters.perSecond * TelescopingArmConstants.LOAD_KV).inVolts,
         (1.meters.perSecond.perSecond * TelescopingArmConstants.LOAD_KA).inVolts
     )
 
-    val noLoadFeedforward: ElevatorFeedforward =
+    val noLoadFeedForward: ElevatorFeedforward =
         ElevatorFeedforward(
             TelescopingArmConstants.NO_LOAD_KS.inVolts,
             TelescopingArmConstants.NO_LOAD_KG.inVolts,
@@ -69,7 +69,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
         Logger.recordOutput("TelescopingArm/rightReverseLimitReached", rightReverseLimitReached)
 
         if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
-            io.configPID(kP.value, kI.value, kD.value)
+            io.configPID(kP.get(), kI.get(), kD.get())
         }
     }
 
