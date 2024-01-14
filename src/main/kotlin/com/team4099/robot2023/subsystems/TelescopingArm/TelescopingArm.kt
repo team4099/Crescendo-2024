@@ -48,33 +48,25 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
     override fun periodic() {
         io.updateInputs(inputs)
 
-        Logger.get().processInputs("TelescopingArm", inputs)
-        Logger.get().recordOutput("TelescopingArm/desiredState", desiredState.name)
-        Logger.get().recordOutput("TelescopingArm/currentState", currentState.name)
-        Logger.get()
-            .recordOutput(
+        Logger.processInputs("TelescopingArm", inputs)
+        Logger.recordOutput("TelescopingArm/desiredState", desiredState.name)
+        Logger.recordOutput("TelescopingArm/currentState", currentState.name)
+        Logger.recordOutput(
                 "TelescopingArm/leftPositionSetpointInches", leftSetpoint.position.meters.inInches
             )
-        Logger.get()
-            .recordOutput("TelescopingArm/leftVelocitySetpointMetersPerSec", leftSetpoint.velocity)
-        Logger.get()
-            .recordOutput(
+        Logger.recordOutput("TelescopingArm/leftVelocitySetpointMetersPerSec", leftSetpoint.velocity)
+        Logger.recordOutput(
                 "TelescopingArm/rightPositionSetpointInches",
                 rightSetpoint.position.meters.inInches
             )
-        Logger.get()
-            .recordOutput(
+        Logger.recordOutput(
                 "TelescopingArm/rightVelocitySetpointMetersPerSec", rightSetpoint.velocity
             )
 
-        Logger.get()
-            .recordOutput("TelescopingArm/leftForwardLimitReached", leftForwardLimitReached)
-        Logger.get()
-            .recordOutput("TelescopingArm/leftReverseLimitReached", leftReverseLimitReached)
-        Logger.get()
-            .recordOutput("TelescopingArm/rightForwardLimitReached", rightForwardLimitReached)
-        Logger.get()
-            .recordOutput("TelescopingArm/rightReverseLimitReached", rightReverseLimitReached)
+        Logger.recordOutput("TelescopingArm/leftForwardLimitReached", leftForwardLimitReached)
+        Logger.recordOutput("TelescopingArm/leftReverseLimitReached", leftReverseLimitReached)
+        Logger.recordOutput("TelescopingArm/rightForwardLimitReached", rightForwardLimitReached)
+        Logger.recordOutput("TelescopingArm/rightReverseLimitReached", rightReverseLimitReached)
 
         if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
             io.configPID(kP.value, kI.value, kD.value)
@@ -216,8 +208,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
                     .volts
             )
 
-            Logger.get()
-                .recordOutput(
+            Logger.recordOutput(
                     "TelescopingArm/leftFeedForwardVolts",
                     noLoadFeedForward.calculate(
                         leftSetpoint.velocity, leftAccel.inMetersPerSecondPerSecond
@@ -228,8 +219,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
                 noLoadFeedForward.calculate(rightSetpoint.velocity, rightAccel.inMetersPerSecondPerSecond)
                     .volts
             )
-            Logger.get()
-                .recordOutput(
+            Logger.recordOutput(
                     "TelescopingArm/rightFeedForwardVolts",
                     noLoadFeedForward.calculate(
                         rightSetpoint.velocity, rightAccel.inMetersPerSecondPerSecond
@@ -241,8 +231,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
                 loadedFeedForward.calculate(leftSetpoint.velocity, leftAccel.inMetersPerSecondPerSecond)
                     .volts
             )
-            Logger.get()
-                .recordOutput(
+            Logger.recordOutput(
                     "TelescopingArm/leftFeedForwardVolts",
                     loadedFeedForward.calculate(
                         leftSetpoint.velocity, leftAccel.inMetersPerSecondPerSecond
@@ -253,7 +242,7 @@ class TelescopingArm(val io: TelescopingArmIO) : SubsystemBase() {
                 loadedFeedForward.calculate(rightSetpoint.velocity, rightAccel.inMetersPerSecondPerSecond)
                     .volts
             )
-            Logger.get().recordOutput(
+            Logger.recordOutput(
                 "TelescopingArm/rightFeedForwardVolts",
                 loadedFeedForward.calculate(
                     rightSetpoint.velocity, rightAccel.inMetersPerSecondPerSecond

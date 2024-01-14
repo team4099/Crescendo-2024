@@ -3,23 +3,24 @@ package com.team4099.robot2022.subsystems.climber
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
+import com.team4099.robot2023.config.constants.Constants
+import com.team4099.robot2023.config.constants.TelescopingArmConstants
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
-import com.team4099.robot2023.config.constants.TelescopingArmConstants
 import com.team4099.robot2023.subsystems.TelescopingArm.TelescopingArmIO
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.sparkMaxLinearMechanismSensor
 
 object TelescopingArmIOReal : TelescopingArmIO {
     private val telescopingLeftArm: CANSparkMax = CANSparkMax(
-        TelescopingArmConstants.L_ARM_ID,
+        Constants.TelescopingArm.L_ARM_ID,
         CANSparkMaxLowLevel.MotorType.kBrushless
     )
 
     private val telescopingRightArm: CANSparkMax = CANSparkMax(
-        TelescopingArmConstants.R_ARM_ID,
+        Constants.TelescopingArm.R_ARM_ID,
         CANSparkMaxLowLevel.MotorType.kBrushless
     )
 
@@ -27,7 +28,7 @@ object TelescopingArmIOReal : TelescopingArmIO {
         sparkMaxLinearMechanismSensor(
             telescopingLeftArm,
             TelescopingArmConstants.SENSOR_CPR,
-            TelescopingArmConstants.ARM_GEAR_RATIO,
+            TelescopingArmConstants.GEAR_RATIO,
             TelescopingArmConstants.LEFT_SPOOL_RADIUS * 2
         )
 
