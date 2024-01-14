@@ -35,11 +35,12 @@ sealed interface Request {
   }
   sealed interface ShooterRequest : Request {
     class OpenLoop(wristVoltage : ElectricalPotential,
-                   rollerVoltage: ElectricalPotential,
-                   feederVoltage: ElectricalPotential):ShooterRequest{}
+                   //rollerVoltage: ElectricalPotential,
+                   //feederVoltage: ElectricalPotential
+      ):ShooterRequest{}
     class TargetingPosition (val wristPosition : Angle,
-                             val rollerVelocity: AngularVelocity,
-                              val feederVelocity: AngularVelocity
+                             //val flywheelVelocity: AngularVelocity,
+                              //val feederVelocity: AngularVelocity
                                                         ):ShooterRequest{}
     class Zero () : ShooterRequest{}
 
