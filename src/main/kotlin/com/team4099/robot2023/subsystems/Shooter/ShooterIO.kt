@@ -122,25 +122,27 @@ interface ShooterIO {
     fun updateInputs(inputs: ShooterIOInputs){
 
     }
-    fun setRollerVoltage (voltage: ElectricalPotential){
+    /*fun setRollerVoltage (voltage: ElectricalPotential){
 
-    }
+    }*/
     fun setWristVoltage (voltage: ElectricalPotential){
 
     }
-    fun setFeederVoltage (voltage: ElectricalPotential){
+    //fun setFeederVoltage (voltage: ElectricalPotential){
+
+//    }
+    fun setWristPosition (position : Angle, feedforward : ElectricalPotential){
 
     }
-    fun setWristPosition (voltage: ElectricalPotential){
+    //fun setRollerBrakeMode (brake: Boolean){
 
-    }
-    fun setRollerBrakeMode (brake: Boolean){
+    //}
+    //fun setFeederBrakeMode (brake: Boolean){
 
-    }
-    fun setFeederBrakeMode (brake: Boolean){
+  //  }
+  fun setWristBrakeMode (brake: Boolean){
 
-    }
-
+      }
 
     fun configWristPID(
         kP: ProportionalGain <Meter, Volt>,
