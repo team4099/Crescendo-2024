@@ -14,7 +14,7 @@ class Intake(val io: IntakeIO) {
     val inputs = IntakeIO.IntakeIOInputs()
     var rollerVoltageTarget: ElectricalPotential = 0.0.volts
     var isZeroed = false
-    var currentState: IntakeStake = IntakeStake.UNINITIALIZED
+    var currentState: IntakeState = IntakeState.UNINITIALIZED
 
     var currentRequest: Request.IntakeRequest = Request.IntakeRequest.Idle()
         set(value) {
@@ -49,21 +49,21 @@ class Intake(val io: IntakeIO) {
 
         var nextState = currentState
         when (currentState) {
-            IntakeStake.UNINITIALIZED -> {
+            IntakeState.UNINITIALIZED -> {
                 // Outputs
                 // No designated output functionality because targeting position will take care of it next
                 // loop cycle
 
                 // Transitions
-                nextState = IntakeStake.IDLE
+                nextState = IntakeState.IDLE
             }
-            IntakeStake.IDLE -> {
+            IntakeState.IDLE -> {
                 setRollerVoltage(IntakeConstants.IDLE_ROLLER_VOLTAGE)
 
                 // Transitions
                 nextState = fromRequestToState(currentRequest)
             }
-            IntakeStake.OPEN_LOOP_REQUEST -> {
+            IntakeState.OPEN_LOOP -> {
                 setRollerVoltage(rollerVoltageTarget)
 
                 // Transitions
@@ -83,23 +83,23 @@ class Intake(val io: IntakeIO) {
     }
 
     companion object {
-        enum class IntakeStake {
+        enum class IntakeState {
             UNINITIALIZED,
             IDLE,
-            OPEN_LOOP_REQUEST;
+            OPEN_LOOP;
 
             fun equivalentToRequest(request: Request.IntakeRequest): Boolean {
                 return (
-                        (request is Request.IntakeRequest.OpenLoop && this == OPEN_LOOP_REQUEST) ||
+                        (request is Request.IntakeRequest.OpenLoop && this == OPEN_LOOP) ||
                                 (request is Request.IntakeRequest.Idle && this == IDLE)
                         )
             }
         }
 
-        fun fromRequestToState(request: Request.IntakeRequest): IntakeStake {
+        fun fromRequestToState(request: Request.IntakeRequest): IntakeState {
             return when (request) {
-                is Request.IntakeRequest.OpenLoop -> IntakeStake.OPEN_LOOP_REQUEST
-                is Request.IntakeRequest.Idle -> IntakeStake.IDLE
+                is Request.IntakeRequest.OpenLoop -> IntakeState.OPEN_LOOP
+                is Request.IntakeRequest.Idle -> IntakeState.IDLE
             }
         }
     }
