@@ -24,6 +24,8 @@ interface IntakeIO {
 
     var rollerTemp = 0.0.celsius
 
+    var isSimulated = false
+
     override fun toLog(table: LogTable?) {
       table?.put("rollerVelocityRPM", rollerVelocity.inRotationsPerMinute)
       table?.put("rollerAppliedVoltage", rollerAppliedVoltage.inVolts)
