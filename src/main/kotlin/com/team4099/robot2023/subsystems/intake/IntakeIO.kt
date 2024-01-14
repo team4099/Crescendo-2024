@@ -21,13 +21,10 @@ interface IntakeIO {
 
     var rollerSupplyCurrent = 0.0.amps
     var rollerStatorCurrent = 0.0.amps
+
     var rollerTemp = 0.0.celsius
 
-    var isSimulated = false
-
     override fun toLog(table: LogTable?) {
-      table?.put("isSimulated", isSimulated)
-
       table?.put("rollerVelocityRPM", rollerVelocity.inRotationsPerMinute)
       table?.put("rollerAppliedVoltage", rollerAppliedVoltage.inVolts)
       table?.put("rollerSupplyCurrentAmps", rollerSupplyCurrent.inAmperes)
@@ -56,9 +53,9 @@ interface IntakeIO {
     }
   }
 
-  fun updateInputs(io: IntakeIOInputs)
+  fun updateInputs(io: IntakeIOInputs) {}
 
-  fun setRollerVoltage(voltage: ElectricalPotential)
+  fun setRollerVoltage(voltage: ElectricalPotential) {}
 
-  fun setRollerBrakeMode(brake: Boolean)
+  fun setRollerBrakeMode(brake: Boolean) {}
 }
