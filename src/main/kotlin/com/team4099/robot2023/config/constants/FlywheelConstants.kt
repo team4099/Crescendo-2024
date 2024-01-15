@@ -1,5 +1,6 @@
-package com.team4099.robot2023.subsystems.Shooter
+package com.team4099.robot2023.config.constants
 
+import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.derived.volts
 
 object FlywheelConstants {

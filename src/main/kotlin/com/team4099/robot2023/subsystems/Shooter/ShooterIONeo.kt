@@ -85,11 +85,10 @@ private val wristSparkMax = CANSparkMax(Constants.Shooter.SHOOTER_WRIST_MOTOR_ID
         inputs.feederTemperature = feederSparkMax.motorTemperature.celsius*/
     }
     override fun configWristPID(
-        kP: ProportionalGain<Meter, Volt>,
-        kI: IntegralGain<Meter, Volt>,
-        kD: DerivativeGain<Meter, Volt>
+        kP: ProportionalGain<Radian, Volt>,
+        kI: IntegralGain<Radian, Volt>,
+        kD: DerivativeGain<Radian, Volt>
     ) {
-//TODO fix this please
         wristPIDController.p = wristSensor.proportionalPositionGainToRawUnits(kP)
         wristPIDController.i = wristSensor.integralPositionGainToRawUnits(kI)
         wristPIDController.d = wristSensor.derivativePositionGainToRawUnits(kD)

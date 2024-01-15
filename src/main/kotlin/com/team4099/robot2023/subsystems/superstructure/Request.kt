@@ -2,6 +2,7 @@ package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.robot2023.config.constants.GamePiece
 import com.team4099.robot2023.config.constants.NodeTier
+import com.team4099.robot2023.subsystems.Shooter.Flywheel
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearVelocity
@@ -43,5 +44,10 @@ sealed interface Request {
                                                         ):ShooterRequest{}
     class Zero () : ShooterRequest{}
 
+  }
+  sealed interface FlywheelRequest : Request {
+    class OpenLoop (flywheelVoltage: ElectricalPotential):FlywheelRequest{}
+    class TargetingVelocity (flywheelVelocity: AngularVelocity)
+    class Zero ():FlywheelRequest{}
   }
 }
