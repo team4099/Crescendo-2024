@@ -32,7 +32,7 @@ class Shooter (val io: ShooterIO){
             "wrist/kD", Pair({ it.inVoltsPerInchPerSecond }, { it.volts.perInchPerSecond })
         )*/
     var currentState = ShooterStates.UNINITIALIZED
-    var flywheelTargetVoltage : ElectricalPotential= 0.0.volts
+    //var flywheelTargetVoltage : ElectricalPotential= 0.0.volts
     var wristTargetVoltage : ElectricalPotential = 0.0.volts
     var feederTargetVoltage : ElectricalPotential = 0.0.volts
   /*  fun setflywheelVoltage(appliedVoltage: ElectricalPotential){
@@ -56,7 +56,6 @@ class Shooter (val io: ShooterIO){
     private var feederInitVoltage = LoggedTunableValue ("Shooter/Initial Feeder Voltage", ShooterConstants.FEEDER_INIT_VOLTAGE, Pair({it.inVolts},{it.volts}))
     */private var wristInitVoltage = LoggedTunableValue ("Shooter/Initial Wrist Voltage", ShooterConstants.WRIST_INIT_VOLTAGE, Pair({it.inVolts},{it.volts}))
     private var timeProfileGeneratedAt = 0.0.seconds
-    //TODO ask aanshi wtf to pass in for init parameters
     var currentRequest = Request.ShooterRequest.OpenLoop(
         ShooterConstants.WRIST_INIT_VOLTAGE,
         //ShooterConstants.ROLLLER_INIT_VOLTAGE,
@@ -77,7 +76,6 @@ fun periodic(){
             nextState = ShooterStates.ZERO
         }
         ShooterStates.ZERO ->{
-//TODO create zero encoder if we get one
         }
 
         ShooterStates.OPEN_LOOP ->{
@@ -112,7 +110,7 @@ fun periodic(){
             }
             val timeElapsed = Clock.fpgaTime - timeProfileGeneratedAt
             setWristPosition(wristProfile.calculate(timeElapsed))
-            //TODO implement set wrist pos function
+            //TODO fix this error
             Logger.recordOutput("Shooter/completedMotionProfile", wristProfile.isFinished(timeElapsed))
         }
 
