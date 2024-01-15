@@ -13,7 +13,6 @@ import org.team4099.lib.units.base.inAmperes
 import org.team4099.lib.units.derived.*
 import org.team4099.lib.units.sparkMaxAngularMechanismSensor
 import kotlin.math.absoluteValue
-//TODO write a kraken file
 object ShooterIONeo : ShooterIO{
     //private val rollerSparkMax = CANSparkMax(Constants.Shooter.ROLLER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
     //private val rollerSensor = sparkMaxAngularMechanismSensor( rollerSparkMax,
