@@ -4,7 +4,7 @@ import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.derived.volts
 
 object IntakeConstants {
-    val ROLLER_INERTIA = 0.0014948033 // this one has been updated
+    val ROLLER_INERTIA = 0.002459315 // this one has been updated
     val VOLTAGE_COMPENSATION = 12.0.volts
 
   // TODO: Change gear ratio according to robot

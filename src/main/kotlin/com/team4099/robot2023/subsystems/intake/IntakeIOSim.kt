@@ -14,13 +14,14 @@ import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perMinute
 
-class IntakeIOSim : IntakeIO {
+object IntakeIOSim : IntakeIO {
     private val rollerSim: FlywheelSim = FlywheelSim(
         DCMotor.getNEO(1),
         IntakeConstants.ROLLER_GEAR_RATIO,
         IntakeConstants.ROLLER_INERTIA
     )
 
+    private var appliedVoltage = 0.volts;
     init{}
 
     override fun updateInputs(inputs: IntakeIO.IntakeIOInputs) {
@@ -28,7 +29,7 @@ class IntakeIOSim : IntakeIO {
         rollerSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
 
         inputs.rollerVelocity = rollerSim.getAngularVelocityRPM().rotations.perMinute
-        inputs.rollerAppliedVoltage = 0.volts
+        inputs.rollerAppliedVoltage = appliedVoltage
         inputs.rollerSupplyCurrent = 0.amps
         inputs.rollerStatorCurrent = rollerSim.currentDrawAmps.amps
         inputs.rollerTemp = 0.0.celsius
@@ -37,6 +38,7 @@ class IntakeIOSim : IntakeIO {
     }
 
     override fun setRollerVoltage(voltage: ElectricalPotential) {
+        appliedVoltage = voltage
         rollerSim.setInputVoltage(
             clamp(
                 voltage,
@@ -46,4 +48,6 @@ class IntakeIOSim : IntakeIO {
                 .inVolts
         )
     }
+
+    override fun setRollerBrakeMode(brake: Boolean) {}
 }
