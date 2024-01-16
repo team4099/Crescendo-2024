@@ -5,6 +5,7 @@ import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
+import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 import com.team4099.robot2023.util.Alert
 import com.team4099.robot2023.util.FMSData
 import com.team4099.robot2023.util.PoseEstimator
@@ -168,6 +169,38 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
     var lastGyroYaw = 0.0.radians
 
+    var velocityTarget = 0.degrees.perSecond
+
+    var targetedDriveVector = Pair(0.meters.perSecond, 0.meters.perSecond)
+
+    var fieldOrientation = true
+
+    var targetedChassisSpeeds = edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
+
+    var targetedChassisAccels = edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
+
+    var currentState: DrivetrainState = DrivetrainState.UNINITIALIZED
+    var currentRequest: DrivetrainRequest = DrivetrainRequest.ZeroSensors()
+        set(value) {
+            when (value) {
+                is DrivetrainRequest.OpenLoop -> {
+                    velocityTarget = value.angularVelocity
+                    targetedDriveVector = value.driveVector
+                    fieldOrientation = value.fieldOriented
+                }
+                is DrivetrainRequest.ClosedLoop -> {
+                    targetedChassisSpeeds = value.chassisSpeeds
+                    targetedChassisAccels = value.chassisAccels
+                }
+                else -> {}
+            }
+            field = value
+        }
+
+    init {
+        zeroSteering()
+    }
+
     override fun periodic() {
         val startTime = Clock.realTimestamp
         gyroNotConnectedAlert.set(!gyroInputs.gyroConnected)
@@ -240,6 +273,44 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
             "LoggedRobot/Subsystems/DrivetrainLoopTimeMS",
             (Clock.realTimestamp - startTime).inMilliseconds
         )
+
+        var nextState = currentState
+
+        when (currentState) {
+            DrivetrainState.UNINITIALIZED -> {
+                // Transitions
+                nextState = DrivetrainState.ZEROING_SENSORS
+            }
+            DrivetrainState.ZEROING_SENSORS -> {
+                zeroSensors()
+
+                // Transitions
+                currentRequest = DrivetrainRequest.Idle()
+                nextState = fromRequestToState(currentRequest)
+            }
+            DrivetrainState.OPEN_LOOP -> {
+                // Outputs
+                setOpenLoop(velocityTarget, targetedDriveVector, fieldOrientation)
+
+                // Transitions
+                nextState = fromRequestToState(currentRequest)
+            }
+            DrivetrainState.CLOSED_LOOP -> {
+                // Outputs
+                setClosedLoop(targetedChassisSpeeds, targetedChassisAccels)
+
+                // Transitions
+                nextState = fromRequestToState(currentRequest)
+            }
+            DrivetrainState.IDLE -> {
+                nextState = fromRequestToState(currentRequest)
+            }
+        }
+
+        currentState = nextState
+
+        // Log the current state
+        Logger.recordOutput("Drivetrain/requestedState", currentState.toString())
     }
 
     private fun updateOdometry() {
@@ -552,5 +623,33 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
     fun addVisionData(visionData: List<PoseEstimator.TimestampedVisionUpdate>) {
         swerveDrivePoseEstimator.addVisionData(visionData)
+    }
+
+    companion object {
+        enum class DrivetrainState {
+            UNINITIALIZED,
+            IDLE,
+            ZEROING_SENSORS,
+            OPEN_LOOP,
+            CLOSED_LOOP;
+
+            inline fun equivalentToRequest(request: DrivetrainRequest): Boolean {
+                return (
+                        (request is DrivetrainRequest.ZeroSensors && this == ZEROING_SENSORS) ||
+                                (request is DrivetrainRequest.OpenLoop && this == OPEN_LOOP) ||
+                                (request is DrivetrainRequest.ClosedLoop && this == CLOSED_LOOP) ||
+                                (request is DrivetrainRequest.Idle && this == IDLE)
+                        )
+            }
+        }
+
+        inline fun fromRequestToState(request: DrivetrainRequest): DrivetrainState {
+            return when (request) {
+                is DrivetrainRequest.OpenLoop -> DrivetrainState.OPEN_LOOP
+                is DrivetrainRequest.ClosedLoop -> DrivetrainState.CLOSED_LOOP
+                is DrivetrainRequest.ZeroSensors -> DrivetrainState.ZEROING_SENSORS
+                is DrivetrainRequest.Idle -> DrivetrainState.IDLE
+            }
+        }
     }
 }
