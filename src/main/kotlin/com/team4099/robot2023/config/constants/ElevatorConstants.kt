@@ -1,13 +1,14 @@
 package com.team4099.robot2023.config.constants
 
 import org.team4099.lib.units.base.inches
+import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
 
 object ElevatorConstants {
-    //TODO: change values later
+    // TODO: Change values later
     val ELEVATOR_KS = 0.0.volts
     val ELEVATOR_KG = 0.0.volts
     val ELEVATOR_KV = 0.0.volts/0.0.inches.perSecond
@@ -16,6 +17,15 @@ object ElevatorConstants {
     val ENABLE_ELEVATOR = 1.0
     val ELEVATOR_IDLE_HEIGHT = 0.0.inches
     val ELEVATOR_SOFT_LIMIT_EXTENSION = 0.0.inches
+    val ELEVATOR_SOFT_LIMIT_RETRACTION = 0.0.inches
+    val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_EXTENSION = 0.0.inches
+    val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_RETRACTION = 0.0.inches
+
+    val ELEVATOR_TOLERANCE = 0.0.inches
+
+    val MAX_VELOCITY = 0.0.meters.perSecond
+    val MAX_ACCELERATION = 0.0.meters.perSecond.perSecond
+
     val SHOOT_SPEAKER_POSITION = 0.0.inches
     val SHOOT_AMP_POSITION = 0.0.inches
     val SOURCE_NOTE_OFFSET = 0.0.inches
