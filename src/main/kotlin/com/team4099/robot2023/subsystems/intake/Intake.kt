@@ -4,6 +4,8 @@ import com.team4099.lib.hal.Clock
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.IntakeConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
+import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.derived.ElectricalPotential
@@ -80,6 +82,11 @@ class Intake(val io: IntakeIO) {
     /** @param appliedVoltage Represents the applied voltage of the roller motor */
     fun setRollerVoltage(appliedVoltage: ElectricalPotential) {
         io.setRollerVoltage(appliedVoltage)
+    }
+
+    fun generateIntakeTestCommand(): Command {
+        val returnCommand = runOnce({ currentRequest = Request.IntakeRequest.OpenLoop(12.volts) })
+        return returnCommand
     }
 
     companion object {
