@@ -1,7 +1,10 @@
 package com.team4099.robot2023.config.constants
 
+import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.amps
-import org.team4099.lib.units.derived.volts
+import org.team4099.lib.units.base.seconds
+import org.team4099.lib.units.derived.*
+import org.team4099.lib.units.perMinute
 
 object FlywheelConstants {
     val FLYWHEEEL_INIT_VOLTAGE = 0.0.volts
@@ -41,5 +44,13 @@ object FlywheelConstants {
     val FLYWHEEL_THRESHOLD_CURRENT_LIMIT = 0.0.amps
     val flywheel_TRIGGER_THRESHOLD_TIME = 0.0.seconds
     val FLYWHEEL_STATOR_CURRENT_LIMIT = 0.0.amps
+
+    val SHOOTER_FLYWHEEL_KP: ProportionalGain<Velocity<Radian>, Volt> =
+        0.001.volts / 1.0.rotations.perMinute
+    val SHOOTER_FLYWHEEL_KI: IntegralGain<Velocity<Radian>, Volt> =
+        0.0.volts / (1.0.rotations.perMinute * 1.0.seconds)
+    val SHOOTER_FLYWHEEL_KD: DerivativeGain<Velocity<Radian>, Volt> =
+        0.0.volts / (1.0.rotations.perMinute / 1.0.seconds)
+
 
 }
