@@ -18,7 +18,7 @@ import org.team4099.lib.units.perSecond
 class Shooter (val io: ShooterIO){
     val inputs = ShooterIO.ShooterIOInputs()
     //TODO do feedforward
-    private var WristFeedforward: SimpleMotorFeedforward<Meter, Volt>(kS,kV,kA)
+    private var WristFeedforward: SimpleMotorFeedforward<Radian, Volt>()
 
 /*
     private val wristflywheelkP =
@@ -109,7 +109,7 @@ fun periodic(){
                 lastWristPositionTarget = wristPositionTarget
             }
             val timeElapsed = Clock.fpgaTime - timeProfileGeneratedAt
-            setWristPosition(wristProfile.calculate(timeElapsed))
+            setWristPosition( WristFeedforward, wristProfile.calculate(timeElapsed))
             //TODO fix this error
             Logger.recordOutput("Shooter/completedMotionProfile", wristProfile.isFinished(timeElapsed))
         }
