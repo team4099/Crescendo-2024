@@ -2,14 +2,14 @@ package com.team4099.robot2023.commands
 
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Subsystem
 import org.littletonrobotics.junction.Logger
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 import java.util.function.Supplier
 
-class SysIdCommand : CommandBase {
+class SysIdCommand : Command {
   private val isDriveTrain: Boolean
   private lateinit var driveTrainSetter: BiConsumer<Double, Double>
   private lateinit var mechanismSetter: Consumer<Double>

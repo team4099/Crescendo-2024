@@ -6,7 +6,6 @@ import com.team4099.lib.trajectory.CustomTrajectoryGenerator
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.AllianceFlipUtil
 import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -15,44 +14,16 @@ import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGeneratio
 import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint
 import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.hal.Clock
 import org.team4099.lib.kinematics.ChassisAccels
-import org.team4099.lib.units.Velocity
-import org.team4099.lib.units.base.Meter
-import org.team4099.lib.units.base.inMeters
-import org.team4099.lib.units.base.inSeconds
-import org.team4099.lib.units.base.inches
-import org.team4099.lib.units.base.meters
-import org.team4099.lib.units.base.seconds
-import org.team4099.lib.units.derived.Radian
-import org.team4099.lib.units.derived.cos
-import org.team4099.lib.units.derived.degrees
-import org.team4099.lib.units.derived.inDegreesPerSecondPerDegree
-import org.team4099.lib.units.derived.inDegreesPerSecondPerDegreePerSecond
-import org.team4099.lib.units.derived.inDegreesPerSecondPerDegreeSeconds
-import org.team4099.lib.units.derived.inMetersPerSecondPerMeter
-import org.team4099.lib.units.derived.inMetersPerSecondPerMeterSeconds
-import org.team4099.lib.units.derived.inMetersPerSecondPerMetersPerSecond
-import org.team4099.lib.units.derived.inRadians
-import org.team4099.lib.units.derived.metersPerSecondPerMetersPerSecond
-import org.team4099.lib.units.derived.perDegree
-import org.team4099.lib.units.derived.perDegreePerSecond
-import org.team4099.lib.units.derived.perDegreeSeconds
-import org.team4099.lib.units.derived.perMeter
-import org.team4099.lib.units.derived.perMeterSeconds
-import org.team4099.lib.units.derived.radians
-import org.team4099.lib.units.derived.sin
-import org.team4099.lib.units.inDegreesPerSecond
-import org.team4099.lib.units.inMetersPerSecond
-import org.team4099.lib.units.inMetersPerSecondPerSecond
-import org.team4099.lib.units.inRadiansPerSecond
-import org.team4099.lib.units.inRadiansPerSecondPerSecond
-import org.team4099.lib.units.perSecond
+import org.team4099.lib.units.*
+import org.team4099.lib.units.base.*
+import org.team4099.lib.units.derived.*
 import java.util.function.Supplier
 import kotlin.math.PI
 
@@ -65,7 +36,7 @@ class DrivePathCommand(
   val endPathOnceAtReference: Boolean = true,
   val leaveOutYAdjustment: Boolean = false,
   val endVelocity: Velocity2d = Velocity2d(),
-) : CommandBase() {
+) : Command() {
   private val xPID: PIDController<Meter, Velocity<Meter>>
   private val yPID: PIDController<Meter, Velocity<Meter>>
 
@@ -244,8 +215,7 @@ class DrivePathCommand(
       Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position)
     )
 
-    drivetrain.currentRequest =
-      Request.DrivetrainRequest.ClosedLoop(
+    drivetrain.setClosedLoop(
         nextDriveState,
         ChassisAccels(xAccel, yAccel, 0.0.radians.perSecond.perSecond).chassisAccelsWPILIB
       )
@@ -310,16 +280,14 @@ class DrivePathCommand(
     Logger.recordOutput("ActiveCommands/DrivePathCommand", false)
     if (interrupted) {
       // Stop where we are if interrupted
-      drivetrain.currentRequest =
-        Request.DrivetrainRequest.OpenLoop(
+      drivetrain.setOpenLoop(
           0.degrees.perSecond, Pair(0.meters.perSecond, 0.meters.perSecond)
         )
     } else {
       // Execute one last time to end up in the final state of the trajectory
       // Since we weren't interrupted, we know curTime > endTime
       execute()
-      drivetrain.currentRequest =
-        Request.DrivetrainRequest.OpenLoop(
+      drivetrain.setOpenLoop(
           0.degrees.perSecond, Pair(0.meters.perSecond, 0.meters.perSecond)
         )
     }
