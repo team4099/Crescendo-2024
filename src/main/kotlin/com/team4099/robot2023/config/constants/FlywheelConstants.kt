@@ -1,10 +1,14 @@
 package com.team4099.robot2023.config.constants
 
+import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.units.Velocity
+import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
+import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.*
 import org.team4099.lib.units.perMinute
+import org.team4099.lib.units.perSecond
 
 object FlywheelConstants {
     val FLYWHEEEL_INIT_VOLTAGE = 0.0.volts
