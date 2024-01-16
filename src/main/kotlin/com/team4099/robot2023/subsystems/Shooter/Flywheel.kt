@@ -7,19 +7,21 @@ import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.ctreAngularMechanismSensor
 import org.team4099.lib.units.derived.*
+import org.team4099.lib.units.*
 
 class Flywheel (val io: FlywheelIO) {
-    var feedforward = SimpleMotorFeedforward<AngularVelocity, ElectricalPotential>()
+    // TODO: Make shooter constants (kS, kV, kA)
+    var feedforward = SimpleMotorFeedforward<Volt, AngularVelocity>()
     val inputs = FlywheelIO.FlywheelIOInputs()
     private val flywheelkS =
         LoggedTunableValue("Flywheel/kS", Pair({ it.inVoltsPerInch }, { it.volts.perInch }))
     private val flywheelkkV =
         LoggedTunableValue(
-            "Flywheel/kV", Pair({ it.inVoltsPerRadianSeconds }, { it.volts.perInchSeconds })
+            "Flywheel/kV", Pair({ it.inVoltsPerInchSeconds }, { it.volts.perInchSeconds })
         )
     private val flywheelkA =
         LoggedTunableValue(
-            "Flywheel/kA", Pair({ it.inVoltsPerRadianPerSecond}, { it.volts.perInchPerSecond })
+            "Flywheel/kA", Pair({ it.inVoltsPerInchPerSecond}, { it.volts.perInchPerSecond })
         )
 
     var flywheelTargetVoltage: ElectricalPotential = 0.0.volts
