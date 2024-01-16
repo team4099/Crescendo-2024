@@ -19,6 +19,7 @@ import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inDegreesPerSecondPerDegree
 import org.team4099.lib.units.derived.inDegreesPerSecondPerDegreePerSecond
 import org.team4099.lib.units.derived.inDegreesPerSecondPerDegreeSeconds
+import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.perDegree
 import org.team4099.lib.units.derived.perDegreePerSecond
 import org.team4099.lib.units.derived.perDegreeSeconds
@@ -61,6 +62,8 @@ class TargetPoseCommand(val drivetrain: Drivetrain, val targetPose: Pose2d) : Co
     init {
         addRequirements(drivetrain)
 
+        Logger.recordOutput("Odometry/targetedPose", doubleArrayOf(targetPose.x.inMeters, targetPose.y.inMeters, targetPose.rotation.inRadians))
+
         if (RobotBase.isReal()) {
             thetakP.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KP)
             thetakI.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KI)
@@ -92,6 +95,12 @@ class TargetPoseCommand(val drivetrain: Drivetrain, val targetPose: Pose2d) : Co
         desiredAngle =
             tan((currentPose.y - targetPose.y).inMeters / (currentPose.x - targetPose.x).inMeters)
                 .radians
+
+        // 30.meters, 27.meters is goal, 3 meters / 4
+        // 17.5 meters 13.5 meters is goal
+
+
+        Logger.recordOutput("AutoLevel/desiredAngleTargetPoseCmd", desiredAngle.inDegrees)
         val thetaFeedback = thetaPID.calculate(currentPose.rotation, desiredAngle)
 
         drivetrain.currentRequest =
