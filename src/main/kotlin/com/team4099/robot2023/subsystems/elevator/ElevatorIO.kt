@@ -99,16 +99,15 @@ interface ElevatorIO {
                 followerRawPosition = it
             }
         }
-
-        fun updateInputs(inputs: ElevatorInputs) {}
-        fun setOutputVoltage(voltage: ElectricalPotential) {}
-        fun setPosition(position: Length, feedForward: ElectricalPotential) {}
-        fun zeroEncoder() {}
-        fun configPID(
-                kP: ProportionalGain<Meter, Volt>,
-                kI: IntegralGain<Meter, Volt>,
-                kD: DerivativeGain<Meter, Volt>
-        ) {
-        }
     }
+
+    fun updateInputs(inputs: ElevatorInputs) {}
+    fun setOutputVoltage(voltage: ElectricalPotential) {}
+    fun setPosition(position: Length, feedForward: ElectricalPotential) {}
+    fun zeroEncoder() {}
+    fun configPID(
+        kP: ProportionalGain<Meter, Volt>,
+        kI: IntegralGain<Meter, Volt>,
+        kD: DerivativeGain<Meter, Volt>
+    ) {}
 }

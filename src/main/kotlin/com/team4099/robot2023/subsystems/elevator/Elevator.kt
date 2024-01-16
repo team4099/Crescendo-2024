@@ -4,6 +4,7 @@ import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableNumber
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.ElevatorConstants
+import edu.wpi.first.wpilibj.RobotBase
 import com.team4099.robot2023.subsystems.superstructure.Request.ElevatorRequest as ElevatorRequest
 import org.team4099.lib.controller.ElevatorFeedforward
 import org.team4099.lib.controller.TrapezoidProfile
@@ -135,6 +136,7 @@ class Elevator(val io: ElevatorIO) {
 
     private var lastHomingStatorCurrentTripTime = -9999.seconds
 
+    // Trapezoidal Profile Constraints
     private var elevatorConstraints: TrapezoidProfile.Constraints<Meter> =
         TrapezoidProfile.Constraints(ElevatorConstants.MAX_VELOCITY, ElevatorConstants.MAX_ACCELERATION)
     private var elevatorSetpoint: TrapezoidProfile.State<Meter> =
@@ -161,6 +163,38 @@ class Elevator(val io: ElevatorIO) {
                             elevatorProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt)
                     ) && lastRequestedPosition == elevatorPositionTarget
 
+
+    init {
+        TunableElevatorHeights
+
+        // Initializes PID constants and changes FF depending on if sim or real
+        if(RobotBase.isReal()) {
+            isHomed = false
+
+            kP.initDefault(ElevatorConstants.REAL_KP)
+            kI.initDefault(ElevatorConstants.REAL_KI)
+            kD.initDefault(ElevatorConstants.REAL_KD)
+        } else {
+            isHomed = true
+
+            kP.initDefault(ElevatorConstants.SIM_KP)
+            kI.initDefault(ElevatorConstants.SIM_KI)
+            kD.initDefault(ElevatorConstants.SIM_KD)
+        }
+
+        elevatorFeedforward = ElevatorFeedforward(
+            ElevatorConstants.ELEVATOR_KS,
+            ElevatorConstants.ELEVATOR_KG,
+            ElevatorConstants.ELEVATOR_KV,
+            ElevatorConstants.ELEVATOR_KA
+        )
+
+        io.configPID(kP.get(), kI.get(), kD.get())
+    }
+
+    fun periodic() {
+
+    }
 
     companion object {
         enum class ElevatorState {

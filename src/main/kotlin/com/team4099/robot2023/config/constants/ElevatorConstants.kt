@@ -8,7 +8,15 @@ import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
 
 object ElevatorConstants {
-    // TODO: Change values later
+    // TODO: Change values later based on CAD
+    val REAL_KP = 0.0.volts / 1.inches
+    val REAL_KI = 0.0.volts / (1.inches * 1.seconds)
+    val REAL_KD = 0.0.volts / (1.inches.perSecond)
+
+    val SIM_KP = 0.0.volts / 1.inches
+    val SIM_KI = 0.0.volts / (1.inches * 1.seconds)
+    val SIM_KD = 0.0.volts / (1.inches.perSecond)
+
     val ELEVATOR_KS = 0.0.volts
     val ELEVATOR_KG = 0.0.volts
     val ELEVATOR_KV = 0.0.volts/0.0.inches.perSecond
