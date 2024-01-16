@@ -116,20 +116,10 @@ object Constants {
   }
 
   object Shooter {
-
-    const val FLYWHEEL_LEFT_MOTOR_ID = 51
-    const val FLYWHEEL_RIGHT_MOTOR_ID = 52
-    //TODO find wrist motor id
-    const val SHOOTER_WRIST_MOTOR_ID = 999
-
-    const val ROLLER_MOTOR_ID = 51
-<<<<<<< HEAD
-
-=======
+    const val FLYWHEEL_MOTOR_ID = 51
     //TODO find wrist motor id
     const val SHOOTER_WRIST_MOTOR_ID = 999
     const val FEEDER_MOTOR_ID = 999
->>>>>>> ec012fa (added feeder and wrist and did requests and started states)
   }
 
   object Alert {

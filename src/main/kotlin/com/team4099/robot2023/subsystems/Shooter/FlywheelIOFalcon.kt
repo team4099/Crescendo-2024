@@ -11,16 +11,15 @@ import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
+import org.team4099.lib.controller.SimpleMotorFeedforward
+import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
-import org.team4099.lib.units.base.Meter
-import org.team4099.lib.units.base.amps
-import org.team4099.lib.units.base.celsius
-import org.team4099.lib.units.base.inAmperes
+import org.team4099.lib.units.base.*
 import org.team4099.lib.units.ctreAngularMechanismSensor
 import org.team4099.lib.units.derived.*
 
 class FlywheelIOFalcon (private val flywheelFalcon : TalonFX){
-    private val flywheelPIDController = TalonFX
+
     private val flywheelConfiguration: TalonFXConfiguration = TalonFXConfiguration()
     private val flywheelSensor =
         ctreAngularMechanismSensor(
@@ -29,18 +28,9 @@ class FlywheelIOFalcon (private val flywheelFalcon : TalonFX){
             FlywheelConstants.FLYWHEEL_VOLTAGE_COMPENSATION,
 
             )
-    val flywheelStatorCurrentSignal: StatusSignal<Double>
-    val flywheelSupplyCurrentSignal: StatusSignal<Double>
-    val flywheelTempSignal: StatusSignal<Double>
-    private val kP =
-        LoggedTunableValue("Flywheel/kP", Pair({ it.inVoltsPerInch }, { it.volts.perInch }))
-    private val kI =
-        LoggedTunableValue(
-            "Flywheel/kI", Pair({ it.inVoltsPerInchSeconds }, { it.volts.perInchSeconds })
-        )
-    private val kD =
-        LoggedTunableValue(
-            "Flywheel/kD", Pair({ it.inVoltsPerInchPerSecond }, { it.volts.perInchPerSecond })
+    var flywheelStatorCurrentSignal: StatusSignal<Double>
+    var flywheelSupplyCurrentSignal: StatusSignal<Double>
+    var flywheelTempSignal: StatusSignal<Double>
     init {
         flywheelFalcon.configurator.apply(TalonFXConfiguration())
 
@@ -48,11 +38,11 @@ class FlywheelIOFalcon (private val flywheelFalcon : TalonFX){
         flywheelFalcon.configurator.apply(flywheelConfiguration)
 //TODO fix PID
         flywheelConfiguration.Slot0.kP =
-            flywheelSensor.proportionalVelocityGainToRawUnits(kP)
+            flywheelSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.SHOOTER_FLYWHEEL_KP)
         flywheelConfiguration.Slot0.kI =
-            flywheelSensor.integralVelocityGainToRawUnits(kI)
+            flywheelSensor.integralVelocityGainToRawUnits(FlywheelConstants.SHOOTER_FLYWHEEL_KI)
         flywheelConfiguration.Slot0.kD =
-            flywheelSensor.derivativeVelocityGainToRawUnits(kD)
+            flywheelSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.SHOOTER_FLYWHEEL_KD)
         flywheelConfiguration.Slot0.kV = 0.05425
         //      flywheelSensor.velocityFeedforwardToRawUnits(FlywheelConstantsConstants.PID.flywheel_KFF)
         flywheelConfiguration.CurrentLimits.SupplyCurrentLimit =
@@ -74,7 +64,7 @@ class FlywheelIOFalcon (private val flywheelFalcon : TalonFX){
         flywheelTempSignal = flywheelFalcon.deviceTemp
 
         MotorChecker.add(
-            "flywheel",
+            "Shooter","Flywheel",
             MotorCollection(
                 mutableListOf(Falcon500(flywheelFalcon, "Flywheel Motor")),
                 FlywheelConstants.FLYWHEEL_SUPPLY_CURRENT_LIMIT,
@@ -84,7 +74,7 @@ class FlywheelIOFalcon (private val flywheelFalcon : TalonFX){
             )
         )
     }
-    override fun configureDrivePID(
+    override fun configPID(
         kP: ProportionalGain<Velocity<Radian>, Volt>,
         kI: IntegralGain<Velocity<Radian>, Volt>,
         kD: DerivativeGain<Velocity<Radian>, Volt>
@@ -97,6 +87,13 @@ class FlywheelIOFalcon (private val flywheelFalcon : TalonFX){
         PIDConfig.kV = 0.05425
 
         flywheelFalcon.configurator.apply(PIDConfig)
+    }
+    override fun setFlywheelVelocity(angularVelocity: AngularVelocity, feedforward: ElectricalPotential){
+        flywheelFalcon.setControl(0,
+            flywheelSensor.velocityToRawUnits(angularVelocity),
+            DemandType.ArbitraryFeedForward,
+            feedforward.inVolts
+            )
     }
 
 
