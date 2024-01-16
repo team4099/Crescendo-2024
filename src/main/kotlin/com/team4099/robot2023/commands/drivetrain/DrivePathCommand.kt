@@ -14,7 +14,7 @@ import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGeneratio
 import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint
 import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.geometry.Pose2d
@@ -64,7 +64,7 @@ class DrivePathCommand(
   val endPathOnceAtReference: Boolean = true,
   val leaveOutYAdjustment: Boolean = false,
   val endVelocity: Velocity2d = Velocity2d(),
-) : CommandBase() {
+) : Command() {
   private val xPID: PIDController<Meter, Velocity<Meter>>
   private val yPID: PIDController<Meter, Velocity<Meter>>
 
