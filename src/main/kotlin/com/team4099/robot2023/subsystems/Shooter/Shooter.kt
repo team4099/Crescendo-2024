@@ -18,7 +18,11 @@ import org.team4099.lib.units.perSecond
 class Shooter (val io: ShooterIO){
     val inputs = ShooterIO.ShooterIOInputs()
     //TODO do feedforward
+<<<<<<< HEAD
     private var wristFeedforward: SimpleMotorFeedforward<Meter, Volt>
+=======
+    private var WristFeedforward: SimpleMotorFeedforward<Meter, Volt>(kS,kV,kA)
+>>>>>>> 829a07586e50bf71782342ae9623c560237b502b
 
 /*
     private val wristflywheelkP =

@@ -145,9 +145,9 @@ interface ShooterIO {
       }
 
     fun configWristPID(
-        kP: ProportionalGain <Meter, Volt>,
-        kI: IntegralGain <Meter, Volt>,
-        kD: DerivativeGain <Meter, Volt>,
+        kP: ProportionalGain <Radian, Volt>,
+        kI: IntegralGain <Radian, Volt>,
+        kD: DerivativeGain <Radian, Volt>
     ){}
     fun zeroEncoder(){
 

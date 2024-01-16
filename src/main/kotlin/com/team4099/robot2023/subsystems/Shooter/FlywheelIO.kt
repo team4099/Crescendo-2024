@@ -2,6 +2,7 @@ package com.team4099.robot2023.subsystems.Shooter
 
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
+import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
@@ -47,6 +48,7 @@ interface FlywheelIO {
             }
         }
     }
+
     fun setFlywheelVoltage (voltage: ElectricalPotential){
 
     }
@@ -57,6 +59,11 @@ interface FlywheelIO {
 
     }
     fun zeroEncoder(){
+
+    }
+    fun configPID(kP: ProportionalGain <Radian, Volt>,
+                  kI: IntegralGain <Radian, Volt>,
+                  kD: DerivativeGain <Radian, Volt>){
 
     }
 
