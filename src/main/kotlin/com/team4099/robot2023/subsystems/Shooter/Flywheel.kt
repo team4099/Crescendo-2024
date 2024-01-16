@@ -54,7 +54,6 @@ class Flywheel (val io: FlywheelIO) {
     var currentState = Flywheel.Companion.FlywheelStates.UNINITIALIZED
 init{
     io.configPID(FlywheelConstants.SHOOTER_FLYWHEEL_KP, FlywheelConstants.SHOOTER_FLYWHEEL_KI, FlywheelConstants.SHOOTER_FLYWHEEL_KD)
-
 }
     fun periodic(){
         io.updateInputs(inputs)
