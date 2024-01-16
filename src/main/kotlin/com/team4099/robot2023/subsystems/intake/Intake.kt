@@ -5,14 +5,14 @@ import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.IntakeConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.Commands.runOnce
+import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
 
-class Intake(val io: IntakeIO) {
+class Intake(val io: IntakeIO) : SubsystemBase() {
     val inputs = IntakeIO.IntakeIOInputs()
     var rollerVoltageTarget: ElectricalPotential = 0.0.volts
     var isZeroed = false
@@ -35,7 +35,7 @@ class Intake(val io: IntakeIO) {
 
     private var timeProfileGeneratedAt = Clock.fpgaTime
 
-    fun periodic() {
+    override fun periodic() {
         io.updateInputs(inputs)
 
         Logger.processInputs("GroundIntake", inputs)
