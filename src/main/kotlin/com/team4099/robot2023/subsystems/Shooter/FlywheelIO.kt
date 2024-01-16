@@ -3,14 +3,12 @@ package com.team4099.robot2023.subsystems.Shooter
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.team4099.lib.controller.SimpleMotorFeedforward
+import org.team4099.lib.units.*
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
 import org.team4099.lib.units.base.inCelsius
 import org.team4099.lib.units.derived.*
-import org.team4099.lib.units.inRadiansPerSecond
-import org.team4099.lib.units.perMinute
-import org.team4099.lib.units.perSecond
 
 interface FlywheelIO {
 
@@ -52,6 +50,9 @@ interface FlywheelIO {
     fun setFlywheelVoltage (voltage: ElectricalPotential){
 
     }
+    fun setFlywheelVelocity(angularVelocity: AngularVelocity, feedforward: ElectricalPotential){
+
+    }
     fun setFlywheelBrakeMode (brake: Boolean){
 
     }
@@ -61,9 +62,9 @@ interface FlywheelIO {
     fun zeroEncoder(){
 
     }
-    fun configPID(kP: ProportionalGain <Radian, Volt>,
-                  kI: IntegralGain <Radian, Volt>,
-                  kD: DerivativeGain <Radian, Volt>){
+    fun configPID(kP: ProportionalGain <Velocity<Radian>, Volt>,
+                  kI: IntegralGain <Velocity<Radian>, Volt>,
+                  kD: DerivativeGain <Velocity<Radian>, Volt>){
 
     }
 
