@@ -14,6 +14,7 @@ import com.team4099.robot2023.subsystems.intake.IntakeIONEO
 import com.team4099.robot2023.subsystems.intake.IntakeIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
+import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.util.driver.Ryan
@@ -90,7 +91,7 @@ object RobotContainer {
   }
 
   fun zeroSensors() {
-    drivetrain.zeroSensors()
+    drivetrain.currentRequest = DrivetrainRequest.ZeroSensors()
   }
 
   fun zeroAngle(toAngle: Angle) {
