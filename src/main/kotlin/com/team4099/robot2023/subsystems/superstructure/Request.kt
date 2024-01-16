@@ -7,7 +7,6 @@ import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.inches
-import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.perSecond
 
@@ -59,12 +58,9 @@ sealed interface Request {
     class Home : ElevatorRequest
   }
 
-  sealed interface GroundIntakeRequest : Request {
-    class TargetingPosition(val position: Angle, val rollerVoltage: ElectricalPotential) :
-      GroundIntakeRequest
-    class OpenLoop(val voltage: ElectricalPotential, val rollerVoltage: ElectricalPotential) :
-      GroundIntakeRequest
-    class ZeroArm() : GroundIntakeRequest
+  sealed interface IntakeRequest : Request {
+    class OpenLoop(val rollerVoltage: ElectricalPotential) : IntakeRequest
+    class Idle() : IntakeRequest
   }
 
   sealed interface DrivetrainRequest : Request {

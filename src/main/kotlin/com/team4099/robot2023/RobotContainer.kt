@@ -6,23 +6,28 @@ import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOReal
+import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIO
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
-import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
+import com.team4099.robot2023.subsystems.intake.Intake
+import com.team4099.robot2023.subsystems.intake.IntakeIONEO
+import com.team4099.robot2023.subsystems.intake.IntakeIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
-import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
+import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.smoothDeadband
+import org.team4099.lib.units.base.feet
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 
 object RobotContainer {
   private val drivetrain: Drivetrain
+  private val intake: Intake
   private val vision: Vision
   private val limelight: LimelightVision
 
@@ -30,7 +35,8 @@ object RobotContainer {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
-      drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
+      drivetrain = Drivetrain(object : GyroIO {}, object : DrivetrainIO {})
+      intake = Intake(IntakeIONEO)
       vision =
         Vision(
           //          object: CameraIO {}
@@ -45,6 +51,7 @@ object RobotContainer {
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
+      intake = Intake(IntakeIOSim)
       vision =
         Vision(
           CameraIONorthstar("northstar_1"),
@@ -86,7 +93,7 @@ object RobotContainer {
   }
 
   fun zeroSensors() {
-    drivetrain.currentRequest = Request.DrivetrainRequest.ZeroSensors()
+    drivetrain.currentRequest = DrivetrainRequest.ZeroSensors()
   }
 
   fun zeroAngle(toAngle: Angle) {

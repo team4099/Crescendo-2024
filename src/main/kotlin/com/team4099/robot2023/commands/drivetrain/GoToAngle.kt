@@ -3,30 +3,20 @@ package com.team4099.robot2023.commands.drivetrain
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 import edu.wpi.first.wpilibj.RobotBase
-import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.ProfiledPIDController
 import org.team4099.lib.controller.TrapezoidProfile
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.meters
-import org.team4099.lib.units.derived.Angle
-import org.team4099.lib.units.derived.Radian
-import org.team4099.lib.units.derived.degrees
-import org.team4099.lib.units.derived.inDegrees
-import org.team4099.lib.units.derived.inDegreesPerSecondPerDegree
-import org.team4099.lib.units.derived.inDegreesPerSecondPerDegreePerSecond
-import org.team4099.lib.units.derived.inDegreesPerSecondPerDegreeSeconds
-import org.team4099.lib.units.derived.perDegree
-import org.team4099.lib.units.derived.perDegreePerSecond
-import org.team4099.lib.units.derived.perDegreeSeconds
-import org.team4099.lib.units.derived.radians
+import org.team4099.lib.units.derived.*
 import org.team4099.lib.units.inDegreesPerSecond
 import org.team4099.lib.units.perSecond
 import kotlin.math.PI
 
-class GoToAngle(val drivetrain: Drivetrain) : CommandBase() {
+class GoToAngle(val drivetrain: Drivetrain) : Command() {
   private val thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
 
   val thetakP =
@@ -92,8 +82,7 @@ class GoToAngle(val drivetrain: Drivetrain) : CommandBase() {
 
     val thetaFeedback = thetaPID.calculate(drivetrain.odometryPose.rotation, desiredAngle)
 
-    drivetrain.currentRequest =
-      Request.DrivetrainRequest.OpenLoop(
+    drivetrain.currentRequest = DrivetrainRequest.OpenLoop(
         thetaFeedback, Pair(0.0.meters.perSecond, 0.0.meters.perSecond), fieldOriented = true
       )
 
@@ -109,9 +98,8 @@ class GoToAngle(val drivetrain: Drivetrain) : CommandBase() {
   }
 
   override fun end(interrupted: Boolean) {
-    drivetrain.currentRequest =
-      Request.DrivetrainRequest.OpenLoop(
-        0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
-      )
+    drivetrain.currentRequest = DrivetrainRequest.OpenLoop(
+      0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
+    )
   }
 }
