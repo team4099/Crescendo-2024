@@ -56,7 +56,7 @@ sealed interface Request {
       val canContinueBuffer: Length = 5.0.inches
     ) : ElevatorRequest
     class OpenLoop(val voltage: ElectricalPotential) : ElevatorRequest
-    class Home : ElevatorRequest
+    class Home() : ElevatorRequest
   }
 
   sealed interface GroundIntakeRequest : Request {

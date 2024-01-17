@@ -3,7 +3,9 @@ package com.team4099.robot2023.subsystems.elevator
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableNumber
 import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.ElevatorConstants
+import edu.wpi.first.units.Voltage
 import edu.wpi.first.wpilibj.RobotBase
 import com.team4099.robot2023.subsystems.superstructure.Request.ElevatorRequest as ElevatorRequest
 import org.team4099.lib.controller.ElevatorFeedforward
@@ -13,6 +15,9 @@ import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.derived.*
 import org.team4099.lib.units.perSecond
 import org.team4099.lib.units.base.inInches
+import org.littletonrobotics.junction.Logger
+import org.team4099.lib.units.base.inSeconds
+import org.team4099.lib.units.inInchesPerSecond
 import kotlin.time.Duration.Companion.seconds
 
 class Elevator(val io: ElevatorIO) {
@@ -97,7 +102,7 @@ class Elevator(val io: ElevatorIO) {
 
     val forwardLimitReached: Boolean
         get() = inputs.elevatorPosition >= ElevatorConstants.ELEVATOR_SOFT_LIMIT_EXTENSION
-    val reversedLimitReached: Boolean
+    val reverseLimitReached: Boolean
         get() = inputs.elevatorPosition <= ElevatorConstants.ELEVATOR_SOFT_LIMIT_RETRACTION
 
     val forwardOpenLoopLimitReached: Boolean
@@ -134,7 +139,7 @@ class Elevator(val io: ElevatorIO) {
 
     private var timeProfileGeneratedAt = Clock.fpgaTime
 
-    private var lastHomingStatorCurrentTripTime = -9999.seconds
+    private var lastHomingStatorCurrentTripTime = Clock.fpgaTime
 
     // Trapezoidal Profile Constraints
     private var elevatorConstraints: TrapezoidProfile.Constraints<Meter> =
@@ -193,16 +198,132 @@ class Elevator(val io: ElevatorIO) {
     }
 
     fun periodic() {
+        io.updateInputs(inputs)
+        if ((kP.hasChanged()) || (kI.hasChanged()) || (kD.hasChanged())) {
+            io.configPID(kP.get(), kI.get(), kD.get())
+        }
+        Logger.processInputs("Elevator", inputs)
+        Logger.recordOutput("Elevator/currentState", currentState.name)
+        Logger.recordOutput("Elevator/currentRequest", currentRequest.javaClass.simpleName)
+        Logger.recordOutput("Elevator/elevatorHeight", inputs.elevatorPosition - ElevatorConstants.ELEVATOR_GROUND_OFFSET)
+        if (Constants.Tuning.DEBUGING_MODE) {
+            Logger.recordOutput("Elevator/isHomed", isHomed)
+            Logger.recordOutput("Elevator/canContinueSafely", canContinueSafely)
 
+            Logger.recordOutput("Elevator/isAtTargetPosition", isAtTargetedPosition)
+            Logger.recordOutput("Elevator/lastGeneratedAt", timeProfileGeneratedAt.inSeconds)
+
+            Logger.recordOutput("Elevator/elevatorPositionTarget", elevatorPositionTarget.inInches)
+            Logger.recordOutput("Elevator/elevatorVelocityTarget", elevatorVelocityTarget.inInchesPerSecond)
+            Logger.recordOutput("Elevator/elevatorVoltageTarget", elevatorVoltageTarget.inVolts)
+
+            Logger.recordOutput("Elevator/lastElevatorPositionTarget", lastRequestedPosition.inInches)
+            Logger.recordOutput(
+                            "Elevator/lastElevatorVelocityTarget", lastRequestedVelocity.inInchesPerSecond
+                    )
+            Logger.recordOutput("Elevator/lastElevatorVoltageTarget", lastRequestedVoltage.inVolts)
+
+            Logger.recordOutput("Elevator/forwardLimitReached", forwardLimitReached)
+            Logger.recordOutput("Elevator/reverseLimitReached", reverseLimitReached)
+        }
+        var nextState = currentState
+        when (currentState) {
+            ElevatorState.UNINITIALIZED -> {
+                nextState = fromElevatorRequestToState(currentRequest)
+            }
+            ElevatorState.OPEN_LOOP -> {
+                setOutputVoltage(elevatorVoltageTarget)
+                nextState = fromElevatorRequestToState(currentRequest)
+            }
+            ElevatorState.TARGETING_POSITION -> {
+                if ((elevatorPositionTarget != lastRequestedPosition) || (elevatorVelocityTarget != lastRequestedVelocity)) {
+                    val preProfileGenerate = Clock.realTimestamp
+                    elevatorProfile = TrapezoidProfile(elevatorConstraints, TrapezoidProfile.State(elevatorPositionTarget, elevatorVelocityTarget), TrapezoidProfile.State(inputs.elevatorPosition, inputs.elevatorVelocity))
+                    val postProfileGenerate = Clock.realTimestamp
+                    Logger.recordOutput("/Elevator/profileGenerationMS", postProfileGenerate.inSeconds - preProfileGenerate.inSeconds)
+                    Logger.recordOutput("Elevator/initialPosition", elevatorProfile.initial.position.inInches)
+                    Logger.recordOutput("Elevator/initialVelocity", elevatorProfile.initial.velocity.inInchesPerSecond)
+                    timeProfileGeneratedAt = Clock.fpgaTime
+                    lastRequestedPosition = elevatorPositionTarget
+                    lastRequestedVelocity = elevatorVelocityTarget
+                }
+                val timeElapsed = Clock.fpgaTime - timeProfileGeneratedAt
+                val profilePosition = elevatorProfile.calculate(timeElapsed)
+                setPosition(profilePosition)
+                Logger.recordOutput("Elevator/completedMotionProfile", elevatorProfile.isFinished(timeElapsed))
+                Logger.recordOutput("Elevator/profileTargetVelocity", profilePosition.velocity.inInchesPerSecond)
+                Logger.recordOutput("Elevator/profileTargetPosition", profilePosition.position.inInches)
+                nextState = fromElevatorRequestToState(currentRequest)
+                if (! (currentState.equivalentToRequest(currentRequest))) {
+                    lastRequestedVelocity = -999.inches.perSecond
+                    lastRequestedPosition = -999.inches
+                }
+            }
+            ElevatorState.HOME -> {
+                if (inputs.leaderStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT) {
+                    lastHomingStatorCurrentTripTime = Clock.fpgaTime
+                }
+                if (! inputs.isSimulating && (! isHomed && inputs.leaderStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT && Clock.fpgaTime - lastHomingStatorCurrentTripTime < ElevatorConstants.HOMING_STALL_TIME_THRESHOLD)) {
+                    setHomeVoltage(ElevatorConstants.HOMING_APPLIED_VOLTAGE)
+                }
+                else {
+                    zeroEncoder()
+                    isHomed = true
+                }
+                if (isHomed) {
+                    nextState = fromElevatorRequestToState(currentRequest)
+                }
+            }
+        }
+        currentState = nextState
+    }
+
+    fun setOutputVoltage(voltage: ElectricalPotential) {
+        if ((forwardLimitReached) && (voltage > 0.volts) || (reverseLimitReached) && (voltage < 0.volts)) {
+            io.setOutputVoltage(0.volts)
+        }
+        else {
+            io.setOutputVoltage(voltage)
+        }
+    }
+
+    fun setHomeVoltage(voltage: ElectricalPotential) {
+        io.setOutputVoltage(voltage)
+    }
+
+    fun zeroEncoder() {
+        io.zeroEncoder()
+    }
+
+    fun setPosition(setpoint : TrapezoidProfile.State < Meter >) {
+        val elevatorAcceleration = (setpoint.velocity - elevatorSetpoint.velocity) / Constants.Universal.LOOP_PERIOD_TIME
+        elevatorSetpoint = setpoint
+        val feedForward = elevatorFeedforward.calculate(setpoint.velocity, elevatorAcceleration)
+        if ((forwardLimitReached) && (setpoint.position > inputs.elevatorPosition) || (reverseLimitReached) && (setpoint.position < inputs.elevatorPosition)) {
+            io.setOutputVoltage(0.volts)
+        }
+        else {
+            io.setPosition(setpoint.position, feedForward)
+        }
     }
 
     companion object {
         enum class ElevatorState {
             UNINITIALIZED,
-            IDLE,
             TARGETING_POSITION,
             OPEN_LOOP,
-            HOME
+            HOME;
+            inline fun equivalentToRequest(request : ElevatorRequest) : Boolean {
+                return (request is ElevatorRequest.Home && this == HOME) || (request is ElevatorRequest.OpenLoop && this == OPEN_LOOP) || (request is ElevatorRequest.TargetingPosition && this == TARGETING_POSITION)
+            }
+        }
+
+        inline fun fromElevatorRequestToState(request : ElevatorRequest) : ElevatorState {
+            return when(request) {
+                is ElevatorRequest.Home -> ElevatorState.HOME
+                is ElevatorRequest.OpenLoop -> ElevatorState.OPEN_LOOP
+                is ElevatorRequest.TargetingPosition -> ElevatorState.TARGETING_POSITION
+            }
         }
     }
 }

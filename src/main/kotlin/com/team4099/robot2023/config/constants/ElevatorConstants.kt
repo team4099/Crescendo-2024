@@ -1,5 +1,6 @@
 package com.team4099.robot2023.config.constants
 
+import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
@@ -38,4 +39,8 @@ object ElevatorConstants {
     val SHOOT_AMP_POSITION = 0.0.inches
     val SOURCE_NOTE_OFFSET = 0.0.inches
     val ELEVATOR_THETA_POS = 0.0.degrees
+    val HOMING_STATOR_CURRENT = 0.0.amps
+    val HOMING_STALL_TIME_THRESHOLD = 0.0.seconds
+    val HOMING_APPLIED_VOLTAGE = 0.0.volts
+    val ELEVATOR_GROUND_OFFSET = 0.0.inches
 }
