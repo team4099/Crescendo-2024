@@ -56,5 +56,7 @@ object FlywheelConstants {
     val SHOOTER_FLYWHEEL_KD: DerivativeGain<Velocity<Radian>, Volt> =
         0.0.volts / (1.0.rotations.perMinute / 1.0.seconds)
 
-
+    val FLYWHEEL_KS = 0.001.volts
+    val FLYWHEEL_KV = 0.01.volts/ 1.rotations.perMinute
+    val FLYWHEEL_KA = 0.01.volts/ 1.rotations.perMinute.perSecond
 }

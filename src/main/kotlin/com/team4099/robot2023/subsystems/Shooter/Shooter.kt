@@ -20,6 +20,9 @@ class Shooter (val io: ShooterIO){
     //TODO do feedforward
     private var wristFeedforward: SimpleMotorFeedforward<Meter, Volt>
 
+    private var WristFeedforward: SimpleMotorFeedforward<Meter, Volt>(kS,kV,kA)
+
+
 /*
     private val wristflywheelkP =
         LoggedTunableValue("Wrist/kP", Pair({ it.inVoltsPerInch }, { it.volts.perInch }))

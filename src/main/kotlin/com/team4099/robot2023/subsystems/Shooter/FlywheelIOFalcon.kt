@@ -18,7 +18,7 @@ import org.team4099.lib.units.base.*
 import org.team4099.lib.units.ctreAngularMechanismSensor
 import org.team4099.lib.units.derived.*
 
-class FlywheelIOFalcon (private val flywheelFalcon : TalonFX){
+class FlywheelIOFalcon (private val flywheelFalcon : TalonFX) : FlywheelIO{
 
     private val flywheelConfiguration: TalonFXConfiguration = TalonFXConfiguration()
     private val flywheelSensor =

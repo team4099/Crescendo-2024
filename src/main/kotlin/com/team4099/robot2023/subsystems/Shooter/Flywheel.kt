@@ -9,6 +9,7 @@ import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.*
@@ -29,17 +30,17 @@ class Flywheel (val io: FlywheelIO) {
 
     val inputs = FlywheelIO.FlywheelIOInputs()
     private val flywheelkS =
-        LoggedTunableValue("Flywheel/kS", Pair({ it.inVoltsPerRadian }, { it.volts.perRadian })
+        LoggedTunableValue("Flywheel/kS", Pair({ it.inVolts }, { it.volts})
         )
     private val flywheelkV =
         LoggedTunableValue(
-            "Flywheel/kV", Pair({ it.inVoltsPerRadianSeconds }, { it.volts.perRadianSeconds })
+            "Flywheel/kV", Pair({ it.inVoltsPerRotaionPerMinute }, { it.volts.perRotationPerMinute })
         )
     private val flywheelkA =
         LoggedTunableValue(
-            "Flywheel/kA", Pair({ it.inVoltsPerRadianPerSecond}, { it.volts.perRadianPerSecond })
+            "Flywheel/kA", Pair({ it.inVoltsPerRotationPerMinutePerSecond}, { it.volts.perRotationPerMinutePerSecond })
         )
-    val flywheelFeedForward = SimpleMotorFeedforward<Radian, Volt>(flywheelkS, flywheelkV, flywheelkA)
+    val flywheelFeedForward = SimpleMotorFeedforward<Velocity<Radian>, Volt>(flywheelkS.get(), flywheelkV.get(), flywheelkA.get())
 
 
     var flywheelTargetVoltage: ElectricalPotential = 0.0.volts
@@ -69,7 +70,7 @@ init{
             Flywheel.Companion.FlywheelStates.TARGETING_VELOCITY ->{
                 if (flywheelTargetVoltage != lastFlywheelVoltage){
                     val controlEffort: ElectricalPotential = flywheelFeedForward.calculate(desiredVelocity)
-                    io.setFlywheelVelocity()//TODO talk to anshi ab a current velocity var
+                    io.setFlywheelVelocity(inputs.flywheelVelocity, controlEffort)//TODO talk to anshi ab a current velocity var
                     io.setFlywheelVoltage(controlEffort)
                 }
             }
