@@ -11,7 +11,7 @@ import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
 
 interface FeederIO {
-    class FeederIOInputs: LoggableInputs {
+    class FeederIOInputs : LoggableInputs {
         var floorAppliedVoltage = 0.0.volts
         var floorStatorCurrent = 0.0.amps
         var floorSupplyCurrent = 0.0.amps
@@ -62,5 +62,9 @@ interface FeederIO {
         fun setFloorVoltage(voltage: ElectricalPotential) {}
 
         fun setVerticalVoltage(voltage: ElectricalPotential) {}
+    }
+
+    interface FeederIO {
+// >>>>>>> e118fffb0f78577b207b9e5dfbe85eacd9068ce7
     }
 }

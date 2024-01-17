@@ -115,9 +115,11 @@ object Constants {
     const val PIGEON_2_ID = 1
   }
 
-  object Manipulator {
-    const val INTAKE_MOTOR_ID = 51
-    const val ARM_MOTOR_ID = 52
+  object Shooter {
+    const val FLYWHEEL_MOTOR_ID = 51
+    //TODO find wrist motor id
+    const val SHOOTER_WRIST_MOTOR_ID = 999
+    const val FEEDER_MOTOR_ID = 999
   }
 
   object Alert {

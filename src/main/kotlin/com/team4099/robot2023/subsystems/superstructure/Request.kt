@@ -2,9 +2,11 @@ package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.robot2023.config.constants.GamePiece
 import com.team4099.robot2023.config.constants.NodeTier
+import com.team4099.robot2023.subsystems.Shooter.Flywheel
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearVelocity
+import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.derived.Angle
@@ -80,5 +82,22 @@ sealed interface Request {
     ) : DrivetrainRequest
     class ZeroSensors : DrivetrainRequest
     class Idle : DrivetrainRequest
+  }
+  sealed interface ShooterRequest : Request {
+    class OpenLoop(wristVoltage : ElectricalPotential,
+                   //rollerVoltage: ElectricalPotential,
+                   //feederVoltage: ElectricalPotential
+      ):ShooterRequest{}
+    class TargetingPosition (val wristPosition : Angle,
+                             //val flywheelVelocity: AngularVelocity,
+                              //val feederVelocity: AngularVelocity
+                                                        ):ShooterRequest{}
+    class Zero () : ShooterRequest{}
+
+  }
+  sealed interface FlywheelRequest : Request {
+    class OpenLoop (flywheelVoltage: ElectricalPotential):FlywheelRequest{}
+    class TargetingVelocity (flywheelVelocity: AngularVelocity)
+    class Zero ():FlywheelRequest{}
   }
 }
