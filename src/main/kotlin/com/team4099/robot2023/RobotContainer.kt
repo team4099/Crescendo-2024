@@ -137,7 +137,7 @@ object RobotContainer {
 
   fun mapTestControls() {}
 
-  fun getAutonomousCommand() = AutonomousSelector.getCommand(drivetrain)
+  fun getAutonomousCommand() = AutonomousSelector.getCommand(drivetrain, shooter)
 
   fun mapTunableCommands() {}
 }
