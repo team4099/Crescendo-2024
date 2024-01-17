@@ -97,7 +97,7 @@ sealed interface Request {
   }
   sealed interface FlywheelRequest : Request {
     class OpenLoop (flywheelVoltage: ElectricalPotential):FlywheelRequest{}
-    class TargetingVelocity (flywheelVelocity: AngularVelocity)
+    class TargetingVelocity (flywheelVelocity: AngularVelocity) : FlywheelRequest{}
     class Zero ():FlywheelRequest{}
   }
 }

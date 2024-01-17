@@ -31,6 +31,7 @@ class FlywheelIOFalcon (private val flywheelFalcon : TalonFX) : FlywheelIO{
     var flywheelStatorCurrentSignal: StatusSignal<Double>
     var flywheelSupplyCurrentSignal: StatusSignal<Double>
     var flywheelTempSignal: StatusSignal<Double>
+    var flywheelDutyCycle : StatusSignal<Double>
     init {
         flywheelFalcon.configurator.apply(TalonFXConfiguration())
 
@@ -62,6 +63,7 @@ class FlywheelIOFalcon (private val flywheelFalcon : TalonFX) : FlywheelIO{
         flywheelStatorCurrentSignal = flywheelFalcon.statorCurrent
         flywheelSupplyCurrentSignal = flywheelFalcon.supplyCurrent
         flywheelTempSignal = flywheelFalcon.deviceTemp
+        flywheelDutyCycle = flywheelFalcon.dutyCycle
 
         MotorChecker.add(
             "Shooter","Flywheel",
@@ -96,6 +98,13 @@ class FlywheelIOFalcon (private val flywheelFalcon : TalonFX) : FlywheelIO{
             )
     }
 
+    override fun updateInputs(inputs: FlywheelIO.FlywheelIOInputs) {
+        inputs.flywheelVelocity = flywheelSensor.velocity
+        inputs.flywheelAppliedVoltage = flywheelDutyCycle.value.volts
+        inputs.flywheelStatorCurrent = flywheelStatorCurrentSignal.value.amps
+        inputs.flywheelSupplyCurrent = flywheelSupplyCurrentSignal.value.amps
+        inputs.flywheelTempreature = flywheelTempSignal.value.celsius
+    }
 
     override fun setFlywheelBrakeMode(brake: Boolean) {
         val motorOutputConfig = MotorOutputConfigs()

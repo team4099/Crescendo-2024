@@ -7,6 +7,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
+import com.team4099.robot2023.subsystems.superstructure.Request
 import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
@@ -53,7 +54,9 @@ class Flywheel (val io: FlywheelIO) {
     private var hasNote:Boolean = true
     val desiredVelocity: AngularVelocity = 1800.rotations.perMinute
     var currentState = Flywheel.Companion.FlywheelStates.UNINITIALIZED
+    var currentRequest = Request.FlywheelRequest.OpenLoop(FlywheelConstants.FLYWHEEL_INIT_VOLTAGE)
 init{
+    //TODO figure out what else needs to run in the init function
     io.configPID(FlywheelConstants.SHOOTER_FLYWHEEL_KP, FlywheelConstants.SHOOTER_FLYWHEEL_KI, FlywheelConstants.SHOOTER_FLYWHEEL_KD)
 }
     fun periodic(){
@@ -66,16 +69,21 @@ init{
             Flywheel.Companion.FlywheelStates.OPEN_LOOP -> {
                 setFlywheelVoltage(flywheelTargetVoltage)
                 lastFlywheelRunTime = Clock.fpgaTime
+
+                nextState = fromRequestToState(currentRequest)
             }
+            //TODO do sensor logic (mayb ask pranav)
             Flywheel.Companion.FlywheelStates.TARGETING_VELOCITY ->{
                 if (flywheelTargetVoltage != lastFlywheelVoltage){
                     val controlEffort: ElectricalPotential = flywheelFeedForward.calculate(desiredVelocity)
-                    io.setFlywheelVelocity(inputs.flywheelVelocity, controlEffort)//TODO talk to anshi ab a current velocity var
+                    io.setFlywheelVelocity(inputs.flywheelVelocity, controlEffort)
                     io.setFlywheelVoltage(controlEffort)
+                    lastFlywheelRunTime = Clock.fpgaTime
+                    nextState = fromRequestToState(currentRequest)
                 }
             }
             Flywheel.Companion.FlywheelStates.ZERO ->{
-
+                nextState = fromRequestToState(currentRequest)
             }
         }
 
@@ -87,6 +95,14 @@ init{
             ZERO,
             OPEN_LOOP,
             TARGETING_VELOCITY,
+        }
+        inline fun fromRequestToState(request: Request.FlywheelRequest): Flywheel.Companion.FlywheelStates {
+            return when (request) {
+                is Request.FlywheelRequest.OpenLoop -> Flywheel.Companion.FlywheelStates.OPEN_LOOP
+                is Request.FlywheelRequest.TargetingVelocity -> Flywheel.Companion.FlywheelStates.TARGETING_VELOCITY
+                is Request.FlywheelRequest.Zero -> Flywheel.Companion.FlywheelStates.ZERO
+
+            }
         }
     }
 }
