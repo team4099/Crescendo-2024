@@ -115,8 +115,6 @@ interface ShooterIO {
 
         }
     }
-
-
 }
 
     fun updateInputs(inputs: ShooterIOInputs){
