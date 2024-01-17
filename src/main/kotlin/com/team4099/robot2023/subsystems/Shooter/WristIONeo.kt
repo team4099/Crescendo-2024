@@ -6,14 +6,13 @@ import com.revrobotics.SparkMaxPIDController
 import com.team4099.lib.math.clamp
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.ShooterConstants
-import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
 import org.team4099.lib.units.derived.*
 import org.team4099.lib.units.sparkMaxAngularMechanismSensor
 import kotlin.math.absoluteValue
-object ShooterIONeo : ShooterIO{
+object WristIONeo : ShooterIO{
     //private val rollerSparkMax = CANSparkMax(Constants.Shooter.ROLLER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
     //private val rollerSensor = sparkMaxAngularMechanismSensor( rollerSparkMax,
         //ShooterConstants.ROLLER_GEAR_RATIO,
