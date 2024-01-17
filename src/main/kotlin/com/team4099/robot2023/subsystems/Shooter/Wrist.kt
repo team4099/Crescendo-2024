@@ -3,20 +3,18 @@ package com.team4099.robot2023.subsystems.Shooter
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.ShooterConstants
-import com.team4099.robot2023.subsystems.Shooter.ShooterIONeo.setWristPosition
+import com.team4099.robot2023.subsystems.Shooter.WristIONeo.setWristPosition
 import com.team4099.robot2023.subsystems.superstructure.Request
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.controller.TrapezoidProfile
-import org.team4099.lib.units.Velocity
 
-import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.*
 import org.team4099.lib.units.perSecond
 
-class Shooter (val io: ShooterIO){
+class Wrist (val io: ShooterIO){
     val inputs = ShooterIO.ShooterIOInputs()
     //TODO do feedforward
     private val wristkS =
@@ -24,15 +22,15 @@ class Shooter (val io: ShooterIO){
         )
     private val wristlkV =
         LoggedTunableValue(
-            "Wrist/kV", Pair({ it.inVoltsPerRotaionPerMinute }, { it.volts.perRotationPerMinute })
+            "Wrist/kV", Pair({ it.inVoltsPerDegreePerSecond }, { it.volts.perDegreePerSecond })
         )
     private val wristkA =
         LoggedTunableValue(
-            "Wrist/kA", Pair({ it.inVoltsPerRotationPerMinutePerSecond}, { it.volts.perRotationPerMinutePerSecond })
+            "Wrist/kA", Pair({ it.inVoltsPerDegreePerSecond.perSecond}, { it.volts.perDegreePerSecond.perSecond })
         )
-    val flywheelFeedForward = SimpleMotorFeedforward<Radian, Volt>(wristkS.get(), wristlkV.get(), wristkA.get())
+    val wristFeedForward = SimpleMotorFeedforward<Radian, Volt>(wristkS.get(), wristlkV.get(), wristkA.get())
 
-
+    override fun ()
 
 
     private val wristflywheelkP =
@@ -81,7 +79,9 @@ class Shooter (val io: ShooterIO){
             TrapezoidProfile.State(-1337.radians, -1337.radians.perSecond),
             TrapezoidProfile.State(-1337.radians, -1337.radians.perSecond)
         )
+     fun setWristPosition(setPoint : TrapezoidProfile.State<Radian>){
 
+     }
 fun periodic(){
     io.updateInputs(inputs)
     var nextState = currentState
@@ -124,9 +124,11 @@ fun periodic(){
                 Logger.recordOutput("/Shooter/ProfileGenerationMS", postProfileGenerate.inSeconds - preProfileGenerate.inSeconds)
                 timeProfileGeneratedAt = Clock.fpgaTime
                 lastWristPositionTarget = wristPositionTarget
+
             }
             val timeElapsed = Clock.fpgaTime - timeProfileGeneratedAt
-            setWristPosition(wristProfile.calculate(timeElapsed))
+            val setPoint: TrapezoidProfile.State= wristProfile.calculate(timeElapsed)
+            setWristPosition(setPoint)
             //TODO fix this error
             Logger.recordOutput("Shooter/completedMotionProfile", wristProfile.isFinished(timeElapsed))
             nextState = fromRequestToState(currentRequest)

@@ -72,7 +72,7 @@ init{
 
                 nextState = fromRequestToState(currentRequest)
             }
-            //TODO do sensor logic (mayb ask pranav)
+            //TODO do sensor logic (mayb ask p)
             Flywheel.Companion.FlywheelStates.TARGETING_VELOCITY ->{
                 if (flywheelTargetVoltage != lastFlywheelVoltage){
                     val controlEffort: ElectricalPotential = flywheelFeedForward.calculate(desiredVelocity)
