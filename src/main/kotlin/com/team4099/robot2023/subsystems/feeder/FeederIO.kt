@@ -11,7 +11,7 @@ import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
 
 interface FeederIO {
-    class FeederIOInputs : LoggableInputs {
+    class FeederIOInputs: LoggableInputs {
         var floorAppliedVoltage = 0.0.volts
         var floorStatorCurrent = 0.0.amps
         var floorSupplyCurrent = 0.0.amps
@@ -35,36 +35,36 @@ interface FeederIO {
         }
 
         override fun fromLog(table: LogTable?) {
-            table?.getDouble("floorAppliedVoltage", floorAppliedVoltage.inVolts)?.let {
+            table?.get("floorAppliedVoltage", floorAppliedVoltage.inVolts)?.let {
                 floorAppliedVoltage = it.volts
             }
-            table?.getDouble("floorStatorCurrent", floorStatorCurrent.inAmperes)?.let {
+            table?.get("floorStatorCurrent", floorStatorCurrent.inAmperes)?.let {
                 floorStatorCurrent = it.amps
             }
-            table?.getDouble("floorSupplyCurrent", floorSupplyCurrent.inAmperes)?.let {
+            table?.get("floorSupplyCurrent", floorSupplyCurrent.inAmperes)?.let {
                 floorSupplyCurrent = it.amps
             }
-            table?.getDouble("floorTempCelcius", floorTemp.inCelsius)?.let { floorTemp = it.celsius }
-            table?.getDouble("verticalAppliedVoltage", verticalAppliedVoltage.inVolts)?.let {
+            table?.get("floorTempCelcius", floorTemp.inCelsius)?.let { floorTemp = it.celsius }
+            table?.get("verticalAppliedVoltage", verticalAppliedVoltage.inVolts)?.let {
                 verticalAppliedVoltage = it.volts
             }
-            table?.getDouble("verticalStatorCurrent", verticalStatorCurrent.inAmperes)?.let {
+            table?.get("verticalStatorCurrent", verticalStatorCurrent.inAmperes)?.let {
                 verticalStatorCurrent = it.amps
             }
-            table?.getDouble("verticalSupplyCurrent", verticalSupplyCurrent.inAmperes)?.let {
+            table?.get("verticalSupplyCurrent", verticalSupplyCurrent.inAmperes)?.let {
                 verticalSupplyCurrent = it.amps
             }
-            table?.getDouble("verticalTempCelcius", verticalTemp.inCelsius)?.let { verticalTemp = it.celsius }
+            table?.get("verticalTempCelcius", verticalTemp.inCelsius)?.let { verticalTemp = it.celsius }
         }
-
-        fun updateInputs(inputs: FeederIOInputs) {}
-
-        fun setFloorVoltage(voltage: ElectricalPotential) {}
-
-        fun setVerticalVoltage(voltage: ElectricalPotential) {}
     }
 
-    interface FeederIO {
-// >>>>>>> e118fffb0f78577b207b9e5dfbe85eacd9068ce7
-    }
+    fun updateInputs(inputs: FeederIOInputs) {}
+
+    fun setFlywheelVoltage(voltage: ElectricalPotential) {}
+
+    fun setFeederVoltage(voltage: ElectricalPotential) {}
+
+    // fun setFloorVoltage(voltage: ElectricalPotential) {}
+
+    // fun setVerticalVoltage(voltage: ElectricalPotential) {}
 }
