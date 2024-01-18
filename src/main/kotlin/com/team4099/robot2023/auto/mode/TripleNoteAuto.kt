@@ -18,7 +18,6 @@ class TripleNoteAuto(val drivetrain: Drivetrain, val shooter: Shooter) : Sequent
 
         addCommands(
             shooter.commandSpinUp(),
-            WaitCommand(0.25),
             DrivePathCommand(
                 drivetrain,
                 {
@@ -32,16 +31,25 @@ class TripleNoteAuto(val drivetrain: Drivetrain, val shooter: Shooter) : Sequent
                             Translation2d(2.45.meters, 7.00.meters).translation2d,
                             null,
                             0.0.degrees.inRotation2ds
-                        ),
+                        )
+                    )
+                },
+            ),
+            WaitCommand(0.25),
+            DrivePathCommand(
+                drivetrain,
+                {
+                    listOf(
                         Waypoint(
-                                Translation2d(2.45.meters, 5.55.meters).translation2d,
+                            Translation2d(2.45.meters, 7.00.meters).translation2d,
                             null,
                             0.0.degrees.inRotation2ds
                         )
                     )
                 },
-                resetPose = true
+                WaitCommand(0.25),
             )
         )
+        resetPose = true
     }
 }
