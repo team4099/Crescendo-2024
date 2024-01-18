@@ -11,7 +11,7 @@ import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
 
-class FourNoteCenterLineAuto(val drivetrain: Drivetrain, val shooter: Shooter) : SequentialCommandGroup() {
+class FiveNoteCenterLineAuto(val drivetrain: Drivetrain, val shooter: Shooter) : SequentialCommandGroup() {
     init {
         addRequirements(drivetrain, shooter)
 

@@ -12,7 +12,7 @@ import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
 
 // Score preloaded, pick up two notes and score them
-class TripleNoteAuto(val drivetrain: Drivetrain, val shooter: Shooter) : SequentialCommandGroup() {
+class FourNoteAuto(val drivetrain: Drivetrain, val shooter: Shooter) : SequentialCommandGroup() {
     init {
         addRequirements(drivetrain, shooter)
 
