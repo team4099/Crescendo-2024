@@ -14,7 +14,7 @@ import org.team4099.lib.units.derived.inRotation2ds
 //Start subwoofer, Pickup all notes in wing and shoot each one
 class PickupShootWingNotesAutoPath(val drivetrain: Drivetrain, val shooter: Shooter) : SequentialCommandGroup() {
     init {
-        addRequirements(drivetrain)
+        addRequirements(drivetrain, shooter)
 
         addCommands(
             shooter.commandSpinUp(),

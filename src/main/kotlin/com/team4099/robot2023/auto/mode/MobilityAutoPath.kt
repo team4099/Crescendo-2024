@@ -12,7 +12,7 @@ import org.team4099.lib.units.derived.inRotation2ds
 
 class MobilityAutoPath(val drivetrain: Drivetrain, val shooter: Shooter) : SequentialCommandGroup() {
     init {
-        addRequirements(drivetrain)
+        addRequirements(drivetrain, shooter)
 
         addCommands(
             shooter.commandSpinUp(),

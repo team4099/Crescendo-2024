@@ -14,7 +14,7 @@ import org.team4099.lib.units.derived.inRotation2ds
 // Score preloaded, pick up center note and score it
 class CenterNoteAutoPath(val drivetrain: Drivetrain, val shooter: Shooter) : SequentialCommandGroup() {
     init {
-        addRequirements(drivetrain)
+        addRequirements(drivetrain, shooter)
 
         addCommands(
             shooter.commandSpinUp(),
@@ -33,10 +33,13 @@ class CenterNoteAutoPath(val drivetrain: Drivetrain, val shooter: Shooter) : Seq
                             0.0.degrees.inRotation2ds
                         ),
                         WaitCommand(0.25)
+                        )
                     )
                 },
                 resetPose = true
-            )
+            ),
+            WaitCommand(0.25),
+            shooter.commandSpinUp()
         )
     }
 }
