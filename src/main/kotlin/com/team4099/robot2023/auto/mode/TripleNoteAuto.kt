@@ -34,6 +34,7 @@ class TripleNoteAuto(val drivetrain: Drivetrain, val shooter: Shooter) : Sequent
                         )
                     )
                 },
+                resetPose = true
             ),
             InstantCommand({ Thread.sleep(250) }),
             DrivePathCommand(
@@ -47,7 +48,6 @@ class TripleNoteAuto(val drivetrain: Drivetrain, val shooter: Shooter) : Sequent
                         )
                     )
                 },
-                resetPose = true
             )
         )
     }
