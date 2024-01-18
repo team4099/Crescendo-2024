@@ -18,7 +18,6 @@ class PickupShootWingNotesAutoPath(val drivetrain: Drivetrain, val shooter: Shoo
 
         addCommands(
             shooter.commandSpinUp(),
-            WaitCommand(0.25),
             DrivePathCommand(
                 drivetrain,
                 {
@@ -32,20 +31,36 @@ class PickupShootWingNotesAutoPath(val drivetrain: Drivetrain, val shooter: Shoo
                             Translation2d(2.23.meters, 7.01.meters).translation2d,
                             null,
                             -90.0.degrees.inRotation2ds
-                        ),
-                        Waypoint(
-                            Translation2d(2.23.meters, 5.57.meters).translation2d,
-                            null,
-                            -90.0.degrees.inRotation2ds
-                        ),
-                        Waypoint(
-                            Translation2d(2.23.meters, 4.11.meters).translation2d,
-                            null,
-                            -90.0.degrees.inRotation2ds
-                        ),
+                        )
                     )
                 },
                 resetPose = true
+            ),
+            WaitCommand(0.25),
+            DrivePathCommand(
+                drivetrain,
+                {
+                    listOf(
+                        Waypoint(
+                            Translation2d(2.23.meters, 5.57.meters).translation2d,
+                            null,
+                            0.0.degrees.inRotation2ds
+                        )
+                    )
+                },
+            ),
+            WaitCommand(0.25),
+            DrivePathCommand(
+                drivetrain,
+                {
+                    listOf(
+                        Waypoint(
+                            Translation2d(2.23.meters, 4.11.meters).translation2d,
+                            null,
+                            0.0.degrees.inRotation2ds
+                        )
+                    )
+                },
             )
         )
     }

@@ -56,14 +56,14 @@ import java.util.function.Supplier
 import kotlin.math.PI
 
 class DrivePathCommand(
-  val drivetrain: Drivetrain,
-  private val waypoints: Supplier<List<Waypoint>>,
-  val resetPose: Boolean = false,
-  val keepTrapping: Boolean = false,
-  val flipForAlliances: Boolean = true,
-  val endPathOnceAtReference: Boolean = true,
-  val leaveOutYAdjustment: Boolean = false,
-  val endVelocity: Velocity2d = Velocity2d(),
+    val drivetrain: Drivetrain,
+    private val waypoints: () -> Unit,
+    val resetPose: Boolean = false,
+    val keepTrapping: Boolean = false,
+    val flipForAlliances: Boolean = true,
+    val endPathOnceAtReference: Boolean = true,
+    val leaveOutYAdjustment: Boolean = false,
+    val endVelocity: Velocity2d = Velocity2d(),
 ) : Command() {
   private val xPID: PIDController<Meter, Velocity<Meter>>
   private val yPID: PIDController<Meter, Velocity<Meter>>

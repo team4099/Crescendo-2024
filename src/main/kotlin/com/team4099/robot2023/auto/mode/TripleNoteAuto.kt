@@ -4,8 +4,8 @@ import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.commands.drivetrain.DrivePathCommand
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.shooter.Shooter
-import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
@@ -36,7 +36,7 @@ class TripleNoteAuto(val drivetrain: Drivetrain, val shooter: Shooter) : Sequent
                 },
                 resetPose = true
             ),
-            InstantCommand({ Thread.sleep(250) }),
+            WaitCommand(0.25),
             DrivePathCommand(
                 drivetrain,
                 {
