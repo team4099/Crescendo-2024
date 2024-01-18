@@ -33,13 +33,12 @@ class CenterNoteAutoPath(val drivetrain: Drivetrain, val shooter: Shooter) : Seq
                             0.0.degrees.inRotation2ds
                         ),
                         WaitCommand(0.25)
-                        )
                     )
                 },
                 resetPose = true
-            ),
-            WaitCommand(0.25),
-            shooter.commandSpinUp()
-        )
+            )
+        ),
+        WaitCommand(0.25),
+        shooter.commandSpinUp()
     }
 }
