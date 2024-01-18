@@ -27,11 +27,11 @@ interface FeederIO {
             table?.put("floorAppliedVoltage", floorAppliedVoltage.inVolts)
             table?.put("floorStatorCurrent", floorStatorCurrent.inAmperes)
             table?.put("floorSupplyCurrent", floorSupplyCurrent.inAmperes)
-            table?.put("floorTempCelcius", floorTemp.inCelsius)
+            table?.put("floorTempCelsius", floorTemp.inCelsius)
             table?.put("verticalAppliedVoltage", verticalAppliedVoltage.inVolts)
             table?.put("verticalStatorCurrent", verticalStatorCurrent.inAmperes)
             table?.put("verticalSupplyCurrent", verticalSupplyCurrent.inAmperes)
-            table?.put("verticalTempCelcius", verticalTemp.inCelsius)
+            table?.put("verticalTempCelsius", verticalTemp.inCelsius)
         }
 
         override fun fromLog(table: LogTable?) {
@@ -44,7 +44,7 @@ interface FeederIO {
             table?.get("floorSupplyCurrent", floorSupplyCurrent.inAmperes)?.let {
                 floorSupplyCurrent = it.amps
             }
-            table?.get("floorTempCelcius", floorTemp.inCelsius)?.let { floorTemp = it.celsius }
+            table?.get("floorTempCelsius", floorTemp.inCelsius)?.let { floorTemp = it.celsius }
             table?.get("verticalAppliedVoltage", verticalAppliedVoltage.inVolts)?.let {
                 verticalAppliedVoltage = it.volts
             }
@@ -54,7 +54,7 @@ interface FeederIO {
             table?.get("verticalSupplyCurrent", verticalSupplyCurrent.inAmperes)?.let {
                 verticalSupplyCurrent = it.amps
             }
-            table?.get("verticalTempCelcius", verticalTemp.inCelsius)?.let { verticalTemp = it.celsius }
+            table?.get("verticalTempCelsius", verticalTemp.inCelsius)?.let { verticalTemp = it.celsius }
         }
     }
 
