@@ -12,10 +12,21 @@ interface FeederIO {
         var isSimulated = false
 
         override fun toLog(table: LogTable?) {
+<<<<<<< HEAD
             table?.put("feederAppliedVoltage", feederAppliedVoltage.inVolts)
             table?.put("feederStatorCurrent", feederStatorCurrent.inAmperes)
             table?.put("feederSupplyCurrent", feederSupplyCurrent.inAmperes)
             table?.put("feederTempCelcius", feederTemp.inCelsius)
+=======
+            table?.put("floorAppliedVoltage", floorAppliedVoltage.inVolts)
+            table?.put("floorStatorCurrent", floorStatorCurrent.inAmperes)
+            table?.put("floorSupplyCurrent", floorSupplyCurrent.inAmperes)
+            table?.put("floorTempCelsius", floorTemp.inCelsius)
+            table?.put("verticalAppliedVoltage", verticalAppliedVoltage.inVolts)
+            table?.put("verticalStatorCurrent", verticalStatorCurrent.inAmperes)
+            table?.put("verticalSupplyCurrent", verticalSupplyCurrent.inAmperes)
+            table?.put("verticalTempCelsius", verticalTemp.inCelsius)
+>>>>>>> 7184cdc (celsius is spelled wrong :-1:)
         }
 
         override fun fromLog(table: LogTable?) {
@@ -30,10 +41,24 @@ interface FeederIO {
             table?.get("feederSupplyCurrent", feederSupplyCurrent.inAmperes)?.let {
                 feederSupplyCurrent = it.amps
             }
+<<<<<<< HEAD
 
             table?.get("feederTempCelcius", feederTemp.inCelsius)?.let {
                 feederTemp = it.celsius
             }
+=======
+            table?.get("floorTempCelsius", floorTemp.inCelsius)?.let { floorTemp = it.celsius }
+            table?.get("verticalAppliedVoltage", verticalAppliedVoltage.inVolts)?.let {
+                verticalAppliedVoltage = it.volts
+            }
+            table?.get("verticalStatorCurrent", verticalStatorCurrent.inAmperes)?.let {
+                verticalStatorCurrent = it.amps
+            }
+            table?.get("verticalSupplyCurrent", verticalSupplyCurrent.inAmperes)?.let {
+                verticalSupplyCurrent = it.amps
+            }
+            table?.get("verticalTempCelsius", verticalTemp.inCelsius)?.let { verticalTemp = it.celsius }
+>>>>>>> 7184cdc (celsius is spelled wrong :-1:)
         }
     }
 
