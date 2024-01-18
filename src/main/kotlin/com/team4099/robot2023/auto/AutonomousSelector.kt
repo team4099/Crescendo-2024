@@ -1,6 +1,7 @@
 package com.team4099.robot2023.auto
 
 import com.team4099.robot2023.auto.mode.MobilityAutoPath
+import com.team4099.robot2023.auto.mode.PickupShootWingNotesAutoPath
 import com.team4099.robot2023.auto.mode.TestAutoPath
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.shooter.Shooter
@@ -32,6 +33,7 @@ object AutonomousSelector {
 
     autonomousModeChooser.addOption("Test", AutonomousMode.TEST_AUTO_PATH)
     autonomousModeChooser.addOption("Mobility Auto", AutonomousMode.MOBILITY_AUTO_PATH)
+    autonomousModeChooser.addOption("Pickup/Shoot Wing Notes", AutonomousMode.PICKUP_SHOOT_WING_NOTES_PATH)
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
     autoTab.add("Mode", autonomousModeChooser.sendableChooser).withSize(4, 2).withPosition(2, 0)
@@ -66,6 +68,8 @@ object AutonomousSelector {
         return WaitCommand(waitTime.inSeconds).andThen(TestAutoPath(drivetrain))
       AutonomousMode.MOBILITY_AUTO_PATH ->
         return WaitCommand(waitTime.inSeconds).andThen(MobilityAutoPath(drivetrain, shooter))
+      AutonomousMode.PICKUP_SHOOT_WING_NOTES_PATH ->
+        return WaitCommand(waitTime.inSeconds).andThen(PickupShootWingNotesAutoPath(drivetrain, shooter))
       else -> println("ERROR: unexpected auto mode: $mode")
     }
     return InstantCommand()
@@ -73,6 +77,7 @@ object AutonomousSelector {
 
   private enum class AutonomousMode {
     TEST_AUTO_PATH,
-    MOBILITY_AUTO_PATH
+    MOBILITY_AUTO_PATH,
+    PICKUP_SHOOT_WING_NOTES_PATH
   }
 }

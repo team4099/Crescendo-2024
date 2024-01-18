@@ -11,8 +11,8 @@ import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
 
-// Score preloaded, pick up two notes and score them
-class TripleNoteAuto(val drivetrain: Drivetrain, val shooter: Shooter) : SequentialCommandGroup() {
+//Start subwoofer, Pickup all notes in wing and shoot each one
+class PickupShootWingNotesAutoPath(val drivetrain: Drivetrain, val shooter: Shooter) : SequentialCommandGroup() {
     init {
         addRequirements(drivetrain)
 
@@ -24,20 +24,25 @@ class TripleNoteAuto(val drivetrain: Drivetrain, val shooter: Shooter) : Sequent
                 {
                     listOf(
                         Waypoint(
-                            Translation2d(1.35.meters, 5.53.meters).translation2d,
-                            null,
-                            180.degrees.inRotation2ds
-                        ),
-                        Waypoint(
-                            Translation2d(2.45.meters, 7.00.meters).translation2d,
+                            Translation2d(1.53.meters, 5.57.meters).translation2d,
                             null,
                             0.0.degrees.inRotation2ds
                         ),
                         Waypoint(
-                                Translation2d(2.45.meters, 5.55.meters).translation2d,
+                            Translation2d(2.23.meters, 7.01.meters).translation2d,
                             null,
-                            0.0.degrees.inRotation2ds
-                        )
+                            -90.0.degrees.inRotation2ds
+                        ),
+                        Waypoint(
+                            Translation2d(2.23.meters, 5.57.meters).translation2d,
+                            null,
+                            -90.0.degrees.inRotation2ds
+                        ),
+                        Waypoint(
+                            Translation2d(2.23.meters, 4.11.meters).translation2d,
+                            null,
+                            -90.0.degrees.inRotation2ds
+                        ),
                     )
                 },
                 resetPose = true
