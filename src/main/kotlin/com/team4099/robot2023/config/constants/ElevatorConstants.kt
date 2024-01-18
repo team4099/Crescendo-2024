@@ -43,4 +43,7 @@ object ElevatorConstants {
     val HOMING_STALL_TIME_THRESHOLD = 0.0.seconds
     val HOMING_APPLIED_VOLTAGE = 0.0.volts
     val ELEVATOR_GROUND_OFFSET = 0.0.inches
+
+    val LEADER_VOLTAGE = 0.0.volts
+    val LEADER_GEAR_RATIO = 0.0
 }
