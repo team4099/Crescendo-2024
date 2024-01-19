@@ -172,20 +172,31 @@ class FlywheelIOFalcon (private val flywheelRightFalcon: TalonFX, private val fl
         flywheelRightFalcon.configurator.apply(PIDConfig)
         flywheelLeftFalcon.configurator.apply(PIDConfig)
     }
-    override fun setFlywheelVelocity(angularVelocity: AngularVelocity, feedforward: ElectricalPotential){
+    //TODO add left flywheel to this
+    override fun setFlywheelVelocity(rightAngularVelocity: AngularVelocity, leftAngularVelocity: AngularVelocity, feedforward: ElectricalPotential){
         flywheelRightFalcon.setControl(0,
-            flywheelRightSensor.velocityToRawUnits(angularVelocity),
+            flywheelRightSensor.velocityToRawUnits(rightAngularVelocity),
             DemandType.ArbitraryFeedForward,
             feedforward.inVolts
             )
+        flywheelLeftFalcon.setControl(0,
+            flywheelRightSensor.velocityToRawUnits(leftAngularVelocity),
+            DemandType.ArbitraryFeedForward,
+            feedforward.inVolts
+        )
     }
-//TODO create IO for the left falcon
     override fun updateInputs(inputs: FlywheelIO.FlywheelIOInputs) {
-        inputs.flywheelVelocity = flywheelRightSensor.velocity
-        inputs.flywheelAppliedVoltage = rightFlywheelDutyCycle.value.volts
-        inputs.flywheelStatorCurrent = rightFlywheelStatorCurrentSignal.value.amps
-        inputs.flywheelSupplyCurrent = rightFlywheelSupplyCurrentSignal.value.amps
-        inputs.flywheelTempreature = rightFlywheelTempSignal.value.celsius
+        inputs.rightFlywheelVelocity = flywheelRightSensor.velocity
+        inputs.rightFlywheelAppliedVoltage = rightFlywheelDutyCycle.value.volts
+        inputs.rightFlywheelStatorCurrent = rightFlywheelStatorCurrentSignal.value.amps
+        inputs.rightFlywheelSupplyCurrent = rightFlywheelSupplyCurrentSignal.value.amps
+        inputs.rightFlywheelTempreature = rightFlywheelTempSignal.value.celsius
+
+        inputs.leftFlywheelVelocity = flywheelLeftSensor.velocity
+        inputs.leftFlywheelAppliedVoltage = leftFlywheelDutyCycle.value.volts
+        inputs.leftFlywheelStatorCurrent = leftFlywheelStatorCurrentSignal.value.amps
+        inputs.leftFlywheelSupplyCurrent = leftFlywheelSupplyCurrentSignal.value.amps
+        inputs.leftFlywheelTempreature = leftFlywheelTempSignal.value.celsius
     }
 
     override fun setFlywheelBrakeMode(brake: Boolean) {
@@ -196,6 +207,7 @@ class FlywheelIOFalcon (private val flywheelRightFalcon: TalonFX, private val fl
         } else {
             motorOutputConfig.NeutralMode = NeutralModeValue.Coast
         }
+        flywheelRightFalcon.configurator.apply(motorOutputConfig)
         flywheelRightFalcon.configurator.apply(motorOutputConfig)
     }
     override fun zeroEncoder(){
