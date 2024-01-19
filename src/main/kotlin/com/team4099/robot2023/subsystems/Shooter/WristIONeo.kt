@@ -5,14 +5,14 @@ import com.revrobotics.CANSparkMaxLowLevel
 import com.revrobotics.SparkMaxPIDController
 import com.team4099.lib.math.clamp
 import com.team4099.robot2023.config.constants.Constants
-import com.team4099.robot2023.config.constants.ShooterConstants
+import com.team4099.robot2023.config.constants.WristConstants
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
 import org.team4099.lib.units.derived.*
 import org.team4099.lib.units.sparkMaxAngularMechanismSensor
 import kotlin.math.absoluteValue
-object WristIONeo : ShooterIO{
+object WristIONeo : WristIO{
     //private val rollerSparkMax = CANSparkMax(Constants.Shooter.ROLLER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
     //private val rollerSensor = sparkMaxAngularMechanismSensor( rollerSparkMax,
         //ShooterConstants.ROLLER_GEAR_RATIO,
@@ -21,8 +21,8 @@ object WristIONeo : ShooterIO{
 
 private val wristSparkMax = CANSparkMax(Constants.Shooter.SHOOTER_WRIST_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
     private val wristSensor = sparkMaxAngularMechanismSensor( wristSparkMax,
-        ShooterConstants.WRIST_GEAR_RATIO,
-        ShooterConstants.WRIST_VOLTAGE_COMPENSATION
+        WristConstants.WRIST_GEAR_RATIO,
+        WristConstants.WRIST_VOLTAGE_COMPENSATION
     )
     private val wristPIDController : SparkMaxPIDController  = wristSparkMax.pidController
     //private val feederSparkMax = CANSparkMax(Constants.Shooter.FEEDER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
@@ -45,14 +45,14 @@ private val wristSparkMax = CANSparkMax(Constants.Shooter.SHOOTER_WRIST_MOTOR_ID
        // rollerSparkMax.enableVoltageCompensation(ShooterConstants.ROLLER_VOLTAGE_COMPENSATION.inVolts)
         //rollerSparkMax.setSmartCurrentLimit(ShooterConstants.ROLLER_STATOR_CURRENT_LIMIT.inAmperes.toInt())
 
-        wristSparkMax.enableVoltageCompensation(ShooterConstants.WRIST_VOLTAGE_COMPENSATION.inVolts)
-        wristSparkMax.setSmartCurrentLimit(ShooterConstants.WRIST_STATOR_CURRENT_LIMIT.inAmperes.toInt())
+        wristSparkMax.enableVoltageCompensation(WristConstants.WRIST_VOLTAGE_COMPENSATION.inVolts)
+        wristSparkMax.setSmartCurrentLimit(WristConstants.WRIST_STATOR_CURRENT_LIMIT.inAmperes.toInt())
 
        // feederSparkMax.enableVoltageCompensation(ShooterConstants.FEEDER_VOLTAGE_COMPENSATION.inVolts)
        // feederSparkMax.setSmartCurrentLimit(ShooterConstants.FEEDER_STATOR_CURRENT_LIMIT.inAmperes.toInt())
     }
 
-    override fun updateInputs (inputs: ShooterIO.ShooterIOInputs){
+    override fun updateInputs (inputs: WristIO.ShooterIOInputs){
      /*   inputs.rollerVelocity = rollerSensor.velocity
         inputs.rollerAppliedVoltage = rollerSparkMax.busVoltage.volts * rollerSparkMax.appliedOutput
         inputs.rollerStatorCurrent = rollerSparkMax.outputCurrent.amps
@@ -98,8 +98,8 @@ private val wristSparkMax = CANSparkMax(Constants.Shooter.SHOOTER_WRIST_MOTOR_ID
             wristSensor.positionToRawUnits(
                 clamp(
                     position,
-                    ShooterConstants.WRIST_SOFTLIMIT_DOWNWARDSTURN,
-                    ShooterConstants.WRIST_SOFTLIMIT_UPWARDSTURN
+                    WristConstants.WRIST_SOFTLIMIT_DOWNWARDSTURN,
+                    WristConstants.WRIST_SOFTLIMIT_UPWARDSTURN
                 )
             ),
             CANSparkMax.ControlType.kPosition,
@@ -112,8 +112,8 @@ private val wristSparkMax = CANSparkMax(Constants.Shooter.SHOOTER_WRIST_MOTOR_ID
         wristSparkMax.setVoltage(
             clamp(
                 voltage,
-                -ShooterConstants.WRIST_VOLTAGE_COMPENSATION ,
-                ShooterConstants.WRIST_VOLTAGE_COMPENSATION
+                -WristConstants.WRIST_VOLTAGE_COMPENSATION ,
+                WristConstants.WRIST_VOLTAGE_COMPENSATION
             )
                 .inVolts
         )

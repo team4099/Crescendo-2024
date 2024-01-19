@@ -4,12 +4,11 @@ import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.team4099.lib.units.base.*
 import org.team4099.lib.units.derived.*
-import org.team4099.lib.units.inInchesPerSecond
 import org.team4099.lib.units.inRadiansPerSecond
 import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 
-interface ShooterIO {
+interface WristIO {
     class ShooterIOInputs : LoggableInputs {
         var rollerVelocity = 0.rotations.perMinute
         var rollerAppliedVoltage = 0.volts
