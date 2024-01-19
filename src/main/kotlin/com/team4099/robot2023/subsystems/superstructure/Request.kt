@@ -35,14 +35,8 @@ sealed interface Request {
     class Idle : DrivetrainRequest
   }
   sealed interface ShooterRequest : Request {
-    class OpenLoop(wristVoltage : ElectricalPotential,
-                   //rollerVoltage: ElectricalPotential,
-                   //feederVoltage: ElectricalPotential
-      ):ShooterRequest{}
-    class TargetingPosition (val wristPosition : Angle,
-                             //val flywheelVelocity: AngularVelocity,
-                              //val feederVelocity: AngularVelocity
-                                                        ):ShooterRequest{}
+    class OpenLoop(wristVoltage : ElectricalPotential):ShooterRequest{}
+    class TargetingPosition (val wristPosition : Angle):ShooterRequest{}
     class Zero () : ShooterRequest{}
 
   }

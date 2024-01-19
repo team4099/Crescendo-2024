@@ -36,6 +36,7 @@ class Shooter (val io: ShooterIO){
 =======
 class Wrist (val io: WristIO) {
     val inputs = WristIO.ShooterIOInputs()
+<<<<<<< HEAD
     //TODO do feedforward
     /*
 >>>>>>> ae9dec4 (Finished Wrist)
@@ -65,6 +66,8 @@ class Wrist (val io: WristIO) {
         )*/
 
     //val wristFeedForward = singleJointedArmFeedforward<Radian, Volt>(wristkS.get(), wristlkV.get(), wristkA.get())
+=======
+>>>>>>> e450bb5 (Worked on adding a second kraken to flywheel)
 
     var wristFeedForward: ArmFeedforward =
         ArmFeedforward(
@@ -88,50 +91,36 @@ class Wrist (val io: WristIO) {
         )
     var currentState = ShooterStates.UNINITIALIZED
 
-    //var flywheelTargetVoltage : ElectricalPotential= 0.0.volts
-    var wristTargetVoltage: ElectricalPotential = 0.0.volts
-    var feederTargetVoltage: ElectricalPotential = 0.0.volts
 
-    /*  fun setflywheelVoltage(appliedVoltage: ElectricalPotential){
-        io.setflywheelVoltage(appliedVoltage)
-    }*/
+    var wristTargetVoltage: ElectricalPotential = 0.0.volts
+
+
     fun setWristVoltage(appliedVoltage: ElectricalPotential) {
         io.setWristVoltage(appliedVoltage)
     }
 
-    /*fun setFeederVoltage(appliedVoltage: ElectricalPotential){
-        io.setFeederVoltage(appliedVoltage)
-    }*/
-    /*var lastFlywheelRunTime = 0.0.seconds
-    var lastFeederRunTime = 0.0.seconds*/
+
     var lastWristRunTime = 0.0.seconds
     var isZeroed: Boolean = false
-    private var lastflywheelVoltage = 0.0.volts
 
-    //TODO ask what to set this too
     private var wristPositionTarget = 0.0.degrees
     private var lastWristPositionTarget = 0.0.degrees
 
-    /*private var flywheelInitVoltage  = LoggedTunableValue ("Shooter/Initial flywheel Voltage", ShooterConstants.ROLLLER_INIT_VOLTAGE, Pair({it.inVolts}, {it.volts}))
-    private var feederInitVoltage = LoggedTunableValue ("Shooter/Initial Feeder Voltage", ShooterConstants.FEEDER_INIT_VOLTAGE, Pair({it.inVolts},{it.volts}))
-    */private var wristInitVoltage = LoggedTunableValue(
+
+    private var wristInitVoltage = LoggedTunableValue(
         "Shooter/Initial Wrist Voltage",
         WristConstants.WRIST_INIT_VOLTAGE,
         Pair({ it.inVolts }, { it.volts })
     )
     private var timeProfileGeneratedAt = 0.0.seconds
     var currentRequest = Request.ShooterRequest.OpenLoop(
-        WristConstants.WRIST_INIT_VOLTAGE,
-        //ShooterConstants.ROLLLER_INIT_VOLTAGE,
-        //ShooterConstants.FEEDER_INIT_VOLTAGE
-    )
+        WristConstants.WRIST_INIT_VOLTAGE)
     private var wristConstraints: TrapezoidProfile.Constraints<Radian> =
         TrapezoidProfile.Constraints(
             WristConstants.MAX_WRIST_VELOCITY, WristConstants.MAX_WRIST_ACCELERATION
         )
     private var wristProfile =
         TrapezoidProfile(
-            //TODO lets fix this one later
             wristConstraints,
             TrapezoidProfile.State(-1337.radians, -1337.radians.perSecond),
             TrapezoidProfile.State(-1337.radians, -1337.radians.perSecond)
@@ -225,15 +214,9 @@ fun periodic(){
             }
 
             ShooterStates.OPEN_LOOP -> {
-                /*
-            setflywheelVoltage(flywheelTargetVoltage)
-            lastflywheelRunTime = Clock.fpgaTime
-*/
                 setWristVoltage(wristTargetVoltage)
                 lastWristRunTime = Clock.fpgaTime
 
-                /* setFeederVoltage(feederTargetVoltage)
-            lastFeederRunTime = Clock.fpgaTime*/
                 if (isZeroed == true) {
                     nextState = fromRequestToState(currentRequest)
                 }

@@ -73,10 +73,11 @@ init{
                 nextState = fromRequestToState(currentRequest)
             }
             //TODO do sensor logic (mayb ask pranav)
+            //TODO add in the left flywheel to this function mayb ask ab dif ff for motors
             Flywheel.Companion.FlywheelStates.TARGETING_VELOCITY ->{
                 if (flywheelTargetVoltage != lastFlywheelVoltage){
                     val controlEffort: ElectricalPotential = flywheelFeedForward.calculate(desiredVelocity)
-                    io.setFlywheelVelocity(inputs.flywheelVelocity, controlEffort)
+                    io.setFlywheelVelocity(inputs.rightFlywheelVelocity, controlEffort)
                     io.setFlywheelVoltage(controlEffort)
                     lastFlywheelRunTime = Clock.fpgaTime
                     nextState = fromRequestToState(currentRequest)
