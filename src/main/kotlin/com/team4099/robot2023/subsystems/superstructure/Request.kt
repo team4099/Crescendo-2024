@@ -84,7 +84,7 @@ sealed interface Request {
   }
 
   sealed interface FeederRequest : Request {
-    class OpenLoop(flywheelVoltage: ElectricalPotential, feederVoltage: ElectricalPotential): FeederRequest {}
+    class OpenLoop(val feederVoltage: ElectricalPotential, val flywheelVoltage: ElectricalPotential): FeederRequest {}
     class Idle(): FeederRequest {}
   }
 }
