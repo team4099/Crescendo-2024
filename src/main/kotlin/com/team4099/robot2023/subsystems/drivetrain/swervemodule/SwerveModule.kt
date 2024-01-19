@@ -259,6 +259,8 @@ class SwerveModule(val io: SwerveModuleIO) {
         optimizedVelState.speedMetersPerSecond.meters.perSecond,
         optimizedAccelState.speedMetersPerSecond.meters.perSecond.perSecond
       )
+
+
     } else {
       io.setClosedLoop(
         desiredVelState.angle.angle,

@@ -4,9 +4,9 @@ import com.revrobotics.CANSparkMax
 import com.revrobotics.SparkMaxAbsoluteEncoder
 import com.revrobotics.SparkMaxPIDController
 import com.team4099.robot2023.config.constants.DrivetrainConstants
-import org.team4099.lib.units.LinearAcceleration
-import org.team4099.lib.units.LinearVelocity
-import org.team4099.lib.units.Velocity
+import org.littletonrobotics.junction.Logger
+import org.team4099.lib.controller.SimpleMotorFeedforward
+import org.team4099.lib.units.*
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
@@ -20,8 +20,6 @@ import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
-import org.team4099.lib.units.sparkMaxAngularMechanismSensor
-import org.team4099.lib.units.sparkMaxLinearMechanismSensor
 
 class SwerveModuleIONeo(
   private val steeringMotor: CANSparkMax,
@@ -42,6 +40,12 @@ class SwerveModuleIONeo(
       DrivetrainConstants.WHEEL_DIAMETER,
       DrivetrainConstants.DRIVE_COMPENSATION_VOLTAGE
     )
+
+  private val driveFeedForward =
+    SimpleMotorFeedforward(
+      DrivetrainConstants.PID.DRIVE_KS, DrivetrainConstants.PID.DRIVE_KV, DrivetrainConstants.PID.DRIVE_KA
+    )
+
   private val throughBoreEncoder =
     steeringMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
 
@@ -114,7 +118,8 @@ class SwerveModuleIONeo(
     speed: LinearVelocity,
     acceleration: LinearAcceleration
   ) {
-    val feedforward = DrivetrainConstants.PID.DRIVE_KS * speed.sign
+    Logger.recordOutput("${label}/velocitySetPoint", speed.inMetersPerSecond)
+    val feedforward = driveFeedForward.calculate(speed, acceleration)
 
     drivePIDController.setReference(
       driveSensor.velocityToRawUnits(speed),
