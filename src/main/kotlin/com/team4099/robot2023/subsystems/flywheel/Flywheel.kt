@@ -3,7 +3,10 @@ package com.team4099.robot2023.subsystems.flywheel
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.FlywheelConstants
+import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
+import edu.wpi.first.wpilibj.RobotBase
+import org.team4099.lib.controller.ArmFeedforward
 import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.perMinute
@@ -27,18 +30,18 @@ class Flywheel (val io: FlywheelIO) {
 
     val inputs = FlywheelIO.FlywheelIOInputs()
     private val flywheelkS =
-        LoggedTunableValue("Flywheel/kS", Pair({ it.inVolts }, { it.volts})
+        LoggedTunableValue("Flywheel/kS", FlywheelConstants.PID.FLYWHEEL_KS,  Pair({ it.inVolts }, { it.volts})
         )
     private val flywheelkV =
         LoggedTunableValue(
-            "Flywheel/kV", Pair({ it.inVoltsPerRotationsPerMinute }, { it.volts/ 1.0.rotations.perMinute  })
+            "Flywheel/kV", FlywheelConstants.PID.FLYWHEEL_KV, Pair({ it.inVoltsPerRotationsPerMinute }, { it.volts/ 1.0.rotations.perMinute  })
         )
     private val flywheelkA =
         LoggedTunableValue(
-            "Flywheel/kA", Pair({ it.inVoltsPerRotationsPerMinutePerSecond}, { it.volts/ 1.0.rotations.perMinute.perSecond })
+            "Flywheel/kA",  FlywheelConstants.PID.FLYWHEEL_KA, Pair({ it.inVoltsPerRotationsPerMinutePerSecond}, { it.volts/ 1.0.rotations.perMinute.perSecond })
         )
-    val leftFlyWheelFeedForward = SimpleMotorFeedforward<Radian, Volt>(flywheelkS.get(), flywheelkV.get(), flywheelkA.get())
-    val rightFlyWheelFeedForward = SimpleMotorFeedforward<Radian, Volt>(flywheelkS.get(), flywheelkV.get(), flywheelkA.get())
+    var leftFlyWheelFeedForward: SimpleMotorFeedforward<Radian, Volt>
+    var rightFlyWheelFeedForward: SimpleMotorFeedforward<Radian, Volt>
 
 
     var lastFlywheelRunTime = 0.0.seconds
@@ -68,14 +71,45 @@ class Flywheel (val io: FlywheelIO) {
     }
 
     init{
-    //TODO figure out what else needs to run in the init function
+            if (RobotBase.isReal()) {
+                kP.initDefault(FlywheelConstants.PID.REAL_KP)
+                kI.initDefault(FlywheelConstants.PID.REAL_KI)
+                kD.initDefault(FlywheelConstants.PID.REAL_KD)
+            } else {
+                kP.initDefault(FlywheelConstants.PID.SIM_KP)
+                kI.initDefault(FlywheelConstants.PID.SIM_KI)
+                kD.initDefault(FlywheelConstants.PID.SIM_KD)
 
-}
+            }
+
+            leftFlyWheelFeedForward =
+                SimpleMotorFeedforward(
+                    FlywheelConstants.PID.FLYWHEEL_KS,
+                    FlywheelConstants.PID.FLYWHEEL_KV,
+                    FlywheelConstants.PID.FLYWHEEL_KA
+                )
+
+            rightFlyWheelFeedForward =
+                SimpleMotorFeedforward(
+                    FlywheelConstants.PID.FLYWHEEL_KS,
+                    FlywheelConstants.PID.FLYWHEEL_KV,
+                    FlywheelConstants.PID.FLYWHEEL_KA
+                )
+    }
     fun periodic(){
         io.updateInputs(inputs)
         if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
             io.configLeftPID(kP.get(), kI.get(), kD.get())
         }
+
+        if(flywheelkA.hasChanged()||flywheelkV.hasChanged()||flywheelkS.hasChanged()){
+            leftFlyWheelFeedForward = SimpleMotorFeedforward(
+                flywheelkS.get(),
+                flywheelkV.get(),
+                flywheelkA.get()
+            )
+        }
+
         var nextState = currentState
         when (currentState) {
             Companion.FlywheelStates.UNINITIALIZED -> {
