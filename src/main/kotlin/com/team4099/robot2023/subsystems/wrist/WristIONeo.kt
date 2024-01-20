@@ -81,7 +81,7 @@ private val wristSparkMax = CANSparkMax(Constants.Shooter.SHOOTER_WRIST_MOTOR_ID
        // feederSparkMax.setSmartCurrentLimit(ShooterConstants.FEEDER_STATOR_CURRENT_LIMIT.inAmperes.toInt())
     }
 
-    override fun updateInputs (inputs: WristIO.ShooterIOInputs){
+    override fun updateInputs (inputs: WristIO.WristIOInputs){
      /*   inputs.rollerVelocity = rollerSensor.velocity
         inputs.rollerAppliedVoltage = rollerSparkMax.busVoltage.volts * rollerSparkMax.appliedOutput
         inputs.rollerStatorCurrent = rollerSparkMax.outputCurrent.amps
@@ -112,7 +112,7 @@ private val wristSparkMax = CANSparkMax(Constants.Shooter.SHOOTER_WRIST_MOTOR_ID
         inputs.feederSupplyCurrent = inputs.wristStatorCurrent * feederSparkMax.appliedOutput.absoluteValue
         inputs.feederTemperature = feederSparkMax.motorTemperature.celsius*/
     }
-    override fun configWristPID(
+    override fun configPID(
         kP: ProportionalGain<Radian, Volt>,
         kI: IntegralGain<Radian, Volt>,
         kD: DerivativeGain<Radian, Volt>
