@@ -12,6 +12,6 @@ object IntakeConstants {
   const val ROLLER_MOTOR_INVERTED = true
   const val ROLLER_GEAR_RATIO = 24.0 / 12.0 // this one has been updated
 
-  // TODO: Update value
-  val IDLE_ROLLER_VOLTAGE = 2.0.volts
+  // TODO: Update the idle roller voltage later
+  val IDLE_ROLLER_VOLTAGE = 1.0.volts
 }
