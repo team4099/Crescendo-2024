@@ -15,6 +15,10 @@ object ElevatorConstants {
     val REAL_KD = 0.0.volts / (1.inches.perSecond)
 
     val RAMP_RATE = 0.5.percent.perSecond
+    val CARRIAGE_MASS = 20.pounds
+
+    val ELEVATOR_MAX_RETRACTION = 0.0.inches
+    val ELEVATOR_MAX_EXTENSION = 18.0.inches
 
     val LEADER_INVERTED = false
     val FOLLOWER_INVERTED = true
@@ -48,5 +52,19 @@ object ElevatorConstants {
     val HOMING_STALL_TIME_THRESHOLD = 0.0.seconds
     val HOMING_APPLIED_VOLTAGE = 0.0.volts
     val ELEVATOR_GROUND_OFFSET = 0.0.inches
+
+
+    val VOLTAGE_COMPENSATION = 12.0.volts
+    val GEAR_RATIO = 4.0 / 1 * 4.0 / 1
+    val SENSOR_CPR = 0
+    val SPOOL_DIAMETER = 1.5.inches
+
+    val LEADER_SUPPLY_CURRENT_LIMIT = 0.0.amps
+    val LEADER_THRESHOLD_CURRENT_LIMIT = 0.0.amps
+    val LEADER_SUPPLY_TIME_THRESHOLD = 0.0.seconds
+    val LEADER_STATOR_CURRENT_LIMIT = 0.0.amps
+
+    val FOLLOWER_SUPPLY_TIME_THRESHOLD = 0.0.seconds
+    val FOLLOWER_STATOR_CURRENT_LIMIT = 0.0.amps
 
 }

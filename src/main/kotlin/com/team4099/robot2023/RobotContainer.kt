@@ -9,9 +9,9 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIO
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
-import com.team4099.robot2023.subsystems.intake.Intake
-import com.team4099.robot2023.subsystems.intake.IntakeIONEO
-import com.team4099.robot2023.subsystems.intake.IntakeIOSim
+import com.team4099.robot2023.subsystems.elevator.Elevator
+import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
+import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
@@ -27,16 +27,15 @@ import org.team4099.lib.units.derived.degrees
 
 object RobotContainer {
   private val drivetrain: Drivetrain
-  private val intake: Intake
   private val vision: Vision
   private val limelight: LimelightVision
+  private val elevator: Elevator
 
   init {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
       drivetrain = Drivetrain(object : GyroIO {}, object : DrivetrainIO {})
-      intake = Intake(IntakeIONEO)
       vision =
         Vision(
           //          object: CameraIO {}
@@ -48,10 +47,10 @@ object RobotContainer {
           //        CameraIONorthstar("backward")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
+      elevator = Elevator(ElevatorIONEO)
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
-      intake = Intake(IntakeIOSim)
       vision =
         Vision(
           CameraIONorthstar("northstar_1"),
@@ -59,6 +58,7 @@ object RobotContainer {
           CameraIONorthstar("northstar_3"),
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
+      elevator = Elevator(ElevatorIOSim)
     }
 
     vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
@@ -135,6 +135,12 @@ object RobotContainer {
     //        Constants.Universal.Substation.SINGLE_SUBSTATION
     //      )
     //    )
+
+    ControlBoard.elevatorOpenLoopExtend.whileTrue(elevator.testElevatorOpenLoopExtendCommand())
+    ControlBoard.elevatorOpenLoopRetract.whileTrue(elevator.testElevatorOpenLoopRetractCommand())
+    ControlBoard.elevatorClosedLoopHigh.whileTrue(elevator.testElevatorClosedLoopExtendCommand())
+    ControlBoard.elevatorClosedLoopLow.whileTrue(elevator.testElevatorClosedLoopExtendCommand())
+
   }
 
   fun mapTestControls() {}

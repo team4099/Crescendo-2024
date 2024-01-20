@@ -7,6 +7,10 @@ import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.ElevatorConstants
 import edu.wpi.first.units.Voltage
 import edu.wpi.first.wpilibj.RobotBase
+import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.Commands
+import edu.wpi.first.wpilibj2.command.Commands.run
+import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import com.team4099.robot2023.subsystems.superstructure.Request.ElevatorRequest as ElevatorRequest
 import org.team4099.lib.controller.ElevatorFeedforward
 import org.team4099.lib.controller.TrapezoidProfile
@@ -119,7 +123,6 @@ class Elevator(val io: ElevatorIO) {
                 is ElevatorRequest.OpenLoop -> elevatorVoltageTarget = value.voltage
                 is ElevatorRequest.TargetingPosition -> {
                     elevatorPositionTarget = value.position
-                    elevatorVelocityTarget = value.finalVelocity
                 }
                 else -> {}
             }
@@ -325,5 +328,29 @@ class Elevator(val io: ElevatorIO) {
                 is ElevatorRequest.TargetingPosition -> ElevatorState.TARGETING_POSITION
             }
         }
+    }
+
+    fun testElevatorOpenLoopRetractCommand(): Command {
+        return runOnce({
+            currentRequest = ElevatorRequest.OpenLoop(-10.volts)
+        })
+    }
+
+    fun testElevatorOpenLoopExtendCommand(): Command {
+        return runOnce({
+            currentRequest = ElevatorRequest.OpenLoop(10.volts)
+        })
+    }
+
+    fun elevatorClosedLoopRetractCommand(): Command {
+        return runOnce({
+            currentRequest = ElevatorRequest.TargetingPosition(12.inches)
+        })
+    }
+
+    fun testElevatorClosedLoopExtendCommand(): Command {
+        return runOnce({
+            currentRequest = ElevatorRequest.TargetingPosition(4.inches)
+        })
     }
 }

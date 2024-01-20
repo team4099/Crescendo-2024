@@ -26,7 +26,7 @@ import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.sparkMaxLinearMechanismSensor
 import kotlin.math.absoluteValue
 
-object ElevatorIONeo : ElevatorIO {
+object ElevatorIONEO : ElevatorIO {
 
     private val leaderSparkMax =
         CANSparkMax(Constants.Elevator.LEADER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
