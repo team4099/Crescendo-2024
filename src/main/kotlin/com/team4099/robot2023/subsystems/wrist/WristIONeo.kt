@@ -1,4 +1,4 @@
-package com.team4099.robot2023.subsystems.Shooter
+package com.team4099.robot2023.subsystems.wrist
 
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
@@ -14,7 +14,7 @@ import org.team4099.lib.units.derived.*
 import org.team4099.lib.units.sparkMaxAngularMechanismSensor
 import kotlin.math.IEEErem
 import kotlin.math.absoluteValue
-object WristIONeo : WristIO{
+object WristIONeo : WristIO {
     //private val rollerSparkMax = CANSparkMax(Constants.Shooter.ROLLER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
     //private val rollerSensor = sparkMaxAngularMechanismSensor( rollerSparkMax,
         //ShooterConstants.ROLLER_GEAR_RATIO,

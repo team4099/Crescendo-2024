@@ -1,8 +1,7 @@
-package com.team4099.robot2023.subsystems.Shooter
+package com.team4099.robot2023.subsystems.flywheel
 
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
-import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.*
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
@@ -16,13 +15,15 @@ interface FlywheelIO {
         var rightFlywheelAppliedVoltage = 0.volts
         var rightFlywheelStatorCurrent = 0.amps
         var rightFlywheelSupplyCurrent = 0.amps
-        var rightFlywheelTempreature = 0.celsius
+        var rightFlywheelTemperature = 0.celsius
 
         var leftFlywheelVelocity = 0.0.rotations.perMinute
         var leftFlywheelAppliedVoltage = 0.volts
         var leftFlywheelStatorCurrent = 0.amps
         var leftFlywheelSupplyCurrent = 0.amps
-        var leftFlywheelTempreature = 0.celsius
+        var leftFlywheelTemperature = 0.celsius
+
+        var isSimulated = false
 
 
         override fun toLog(table: LogTable) {
@@ -30,13 +31,13 @@ interface FlywheelIO {
             table.put("flywheelRightAppliedVoltage", rightFlywheelAppliedVoltage.inVolts)
             table.put("flywheelRightStatorCurrent", rightFlywheelStatorCurrent.inAmperes)
             table.put("flywheelRightSupplyCurrent", rightFlywheelSupplyCurrent.inAmperes)
-            table.put("flywheelRightTemperature", rightFlywheelTempreature.inCelsius)
+            table.put("flywheelRightTemperature", rightFlywheelTemperature.inCelsius)
 
             table.put("flywheelLeftVelocityRPM", leftFlywheelVelocity.inRadiansPerSecond)
             table.put("flywheelLeftAppliedVoltage", leftFlywheelAppliedVoltage.inVolts)
             table.put("flywheelLeftStatorCurrent", leftFlywheelStatorCurrent.inAmperes)
             table.put("flywheelLeftSupplyCurrent", leftFlywheelSupplyCurrent.inAmperes)
-            table.put("flywheelLeftTemperature", leftFlywheelTempreature.inCelsius)
+            table.put("flywheelLeftTemperature", leftFlywheelTemperature.inCelsius)
         }
 
         override fun fromLog(table: LogTable) {
@@ -54,8 +55,8 @@ interface FlywheelIO {
                 rightFlywheelSupplyCurrent = it.amps
 
             }
-            table.get("rightFlywheelTempreature", rightFlywheelTempreature.inCelsius).let {
-                rightFlywheelTempreature = it.celsius
+            table.get("rightFlywheelTempreature", rightFlywheelTemperature.inCelsius).let {
+                rightFlywheelTemperature = it.celsius
             }
 
             //LeFt motor
@@ -72,8 +73,8 @@ interface FlywheelIO {
                 leftFlywheelSupplyCurrent = it.amps
 
             }
-            table.get("leftFlywheelTempreature", leftFlywheelTempreature.inCelsius).let {
-                leftFlywheelTempreature = it.celsius
+            table.get("leftFlywheelTempreature", leftFlywheelTemperature.inCelsius).let {
+                leftFlywheelTemperature = it.celsius
             }
         }
     }

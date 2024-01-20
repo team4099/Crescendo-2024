@@ -1,4 +1,4 @@
-package com.team4099.robot2023.subsystems.Shooter
+package com.team4099.robot2023.subsystems.wrist
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
@@ -117,7 +117,7 @@ class Wrist (val io: WristIO) {
             field = value
         }
 
-    var currentState: Companion.WristStates = WristStates.UNINITIALIZED
+    var currentState: WristStates = WristStates.UNINITIALIZED
 
     var wristTargetVoltage: ElectricalPotential = 0.0.volts
 
@@ -425,9 +425,9 @@ fun periodic(){
 
             inline fun equivalentToRequest(request: Request.WristRequest): Boolean {
                 return (
-                        (request is Request.WristRequest.Zero && this == WristStates.ZERO) ||
-                        (request is Request.WristRequest.OpenLoop && this == WristStates.OPEN_LOOP) ||
-                                (request is Request.WristRequest.TargetingPosition && this == WristStates.TARGETING_POSITION)
+                        (request is Request.WristRequest.Zero && this == ZERO) ||
+                        (request is Request.WristRequest.OpenLoop && this == OPEN_LOOP) ||
+                                (request is Request.WristRequest.TargetingPosition && this == TARGETING_POSITION)
                         )
             }
 

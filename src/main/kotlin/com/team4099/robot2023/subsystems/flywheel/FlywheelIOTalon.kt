@@ -1,4 +1,4 @@
-package com.team4099.robot2023.subsystems.Shooter
+package com.team4099.robot2023.subsystems.flywheel
 
 import com.ctre.phoenix6.StatusSignal
 import com.ctre.phoenix6.configs.MotorOutputConfigs
@@ -18,7 +18,6 @@ import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.*
 import org.team4099.lib.units.ctreAngularMechanismSensor
 import org.team4099.lib.units.derived.*
-import org.team4099.lib.units.inRotationsPerSecond
 
 object FlywheelIOTalon : FlywheelIO{
     private val flywheelRightTalon: TalonFX =  TalonFX(FLYWHEEL_LEFT_MOTOR_ID)

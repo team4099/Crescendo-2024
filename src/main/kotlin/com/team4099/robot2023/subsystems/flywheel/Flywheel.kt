@@ -1,15 +1,10 @@
-package com.team4099.robot2023.subsystems.Shooter
+package com.team4099.robot2023.subsystems.flywheel
 
-import com.ctre.phoenix6.hardware.TalonFX
-import com.ctre.phoenix6.signals.ControlModeValue
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
-import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FlywheelConstants
-import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.superstructure.Request
 import org.team4099.lib.controller.SimpleMotorFeedforward
-import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
