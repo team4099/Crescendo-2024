@@ -20,7 +20,11 @@ import org.team4099.lib.units.derived.*
 object ElevatorIOKraken: ElevatorIO {
     private val elevatorLeaderKraken: TalonFX = TalonFX(Constants.Elevator.LEADER_MOTOR_ID)
     private val elevatorFollowerKraken: TalonFX = TalonFX(Constants.Elevator.FOLLOWER_MOTOR_ID)
-    private val leaderSensor = ctreLinearMechanismSensor(elevatorLeaderKraken, ElevatorConstants.SENSOR_CPR, ElevatorConstants.GEAR_RATIO, ElevatorConstants.SPOOL_DIAMETER, ElevatorConstants.VOLTAGE_COMPENSATION)
+    private val leaderSensor
+
+
+
+    = ctreLinearMechanismSensor(elevatorLeaderKraken, ElevatorConstants.SENSOR_CPR, ElevatorConstants.GEAR_RATIO, ElevatorConstants.SPOOL_DIAMETER, ElevatorConstants.VOLTAGE_COMPENSATION)
     private val followerSensor = ctreLinearMechanismSensor(elevatorLeaderKraken, ElevatorConstants.SENSOR_CPR, ElevatorConstants.GEAR_RATIO, ElevatorConstants.SPOOL_DIAMETER, ElevatorConstants.VOLTAGE_COMPENSATION)
     private val elevatorLeaderConfiguration: TalonFXConfiguration = TalonFXConfiguration()
     private val elevatorFollowerConfiguration: TalonFXConfiguration = TalonFXConfiguration()
