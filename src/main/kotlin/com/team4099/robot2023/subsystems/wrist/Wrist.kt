@@ -2,97 +2,41 @@ package com.team4099.robot2023.subsystems.wrist
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
-<<<<<<< HEAD
-import com.team4099.robot2023.config.constants.ShooterConstants
-import com.team4099.robot2023.subsystems.Shooter.ShooterIONeo.setWristPosition
-=======
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.WristConstants
->>>>>>> ae9dec4 (Finished Wrist)
 import com.team4099.robot2023.subsystems.superstructure.Request
+import edu.wpi.first.wpilibj.RobotBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.ArmFeedforward
 import org.team4099.lib.controller.TrapezoidProfile
-<<<<<<< HEAD
-import org.team4099.lib.units.Velocity
-=======
 import org.team4099.lib.units.AngularVelocity
->>>>>>> ae9dec4 (Finished Wrist)
 
-import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.*
 import org.team4099.lib.units.inDegreesPerSecond
 import org.team4099.lib.units.perSecond
 
-<<<<<<< HEAD
-class Shooter (val io: ShooterIO){
-    val inputs = ShooterIO.ShooterIOInputs()
-    //TODO do feedforward
-<<<<<<< HEAD
-    private var WristFeedforward: SimpleMotorFeedforward<Radian, Volt>()
-=======
-=======
 class Wrist (val io: WristIO) {
-    val inputs = WristIO.ShooterIOInputs()
-<<<<<<< HEAD
-    //TODO do feedforward
-    /*
->>>>>>> ae9dec4 (Finished Wrist)
-    private val wristkS =
-        LoggedTunableValue("Wrist/kS", Pair({ it.inVolts }, { it.volts})
-        )
-    private val wristlkV =
-        LoggedTunableValue(
-            "Wrist/kV", Pair({ it.inVoltsPerRotaionPerMinute }, { it.volts.perRotationPerMinute })
-        )
-    private val wristkA =
-        LoggedTunableValue(
-<<<<<<< HEAD
-            "Wrist/kA", Pair({ it.inVoltsPerRotationPerMinutePerSecond}, { it.volts.perRotationPerMinutePerSecond })
-        )
-    val flywheelFeedForward = SimpleMotorFeedforward<Radian, Volt>(wristkS.get(), wristlkV.get(), wristkA.get())
-
-
-
->>>>>>> a0de61a (wrote update IO function fo flywheel and started feedforward for wrist)
-
-    private val wristflywheelkP =
-        LoggedTunableValue("Wrist/kP", Pair({ it.inVoltsPerInch }, { it.volts.perInch }))
-    private val wristflywheelkI =
-=======
-            "Wrist/kA", Pair({ it.inVoltsPerDegreePerSecond.perSecond}, { it.volts.perDegreePerSecond.perSecond })
-        )*/
-
-    //val wristFeedForward = singleJointedArmFeedforward<Radian, Volt>(wristkS.get(), wristlkV.get(), wristkA.get())
-=======
->>>>>>> e450bb5 (Worked on adding a second kraken to flywheel)
+    val inputs = WristIO.WristIOInputs()
 
     private val wristkS =
-        LoggedTunableValue("Wrist/kS", Pair({ it.inVolts }, { it.volts})
+        LoggedTunableValue("Wrist/kS",WristConstants.PID.WRIST_KS, Pair({ it.inVolts }, { it.volts})
         )
     private val wristkV =
         LoggedTunableValue(
-            "Wrist/kV", Pair({ it.inVoltsPerDegreePerSecond}, { it.volts.perDegreePerSecond })
+            "Wrist/kV", WristConstants.PID.WRIST_KV, Pair({ it.inVoltsPerDegreePerSecond}, { it.volts.perDegreePerSecond })
         )
     private val wristkA =
         LoggedTunableValue(
-            "Wrist/kA", Pair({ it.inVoltsPerDegreePerSecondPerSecond}, { it.volts.perDegreePerSecondPerSecond }))
-    private val wristkG = LoggedTunableValue("Wrist/kG", Pair({ it.inVolts }, { it.volts} ))
+            "Wrist/kA", WristConstants.PID.WRIST_KA, Pair({ it.inVoltsPerDegreePerSecondPerSecond}, { it.volts.perDegreePerSecondPerSecond }))
+    private val wristkG = LoggedTunableValue("Wrist/kG", WristConstants.PID.WRIST_KG, Pair({ it.inVolts }, { it.volts} ))
 
-    var wristFeedForward: ArmFeedforward = ArmFeedforward(
-            wristkS.get(),
-            wristkG.get(),
-            wristkV.get(),
-            wristkA.get()
-        )
-
+    var wristFeedForward: ArmFeedforward
 
     private val wristkP =
-        LoggedTunableValue("Wrist/kP", Pair({ it.inVoltsPerDegree }, { it.volts.perDegree }))
+        LoggedTunableValue("Wrist/kP",  Pair({ it.inVoltsPerDegree }, { it.volts.perDegree }))
     private val wristkI =
->>>>>>> ae9dec4 (Finished Wrist)
         LoggedTunableValue(
             "Wrist/kI", Pair({ it.inVoltsPerDegreeSeconds }, { it.volts.perDegreeSeconds })
         )
@@ -139,22 +83,7 @@ class Wrist (val io: WristIO) {
             TrapezoidProfile.State(-1337.radians, -1337.radians.perSecond),
             TrapezoidProfile.State(-1337.radians, -1337.radians.perSecond)
         )
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-fun periodic(){
-    io.updateInputs(inputs)
-    var nextState = currentState
-    when (currentState) {
-        ShooterStates.UNINITIALIZED -> {
-            nextState = fromRequestToState(currentRequest)
-        }
-        ShooterStates.ZERO ->{
-            nextState = fromRequestToState(currentRequest)
-=======
-=======
-
->>>>>>> c5552eb (fix shooter stuff)
     private var prevWristSetpoint: TrapezoidProfile.State<Radian> =
         TrapezoidProfile.State(inputs.wristPostion, inputs.wristVelocity)
     val forwardLimitReached: Boolean
@@ -169,11 +98,31 @@ fun periodic(){
     }
 
 
+    init {
+        if (RobotBase.isReal()) {
+            wristkP.initDefault(WristConstants.PID.REAL_KP)
+            wristkI.initDefault(WristConstants.PID.REAL_KI)
+            wristkD.initDefault(WristConstants.PID.REAL_KD)
+        } else {
+            wristkP.initDefault(WristConstants.PID.SIM_KP)
+            wristkI.initDefault(WristConstants.PID.SIM_KI)
+            wristkD.initDefault(WristConstants.PID.SIM_KD)
+
+        }
+
+        wristFeedForward =
+            ArmFeedforward(
+                WristConstants.PID.WRIST_KS,
+                WristConstants.PID.WRIST_KG,
+                WristConstants.PID.WRIST_KV,
+                WristConstants.PID.WRIST_KA
+            )
+    }
 
     fun periodic() {
         io.updateInputs(inputs)
         if (wristkP.hasChanged() || wristkI.hasChanged() || wristkD.hasChanged()) {
-            io.configWristPID(wristkP.get(), wristkI.get(), wristkD.get())
+            io.configPID(wristkP.get(), wristkI.get(), wristkD.get())
         }
         if(wristkA.hasChanged()||wristkV.hasChanged()||wristkG.hasChanged()||wristkS.hasChanged()){
             wristFeedForward = ArmFeedforward(
@@ -272,7 +221,6 @@ fun periodic(){
             io.setWristVoltage(wristFeedForward.calculate(inputs.wristPostion, 0.degrees.perSecond))
         } else {
             io.setWristPosition(setPoint.position, feedforward)
->>>>>>> ae9dec4 (Finished Wrist)
         }
 
         Logger.recordOutput("Wrist/profileIsOutOfBounds", isOutOfBounds(setPoint.velocity))
@@ -292,124 +240,6 @@ fun periodic(){
 
                     )
 
-<<<<<<< HEAD
-    fun periodic() {
-        io.updateInputs(inputs)
-        if (wristkP.hasChanged() || wristkI.hasChanged() || wristkD.hasChanged()) {
-            io.configWristPID(wristkP.get(), wristkI.get(), wristkD.get())
-        }
-        if(wristkA.hasChanged()||wristkV.hasChanged()||wristkG.hasChanged()||wristkS.hasChanged()){
-            wristFeedForward = ArmFeedforward(
-                wristkS.get(),
-                wristkG.get(),
-                wristkV.get(),
-                wristkA.get()
-            )
-        }
-        Logger.processInputs("Wrist", inputs)
-
-        Logger.recordOutput("Wrist/currentState", currentState.name)
-
-        Logger.recordOutput("Wrist/requestedState", currentRequest.javaClass.simpleName)
-
-        Logger.recordOutput("Wrist/isAtTargetedPosition", isAtTargetedPosition)
-
-        Logger.recordOutput("Wrist/isZeroed", isZeroed)
-
-        if (Constants.Tuning.DEBUGING_MODE) {
-
-        }
-
-        var nextState = currentState
-        when (currentState) {
-            ShooterStates.UNINITIALIZED -> {
-                nextState = fromRequestToState(currentRequest)
-            }
-
-            ShooterStates.ZERO -> {
-                nextState = fromRequestToState(currentRequest)
-            }
-
-            ShooterStates.OPEN_LOOP -> {
-                setWristVoltage(wristTargetVoltage)
-                lastWristRunTime = Clock.fpgaTime
-
-                if (isZeroed == true) {
-                    nextState = fromRequestToState(currentRequest)
-                }
-                nextState = fromRequestToState(currentRequest)
-<<<<<<< HEAD
-            }
-            nextState = fromRequestToState(currentRequest)
-
-        }
-
-        ShooterStates.TARGETING_POSITION ->{
-
-            if (wristPositionTarget!=lastWristPositionTarget){
-                val preProfileGenerate = Clock.fpgaTime
-                //TODO figure out how to implment feedforward here.
-                wristProfile = TrapezoidProfile(
-                    wristConstraints,
-                    TrapezoidProfile.State(wristPositionTarget, 0.0.radians.perSecond),
-                    TrapezoidProfile.State(inputs.wristPostion, inputs.wristVelocity)
-                )
-                val postProfileGenerate = Clock.fpgaTime
-                Logger.recordOutput("/Shooter/ProfileGenerationMS", postProfileGenerate.inSeconds - preProfileGenerate.inSeconds)
-                timeProfileGeneratedAt = Clock.fpgaTime
-                lastWristPositionTarget = wristPositionTarget
-            }
-            val timeElapsed = Clock.fpgaTime - timeProfileGeneratedAt
-            setWristPosition( WristFeedforward, wristProfile.calculate(timeElapsed))
-            //TODO fix this error
-            Logger.recordOutput("Shooter/completedMotionProfile", wristProfile.isFinished(timeElapsed))
-            nextState = fromRequestToState(currentRequest)
-        }
-
-=======
-
-            }
-
-            ShooterStates.TARGETING_POSITION -> {
-
-                if (wristPositionTarget != lastWristPositionTarget) {
-                    val preProfileGenerate = Clock.fpgaTime
-                    wristProfile = TrapezoidProfile(
-                        wristConstraints,
-                        TrapezoidProfile.State(wristPositionTarget, 0.0.radians.perSecond),
-                        TrapezoidProfile.State(inputs.wristPostion, inputs.wristVelocity)
-                    )
-                    val postProfileGenerate = Clock.fpgaTime
-                    Logger.recordOutput(
-                        "/Shooter/ProfileGenerationMS",
-                        postProfileGenerate.inSeconds - preProfileGenerate.inSeconds
-                    )
-                    timeProfileGeneratedAt = Clock.fpgaTime
-                    lastWristPositionTarget = wristPositionTarget
-
-                }
-                val timeElapsed = Clock.fpgaTime - timeProfileGeneratedAt
-                val setPoint: TrapezoidProfile.State<Radian> = wristProfile.calculate(timeElapsed)
-                setWristPosition(setPoint)
-                Logger.recordOutput("Shooter/completedMotionProfile", wristProfile.isFinished(timeElapsed))
-                nextState = fromRequestToState(currentRequest)
-                // if we're transitioning out of targeting position, we want to make sure the next time we
-                // enter targeting position, we regenerate profile (even if the arm setpoint is the same as
-                // the previous time we ran it)
-                if (!(currentState.equivalentToRequest(currentRequest))) {
-                    // setting the last target to something unreasonable so the profile is generated next loop
-                    // cycle
-                    lastWristPositionTarget = (-1337).degrees
-
-                }
->>>>>>> ae9dec4 (Finished Wrist)
-
-
-            }
-
-        }
-=======
->>>>>>> c5552eb (fix shooter stuff)
 
     fun setWristVoltage(appliedVoltage: ElectricalPotential) {
         io.setWristVoltage(appliedVoltage)
