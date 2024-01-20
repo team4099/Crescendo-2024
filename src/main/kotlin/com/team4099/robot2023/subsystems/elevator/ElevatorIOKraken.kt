@@ -20,19 +20,19 @@ import org.team4099.lib.units.derived.*
 object ElevatorIOKraken: ElevatorIO {
     private val elevatorLeaderKraken: TalonFX = TalonFX(Constants.Elevator.LEADER_MOTOR_ID)
     private val elevatorFollowerKraken: TalonFX = TalonFX(Constants.Elevator.FOLLOWER_MOTOR_ID)
-    private val leaderSensor = ctreLinearMechanismSensor(elevatorLeaderKraken, ElevatorConstants.LEADER_SENSOR_CPR, ElevatorConstants.LEADER_GEAR_RATIO, ElevatorConstants.LEADER_DIAMETER, ElevatorConstants.LEADER_VOLTAGE)
-    private val followerSensor = ctreLinearMechanismSensor(elevatorLeaderKraken, ElevatorConstants.FOLLOWER_SENSOR_CPR, ElevatorConstants.FOLLOWER_GEAR_RATIO, ElevatorConstants.FOLLOWER_DIAMETER, ElevatorConstants.FOLLOWER_VOLTAGE)
+    private val leaderSensor = ctreLinearMechanismSensor(elevatorLeaderKraken, ElevatorConstants.SENSOR_CPR, ElevatorConstants.GEAR_RATIO, ElevatorConstants.SPOOL_DIAMETER, ElevatorConstants.VOLTAGE_COMPENSATION)
+    private val followerSensor = ctreLinearMechanismSensor(elevatorLeaderKraken, ElevatorConstants.SENSOR_CPR, ElevatorConstants.GEAR_RATIO, ElevatorConstants.SPOOL_DIAMETER, ElevatorConstants.VOLTAGE_COMPENSATION)
     private val elevatorLeaderConfiguration: TalonFXConfiguration = TalonFXConfiguration()
     private val elevatorFollowerConfiguration: TalonFXConfiguration = TalonFXConfiguration()
 
-    lateinit var elevatorLeaderStatorCurrentSignal: StatusSignal<Double>
-    lateinit var elevatorLeaderSupplyCurrentSignal: StatusSignal<Double>
-    lateinit var elevatorLeadertempSignal: StatusSignal<Double>
-    lateinit var elevatorLeaderDutyCycle: StatusSignal<Double>
-    lateinit var elevatorFollowerStatorCurrentSignal: StatusSignal<Double>
-    lateinit var elevatorFollowerSupplyCurrentSignal: StatusSignal<Double>
-    lateinit var elevatorFollowertempSignal: StatusSignal<Double>
-    lateinit var elevatorFollowerDutyCycle: StatusSignal<Double>
+    var elevatorLeaderStatorCurrentSignal: StatusSignal<Double>
+    var elevatorLeaderSupplyCurrentSignal: StatusSignal<Double>
+    var elevatorLeadertempSignal: StatusSignal<Double>
+    var elevatorLeaderDutyCycle: StatusSignal<Double>
+    var elevatorFollowerStatorCurrentSignal: StatusSignal<Double>
+    var elevatorFollowerSupplyCurrentSignal: StatusSignal<Double>
+    var elevatorFollowertempSignal: StatusSignal<Double>
+    var elevatorFollowerDutyCycle: StatusSignal<Double>
 
     init {
         elevatorLeaderKraken.clearStickyFaults()

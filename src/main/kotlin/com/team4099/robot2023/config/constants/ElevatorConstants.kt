@@ -1,9 +1,6 @@
 package com.team4099.robot2023.config.constants
 
-import org.team4099.lib.units.base.amps
-import org.team4099.lib.units.base.inches
-import org.team4099.lib.units.base.meters
-import org.team4099.lib.units.base.seconds
+import org.team4099.lib.units.base.*
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.perInch
 import org.team4099.lib.units.derived.rotations
@@ -16,6 +13,11 @@ object ElevatorConstants {
     val REAL_KP = 0.0.volts / 1.inches
     val REAL_KI = 0.0.volts / (1.inches * 1.seconds)
     val REAL_KD = 0.0.volts / (1.inches.perSecond)
+
+    val RAMP_RATE = 0.5.percent.perSecond
+
+    val LEADER_INVERTED = false
+    val FOLLOWER_INVERTED = true
 
     val SIM_KP = 0.0.volts / 1.inches
     val SIM_KI = 0.0.volts / (1.inches * 1.seconds)
@@ -46,5 +48,5 @@ object ElevatorConstants {
     val HOMING_STALL_TIME_THRESHOLD = 0.0.seconds
     val HOMING_APPLIED_VOLTAGE = 0.0.volts
     val ELEVATOR_GROUND_OFFSET = 0.0.inches
-    
+
 }
