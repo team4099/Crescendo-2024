@@ -12,13 +12,13 @@ import org.team4099.lib.units.perSecond
 import com.ctre.phoenix6.controls.PositionVoltage as PositionVoltagePhoenix6
 
 class PositionVoltage(
-    var position: Angle, // Assuming an AngularPosition type exists similar to AngularVelocity
-    var enableFOC: Boolean = true,
-    var feedforward: ElectricalPotential = 0.0.volts,
-    var slot: Int = 0,
-    var overrideBrakeDurNeutral: Boolean = false,
-    var limitForwardMotion: Boolean = false,
-    var limitReverseMotion: Boolean = false,
+    private var position: Angle, // Assuming an AngularPosition type exists similar to AngularVelocity
+    private var enableFOC: Boolean = true,
+    private var feedforward: ElectricalPotential = 0.0.volts,
+    private var slot: Int = 0,
+    private var overrideBrakeDurNeutral: Boolean = false,
+    private var limitForwardMotion: Boolean = false,
+    private var limitReverseMotion: Boolean = false,
     var velocity: AngularVelocity = 0.0.degrees.perSecond,
 ) {
 
