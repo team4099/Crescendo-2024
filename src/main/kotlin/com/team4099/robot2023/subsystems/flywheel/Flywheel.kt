@@ -6,37 +6,23 @@ import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
 import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.base.seconds
-import org.team4099.lib.units.derived.Radian
-import org.team4099.lib.units.derived.Volt
-import org.team4099.lib.units.derived.inVolts
-import org.team4099.lib.units.derived.volts
-import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
-import org.team4099.lib.units.derived.inVoltsPerRotationsPerMinute
-import org.team4099.lib.units.derived.inVoltsPerRotationsPerMinutePerSecond
-import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.derived.*
 
 class Flywheel (val io: FlywheelIO) {
-    private val leftKP =
-        LoggedTunableValue("Flywheel/kP", FlywheelConstants.SHOOTER_FLYWHEEL_KP)
-    private val leftKI =
+    private val kP =
+        LoggedTunableValue("Flywheel/kP", Pair({ it.inVoltsPerRotationsPerMinute }, { it.volts / 1.0.rotations.perMinute}))
+    private val kI =
         LoggedTunableValue(
-            "Flywheel/kI", FlywheelConstants.SHOOTER_FLYWHEEL_KI)
-    private val leftKD =
+            "Flywheel/kI", Pair({ it.inVoltsPerRotations }, { it.volts / (1.0.rotations.perMinute * 1.0.seconds)})
+        )
+    private val kD =
         LoggedTunableValue(
-            "Flywheel/kD", FlywheelConstants.SHOOTER_FLYWHEEL_KD)
-
-    private val rightKP =
-        LoggedTunableValue("Flywheel/kP", FlywheelConstants.SHOOTER_FLYWHEEL_KP)
-    private val rightKI =
-        LoggedTunableValue(
-            "Flywheel/kI", FlywheelConstants.SHOOTER_FLYWHEEL_KI)
-    private val rightKD =
-        LoggedTunableValue(
-            "Flywheel/kD", FlywheelConstants.SHOOTER_FLYWHEEL_KD)
-
+            "Flywheel/kD",
+            Pair({ it.inVoltsPerRotationsPerMinutePerSecond }, { it.volts / 1.0.rotations.perMinute.perSecond })
+        )
 
 
     val inputs = FlywheelIO.FlywheelIOInputs()
@@ -87,10 +73,8 @@ class Flywheel (val io: FlywheelIO) {
 }
     fun periodic(){
         io.updateInputs(inputs)
-        if (leftKP.hasChanged() || leftKI.hasChanged() || leftKD.hasChanged()
-            ||rightKP.hasChanged() || rightKI.hasChanged() || rightKD.hasChanged()) {
-            io.configLeftPID(leftKP.get(), leftKI.get(), leftKD.get())
-            io.configRightPID(rightKP.get(), rightKI.get(), rightKD.get())
+        if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
+            io.configLeftPID(kP.get(), kI.get(), kD.get())
         }
         var nextState = currentState
         when (currentState) {
