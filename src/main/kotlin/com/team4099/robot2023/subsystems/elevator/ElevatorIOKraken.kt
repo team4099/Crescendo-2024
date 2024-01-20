@@ -1,13 +1,21 @@
 package com.team4099.robot2023.subsystems.elevator
 
 import com.ctre.phoenix6.StatusSignal
+import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
+import com.ctre.phoenix6.controls.PositionDutyCycle
 import com.ctre.phoenix6.hardware.TalonFX
+import com.ctre.phoenix6.signals.NeutralModeValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.ElevatorConstants
-import org.team4099.lib.units.base.inAmperes
-import org.team4099.lib.units.base.inSeconds
+import com.team4099.robot2023.subsystems.falconspin.Falcon500
+import com.team4099.robot2023.subsystems.falconspin.MotorChecker
+import com.team4099.robot2023.subsystems.falconspin.MotorCollection
+import edu.wpi.first.math.controller.PIDController
+import org.team4099.lib.units.Velocity
+import org.team4099.lib.units.base.*
 import org.team4099.lib.units.ctreLinearMechanismSensor
+import org.team4099.lib.units.derived.*
 
 object ElevatorIOKraken: ElevatorIO {
     private val elevatorLeaderKraken: TalonFX = TalonFX(Constants.Elevator.LEADER_MOTOR_ID)
@@ -51,8 +59,56 @@ object ElevatorIOKraken: ElevatorIO {
         elevatorFollowerConfiguration.CurrentLimits.StatorCurrentLimit = ElevatorConstants.FOLLOWER_STATOR_CURRENT_LIMIT.inAmperes
         elevatorFollowerConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
 
+        elevatorLeaderConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
+        elevatorFollowerConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
         elevatorLeaderKraken.configurator.apply(elevatorLeaderConfiguration)
         elevatorFollowerKraken.configurator.apply(elevatorFollowerConfiguration)
+        elevatorLeaderKraken.inverted = true
+        elevatorFollowerKraken.inverted = false
+        MotorChecker.add("Elevator", "Extension", MotorCollection(mutableListOf(
+                Falcon500(elevatorLeaderKraken, "Leader Extension Motor"), (Falcon500(elevatorFollowerKraken, "Follower Extension Motor"))), ElevatorConstants.LEADER_STATOR_CURRENT_LIMIT, 30.celsius, ElevatorConstants.LEADER_STATOR_CURRENT_LIMIT-30.amps, 110.celsius))
+        elevatorLeaderStatorCurrentSignal = elevatorLeaderKraken.statorCurrent
+        elevatorLeaderSupplyCurrentSignal = elevatorLeaderKraken.supplyCurrent
+        elevatorLeadertempSignal = elevatorLeaderKraken.deviceTemp
+        elevatorLeaderDutyCycle = elevatorLeaderKraken.dutyCycle
+        elevatorFollowerStatorCurrentSignal = elevatorFollowerKraken.statorCurrent
+        elevatorFollowerSupplyCurrentSignal = elevatorFollowerKraken.supplyCurrent
+        elevatorFollowertempSignal = elevatorFollowerKraken.deviceTemp
+        elevatorFollowerDutyCycle = elevatorFollowerKraken.dutyCycle
+    }
 
+    override fun configPID(kP: ProportionalGain<Meter, Volt>, kI: IntegralGain<Meter, Volt>, kD: DerivativeGain<Meter, Volt>) {
+        val pidController = Slot0Configs()
+        pidController.kP = leaderSensor.proportionalPositionGainToRawUnits(kP)
+        pidController.kI = leaderSensor.integralPositionGainToRawUnits(kI)
+        pidController.kD = leaderSensor.derivativePositionGainToRawUnits(kD)
+    }
+
+    override fun updateInputs(inputs: ElevatorIO.ElevatorInputs) {
+        inputs.elevatorPosition = leaderSensor.position
+        inputs.elevatorVelocity = leaderSensor.velocity
+        inputs.leaderAppliedVoltage = elevatorLeaderDutyCycle.value.volts
+        inputs.followerAppliedVoltage = elevatorFollowerDutyCycle.value.volts
+        inputs.leaderSupplyCurrent = elevatorLeaderSupplyCurrentSignal.value.amps
+        inputs.leaderStatorCurrent = elevatorLeaderStatorCurrentSignal.value.amps
+        inputs.followerSupplyCurrent = elevatorFollowerSupplyCurrentSignal.value.amps
+        inputs.followerStatorCurrent = elevatorFollowerStatorCurrentSignal.value.amps
+        inputs.leaderTempCelcius = elevatorLeadertempSignal.value.celsius
+        inputs.followerTempCelcius = elevatorFollowertempSignal.value.celsius
+        inputs.leaderRawPosition = leaderSensor.getRawPosition()
+        inputs.followerRawPosition = followerSensor.getRawPosition()
+    }
+
+    override fun setOutputVoltage(voltage: ElectricalPotential) {
+        elevatorLeaderKraken.setVoltage(voltage.inVolts)
+    }
+
+    override fun setPosition(position: Length, feedForward: ElectricalPotential) {
+        elevatorLeaderKraken.setControl(PositionDutyCycle(leaderSensor.positionToRawUnits(position), 0.0, true, feedForward.inVolts, 0, false, false, false))
+    }
+
+    override fun zeroEncoder() {
+        elevatorLeaderKraken.setPosition(0.0)
+        elevatorFollowerKraken.setPosition(0.0)
     }
 }
