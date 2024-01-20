@@ -1,17 +1,10 @@
 package com.team4099.robot2023.subsystems.superstructure
 
-import com.team4099.robot2023.config.constants.GamePiece
-import com.team4099.robot2023.config.constants.NodeTier
-import com.team4099.robot2023.subsystems.Shooter.Flywheel
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearVelocity
-import org.team4099.lib.units.Velocity
-import org.team4099.lib.units.base.Length
-import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.ElectricalPotential
-import org.team4099.lib.units.perSecond
 
 // typealias GroundIntakeRequest = SuperStructureState.GroundIntakeStructure.GroundIntakeRequest
 // typealias GroundIntakeState = SuperStructureState.GroundIntakeStructure.GroundIntakeState

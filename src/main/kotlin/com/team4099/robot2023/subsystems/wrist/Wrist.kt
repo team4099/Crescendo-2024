@@ -5,7 +5,6 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
-import edu.wpi.first.wpilibj.RobotBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.ArmFeedforward
 import org.team4099.lib.controller.TrapezoidProfile
@@ -18,24 +17,30 @@ import org.team4099.lib.units.inDegreesPerSecond
 import org.team4099.lib.units.perSecond
 
 class Wrist (val io: WristIO) {
-    val inputs = WristIO.WristIOInputs()
+    val inputs = WristIO.ShooterIOInputs()
 
     private val wristkS =
-        LoggedTunableValue("Wrist/kS",WristConstants.PID.WRIST_KS, Pair({ it.inVolts }, { it.volts})
+        LoggedTunableValue("Wrist/kS", Pair({ it.inVolts }, { it.volts})
         )
     private val wristkV =
         LoggedTunableValue(
-            "Wrist/kV", WristConstants.PID.WRIST_KV, Pair({ it.inVoltsPerDegreePerSecond}, { it.volts.perDegreePerSecond })
+            "Wrist/kV", Pair({ it.inVoltsPerDegreePerSecond}, { it.volts.perDegreePerSecond })
         )
     private val wristkA =
         LoggedTunableValue(
-            "Wrist/kA", WristConstants.PID.WRIST_KA, Pair({ it.inVoltsPerDegreePerSecondPerSecond}, { it.volts.perDegreePerSecondPerSecond }))
-    private val wristkG = LoggedTunableValue("Wrist/kG", WristConstants.PID.WRIST_KG, Pair({ it.inVolts }, { it.volts} ))
+            "Wrist/kA", Pair({ it.inVoltsPerDegreePerSecondPerSecond}, { it.volts.perDegreePerSecondPerSecond }))
+    private val wristkG = LoggedTunableValue("Wrist/kG", Pair({ it.inVolts }, { it.volts} ))
 
-    var wristFeedForward: ArmFeedforward
+    var wristFeedForward: ArmFeedforward = ArmFeedforward(
+            wristkS.get(),
+            wristkG.get(),
+            wristkV.get(),
+            wristkA.get()
+        )
+
 
     private val wristkP =
-        LoggedTunableValue("Wrist/kP",  Pair({ it.inVoltsPerDegree }, { it.volts.perDegree }))
+        LoggedTunableValue("Wrist/kP", Pair({ it.inVoltsPerDegree }, { it.volts.perDegree }))
     private val wristkI =
         LoggedTunableValue(
             "Wrist/kI", Pair({ it.inVoltsPerDegreeSeconds }, { it.volts.perDegreeSeconds })
@@ -98,31 +103,11 @@ class Wrist (val io: WristIO) {
     }
 
 
-    init {
-        if (RobotBase.isReal()) {
-            wristkP.initDefault(WristConstants.PID.REAL_KP)
-            wristkI.initDefault(WristConstants.PID.REAL_KI)
-            wristkD.initDefault(WristConstants.PID.REAL_KD)
-        } else {
-            wristkP.initDefault(WristConstants.PID.SIM_KP)
-            wristkI.initDefault(WristConstants.PID.SIM_KI)
-            wristkD.initDefault(WristConstants.PID.SIM_KD)
-
-        }
-
-        wristFeedForward =
-            ArmFeedforward(
-                WristConstants.PID.WRIST_KS,
-                WristConstants.PID.WRIST_KG,
-                WristConstants.PID.WRIST_KV,
-                WristConstants.PID.WRIST_KA
-            )
-    }
 
     fun periodic() {
         io.updateInputs(inputs)
         if (wristkP.hasChanged() || wristkI.hasChanged() || wristkD.hasChanged()) {
-            io.configPID(wristkP.get(), wristkI.get(), wristkD.get())
+            io.configWristPID(wristkP.get(), wristkI.get(), wristkD.get())
         }
         if(wristkA.hasChanged()||wristkV.hasChanged()||wristkG.hasChanged()||wristkS.hasChanged()){
             wristFeedForward = ArmFeedforward(
