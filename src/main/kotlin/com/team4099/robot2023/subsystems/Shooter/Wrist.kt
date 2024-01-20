@@ -69,12 +69,23 @@ class Wrist (val io: WristIO) {
 =======
 >>>>>>> e450bb5 (Worked on adding a second kraken to flywheel)
 
-    var wristFeedForward: ArmFeedforward =
-        ArmFeedforward(
-            WristConstants.WRIST_KS,
-            WristConstants.WRRIST_KG,
-            WristConstants.WRIST_KV,
-            WristConstants.WRIST_KA
+    private val wristkS =
+        LoggedTunableValue("Wrist/kS", Pair({ it.inVolts }, { it.volts})
+        )
+    private val wristkV =
+        LoggedTunableValue(
+            "Wrist/kV", Pair({ it.inVoltsPerRotaionPerMinute }, { it.volts.perRotationPerMinute })
+        )
+    private val wristkA =
+        LoggedTunableValue(
+            "Wrist/kA", Pair({ it.inVoltsPerRotationPerMinutePerSecond}, { it.volts.perRotationPerMinutePerSecond }))
+    private val wristkG = LoggedTunableValue("Wrist/kG", Pair({ it.inVolts }, { it.volts} ))
+
+    var wristFeedForward: ArmFeedforward = ArmFeedforward(
+            wristkS.get(),
+            wristkG.get(),
+            wristkV.get(),
+            wristkA.get()
         )
 
 
@@ -188,6 +199,14 @@ fun periodic(){
         io.updateInputs(inputs)
         if (wristkP.hasChanged() || wristkI.hasChanged() || wristkD.hasChanged()) {
             io.configWristPID(wristkP.get(), wristkI.get(), wristkD.get())
+        }
+        if(wristkA.hasChanged()||wristkV.hasChanged()||wristkG.hasChanged()||wristkS.hasChanged()){
+            wristFeedForward = ArmFeedforward(
+                wristkS.get(),
+                wristkG.get(),
+                wristkV.get(),
+                wristkA.get()
+            )
         }
         Logger.processInputs("Wrist", inputs)
 

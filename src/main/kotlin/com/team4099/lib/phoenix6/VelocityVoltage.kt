@@ -12,6 +12,7 @@ import org.team4099.lib.units.inRotationsPerSecondPerSecond
 import org.team4099.lib.units.perSecond
 
 class VelocityVoltage(var velocity: AngularVelocity,
+<<<<<<< HEAD
                            var acceleration: AngularAcceleration = 0.0.degrees.perSecond.perSecond,
                            var enableFOC:Boolean = true,
                            var feedforward: ElectricalPotential = 0.0.volts,
@@ -19,6 +20,15 @@ class VelocityVoltage(var velocity: AngularVelocity,
                            var overrideBrakeDurNeutral: Boolean = false,
                            var limitForwardMotion: Boolean = false,
                            var limitReverseMotion: Boolean = false){
+=======
+                      var acceleration: AngularAcceleration = 0.0.degrees.perSecond.perSecond,
+                      var enableFOC:Boolean = true,
+                      var feedforward: ElectricalPotential = 0.0.volts,
+                      var slot:Int = 0,
+                      var overrideBrakeDurNeutral: Boolean = false,
+                      var limitForwardMotion: Boolean = false,
+                      var limitReverseMotion: Boolean = false){
+>>>>>>> 4abb5a7 (Finshing up flywheel)
 
     val velocityVoltagePhoenix6 = VelocityVoltagePhoenix6(velocity.inRotationsPerSecond, acceleration.inRotationsPerSecondPerSecond, enableFOC, feedforward.inVolts, slot, overrideBrakeDurNeutral, limitForwardMotion, limitReverseMotion)
 
