@@ -20,6 +20,11 @@ import org.team4099.lib.units.perSecond
 
 sealed interface Request {
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> c5552eb (fix shooter stuff)
   sealed interface DrivetrainRequest : Request {
     class OpenLoop(
       val angularVelocity: AngularVelocity,
@@ -34,14 +39,14 @@ sealed interface Request {
     class ZeroSensors : DrivetrainRequest
     class Idle : DrivetrainRequest
   }
-  sealed interface ShooterRequest : Request {
-    class OpenLoop(wristVoltage : ElectricalPotential):ShooterRequest{}
-    class TargetingPosition (val wristPosition : Angle):ShooterRequest{}
-    class Zero () : ShooterRequest{}
+  sealed interface WristRequest : Request {
+    class OpenLoop(val wristVoltage : ElectricalPotential): WristRequest{}
+    class TargetingPosition (val wristPosition : Angle): WristRequest{}
+    class Zero() : WristRequest{}
 
   }
   sealed interface FlywheelRequest : Request {
-    class OpenLoop (flywheelVoltage: ElectricalPotential):FlywheelRequest{}
-    class TargetingVelocity (flywheelVelocity: AngularVelocity) : FlywheelRequest{}
+    class OpenLoop (val leftFlywheelVoltage: ElectricalPotential, val rightFlywheelVoltage: ElectricalPotential): FlywheelRequest{}
+    class TargetingVelocity (val leftFlywheelVelocity: AngularVelocity, val rightFlywheelVelocity: AngularVelocity) : FlywheelRequest{}
   }
 }

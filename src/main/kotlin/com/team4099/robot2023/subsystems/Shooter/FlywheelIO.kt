@@ -11,7 +11,6 @@ import org.team4099.lib.units.base.inCelsius
 import org.team4099.lib.units.derived.*
 
 interface FlywheelIO {
-
     class FlywheelIOInputs : LoggableInputs {
         var rightFlywheelVelocity = 0.0.rotations.perMinute
         var rightFlywheelAppliedVoltage = 0.volts
@@ -31,13 +30,13 @@ interface FlywheelIO {
             table.put("flywheelRightAppliedVoltage", rightFlywheelAppliedVoltage.inVolts)
             table.put("flywheelRightStatorCurrent", rightFlywheelStatorCurrent.inAmperes)
             table.put("flywheelRightSupplyCurrent", rightFlywheelSupplyCurrent.inAmperes)
-            table.put("flywheelRightTempreature", rightFlywheelTempreature.inCelsius)
+            table.put("flywheelRightTemperature", rightFlywheelTempreature.inCelsius)
 
             table.put("flywheelLeftVelocityRPM", leftFlywheelVelocity.inRadiansPerSecond)
             table.put("flywheelLeftAppliedVoltage", leftFlywheelAppliedVoltage.inVolts)
             table.put("flywheelLeftStatorCurrent", leftFlywheelStatorCurrent.inAmperes)
             table.put("flywheelLeftSupplyCurrent", leftFlywheelSupplyCurrent.inAmperes)
-            table.put("flywheelLeftTempreature", leftFlywheelTempreature.inCelsius)
+            table.put("flywheelLeftTemperature", leftFlywheelTempreature.inCelsius)
         }
 
         override fun fromLog(table: LogTable) {
@@ -78,15 +77,27 @@ interface FlywheelIO {
             }
         }
     }
-        fun setFlywheelVoltage(voltage: ElectricalPotential) {
+        fun setLeftFlywheelVoltage(leftVoltage: ElectricalPotential) {
 
         }
 
-        fun setFlywheelVelocity(rightAngularVelocity: AngularVelocity, leftAngularVelocity: AngularVelocity, feedforward: ElectricalPotential) {
+        fun setRightFlywheelVoltage(leftVoltage: ElectricalPotential) {
 
         }
 
-        fun setFlywheelBrakeMode(brake: Boolean) {
+        fun setLeftFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {
+
+        }
+
+        fun setRightFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {
+
+        }
+
+        fun setLeftFlywheelBrakeMode(brake: Boolean) {
+
+        }
+
+        fun setRightFlywheelBrakeMode(brake: Boolean) {
 
         }
 
@@ -94,10 +105,16 @@ interface FlywheelIO {
 
         }
 
-        fun configPID(
-            kP: ProportionalGain<Velocity<Radian>, Volt>,
-            kI: IntegralGain<Velocity<Radian>, Volt>,
-            kD: DerivativeGain<Velocity<Radian>, Volt>
+        fun configLeftPID(
+            leftkP: ProportionalGain<Velocity<Radian>, Volt>,
+            leftkI: IntegralGain<Velocity<Radian>, Volt>,
+            leftkD: DerivativeGain<Velocity<Radian>, Volt>
+        ) {}
+
+        fun configRightPID (
+            rightkP: ProportionalGain<Velocity<Radian>, Volt>,
+            rightkI: IntegralGain<Velocity<Radian>, Volt>,
+            rightkD: DerivativeGain<Velocity<Radian>, Volt>
         ) {}
 
 

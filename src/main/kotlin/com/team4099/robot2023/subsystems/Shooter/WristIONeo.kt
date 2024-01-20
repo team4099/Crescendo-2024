@@ -6,11 +6,13 @@ import com.revrobotics.SparkMaxPIDController
 import com.team4099.lib.math.clamp
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.WristConstants
+import edu.wpi.first.wpilibj.DutyCycleEncoder
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
 import org.team4099.lib.units.derived.*
 import org.team4099.lib.units.sparkMaxAngularMechanismSensor
+import kotlin.math.IEEErem
 import kotlin.math.absoluteValue
 object WristIONeo : WristIO{
     //private val rollerSparkMax = CANSparkMax(Constants.Shooter.ROLLER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
@@ -30,6 +32,33 @@ private val wristSparkMax = CANSparkMax(Constants.Shooter.SHOOTER_WRIST_MOTOR_ID
         //ShooterConstants.FEEDER_GEAR_RATIO,
         //ShooterConstants.FEEDER_VOLTAGE_COMPENSATION
     //)
+
+
+    private val throughBoreEncoder = DutyCycleEncoder(Constants.Intake.REV_ENCODER_PORT)
+
+    private val encoderAbsolutePosition: Angle
+        get() {
+            var output =
+                (
+                        (-throughBoreEncoder.absolutePosition.rotations) *
+                                WristConstants.WRIST_ENCODER_GEAR_RATIO
+                        )
+
+            if (output in (-55).degrees..0.0.degrees) {
+                output -= 180.degrees
+            }
+
+            return output
+        }
+
+    // uses the absolute encoder position to calculate the arm position
+    private val armAbsolutePosition: Angle
+        get() {
+            return (encoderAbsolutePosition - WristConstants.ABSOLUTE_ENCODER_OFFSET).inDegrees
+                .IEEErem(360.0)
+                .degrees
+        }
+
     init{
         //reset the motors
         //rollerSparkMax.restoreFactoryDefaults()
@@ -128,6 +157,6 @@ private val wristSparkMax = CANSparkMax(Constants.Shooter.SHOOTER_WRIST_MOTOR_ID
     }
 
     override fun zeroEncoder() {
-        wristSparkMax.encoder.position = 0.0
+        wristSparkMax.encoder.position = wristSensor.positionToRawUnits(armAbsolutePosition)
     }
 }
