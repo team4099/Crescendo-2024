@@ -46,28 +46,5 @@ object ElevatorConstants {
     val HOMING_STALL_TIME_THRESHOLD = 0.0.seconds
     val HOMING_APPLIED_VOLTAGE = 0.0.volts
     val ELEVATOR_GROUND_OFFSET = 0.0.inches
-
-    val LEADER_VOLTAGE = 0.0.volts
-    val LEADER_GEAR_RATIO = 0.0
-    val LEADER_SENSOR_CPR = 0
-    val LEADER_DIAMETER = 0.0.inches
-    val LEADER_KP = 0.0.volts/1.0.inches.perSecond
-    val LEADER_KI = 0.0.volts/(1.0.inches.perSecond*1.0.seconds)
-    val LEADER_KD = 0.0.volts/(1.0.inches.perSecond/1.0.seconds)
-    val LEADER_SUPPLY_CURRENT_LIMIT = 0.0.amps
-    val LEADER_THRESHOLD_CURRENT_LIMIT = 0.0.amps
-    val LEADER_SUPPLY_TIME_THRESHOLD = 0.0.seconds
-    val LEADER_STATOR_CURRENT_LIMIT = 0.0.amps
-
-    val FOLLOWER_VOLTAGE = 0.0.volts
-    val FOLLOWER_GEAR_RATIO = 0.0
-    val FOLLOWER_SENSOR_CPR = 0
-    val FOLLOWER_DIAMETER = 0.0.inches
-    val FOLLOWER_KP = 0.0.volts/1.0.inches.perSecond
-    val FOLLOWER_KI = 0.0.volts/(1.0.inches.perSecond*1.0.seconds)
-    val FOLLOWER_KD = 0.0.volts/(1.0.inches.perSecond/1.0.seconds)
-    val FOLLOWER_SUPPLY_CURRENT_LIMIT = 0.0.amps
-    val FOLLOWER_THRESHOLD_CURRENT_LIMIT = 0.0.amps
-    val FOLLOWER_SUPPLY_TIME_THRESHOLD = 0.0.seconds
-    val FOLLOWER_STATOR_CURRENT_LIMIT = 0.0.amps
+    
 }
