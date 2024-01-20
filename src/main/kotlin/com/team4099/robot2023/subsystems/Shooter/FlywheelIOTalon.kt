@@ -4,28 +4,28 @@ import com.ctre.phoenix6.StatusSignal
 import com.ctre.phoenix6.configs.MotorOutputConfigs
 import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
+import com.team4099.lib.phoenix6.VelocityVoltage
 import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.NeutralModeValue
-import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
-import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.*
 import org.team4099.lib.units.ctreAngularMechanismSensor
 import org.team4099.lib.units.derived.*
+import org.team4099.lib.units.inRotationsPerSecond
 
-class FlywheelIOFalcon (private val flywheelRightFalcon: TalonFX, private val flywheelLeftFalcon: TalonFX) : FlywheelIO{
+class FlywheelIOTalon (private val flywheelRightTalon: TalonFX, private val flywheelLeftTalon: TalonFX) : FlywheelIO{
 
     private val flywheelRightConfiguration: TalonFXConfiguration = TalonFXConfiguration()
     private val flywheelLeftConfiguration: TalonFXConfiguration = TalonFXConfiguration()
     
     private val flywheelRightSensor =
         ctreAngularMechanismSensor(
-            flywheelRightFalcon,
+            flywheelRightTalon,
             FlywheelConstants.ROLLER_GEAR_RATIO,
             FlywheelConstants.RIGHT_FLYWHEEL_VOLTAGE_COMPENSATION,
 
@@ -33,7 +33,7 @@ class FlywheelIOFalcon (private val flywheelRightFalcon: TalonFX, private val fl
     
     private val flywheelLeftSensor =
         ctreAngularMechanismSensor(
-            flywheelLeftFalcon,
+            flywheelLeftTalon,
             FlywheelConstants.ROLLER_GEAR_RATIO,
             FlywheelConstants.LEFT_FLYWHEEL_VOLTAGE_COMPENSATION,
 
@@ -49,14 +49,14 @@ class FlywheelIOFalcon (private val flywheelRightFalcon: TalonFX, private val fl
     var leftFlywheelTempSignal: StatusSignal<Double>
     var leftFlywheelDutyCycle : StatusSignal<Double>
     init {
-        flywheelRightFalcon.configurator.apply(TalonFXConfiguration())
-        flywheelLeftFalcon.configurator.apply(TalonFXConfiguration())
+        flywheelRightTalon.configurator.apply(TalonFXConfiguration())
+        flywheelLeftTalon.configurator.apply(TalonFXConfiguration())
 
-        flywheelRightFalcon.clearStickyFaults()
-        flywheelRightFalcon.configurator.apply(flywheelRightConfiguration)
+        flywheelRightTalon.clearStickyFaults()
+        flywheelRightTalon.configurator.apply(flywheelRightConfiguration)
 
-        flywheelLeftFalcon.clearStickyFaults()
-        flywheelLeftFalcon.configurator.apply(flywheelLeftConfiguration)
+        flywheelLeftTalon.clearStickyFaults()
+        flywheelLeftTalon.configurator.apply(flywheelLeftConfiguration)
 
         flywheelRightConfiguration.Slot0.kP =
             flywheelRightSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.SHOOTER_FLYWHEEL_KP)
@@ -101,23 +101,23 @@ class FlywheelIOFalcon (private val flywheelRightFalcon: TalonFX, private val fl
         flywheelRightConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
         flywheelLeftConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
 
-        flywheelLeftFalcon.configurator.apply(flywheelRightConfiguration)
-        flywheelRightFalcon.configurator.apply(flywheelLeftConfiguration)
+        flywheelLeftTalon.configurator.apply(flywheelRightConfiguration)
+        flywheelRightTalon.configurator.apply(flywheelLeftConfiguration)
 
-        rightFlywheelStatorCurrentSignal = flywheelRightFalcon.statorCurrent
-        rightFlywheelSupplyCurrentSignal = flywheelRightFalcon.supplyCurrent
-        rightFlywheelTempSignal = flywheelRightFalcon.deviceTemp
-        rightFlywheelDutyCycle = flywheelRightFalcon.dutyCycle
+        rightFlywheelStatorCurrentSignal = flywheelRightTalon.statorCurrent
+        rightFlywheelSupplyCurrentSignal = flywheelRightTalon.supplyCurrent
+        rightFlywheelTempSignal = flywheelRightTalon.deviceTemp
+        rightFlywheelDutyCycle = flywheelRightTalon.dutyCycle
 
-        leftFlywheelStatorCurrentSignal = flywheelLeftFalcon.statorCurrent
-        leftFlywheelSupplyCurrentSignal = flywheelLeftFalcon.supplyCurrent
-        leftFlywheelTempSignal = flywheelLeftFalcon.deviceTemp
-        leftFlywheelDutyCycle = flywheelLeftFalcon.dutyCycle
+        leftFlywheelStatorCurrentSignal = flywheelLeftTalon.statorCurrent
+        leftFlywheelSupplyCurrentSignal = flywheelLeftTalon.supplyCurrent
+        leftFlywheelTempSignal = flywheelLeftTalon.deviceTemp
+        leftFlywheelDutyCycle = flywheelLeftTalon.dutyCycle
 
         MotorChecker.add(
             "Shooter","Flywheel",
             MotorCollection(
-                mutableListOf(Falcon500(flywheelRightFalcon, "Flywheel Right Motor")),
+                mutableListOf(Falcon500(flywheelRightTalon, "Flywheel Right Motor")),
                 FlywheelConstants.RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT,
                 90.celsius,
                 FlywheelConstants.RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT - 30.amps,
@@ -128,7 +128,7 @@ class FlywheelIOFalcon (private val flywheelRightFalcon: TalonFX, private val fl
         MotorChecker.add(
             "Shooter","Flywheel",
             MotorCollection(
-                mutableListOf(Falcon500(flywheelRightFalcon, "Flywheel Right Motor")),
+                mutableListOf(Falcon500(flywheelRightTalon, "Flywheel Right Motor")),
                 FlywheelConstants.RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT,
                 90.celsius,
                 FlywheelConstants.RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT - 30.amps,
@@ -139,7 +139,7 @@ class FlywheelIOFalcon (private val flywheelRightFalcon: TalonFX, private val fl
         MotorChecker.add(
             "Shooter","Flywheel",
             MotorCollection(
-                mutableListOf(Falcon500(flywheelRightFalcon, "Flywheel Right Motor")),
+                mutableListOf(Falcon500(flywheelRightTalon, "Flywheel Right Motor")),
                 FlywheelConstants.RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT,
                 90.celsius,
                 FlywheelConstants.RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT - 30.amps,
@@ -169,21 +169,14 @@ class FlywheelIOFalcon (private val flywheelRightFalcon: TalonFX, private val fl
         PIDConfig.kD = flywheelLeftSensor.derivativeVelocityGainToRawUnits(leftkD)
         PIDConfig.kV = 0.05425
         
-        flywheelRightFalcon.configurator.apply(PIDConfig)
-        flywheelLeftFalcon.configurator.apply(PIDConfig)
+        flywheelRightTalon.configurator.apply(PIDConfig)
+        flywheelLeftTalon.configurator.apply(PIDConfig)
     }
     //TODO add left flywheel to this
     override fun setFlywheelVelocity(rightAngularVelocity: AngularVelocity, leftAngularVelocity: AngularVelocity, feedforward: ElectricalPotential){
-        flywheelRightFalcon.setControl(0,
-            flywheelRightSensor.velocityToRawUnits(rightAngularVelocity),
-            DemandType.ArbitraryFeedForward,
-            feedforward.inVolts
-            )
-        flywheelLeftFalcon.setControl(0,
-            flywheelRightSensor.velocityToRawUnits(leftAngularVelocity),
-            DemandType.ArbitraryFeedForward,
-            feedforward.inVolts
-        )
+        flywheelRightTalon.setControl(VelocityVoltage(rightAngularVelocity, slot = 0, feedforward = feedforward).velocityVoltagePhoenix6)
+
+        flywheelLeftTalon.setControl(VelocityVoltage(leftAngularVelocity, slot = 0, feedforward = feedforward).velocityVoltagePhoenix6)
     }
     override fun updateInputs(inputs: FlywheelIO.FlywheelIOInputs) {
         inputs.rightFlywheelVelocity = flywheelRightSensor.velocity
@@ -207,11 +200,7 @@ class FlywheelIOFalcon (private val flywheelRightFalcon: TalonFX, private val fl
         } else {
             motorOutputConfig.NeutralMode = NeutralModeValue.Coast
         }
-        flywheelRightFalcon.configurator.apply(motorOutputConfig)
-        flywheelRightFalcon.configurator.apply(motorOutputConfig)
-    }
-    override fun zeroEncoder(){
-        //TODO finish zero encoder fun (ask sumone what the encoder for falcon is)
-
+        flywheelRightTalon.configurator.apply(motorOutputConfig)
+        flywheelRightTalon.configurator.apply(motorOutputConfig)
     }
 }

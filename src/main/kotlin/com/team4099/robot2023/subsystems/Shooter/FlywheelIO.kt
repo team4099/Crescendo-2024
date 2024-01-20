@@ -77,7 +77,7 @@ interface FlywheelIO {
                 leftFlywheelTempreature = it.celsius
             }
         }
-
+    }
         fun setFlywheelVoltage(voltage: ElectricalPotential) {
 
         }
@@ -94,17 +94,11 @@ interface FlywheelIO {
 
         }
 
-        fun zeroEncoder() {
-
-        }
-
         fun configPID(
             kP: ProportionalGain<Velocity<Radian>, Volt>,
             kI: IntegralGain<Velocity<Radian>, Volt>,
             kD: DerivativeGain<Velocity<Radian>, Volt>
-        ) {
+        ) {}
 
-        }
 
-    }
 }

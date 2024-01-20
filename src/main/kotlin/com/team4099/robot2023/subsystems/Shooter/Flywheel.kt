@@ -35,7 +35,7 @@ class Flywheel (val io: FlywheelIO) {
         )
     private val flywheelkV =
         LoggedTunableValue(
-            "Flywheel/kV", Pair({ it.inVoltsPerRotaionPerMinute }, { it.volts.perRotationPerMinute })
+            "Flywheel/kV", Pair({ it.inVoltsPerRotaionPerMinute }, { it.volts.perRotation.perMinute })
         )
     private val flywheelkA =
         LoggedTunableValue(
@@ -57,14 +57,17 @@ class Flywheel (val io: FlywheelIO) {
     var currentRequest = Request.FlywheelRequest.OpenLoop(FlywheelConstants.FLYWHEEL_INIT_VOLTAGE)
 init{
     //TODO figure out what else needs to run in the init function
-    io.configPID(FlywheelConstants.SHOOTER_FLYWHEEL_KP, FlywheelConstants.SHOOTER_FLYWHEEL_KI, FlywheelConstants.SHOOTER_FLYWHEEL_KD)
+
 }
     fun periodic(){
         io.updateInputs(inputs)
+        if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
+            io.configPID(kP.get(), kI.get(), kD.get())
+        }
         var nextState = currentState
         when (currentState) {
             Flywheel.Companion.FlywheelStates.UNINITIALIZED -> {
-                nextState = Flywheel.Companion.FlywheelStates.ZERO
+                nextState = Flywheel.Companion.FlywheelStates.OPEN_LOOP
             }
             Flywheel.Companion.FlywheelStates.OPEN_LOOP -> {
                 setFlywheelVoltage(flywheelTargetVoltage)
@@ -72,20 +75,17 @@ init{
 
                 nextState = fromRequestToState(currentRequest)
             }
-            //TODO do sensor logic (mayb ask pranav)
-            //TODO add in the left flywheel to this function mayb ask ab dif ff for motors
+
             Flywheel.Companion.FlywheelStates.TARGETING_VELOCITY ->{
                 if (flywheelTargetVoltage != lastFlywheelVoltage){
                     val controlEffort: ElectricalPotential = flywheelFeedForward.calculate(desiredVelocity)
-                    io.setFlywheelVelocity(inputs.rightFlywheelVelocity, controlEffort)
+                    io.setFlywheelVelocity(inputs.rightFlywheelVelocity, inputs.leftFlywheelVelocity, controlEffort)
                     io.setFlywheelVoltage(controlEffort)
                     lastFlywheelRunTime = Clock.fpgaTime
                     nextState = fromRequestToState(currentRequest)
                 }
             }
-            Flywheel.Companion.FlywheelStates.ZERO ->{
-                nextState = fromRequestToState(currentRequest)
-            }
+
         }
 
     }
@@ -93,7 +93,6 @@ init{
     companion object {
         enum class FlywheelStates {
             UNINITIALIZED,
-            ZERO,
             OPEN_LOOP,
             TARGETING_VELOCITY,
         }
@@ -101,8 +100,6 @@ init{
             return when (request) {
                 is Request.FlywheelRequest.OpenLoop -> Flywheel.Companion.FlywheelStates.OPEN_LOOP
                 is Request.FlywheelRequest.TargetingVelocity -> Flywheel.Companion.FlywheelStates.TARGETING_VELOCITY
-                is Request.FlywheelRequest.Zero -> Flywheel.Companion.FlywheelStates.ZERO
-
             }
         }
     }
