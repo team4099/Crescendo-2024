@@ -62,6 +62,5 @@ interface FeederIO {
 
     // fun setFloorVoltage(voltage: ElectricalPotential) {}
 
-
     // fun setVerticalVoltage(voltage: ElectricalPotential) {}
 }
