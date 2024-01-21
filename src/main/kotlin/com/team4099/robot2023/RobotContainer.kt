@@ -14,16 +14,14 @@ import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
-import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
-import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.smoothDeadband
-import org.team4099.lib.units.base.feet
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
+import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -140,7 +138,6 @@ object RobotContainer {
     ControlBoard.elevatorOpenLoopRetract.whileTrue(elevator.testElevatorOpenLoopRetractCommand())
     ControlBoard.elevatorClosedLoopHigh.whileTrue(elevator.testElevatorClosedLoopExtendCommand())
     ControlBoard.elevatorClosedLoopLow.whileTrue(elevator.testElevatorClosedLoopExtendCommand())
-
   }
 
   fun mapTestControls() {}

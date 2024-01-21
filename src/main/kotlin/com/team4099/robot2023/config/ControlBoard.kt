@@ -98,8 +98,8 @@ object ControlBoard {
   // for testing
   val setArmCommand = Trigger { technician.yButton }
 
-  val elevatorOpenLoopExtend = Trigger {driver.aButton}
-  val elevatorOpenLoopRetract = Trigger {driver.bButton}
-  val elevatorClosedLoopHigh = Trigger {driver.xButton}
-  val elevatorClosedLoopLow = Trigger { driver.yButton}
+  val elevatorOpenLoopExtend = Trigger { driver.aButton }
+  val elevatorOpenLoopRetract = Trigger { driver.bButton }
+  val elevatorClosedLoopHigh = Trigger { driver.xButton }
+  val elevatorClosedLoopLow = Trigger { driver.yButton }
 }
