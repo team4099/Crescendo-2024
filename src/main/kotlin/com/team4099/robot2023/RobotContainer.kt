@@ -9,23 +9,29 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIO
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
+import com.team4099.robot2023.subsystems.flywheel.Flywheel
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
-import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
+import com.team4099.robot2023.subsystems.wrist.Wrist
+import com.team4099.robot2023.subsystems.wrist.WristIONeo
+import com.team4099.robot2023.subsystems.wrist.WristIOSim
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
-import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.smoothDeadband
-import org.team4099.lib.units.base.feet
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
+import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 object RobotContainer {
   private val drivetrain: Drivetrain
   private val vision: Vision
   private val limelight: LimelightVision
+  private val flywheel: Flywheel
+  private val wrist: Wrist
 
   init {
     if (RobotBase.isReal()) {
@@ -43,6 +49,9 @@ object RobotContainer {
           //        CameraIONorthstar("backward")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
+
+      flywheel = Flywheel(FlywheelIOTalon)
+      wrist = Wrist(WristIONeo)
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
@@ -53,6 +62,8 @@ object RobotContainer {
           CameraIONorthstar("northstar_3"),
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
+      flywheel = Flywheel(FlywheelIOSim)
+      wrist = Wrist(WristIOSim)
     }
 
     vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
@@ -129,6 +140,14 @@ object RobotContainer {
     //        Constants.Universal.Substation.SINGLE_SUBSTATION
     //      )
     //    )
+
+    ControlBoard.resetFlywheel.whileTrue(flywheel.flywheelResetCommand())
+    ControlBoard.spinUpFlywheel.whileTrue(flywheel.flywheelSpinUpCommand())
+    ControlBoard.openLoopFlywheel.whileTrue(flywheel.flywheelOpenLoopCommand())
+
+    ControlBoard.resetWrist.whileTrue(wrist.wristResetCommand())
+    ControlBoard.spinUpWrist.whileTrue(wrist.wristPositionCommand())
+    ControlBoard.openLoopWrist.whileTrue(wrist.wristOpenLoopCommand())
   }
 
   fun mapTestControls() {}

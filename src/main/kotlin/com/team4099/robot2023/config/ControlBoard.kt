@@ -97,4 +97,16 @@ object ControlBoard {
 
   // for testing
   val setArmCommand = Trigger { technician.yButton }
+
+  val resetFlywheel = Trigger { driver.aButton }
+
+  val openLoopFlywheel = Trigger { driver.bButton }
+
+  val spinUpFlywheel = Trigger { driver.xButton }
+
+  val resetWrist = Trigger { operator.aButton }
+
+  val openLoopWrist = Trigger { operator.bButton }
+
+  val spinUpWrist = Trigger { operator.xButton }
 }

@@ -13,8 +13,6 @@ import org.team4099.lib.units.derived.ElectricalPotential
 
 sealed interface Request {
 
-
-
   sealed interface DrivetrainRequest : Request {
     class OpenLoop(
       val angularVelocity: AngularVelocity,
@@ -30,13 +28,12 @@ sealed interface Request {
     class Idle : DrivetrainRequest
   }
   sealed interface WristRequest : Request {
-    class OpenLoop(val wristVoltage : ElectricalPotential): WristRequest{}
-    class TargetingPosition (val wristPosition : Angle): WristRequest{}
-    class Zero() : WristRequest{}
-
+    class OpenLoop(val wristVoltage: ElectricalPotential) : WristRequest
+    class TargetingPosition(val wristPosition: Angle) : WristRequest
+    class Zero() : WristRequest
   }
   sealed interface FlywheelRequest : Request {
-    class OpenLoop (val leftFlywheelVoltage: ElectricalPotential, val rightFlywheelVoltage: ElectricalPotential): FlywheelRequest{}
-    class TargetingVelocity (val leftFlywheelVelocity: AngularVelocity, val rightFlywheelVelocity: AngularVelocity) : FlywheelRequest{}
+    class OpenLoop(val flywheelVoltage: ElectricalPotential) : FlywheelRequest
+    class TargetingVelocity(val flywheelVelocity: AngularVelocity) : FlywheelRequest
   }
 }

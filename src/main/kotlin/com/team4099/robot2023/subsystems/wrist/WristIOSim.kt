@@ -27,117 +27,108 @@ import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
 
-object WristIOSim: WristIO {
+object WristIOSim : WristIO {
 
-    val wristSim =
-        SingleJointedArmSim(
-            DCMotor.getNEO(1),
-            WristConstants.WRIST_GEAR_RATIO,
-            WristConstants.WRIST_INERTIA.inKilogramsMeterSquared,
-            WristConstants.WRIST_LENGHT.inMeters,
-            WristConstants.WRIST_MIN_ROTATION.inRadians,
-            WristConstants.WRIST_MAX_ROTATION.inRadians,
-            true,
-            0.0
-        )
+  val wristSim =
+    SingleJointedArmSim(
+      DCMotor.getNEO(1),
+      WristConstants.WRIST_GEAR_RATIO,
+      WristConstants.WRIST_INERTIA.inKilogramsMeterSquared,
+      WristConstants.WRIST_LENGHT.inMeters,
+      WristConstants.WRIST_MIN_ROTATION.inRadians,
+      WristConstants.WRIST_MAX_ROTATION.inRadians,
+      true,
+      0.0
+    )
 
-    init {
-        MotorChecker.add(
-            "Ground Intake",
-            "Rotation",
-            MotorCollection(
-                mutableListOf(
-                    SimulatedMotor(
-                        wristSim,
-                        "Arm Motor",
-                    ),
-                ),
-                60.amps,
-                10.celsius,
-                45.amps,
-                20.celsius
-            )
-        )
+  init {
+    MotorChecker.add(
+      "Ground Intake",
+      "Rotation",
+      MotorCollection(
+        mutableListOf(
+          SimulatedMotor(
+            wristSim,
+            "Arm Motor",
+          ),
+        ),
+        60.amps,
+        10.celsius,
+        45.amps,
+        20.celsius
+      )
+    )
 
-        MotorChecker.add(
-            "Ground Intake",
-            "Roller",
-            MotorCollection(
-                mutableListOf(
-                    SimulatedMotor(
-                        wristSim,
-                        "Roller Motor",
-                    )
-                ),
-                60.amps,
-                10.celsius,
-                45.amps,
-                20.celsius
-            )
-        )
-    }
+    MotorChecker.add(
+      "Ground Intake",
+      "Roller",
+      MotorCollection(
+        mutableListOf(
+          SimulatedMotor(
+            wristSim,
+            "Roller Motor",
+          )
+        ),
+        60.amps,
+        10.celsius,
+        45.amps,
+        20.celsius
+      )
+    )
+  }
 
-    private val wristController =
-        PIDController(
-            WristConstants.PID.SIM_KP,
-            WristConstants.PID.SIM_KI,
-            WristConstants.PID.SIM_KD
-        )
+  private val wristController =
+    PIDController(WristConstants.PID.SIM_KP, WristConstants.PID.SIM_KI, WristConstants.PID.SIM_KD)
 
-    val appliedVoltage = 0.volts
+  val appliedVoltage = 0.volts
 
-    override fun updateInputs(inputs: WristIO.WristIOInputs) {
-        wristSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
-        wristSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
+  override fun updateInputs(inputs: WristIO.WristIOInputs) {
+    wristSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
+    wristSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
 
-        inputs.wristPostion = wristSim.angleRads.radians
-        inputs.wristVelocity = wristSim.velocityRadPerSec.radians.perSecond
-        inputs.wristSupplyCurrent = 0.amps
-        inputs.wristAppliedVoltage = 0.volts
-        inputs.wristStatorCurrent = wristSim.currentDrawAmps.amps
-        inputs.wristTemperature = 0.0.celsius
+    inputs.wristPostion = wristSim.angleRads.radians
+    inputs.wristVelocity = wristSim.velocityRadPerSec.radians.perSecond
+    inputs.wristSupplyCurrent = 0.amps
+    inputs.wristAppliedVoltage = 0.volts
+    inputs.wristStatorCurrent = wristSim.currentDrawAmps.amps
+    inputs.wristTemperature = 0.0.celsius
 
-        inputs.isSimulated = true
-    }
+    inputs.isSimulated = true
+  }
 
-    /**
-     * Sets the roller motor voltage, ensures the voltage is limited to battery voltage compensation
-     *
-     * @param voltage the voltage to set the roller motor to
-     */
-    override fun setWristVoltage(voltage: ElectricalPotential) {
-        wristSim.setInputVoltage(
-            clamp(
-                voltage,
-                -WristConstants.VOLTAGE_COMPENSATION,
-                WristConstants.VOLTAGE_COMPENSATION
-            )
-                .inVolts
-        )
-    }
+  /**
+   * Sets the roller motor voltage, ensures the voltage is limited to battery voltage compensation
+   *
+   * @param voltage the voltage to set the roller motor to
+   */
+  override fun setWristVoltage(voltage: ElectricalPotential) {
+    wristSim.setInputVoltage(
+      clamp(voltage, -WristConstants.VOLTAGE_COMPENSATION, WristConstants.VOLTAGE_COMPENSATION)
+        .inVolts
+    )
+  }
 
-    override fun setWristPosition(wristPosition: Angle, feedforward: ElectricalPotential) {
-        val feedback = wristController.calculate(wristSim.angleRads.radians, wristPosition)
-        setWristVoltage(feedback + feedforward)
-    }
+  override fun setWristPosition(wristPosition: Angle, feedforward: ElectricalPotential) {
+    val feedback = wristController.calculate(wristSim.angleRads.radians, wristPosition)
+    setWristVoltage(feedback + feedforward)
+  }
 
-    /**
-     * Updates the PID constants using the implementation controller, uses arm sensor to convert from
-     * PID constants to motor controller units
-     *
-     * @param kP accounts for linear error
-     * @param kI accounts for integral error
-     * @param kD accounts for derivative error
-     */
-    override fun configPID(
-        kP: ProportionalGain<Radian, Volt>,
-        kI: IntegralGain<Radian, Volt>,
-        kD: DerivativeGain<Radian, Volt>
-    ) {
-        wristController.setPID(kP, kI, kD)
-    }
+  /**
+   * Updates the PID constants using the implementation controller, uses arm sensor to convert from
+   * PID constants to motor controller units
+   *
+   * @param kP accounts for linear error
+   * @param kI accounts for integral error
+   * @param kD accounts for derivative error
+   */
+  override fun configPID(
+    kP: ProportionalGain<Radian, Volt>,
+    kI: IntegralGain<Radian, Volt>,
+    kD: DerivativeGain<Radian, Volt>
+  ) {
+    wristController.setPID(kP, kI, kD)
+  }
 
-
-    /** recalculates the current position of the neo encoder using value from the absolute encoder */
-    override fun zeroEncoder() {}
+  /** recalculates the current position of the neo encoder using value from the absolute encoder */
+  override fun zeroEncoder() {}
 }

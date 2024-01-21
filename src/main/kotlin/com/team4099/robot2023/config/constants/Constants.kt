@@ -118,8 +118,13 @@ object Constants {
   object Shooter {
     const val FLYWHEEL_LEFT_MOTOR_ID = 51
     const val FLYWHEEL_RIGHT_MOTOR_ID = 52
-    //TODO find wrist motor id
-    const val SHOOTER_WRIST_MOTOR_ID = 999
+    // TODO find wrist motor id
+
+  }
+
+  object WRIST {
+    const val WRIST_MOTOR_ID = 41
+    const val CANCODER_ID = 42
   }
 
   object Alert {
