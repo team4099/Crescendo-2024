@@ -13,10 +13,37 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.controller.SimpleMotorFeedforward
-import org.team4099.lib.units.*
-import org.team4099.lib.units.base.*
-import org.team4099.lib.units.derived.*
 import kotlin.random.Random
+import org.team4099.lib.units.AngularAcceleration
+import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.LinearAcceleration
+import org.team4099.lib.units.LinearVelocity
+import org.team4099.lib.units.Velocity
+import org.team4099.lib.units.base.Length
+import org.team4099.lib.units.base.Meter
+import org.team4099.lib.units.base.amps
+import org.team4099.lib.units.base.celsius
+import org.team4099.lib.units.base.inAmperes
+import org.team4099.lib.units.base.inSeconds
+import org.team4099.lib.units.base.meters
+import org.team4099.lib.units.derived.Angle
+import org.team4099.lib.units.derived.DerivativeGain
+import org.team4099.lib.units.derived.ElectricalPotential
+import org.team4099.lib.units.derived.IntegralGain
+import org.team4099.lib.units.derived.ProportionalGain
+import org.team4099.lib.units.derived.Radian
+import org.team4099.lib.units.derived.Volt
+import org.team4099.lib.units.derived.inKilogramsMeterSquared
+import org.team4099.lib.units.derived.inRadians
+import org.team4099.lib.units.derived.inRotations
+import org.team4099.lib.units.derived.inVolts
+import org.team4099.lib.units.derived.inVoltsPerDegree
+import org.team4099.lib.units.derived.inVoltsPerDegreePerSecond
+import org.team4099.lib.units.derived.inVoltsPerDegreeSeconds
+import org.team4099.lib.units.derived.radians
+import org.team4099.lib.units.derived.volts
+import org.team4099.lib.units.inMetersPerSecond
+import org.team4099.lib.units.perSecond
 
 class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     // Use inverses of gear ratios because our standard is <1 is reduction
