@@ -35,9 +35,7 @@ object WristIONeo : WristIO {
   // )
 
   private val wristSparkMax =
-    CANSparkMax(
-      Constants.Shooter.SHOOTER_WRIST_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless
-    )
+    CANSparkMax(Constants.WRIST.WRIST_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
   private val wristSensor =
     sparkMaxAngularMechanismSensor(
       wristSparkMax, WristConstants.WRIST_GEAR_RATIO, WristConstants.WRIST_VOLTAGE_COMPENSATION
