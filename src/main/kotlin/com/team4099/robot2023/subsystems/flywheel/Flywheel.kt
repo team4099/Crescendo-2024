@@ -40,30 +40,26 @@ class Flywheel (val io: FlywheelIO) {
         LoggedTunableValue(
             "Flywheel/kA",  FlywheelConstants.PID.FLYWHEEL_KA, Pair({ it.inVoltsPerRotationsPerMinutePerSecond}, { it.volts/ 1.0.rotations.perMinute.perSecond })
         )
-    var leftFlyWheelFeedForward: SimpleMotorFeedforward<Radian, Volt>
-    var rightFlyWheelFeedForward: SimpleMotorFeedforward<Radian, Volt>
+    var flywheelFeedForward: SimpleMotorFeedforward<Radian, Volt>
 
 
     var lastFlywheelRunTime = 0.0.seconds
     private var lastFlywheelVoltage = 0.0.volts
-    var leftTargetVoltage = 0.volts
-    var rightTargetVoltage = 0.volts
+    var flywheelTargetVoltage = 0.volts
 
-    var leftTargetVelocity: AngularVelocity = 0.rotations.perMinute
-    var rightTargetVelocity: AngularVelocity = 0.rotations.perMinute
+    var flywheelTargetVelocity: AngularVelocity = 0.rotations.perMinute
+
     var currentState = Companion.FlywheelStates.UNINITIALIZED
 
     var currentRequest: Request.FlywheelRequest = Request.FlywheelRequest.OpenLoop(0.0.volts, 0.0.volts)
     set(value) {
         when (value) {
             is Request.FlywheelRequest.OpenLoop -> {
-                leftTargetVoltage = value.leftFlywheelVoltage
-                rightTargetVoltage = value.rightFlywheelVoltage
+                flywheelTargetVoltage = value.leftFlywheelVoltage
             }
 
             is Request.FlywheelRequest.TargetingVelocity -> {
-                leftTargetVelocity = value.leftFlywheelVelocity
-                rightTargetVelocity = value.rightFlywheelVelocity
+                flywheelTargetVelocity = value.leftFlywheelVelocity
             }
             else -> {}
         }
@@ -82,14 +78,7 @@ class Flywheel (val io: FlywheelIO) {
 
             }
 
-            leftFlyWheelFeedForward =
-                SimpleMotorFeedforward(
-                    FlywheelConstants.PID.FLYWHEEL_KS,
-                    FlywheelConstants.PID.FLYWHEEL_KV,
-                    FlywheelConstants.PID.FLYWHEEL_KA
-                )
-
-            rightFlyWheelFeedForward =
+            flywheelFeedForward =
                 SimpleMotorFeedforward(
                     FlywheelConstants.PID.FLYWHEEL_KS,
                     FlywheelConstants.PID.FLYWHEEL_KV,
@@ -103,7 +92,7 @@ class Flywheel (val io: FlywheelIO) {
         }
 
         if(flywheelkA.hasChanged()||flywheelkV.hasChanged()||flywheelkS.hasChanged()){
-            leftFlyWheelFeedForward = SimpleMotorFeedforward(
+            flywheelFeedForward = SimpleMotorFeedforward(
                 flywheelkS.get(),
                 flywheelkV.get(),
                 flywheelkA.get()
@@ -116,14 +105,14 @@ class Flywheel (val io: FlywheelIO) {
                 nextState = Companion.FlywheelStates.OPEN_LOOP
             }
             Companion.FlywheelStates.OPEN_LOOP -> {
-                setFlywheelVoltage(leftTargetVoltage, rightTargetVoltage)
+                setFlywheelVoltage(flywheelTargetVoltage)
                 lastFlywheelRunTime = Clock.fpgaTime
 
                 nextState = fromRequestToState(currentRequest)
             }
 
            Companion.FlywheelStates.TARGETING_VELOCITY ->{
-                    setFlywheelVelocity(leftTargetVelocity, leftTargetVelocity)
+                    setFlywheelVelocity(flywheelTargetVelocity)
                     lastFlywheelRunTime = Clock.fpgaTime
                     nextState = fromRequestToState(currentRequest)
             }
@@ -132,16 +121,13 @@ class Flywheel (val io: FlywheelIO) {
 
     }
 
-    fun setFlywheelVoltage(leftAppliedVoltage: ElectricalPotential, rightAppliedVoltage: ElectricalPotential) {
-        io.setLeftFlywheelVoltage(leftAppliedVoltage)
-        io.setRightFlywheelVoltage(rightAppliedVoltage)
+    fun setFlywheelVoltage(appliedVoltage: ElectricalPotential) {
+        io.setFlywheelVoltage(appliedVoltage)
     }
 
-    fun setFlywheelVelocity(leftVelocity: AngularVelocity, rightVelocity: AngularVelocity) {
-        val leftFeedForward = leftFlyWheelFeedForward.calculate(leftVelocity)
-        val rightFeedForward = rightFlyWheelFeedForward.calculate(rightVelocity)
-        io.setLeftFlywheelVelocity(leftVelocity, leftFeedForward)
-        io.setRightFlywheelVelocity(rightVelocity, rightFeedForward)
+    fun setFlywheelVelocity(flywheelVelocity: AngularVelocity) {
+        val feedForward = flywheelFeedForward.calculate(flywheelVelocity)
+        io.setFlywheelVelocity(flywheelVelocity, feedForward)
     }
 
 
