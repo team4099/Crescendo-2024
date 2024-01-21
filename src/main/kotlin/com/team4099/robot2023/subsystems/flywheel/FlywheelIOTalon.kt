@@ -29,7 +29,7 @@ object FlywheelIOTalon : FlywheelIO{
     private val flywheelRightSensor =
         ctreAngularMechanismSensor(
             flywheelRightTalon,
-            FlywheelConstants.ROLLER_GEAR_RATIO,
+            FlywheelConstants.LEFT_GEAR_RATIO,
             FlywheelConstants.RIGHT_FLYWHEEL_VOLTAGE_COMPENSATION,
 
             )
@@ -37,7 +37,7 @@ object FlywheelIOTalon : FlywheelIO{
     private val flywheelLeftSensor =
         ctreAngularMechanismSensor(
             flywheelLeftTalon,
-            FlywheelConstants.ROLLER_GEAR_RATIO,
+            FlywheelConstants.RIGHT_GEAR_RATIO,
             FlywheelConstants.LEFT_FLYWHEEL_VOLTAGE_COMPENSATION,
 
             )
@@ -62,18 +62,18 @@ object FlywheelIOTalon : FlywheelIO{
         flywheelLeftTalon.configurator.apply(flywheelLeftConfiguration)
 
         flywheelRightConfiguration.Slot0.kP =
-            flywheelRightSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.SHOOTER_FLYWHEEL_KP)
+            flywheelRightSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KP)
         flywheelRightConfiguration.Slot0.kI =
-            flywheelRightSensor.integralVelocityGainToRawUnits(FlywheelConstants.SHOOTER_FLYWHEEL_KI)
+            flywheelRightSensor.integralVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KI)
         flywheelRightConfiguration.Slot0.kD =
-            flywheelRightSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.SHOOTER_FLYWHEEL_KD)
+            flywheelRightSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KD)
 
         flywheelLeftConfiguration.Slot0.kP =
-            flywheelLeftSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.SHOOTER_FLYWHEEL_KP)
+            flywheelLeftSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KP)
         flywheelRightConfiguration.Slot0.kI =
-            flywheelLeftSensor.integralVelocityGainToRawUnits(FlywheelConstants.SHOOTER_FLYWHEEL_KI)
+            flywheelLeftSensor.integralVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KI)
         flywheelRightConfiguration.Slot0.kD =
-            flywheelLeftSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.SHOOTER_FLYWHEEL_KD)
+            flywheelLeftSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KD)
         //      flywheelSensor.velocityFeedforwardToRawUnits(FlywheelConstantsConstants.PID.flywheel_KFF)
         
         flywheelRightConfiguration.CurrentLimits.SupplyCurrentLimit =
@@ -191,13 +191,13 @@ object FlywheelIOTalon : FlywheelIO{
         inputs.rightFlywheelAppliedVoltage = rightFlywheelDutyCycle.value.volts
         inputs.rightFlywheelStatorCurrent = rightFlywheelStatorCurrentSignal.value.amps
         inputs.rightFlywheelSupplyCurrent = rightFlywheelSupplyCurrentSignal.value.amps
-        inputs.rightFlywheelTempreature = rightFlywheelTempSignal.value.celsius
+        inputs.rightFlywheelTemperature = rightFlywheelTempSignal.value.celsius
 
         inputs.leftFlywheelVelocity = flywheelLeftSensor.velocity
         inputs.leftFlywheelAppliedVoltage = leftFlywheelDutyCycle.value.volts
         inputs.leftFlywheelStatorCurrent = leftFlywheelStatorCurrentSignal.value.amps
         inputs.leftFlywheelSupplyCurrent = leftFlywheelSupplyCurrentSignal.value.amps
-        inputs.leftFlywheelTempreature = leftFlywheelTempSignal.value.celsius
+        inputs.leftFlywheelTemperature = leftFlywheelTempSignal.value.celsius
     }
 
     override fun setLeftFlywheelBrakeMode(brake: Boolean) {
