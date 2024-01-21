@@ -22,7 +22,7 @@ object FlywheelIOSim : FlywheelIO {
     FlywheelSim(
       DCMotor.getNEO(1),
       FlywheelConstants.LEFT_GEAR_RATIO,
-      FlywheelConstants.LEFT_INERTIA.inKilogramsMeterSquared
+      FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
 
   private var appliedVoltage = 0.volts

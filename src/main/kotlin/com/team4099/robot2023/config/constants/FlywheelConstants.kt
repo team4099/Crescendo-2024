@@ -25,18 +25,17 @@ object FlywheelConstants {
 
   val VOLTAGE_COMPENSATION = 12.volts
 
-  val LEFT_INERTIA = 0.0.kilo.grams * 1.0.meters.squared
-  val RIGHT_INERTIA = 0.0.kilo.grams * 1.0.meters.squared
+  val INERTIA = 0.0014550597.kilo.grams * 1.0.meters.squared
 
-  val RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT = 0.0.amps
-  val RIGHT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT = 0.0.amps
-  val RIGHT_flywheel_TRIGGER_THRESHOLD_TIME = 0.0.seconds
-  val RIGHT_FLYWHEEL_STATOR_CURRENT_LIMIT = 0.0.amps
+  val RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT = 50.0.amps
+  val RIGHT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT = 1.0.amps
+  val RIGHT_flywheel_TRIGGER_THRESHOLD_TIME = 10.0.seconds
+  val RIGHT_FLYWHEEL_STATOR_CURRENT_LIMIT = 50.0.amps
 
-  val LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT = 0.0.amps
-  val LEFT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT = 0.0.amps
-  val LEFT_flywheel_TRIGGER_THRESHOLD_TIME = 0.0.seconds
-  val LEFT_FLYWHEEL_STATOR_CURRENT_LIMIT = 0.0.amps
+  val LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT = 50.0.amps
+  val LEFT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT = 1.0.amps
+  val LEFT_flywheel_TRIGGER_THRESHOLD_TIME = 10.0.seconds
+  val LEFT_FLYWHEEL_STATOR_CURRENT_LIMIT = 50.0.amps
 
   object PID {
     val REAL_KP: ProportionalGain<Velocity<Radian>, Volt> = 0.001.volts / 1.0.rotations.perMinute
