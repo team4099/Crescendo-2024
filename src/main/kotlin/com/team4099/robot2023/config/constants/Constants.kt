@@ -132,6 +132,10 @@ object Constants {
     const val REV_ENCODER_PORT = 7
   }
 
+  object Feeder {
+
+  }
+
   object Led {
     const val LED_CANDLE_ID = 61
     const val LED_BLINKEN_ID = 1
