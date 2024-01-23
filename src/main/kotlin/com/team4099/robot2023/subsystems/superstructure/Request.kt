@@ -60,7 +60,6 @@ sealed interface Request {
 
   sealed interface IntakeRequest : Request {
     class OpenLoop(val rollerVoltage: ElectricalPotential) : IntakeRequest
-    class Idle() : IntakeRequest
   }
 
   sealed interface DrivetrainRequest : Request {
