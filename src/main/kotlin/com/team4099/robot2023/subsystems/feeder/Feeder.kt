@@ -65,28 +65,19 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
     var nextState = currentState
     when (currentState) {
       FeederStates.UNINITIALIZED -> {
-        nextState = FeederStates.IDLE
-      }
-      FeederStates.IDLE -> {
-        setFeederVoltage(FeederConstants.FEEDER_IDLE_VOLTAGE)
-        nextState = fromRequestToState(currentRequest)
+        nextState = FeederStates.OPEN_LOOP_INTAKE
       }
       FeederStates.OPEN_LOOP_INTAKE -> {
-
         if (!hasNote) {
           setFeederVoltage(feederTargetVoltage)
-          nextState = fromRequestToState(currentRequest)
-        } else {
-          nextState = FeederStates.IDLE
-        }
+          }
+        nextState = fromRequestToState(currentRequest)
       }
       FeederStates.OPEN_LOOP_SHOOT -> {
         if (hasNote) {
           setFeederVoltage(feederTargetVoltage)
-          nextState = fromRequestToState(currentRequest)
-        } else {
-          nextState = FeederStates.IDLE
         }
+        nextState = fromRequestToState(currentRequest)
       }
     }
     currentState = nextState
@@ -112,22 +103,19 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
   companion object {
     enum class FeederStates {
       UNINITIALIZED,
-      IDLE,
       OPEN_LOOP_INTAKE,
       OPEN_LOOP_SHOOT;
 
       fun equivalentToRequest(request: Request.FeederRequest): Boolean {
         return (
           (request is Request.FeederRequest.OpenLoopIntake && this == OPEN_LOOP_SHOOT) ||
-            (request is Request.FeederRequest.OpenLoopIntake && this == OPEN_LOOP_INTAKE) ||
-            (request is Request.FeederRequest.Idle && this == IDLE)
+            (request is Request.FeederRequest.OpenLoopIntake && this == OPEN_LOOP_INTAKE)
           )
       }
     }
 
     fun fromRequestToState(request: Request.FeederRequest): FeederStates {
       return when (request) {
-        is Request.FeederRequest.Idle -> FeederStates.IDLE
         is Request.FeederRequest.OpenLoopIntake -> FeederStates.OPEN_LOOP_INTAKE
         is Request.FeederRequest.OpenLoopShoot -> FeederStates.OPEN_LOOP_SHOOT
       }

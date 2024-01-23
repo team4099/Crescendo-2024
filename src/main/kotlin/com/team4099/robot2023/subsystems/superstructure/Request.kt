@@ -28,7 +28,6 @@ sealed interface Request {
   }
 
   sealed interface FeederRequest : Request {
-    class Idle() : FeederRequest
     class OpenLoopIntake(val feederVoltage: ElectricalPotential) : FeederRequest
     class OpenLoopShoot(val feederVoltage: ElectricalPotential) : FeederRequest
   }

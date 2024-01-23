@@ -37,7 +37,6 @@ object FeederIONeo : FeederIO {
 
     feederSparkMax.idleMode = CANSparkMax.IdleMode.kCoast
 
-    feederSparkMax.openLoopRampRate = 0.0
     feederSparkMax.burnFlash()
 
     MotorChecker.add(
@@ -47,7 +46,7 @@ object FeederIONeo : FeederIO {
         mutableListOf(Neo(feederSparkMax, "Roller Motor")),
         FeederConstants.FEEDER_CURRENT_LIMIT,
         70.celsius,
-        FeederConstants.FEEDER_CURRENT_LIMIT - 0.amps,
+        30.amps,
         90.celsius
       ),
     )
@@ -66,11 +65,6 @@ object FeederIONeo : FeederIO {
       inputs.feederStatorCurrent * feederSparkMax.appliedOutput.absoluteValue
     inputs.feederTemp = feederSparkMax.motorTemperature.celsius
 
-    Logger.recordOutput(
-      "Intake/rollerMotorOvercurrentFault",
-      feederSparkMax.getFault(CANSparkMax.FaultID.kOvercurrent)
-    )
-    Logger.recordOutput("Intake/busVoltage", feederSparkMax.busVoltage)
   }
 
   /**

@@ -33,6 +33,7 @@ interface FeederIO {
       table?.put("feederStatorCurrent", feederStatorCurrent.inAmperes)
       table?.put("feederSupplyCurrent", feederSupplyCurrent.inAmperes)
       table?.put("feederTempCelcius", feederTemp.inCelsius)
+      table?.put("feederBeamBroken", beamBroken)
     }
 
     override fun fromLog(table: LogTable?) {
@@ -53,6 +54,7 @@ interface FeederIO {
       }
 
       table?.get("feederTempCelcius", feederTemp.inCelsius)?.let { feederTemp = it.celsius }
+      table?.get("feederBeamBroken", beamBroken)?.let { beamBroken = it }
     }
   }
 
