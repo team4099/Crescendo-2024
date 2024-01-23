@@ -88,11 +88,11 @@ class Elevator(val io: ElevatorIO) {
     // TODO: change voltages
     val openLoopExtendVoltage =
       LoggedTunableValue(
-        "Elevator/openLoopExtendVoltage", 8.volts, Pair({ it.inVolts }, { it.volts })
+        "Elevator/openLoopExtendVoltage", ElevatorConstants.ELEVATOR_OPEN_LOOP_EXTEND_VOLTAGE, Pair({ it.inVolts }, { it.volts })
       )
     val openLoopRetractVoltage =
       LoggedTunableValue(
-        "Elevator/openLoopRetractVoltage", -12.0.volts, Pair({ it.inVolts }, { it.volts })
+        "Elevator/openLoopRetractVoltage", ElevatorConstants.ELEVATOR_OPEN_LOOP_RETRACT_VOLTAGE, Pair({ it.inVolts }, { it.volts })
       )
 
     val shootSpeakerPosition =
@@ -187,7 +187,7 @@ class Elevator(val io: ElevatorIO) {
     get() =
       currentRequest is ElevatorRequest.TargetingPosition &&
         (
-          ((inputs.elevatorPosition - elevatorPositionTarget).absoluteValue <= 5.inches) ||
+          ((inputs.elevatorPosition - elevatorPositionTarget).absoluteValue <= ElevatorConstants.ELEVATOR_SAFE_THRESHOLD) ||
             elevatorProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt)
           ) &&
         lastRequestedPosition == elevatorPositionTarget
@@ -208,6 +208,8 @@ class Elevator(val io: ElevatorIO) {
       kP.initDefault(ElevatorConstants.SIM_KP)
       kI.initDefault(ElevatorConstants.SIM_KI)
       kD.initDefault(ElevatorConstants.SIM_KD)
+
+      io.configPID(kP.get(), kI.get(), kD.get())
     }
 
     elevatorFeedforward =
@@ -218,7 +220,7 @@ class Elevator(val io: ElevatorIO) {
         ElevatorConstants.ELEVATOR_KA
       )
 
-    io.configPID(kP.get(), kI.get(), kD.get())
+
   }
 
   fun periodic() {
@@ -316,7 +318,7 @@ class Elevator(val io: ElevatorIO) {
               ElevatorConstants.HOMING_STALL_TIME_THRESHOLD
             )
         ) {
-          setHomeVoltage(ElevatorConstants.HOMING_APPLIED_VOLTAGE)
+          io.setVoltage(ElevatorConstants.HOMING_APPLIED_VOLTAGE)
         } else {
           zeroEncoder()
           isHomed = true
@@ -355,7 +357,7 @@ class Elevator(val io: ElevatorIO) {
     if ((forwardLimitReached) && (setpoint.position > inputs.elevatorPosition) ||
       (reverseLimitReached) && (setpoint.position < inputs.elevatorPosition)
     ) {
-      io.setOutputVoltage(0.volts)
+      io.setPosition(inputs.elevatorPosition, feedForward)
     } else {
       io.setPosition(setpoint.position, feedForward)
     }

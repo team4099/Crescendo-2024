@@ -37,8 +37,8 @@ interface ElevatorIO {
     var leaderTempCelcius = 0.0.celsius
     var followerTempCelcius = 0.0.celsius
 
-    var leaderRawPosition = 0.0
-    var followerRawPosition = 0.0
+    var leaderRawPosition = 0.0.rotations
+    var followerRawPosition = 0.0.rotations
 
     var isSimulating = false
 

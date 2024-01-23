@@ -34,7 +34,6 @@ object ElevatorIOKraken : ElevatorIO {
   private val leaderSensor =
     ctreLinearMechanismSensor(
       elevatorLeaderKraken,
-      ElevatorConstants.SENSOR_CPR,
       ElevatorConstants.GEAR_RATIO,
       ElevatorConstants.SPOOL_DIAMETER,
       ElevatorConstants.VOLTAGE_COMPENSATION
@@ -42,7 +41,6 @@ object ElevatorIOKraken : ElevatorIO {
   private val followerSensor =
     ctreLinearMechanismSensor(
       elevatorLeaderKraken,
-      ElevatorConstants.SENSOR_CPR,
       ElevatorConstants.GEAR_RATIO,
       ElevatorConstants.SPOOL_DIAMETER,
       ElevatorConstants.VOLTAGE_COMPENSATION
@@ -169,7 +167,7 @@ object ElevatorIOKraken : ElevatorIO {
   override fun setPosition(position: Length, feedForward: ElectricalPotential) {
     elevatorLeaderKraken.setControl(
       PositionVoltage(
-        leaderSensor.positionToRawUnits(position),
+        leaderSensor.getRawPosition(),
         true,
         feedForward,
         0,

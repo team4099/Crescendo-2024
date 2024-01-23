@@ -45,13 +45,17 @@ object ElevatorConstants {
   val ELEVATOR_KG = 0.0.volts
   val ELEVATOR_KV = 0.0.volts / 0.0.inches.perSecond
   val ELEVATOR_KA = 0.0.volts / 0.0.inches.perSecond.perSecond
+  val ELEVATOR_OPEN_LOOP_EXTEND_VOLTAGE = 8.0.volts
+  val ELEVATOR_OPEN_LOOP_RETRACT_VOLTAGE = -12.0.volts
 
-  val ENABLE_ELEVATOR = 1.0
+  val ENABLE_ELEVATOR = false
   val ELEVATOR_IDLE_HEIGHT = 0.0.inches
   val ELEVATOR_SOFT_LIMIT_EXTENSION = 0.0.inches
   val ELEVATOR_SOFT_LIMIT_RETRACTION = 0.0.inches
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_EXTENSION = 0.0.inches
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_RETRACTION = 0.0.inches
+  val ELEVATOR_SAFE_THRESHOLD = 5.0.inches
+
 
   val ELEVATOR_TOLERANCE = 0.0.inches
 
@@ -68,8 +72,7 @@ object ElevatorConstants {
   val ELEVATOR_GROUND_OFFSET = 0.0.inches
 
   val VOLTAGE_COMPENSATION = 12.0.volts
-  val GEAR_RATIO = 4.0 / 1 * 4.0 / 1
-  val SENSOR_CPR = 0
+  val ELEVATOR_PULLEY_TO_MOTOR = 4.0 / 1 * 4.0 / 1
   val SPOOL_DIAMETER = 1.5.inches
 
   val LEADER_SUPPLY_CURRENT_LIMIT = 0.0.amps
@@ -81,4 +84,5 @@ object ElevatorConstants {
   val FOLLOWER_STATOR_CURRENT_LIMIT = 0.0.amps
   val FOLLOWER_SUPPLY_CURRENT_LIMIT = 0.0.amps
   val FOLLOWER_THRESHOLD_CURRENT_LIMIT = 0.0.amps
+
 }
