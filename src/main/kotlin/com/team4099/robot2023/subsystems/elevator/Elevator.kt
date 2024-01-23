@@ -15,6 +15,7 @@ import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.inInches
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.inches
+import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -27,6 +28,7 @@ import org.team4099.lib.units.derived.perInchSeconds
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inInchesPerSecond
 import org.team4099.lib.units.perSecond
+import kotlin.time.Duration.Companion.seconds
 import com.team4099.robot2023.subsystems.superstructure.Request.ElevatorRequest as ElevatorRequest
 
 class Elevator(val io: ElevatorIO) {
@@ -48,6 +50,22 @@ class Elevator(val io: ElevatorIO) {
   private val kD =
     LoggedTunableValue(
       "Elevator/kD", Pair({ it.inVoltsPerInchPerSecond }, { it.volts / 1.0.inches.perSecond })
+    )
+  private val kS =
+    LoggedTunableValue(
+      "Elevator/kS", Pair({ it.inVolts}, {it.volts})
+    )
+  private val kG =
+    LoggedTunableValue(
+      "Elevator/kG", Pair({ it.inVolts}, {it.volts})
+    )
+  private val kV =
+    LoggedTunableValue(
+      "Elevator/kG", Pair({it.inVoltsPerInchPerSecond}, {it.volts / 1.0.inches.perSecond})
+    )
+  private val kA =
+    LoggedTunableValue(
+      "Elevator/kA", Pair({it.inVolts.perMetersPerSecondPerSecond}, {it.volts / 1.0.meters.perSecond.perSecond})
     )
 
   object TunableElevatorHeights {

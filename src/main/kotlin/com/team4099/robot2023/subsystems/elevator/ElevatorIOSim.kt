@@ -18,6 +18,7 @@ import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inKilograms
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inSeconds
+import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.ElectricalPotential
@@ -99,16 +100,19 @@ object ElevatorIOSim : ElevatorIO {
    * @param voltage the voltage to set the motor to
    */
   override fun setOutputVoltage(voltage: ElectricalPotential) {
-    val clampedVoltage =
-      clamp(
-        voltage,
-        -ElevatorConstants.VOLTAGE_COMPENSATION,
-        ElevatorConstants.VOLTAGE_COMPENSATION
-      )
+    if (!((elevatorSim.positionMeters.meters < 0.5.inches) && (voltage < 0.volts)) &&
+      !(elevatorSim.positionMeters.meters > ElevatorConstants.ELEVATOR_MAX_EXTENSION - 0.5.inches && (voltage > 0.volts))
+    ) {
+      val clampedVoltage =
+        clamp(
+          voltage,
+          -ElevatorConstants.VOLTAGE_COMPENSATION,
+          ElevatorConstants.VOLTAGE_COMPENSATION
+        )
+      lastAppliedVoltage = clampedVoltage
 
-    lastAppliedVoltage = clampedVoltage
-
-    elevatorSim.setInputVoltage(clampedVoltage.inVolts)
+      elevatorSim.setInputVoltage(clampedVoltage.inVolts)
+    }
   }
 
   /**
@@ -127,13 +131,12 @@ object ElevatorIOSim : ElevatorIO {
       )
     val feedback = elevatorController.calculate(elevatorSim.positionMeters.meters, position)
 
-    lastAppliedVoltage = ff + feedback
+    setOutputVoltage(ff + feedback)
     elevatorSim.setInputVoltage((ff + feedback).inVolts)
   }
 
   /** set the current encoder position to be the encoders zero value */
   override fun zeroEncoder() {
-    println("don't work right now")
   }
 
   /**

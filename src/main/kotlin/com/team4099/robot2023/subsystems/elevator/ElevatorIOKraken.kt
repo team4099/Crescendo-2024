@@ -18,6 +18,7 @@ import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
 import org.team4099.lib.units.base.inSeconds
+import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.ctreLinearMechanismSensor
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.ElectricalPotential
@@ -156,16 +157,21 @@ object ElevatorIOKraken : ElevatorIO {
   }
 
   override fun setOutputVoltage(voltage: ElectricalPotential) {
-    elevatorLeaderKraken.setVoltage(voltage.inVolts)
+    if (((leaderSensor.position < 0.5.inches) && (voltage < 0.volts)) ||
+      (leaderSensor.position > ElevatorConstants.ELEVATOR_MAX_EXTENSION - 0.5.inches && (voltage > 0.volts))) {
+      elevatorLeaderKraken.setVoltage(0.0)
+    }
+    else {
+      elevatorLeaderKraken.setVoltage(voltage.inVolts)
+    }
   }
 
   override fun setPosition(position: Length, feedForward: ElectricalPotential) {
     elevatorLeaderKraken.setControl(
-      PositionDutyCycle(
+      PositionVoltage(
         leaderSensor.positionToRawUnits(position),
-        0.0,
         true,
-        feedForward.inVolts,
+        feedForward,
         0,
         false,
         false,
