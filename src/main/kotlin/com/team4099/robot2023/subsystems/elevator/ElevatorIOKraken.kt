@@ -4,9 +4,9 @@ import com.ctre.phoenix6.StatusSignal
 import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.PositionDutyCycle
+import com.ctre.phoenix6.controls.PositionVoltage
 import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.NeutralModeValue
-import com.team4099.lib.phoenix6.PositionVoltage
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.ElevatorConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
@@ -26,6 +26,7 @@ import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.inVolts
+import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 
 object ElevatorIOKraken : ElevatorIO {
@@ -34,14 +35,14 @@ object ElevatorIOKraken : ElevatorIO {
   private val leaderSensor =
     ctreLinearMechanismSensor(
       elevatorLeaderKraken,
-      ElevatorConstants.GEAR_RATIO,
+      ElevatorConstants.ELEVATOR_PULLEY_TO_MOTOR,
       ElevatorConstants.SPOOL_DIAMETER,
       ElevatorConstants.VOLTAGE_COMPENSATION
     )
   private val followerSensor =
     ctreLinearMechanismSensor(
       elevatorLeaderKraken,
-      ElevatorConstants.GEAR_RATIO,
+      ElevatorConstants.ELEVATOR_PULLEY_TO_MOTOR,
       ElevatorConstants.SPOOL_DIAMETER,
       ElevatorConstants.VOLTAGE_COMPENSATION
     )
@@ -168,8 +169,9 @@ object ElevatorIOKraken : ElevatorIO {
     elevatorLeaderKraken.setControl(
       PositionVoltage(
         leaderSensor.getRawPosition(),
+        0.0,
         true,
-        feedForward,
+        feedForward.inVolts,
         0,
         false,
         false,
