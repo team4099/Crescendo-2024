@@ -68,6 +68,7 @@ object RobotContainer {
 
     vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
     limelight.poseSupplier = { drivetrain.odometryPose }
+
   }
 
   fun mapDefaultCommands() {

@@ -45,11 +45,7 @@ interface FlywheelIO {
       table.put("flywheelRightSupplyCurrent", rightFlywheelSupplyCurrent.inAmperes)
       table.put("flywheelRightTemperature", rightFlywheelTemperature.inCelsius)
 
-      table.put("flywheelLeftVelocityRPM", leftFlywheelVelocity.inRadiansPerSecond)
-      table.put("flywheelLeftAppliedVoltage", leftFlywheelAppliedVoltage.inVolts)
-      table.put("flywheelLeftStatorCurrent", leftFlywheelStatorCurrent.inAmperes)
-      table.put("flywheelLeftSupplyCurrent", leftFlywheelSupplyCurrent.inAmperes)
-      table.put("flywheelLeftTemperature", leftFlywheelTemperature.inCelsius)
+
     }
 
     override fun fromLog(table: LogTable) {
@@ -69,22 +65,6 @@ interface FlywheelIO {
       table.get("rightFlywheelTempreature", rightFlywheelTemperature.inCelsius).let {
         rightFlywheelTemperature = it.celsius
       }
-
-      // LeFt motor
-      table.get("leftFlywheelVelocityRPM", leftFlywheelVelocity.inRadiansPerSecond).let {
-        leftFlywheelVelocity = it.radians.perSecond
-      }
-      table.get("leftFlywheelAppliedVoltage", leftFlywheelAppliedVoltage.inVolts).let {
-        leftFlywheelAppliedVoltage = it.volts
-      }
-      table.get("leftFlywheelStatorCurrent", leftFlywheelStatorCurrent.inAmperes).let {
-        leftFlywheelStatorCurrent = it.amps
-      }
-      table.get("leftFlywheelSupplyCurrent", leftFlywheelSupplyCurrent.inAmperes).let {
-        leftFlywheelSupplyCurrent = it.amps
-      }
-      table.get("leftFlywheelTempreature", leftFlywheelTemperature.inCelsius).let {
-        leftFlywheelTemperature = it.celsius
       }
     }
   }

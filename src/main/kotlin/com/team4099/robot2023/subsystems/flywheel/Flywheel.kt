@@ -3,11 +3,15 @@ package com.team4099.robot2023.subsystems.flywheel
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.FlywheelConstants
+import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.Wrist.Companion.fromRequestToState
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands.runOnce
+import edu.wpi.first.wpilibj2.command.SubsystemBase
+import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.base.seconds
@@ -23,7 +27,8 @@ import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 
-class Flywheel(val io: FlywheelIO) {
+class Flywheel(val io: FlywheelIO):SubsystemBase() {
+  //right flywheel is the only motor
   private val kP =
     LoggedTunableValue(
       "Flywheel/kP",
@@ -71,6 +76,14 @@ class Flywheel(val io: FlywheelIO) {
 
   var flywheelTargetVelocity: AngularVelocity = 0.rotations.perMinute
 
+  val isAtTargetedPosition: Boolean
+    get() =
+      (
+              currentState == Flywheel.Companion.FlywheelStates.TARGETING_VELOCITY &&
+                      (inputs.rightFlywheelVelocity - flywheelTargetVelocity).absoluteValue <=
+                      FlywheelConstants.FLYWHEEL_VELOCITY_TOLERANCE
+              )
+
   var currentState = Companion.FlywheelStates.UNINITIALIZED
 
   var currentRequest: Request.FlywheelRequest = Request.FlywheelRequest.OpenLoop(0.0.volts)
@@ -105,7 +118,7 @@ class Flywheel(val io: FlywheelIO) {
         FlywheelConstants.PID.FLYWHEEL_KA
       )
   }
-  fun periodic() {
+  override fun periodic() {
     io.updateInputs(inputs)
     if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
       io.configPID(kP.get(), kI.get(), kD.get())
@@ -115,6 +128,13 @@ class Flywheel(val io: FlywheelIO) {
       flywheelFeedForward =
         SimpleMotorFeedforward(flywheelkS.get(), flywheelkV.get(), flywheelkA.get())
     }
+    Logger.processInputs("Flywheel", inputs)
+
+    Logger.recordOutput("Flywheel/currentState", currentState.name)
+
+    Logger.recordOutput("Flywheel/requestedState", currentRequest.javaClass.simpleName)
+
+    Logger.recordOutput("Flywheel/isAtTargetedVelocity", isAtTargetedPosition)
 
     var nextState = currentState
     when (currentState) {
