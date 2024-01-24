@@ -37,9 +37,6 @@ interface ElevatorIO {
     var leaderTempCelcius = 0.0.celsius
     var followerTempCelcius = 0.0.celsius
 
-    var leaderRawPosition = 0.0.rotations
-    var followerRawPosition = 0.0.rotations
-
     var isSimulating = false
 
     override fun toLog(table: LogTable) {
@@ -53,8 +50,6 @@ interface ElevatorIO {
       table?.put("elevatorFollowerSupplyCurrentAmps", followerSupplyCurrent.inAmperes)
       table?.put("elevatorLeaderTempCelsius", leaderTempCelcius.inCelsius)
       table?.put("elevatorFollowerTempCelsius", followerTempCelcius.inCelsius)
-      table?.put("elevatorLeaderRawPosition", leaderRawPosition)
-      table?.put("elevatorFollowRawPosition", followerRawPosition)
     }
 
     override fun fromLog(table: LogTable?) {
@@ -92,8 +87,6 @@ interface ElevatorIO {
       table?.get("elevatorFollowerTempCelcius", followerTempCelcius.inCelsius)?.let {
         followerTempCelcius = it.celsius
       }
-      table?.get("elevatorLeaderRawPosition", leaderRawPosition)?.let { leaderRawPosition = it }
-      table?.get("elevatorFollowerRawPosition", leaderRawPosition)?.let { followerRawPosition = it }
     }
   }
 

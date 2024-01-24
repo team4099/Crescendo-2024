@@ -21,7 +21,7 @@ object ElevatorConstants {
   val REAL_KI = 0.0.volts / (1.inches * 1.seconds)
   val REAL_KD = 0.0.volts / (1.inches.perSecond)
 
-  val CARRIAGE_MASS = 20.pounds
+  val CARRIAGE_MASS = 30.892.pounds
 
   val ELEVATOR_MAX_RETRACTION = 0.0.inches
   val ELEVATOR_MAX_EXTENSION = 18.0.inches
@@ -37,30 +37,30 @@ object ElevatorConstants {
   val FOLLOWER_KI: IntegralGain<Meter, Volt> = 0.0.volts / (1.inches * 1.seconds)
   val FOLLOWER_KD: DerivativeGain<Meter, Volt> = 0.0.volts / (1.inches.perSecond)
 
-  val SIM_KP = 0.0.volts / 1.inches
+  val SIM_KP = 2.0.volts / 1.inches
   val SIM_KI = 0.0.volts / (1.inches * 1.seconds)
   val SIM_KD = 0.0.volts / (1.inches.perSecond)
 
   val ELEVATOR_KS = 0.0.volts
-  val ELEVATOR_KG = 0.0.volts
-  val ELEVATOR_KV = 0.0.volts / 0.0.inches.perSecond
-  val ELEVATOR_KA = 0.0.volts / 0.0.inches.perSecond.perSecond
+  val ELEVATOR_KG = 0.32.volts
+  val ELEVATOR_KV = 0.39.volts / 1.inches.perSecond
+  val ELEVATOR_KA = 0.00083.volts / 1.inches.perSecond.perSecond
   val ELEVATOR_OPEN_LOOP_EXTEND_VOLTAGE = 8.0.volts
   val ELEVATOR_OPEN_LOOP_RETRACT_VOLTAGE = -12.0.volts
 
   val ENABLE_ELEVATOR = false
   val ELEVATOR_IDLE_HEIGHT = 0.0.inches
-  val ELEVATOR_SOFT_LIMIT_EXTENSION = 0.0.inches
-  val ELEVATOR_SOFT_LIMIT_RETRACTION = 0.0.inches
+  val ELEVATOR_SOFT_LIMIT_EXTENSION = 17.5.inches
+  val ELEVATOR_SOFT_LIMIT_RETRACTION = -1.0.inches
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_EXTENSION = 0.0.inches
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_RETRACTION = 0.0.inches
   val ELEVATOR_SAFE_THRESHOLD = 5.0.inches
 
 
-  val ELEVATOR_TOLERANCE = 0.0.inches
+  val ELEVATOR_TOLERANCE = 0.2.inches
 
-  val MAX_VELOCITY = 0.0.meters.perSecond
-  val MAX_ACCELERATION = 0.0.meters.perSecond.perSecond
+  val MAX_VELOCITY = 0.82.meters.perSecond
+  val MAX_ACCELERATION = 0.5.meters.perSecond.perSecond
 
   val SHOOT_SPEAKER_POSITION = 0.0.inches
   val SHOOT_AMP_POSITION = 0.0.inches
@@ -73,7 +73,7 @@ object ElevatorConstants {
 
   val VOLTAGE_COMPENSATION = 12.0.volts
   val ELEVATOR_PULLEY_TO_MOTOR = 4.0 / 1 * 4.0 / 1
-  val SPOOL_DIAMETER = 1.5.inches
+  val SPOOL_DIAMETER = 1.591.inches
 
   val LEADER_SUPPLY_CURRENT_LIMIT = 0.0.amps
   val LEADER_THRESHOLD_CURRENT_LIMIT = 0.0.amps

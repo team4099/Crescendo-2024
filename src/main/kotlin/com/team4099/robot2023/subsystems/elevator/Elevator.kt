@@ -8,6 +8,7 @@ import com.team4099.robot2023.config.constants.ElevatorConstants
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands.runOnce
+import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.ElevatorFeedforward
 import org.team4099.lib.controller.TrapezoidProfile
@@ -23,6 +24,7 @@ import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.inVoltsPerInch
 import org.team4099.lib.units.derived.inVoltsPerInchPerSecond
 import org.team4099.lib.units.derived.inVoltsPerInchSeconds
+import org.team4099.lib.units.derived.inVoltsPerMeterPerSecondPerSecond
 import org.team4099.lib.units.derived.perInch
 import org.team4099.lib.units.derived.perInchSeconds
 import org.team4099.lib.units.derived.volts
@@ -31,7 +33,7 @@ import org.team4099.lib.units.perSecond
 import kotlin.time.Duration.Companion.seconds
 import com.team4099.robot2023.subsystems.superstructure.Request.ElevatorRequest as ElevatorRequest
 
-class Elevator(val io: ElevatorIO) {
+class Elevator(val io: ElevatorIO) : SubsystemBase() {
   val inputs = ElevatorIO.ElevatorInputs()
   private var elevatorFeedforward: ElevatorFeedforward =
     ElevatorFeedforward(
@@ -65,12 +67,13 @@ class Elevator(val io: ElevatorIO) {
     )
   private val kA =
     LoggedTunableValue(
-      "Elevator/kA", Pair({it.inVolts.perMetersPerSecondPerSecond}, {it.volts / 1.0.meters.perSecond.perSecond})
+      "Elevator/kA", Pair({it.inVoltsPerMeterPerSecondPerSecond}, {it.volts / 1.0.meters.perSecond.perSecond})
     )
 
   object TunableElevatorHeights {
     val enableElevator =
-      LoggedTunableNumber("Elevator/enableMovementElevator", ElevatorConstants.ENABLE_ELEVATOR)
+      LoggedTunableNumber("Elevator/enableMovementElevator",
+      if (ElevatorConstants.ENABLE_ELEVATOR) 1.0 else 0.0)
 
     val minPosition =
       LoggedTunableValue(
@@ -223,7 +226,7 @@ class Elevator(val io: ElevatorIO) {
 
   }
 
-  fun periodic() {
+  override fun periodic() {
     io.updateInputs(inputs)
     if ((kP.hasChanged()) || (kI.hasChanged()) || (kD.hasChanged())) {
       io.configPID(kP.get(), kI.get(), kD.get())
@@ -318,7 +321,7 @@ class Elevator(val io: ElevatorIO) {
               ElevatorConstants.HOMING_STALL_TIME_THRESHOLD
             )
         ) {
-          io.setVoltage(ElevatorConstants.HOMING_APPLIED_VOLTAGE)
+          io.setOutputVoltage(ElevatorConstants.HOMING_APPLIED_VOLTAGE)
         } else {
           zeroEncoder()
           isHomed = true
@@ -394,10 +397,10 @@ class Elevator(val io: ElevatorIO) {
   }
 
   fun elevatorClosedLoopRetractCommand(): Command {
-    return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(12.inches) })
+    return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(4.inches) })
   }
 
   fun testElevatorClosedLoopExtendCommand(): Command {
-    return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(4.inches) })
+    return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(16.inches) })
   }
 }

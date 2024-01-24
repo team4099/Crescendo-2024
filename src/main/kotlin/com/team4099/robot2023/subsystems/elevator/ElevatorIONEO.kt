@@ -35,7 +35,7 @@ object ElevatorIONEO : ElevatorIO {
   private val leaderSensor =
     sparkMaxLinearMechanismSensor(
       leaderSparkMax,
-      ElevatorConstants.GEAR_RATIO,
+      ElevatorConstants.ELEVATOR_PULLEY_TO_MOTOR,
       ElevatorConstants.SPOOL_DIAMETER,
       ElevatorConstants.VOLTAGE_COMPENSATION
     )
@@ -46,7 +46,7 @@ object ElevatorIONEO : ElevatorIO {
   private val followerSensor =
     sparkMaxLinearMechanismSensor(
       followerSparkMax,
-      ElevatorConstants.GEAR_RATIO,
+      ElevatorConstants.ELEVATOR_PULLEY_TO_MOTOR,
       ElevatorConstants.SPOOL_DIAMETER,
       ElevatorConstants.VOLTAGE_COMPENSATION
     )
@@ -131,10 +131,6 @@ object ElevatorIONEO : ElevatorIO {
       inputs.followerStatorCurrent * followerSparkMax.appliedOutput.absoluteValue
 
     inputs.followerTempCelcius = followerSparkMax.motorTemperature.celsius
-
-    inputs.leaderRawPosition = leaderSparkMax.encoder.position
-
-    inputs.followerRawPosition = followerSparkMax.encoder.position
 
     Logger.recordOutput("Elevator/leaderRawRotations", leaderSparkMax.encoder.position)
   }

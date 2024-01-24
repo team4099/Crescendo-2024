@@ -10,6 +10,7 @@ import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.wpilibj.simulation.BatterySim
 import edu.wpi.first.wpilibj.simulation.ElevatorSim
 import edu.wpi.first.wpilibj.simulation.RoboRioSim
+import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Meter
@@ -34,7 +35,7 @@ object ElevatorIOSim : ElevatorIO {
   val elevatorSim: ElevatorSim =
     ElevatorSim(
       DCMotor.getNEO(2),
-      ElevatorConstants.GEAR_RATIO,
+      ElevatorConstants.ELEVATOR_PULLEY_TO_MOTOR,
       ElevatorConstants.CARRIAGE_MASS.inKilograms,
       ElevatorConstants.SPOOL_DIAMETER.inMeters / 2,
       ElevatorConstants.ELEVATOR_MAX_RETRACTION.inMeters,
@@ -83,9 +84,6 @@ object ElevatorIOSim : ElevatorIO {
     inputs.followerSupplyCurrent = elevatorSim.currentDrawAmps.amps / 2
     inputs.followerAppliedVoltage = lastAppliedVoltage
 
-    inputs.leaderRawPosition = 0.0
-    inputs.followerRawPosition = 0.0
-
     inputs.isSimulating = true
 
     RoboRioSim.setVInVoltage(
@@ -100,9 +98,7 @@ object ElevatorIOSim : ElevatorIO {
    * @param voltage the voltage to set the motor to
    */
   override fun setOutputVoltage(voltage: ElectricalPotential) {
-    if (!((elevatorSim.positionMeters.meters < 0.5.inches) && (voltage < 0.volts)) &&
-      !(elevatorSim.positionMeters.meters > ElevatorConstants.ELEVATOR_MAX_EXTENSION - 0.5.inches && (voltage > 0.volts))
-    ) {
+    Logger.recordOutput("Elevator/OutputTest", voltage)
       val clampedVoltage =
         clamp(
           voltage,
@@ -112,7 +108,6 @@ object ElevatorIOSim : ElevatorIO {
       lastAppliedVoltage = clampedVoltage
 
       elevatorSim.setInputVoltage(clampedVoltage.inVolts)
-    }
   }
 
   /**

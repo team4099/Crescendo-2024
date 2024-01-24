@@ -137,7 +137,7 @@ object RobotContainer {
     ControlBoard.elevatorOpenLoopExtend.whileTrue(elevator.testElevatorOpenLoopExtendCommand())
     ControlBoard.elevatorOpenLoopRetract.whileTrue(elevator.testElevatorOpenLoopRetractCommand())
     ControlBoard.elevatorClosedLoopHigh.whileTrue(elevator.testElevatorClosedLoopExtendCommand())
-    ControlBoard.elevatorClosedLoopLow.whileTrue(elevator.testElevatorClosedLoopExtendCommand())
+    ControlBoard.elevatorClosedLoopLow.whileTrue(elevator.elevatorClosedLoopRetractCommand())
   }
 
   fun mapTestControls() {}

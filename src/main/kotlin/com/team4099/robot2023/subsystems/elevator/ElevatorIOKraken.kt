@@ -151,8 +151,6 @@ object ElevatorIOKraken : ElevatorIO {
     inputs.followerStatorCurrent = elevatorFollowerStatorCurrentSignal.value.amps
     inputs.leaderTempCelcius = elevatorLeadertempSignal.value.celsius
     inputs.followerTempCelcius = elevatorFollowertempSignal.value.celsius
-    inputs.leaderRawPosition = leaderSensor.getRawPosition()
-    inputs.followerRawPosition = followerSensor.getRawPosition()
   }
 
   override fun setOutputVoltage(voltage: ElectricalPotential) {
