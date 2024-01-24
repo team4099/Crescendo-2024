@@ -34,7 +34,7 @@ object WristIOSim : WristIO {
       DCMotor.getNEO(1),
       WristConstants.WRIST_GEAR_RATIO,
       WristConstants.WRIST_INERTIA.inKilogramsMeterSquared,
-      WristConstants.WRIST_LENGHT.inMeters,
+      WristConstants.WRIST_LENGTH.inMeters,
       WristConstants.WRIST_MIN_ROTATION.inRadians,
       WristConstants.WRIST_MAX_ROTATION.inRadians,
       true,
