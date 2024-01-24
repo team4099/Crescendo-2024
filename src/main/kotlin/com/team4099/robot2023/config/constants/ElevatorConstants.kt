@@ -37,18 +37,18 @@ object ElevatorConstants {
   val FOLLOWER_KI: IntegralGain<Meter, Volt> = 0.0.volts / (1.inches * 1.seconds)
   val FOLLOWER_KD: DerivativeGain<Meter, Volt> = 0.0.volts / (1.inches.perSecond)
 
-  val SIM_KP = 2.0.volts / 1.inches
+  val SIM_KP = 3.0.volts / 1.inches
   val SIM_KI = 0.0.volts / (1.inches * 1.seconds)
   val SIM_KD = 0.0.volts / (1.inches.perSecond)
 
   val ELEVATOR_KS = 0.0.volts
-  val ELEVATOR_KG = 0.32.volts
+  val ELEVATOR_KG = 0.35.volts
   val ELEVATOR_KV = 0.39.volts / 1.inches.perSecond
   val ELEVATOR_KA = 0.00083.volts / 1.inches.perSecond.perSecond
   val ELEVATOR_OPEN_LOOP_EXTEND_VOLTAGE = 8.0.volts
   val ELEVATOR_OPEN_LOOP_RETRACT_VOLTAGE = -12.0.volts
 
-  val ENABLE_ELEVATOR = false
+  val ENABLE_ELEVATOR = true
   val ELEVATOR_IDLE_HEIGHT = 0.0.inches
   val ELEVATOR_SOFT_LIMIT_EXTENSION = 17.5.inches
   val ELEVATOR_SOFT_LIMIT_RETRACTION = -1.0.inches
@@ -60,7 +60,7 @@ object ElevatorConstants {
   val ELEVATOR_TOLERANCE = 0.2.inches
 
   val MAX_VELOCITY = 0.82.meters.perSecond
-  val MAX_ACCELERATION = 0.5.meters.perSecond.perSecond
+  val MAX_ACCELERATION = 2.meters.perSecond.perSecond
 
   val SHOOT_SPEAKER_POSITION = 0.0.inches
   val SHOOT_AMP_POSITION = 0.0.inches
