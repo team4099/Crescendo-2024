@@ -2,12 +2,15 @@ package com.team4099.robot2023.subsystems.flywheel
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.wrist.Wrist.Companion.fromRequestToState
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands.runOnce
+import edu.wpi.first.wpilibj2.command.SubsystemBase
+import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.base.seconds
@@ -20,10 +23,11 @@ import org.team4099.lib.units.derived.inVoltsPerRotationsPerMinute
 import org.team4099.lib.units.derived.inVoltsPerRotationsPerMinutePerSecond
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
+import org.team4099.lib.units.inRadiansPerSecond
 import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 
-class Flywheel(val io: FlywheelIO) {
+class Flywheel(val io: FlywheelIO) : SubsystemBase() {
   private val kP =
     LoggedTunableValue(
       "Flywheel/kP",
@@ -105,8 +109,16 @@ class Flywheel(val io: FlywheelIO) {
         FlywheelConstants.PID.FLYWHEEL_KA
       )
   }
-  fun periodic() {
+  override fun periodic() {
     io.updateInputs(inputs)
+    Logger.processInputs("Flywheel", inputs)
+
+    if (Constants.Tuning.DEBUGING_MODE) {
+      Logger.recordOutput("Flywheel/FlywheelTargetVoltage", flywheelTargetVoltage.inVolts)
+      Logger.recordOutput("Flywheel/FlywheelTargetVelocity", flywheelTargetVelocity.inRadiansPerSecond)
+      Logger.recordOutput("Flywheel/FlywheelLastVoltage", lastFlywheelVoltage.inVolts)
+    }
+
     if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
       io.configPID(kP.get(), kI.get(), kD.get())
     }
@@ -122,6 +134,7 @@ class Flywheel(val io: FlywheelIO) {
         nextState = Companion.FlywheelStates.OPEN_LOOP
       }
       Companion.FlywheelStates.OPEN_LOOP -> {
+        println("aryan is a monkey")
         setFlywheelVoltage(flywheelTargetVoltage)
         lastFlywheelRunTime = Clock.fpgaTime
 
@@ -162,15 +175,17 @@ class Flywheel(val io: FlywheelIO) {
     enum class FlywheelStates {
       UNINITIALIZED,
       OPEN_LOOP,
-      TARGETING_VELOCITY,
+      TARGETING_VELOCITY;
+      fun equivalentToRequest(request: Request.FlywheelRequest) : Boolean {
+        //Hey Google, where is the nearest bridge? (stupid syntax)
+        return (request is Request.FlywheelRequest.OpenLoop && this == OPEN_LOOP) ||
+                (request is Request.FlywheelRequest.TargetingVelocity && this == TARGETING_VELOCITY)
+      }
     }
-    inline fun fromRequestToState(
-      request: Request.FlywheelRequest
-    ): Flywheel.Companion.FlywheelStates {
+    inline fun fromRequestToState(request: Request.FlywheelRequest): FlywheelStates {
       return when (request) {
-        is Request.FlywheelRequest.OpenLoop -> Flywheel.Companion.FlywheelStates.OPEN_LOOP
-        is Request.FlywheelRequest.TargetingVelocity ->
-          Flywheel.Companion.FlywheelStates.TARGETING_VELOCITY
+        is Request.FlywheelRequest.OpenLoop -> FlywheelStates.OPEN_LOOP
+        is Request.FlywheelRequest.TargetingVelocity -> FlywheelStates.TARGETING_VELOCITY
       }
     }
   }

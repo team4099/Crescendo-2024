@@ -33,7 +33,6 @@ object FlywheelIOSim : FlywheelIO {
     )
 
   override fun updateInputs(inputs: FlywheelIO.FlywheelIOInputs) {
-
     flywheelSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
 
     inputs.leftFlywheelVelocity = flywheelSim.getAngularVelocityRPM().rotations.perMinute
@@ -71,6 +70,8 @@ object FlywheelIOSim : FlywheelIO {
         flywheelSim.getAngularVelocityRPM().rotations.perMinute, velocity
       )
     setFlywheelVoltage(feedback + feedforward)
+
+    appliedVoltage = feedback + feedforward
   }
 
   override fun setFlywheelBrakeMode(brake: Boolean) {}

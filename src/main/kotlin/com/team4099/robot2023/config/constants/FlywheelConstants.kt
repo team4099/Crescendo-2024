@@ -51,8 +51,8 @@ object FlywheelConstants {
       0.0.volts / (1.0.rotations.perMinute.perSecond)
 
     val FLYWHEEL_KS = 0.001.volts
-    val FLYWHEEL_KV = 0.01.volts / 1.rotations.perMinute
-    val FLYWHEEL_KA = 0.01.volts / 1.rotations.perMinute.perSecond
+    val FLYWHEEL_KV = 0.01.volts / 1.radians.perSecond
+    val FLYWHEEL_KA = 0.03.volts / 1.radians.perSecond.perSecond
 
     val FLYWHEEL_INIT_VOLTAGE = 0.0.volts
   }
