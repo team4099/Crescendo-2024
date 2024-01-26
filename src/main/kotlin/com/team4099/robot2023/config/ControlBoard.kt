@@ -104,9 +104,11 @@ object ControlBoard {
 
   val spinUpFlywheel = Trigger { driver.xButton }
 
-  val resetWrist = Trigger { operator.aButton }
+  //val resetWrist = Trigger { operator.aButton }
 
   val openLoopWrist = Trigger { operator.bButton }
 
   val spinUpWrist = Trigger { operator.xButton }
+
+  val wristPID = Trigger { operator.aButton }
 }

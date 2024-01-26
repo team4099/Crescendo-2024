@@ -8,6 +8,7 @@ import com.team4099.robot2023.subsystems.superstructure.Request
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
+import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.ArmFeedforward
 import org.team4099.lib.controller.TrapezoidProfile
@@ -32,7 +33,7 @@ import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inDegreesPerSecond
 import org.team4099.lib.units.perSecond
 
-class Wrist(val io: WristIO) {
+class Wrist(val io: WristIO) : SubsystemBase() {
   val inputs = WristIO.WristIOInputs()
 
   private val wristkS =
@@ -66,7 +67,7 @@ class Wrist(val io: WristIO) {
     )
   private val wristkD =
     LoggedTunableValue(
-      "wrist/kD", Pair({ it.inVoltsPerDegreePerSecond }, { it.volts.perDegreePerSecond })
+      "Wrist/kD", Pair({ it.inVoltsPerDegreePerSecond }, { it.volts.perDegreePerSecond })
     )
 
   var currentRequest: Request.WristRequest = Request.WristRequest.Zero()
@@ -136,7 +137,7 @@ class Wrist(val io: WristIO) {
       )
   }
 
-  fun periodic() {
+  override fun periodic() {
     io.updateInputs(inputs)
     if (wristkP.hasChanged() || wristkI.hasChanged() || wristkD.hasChanged()) {
       io.configPID(wristkP.get(), wristkI.get(), wristkD.get())

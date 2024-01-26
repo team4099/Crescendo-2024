@@ -5,5 +5,18 @@
       "/Shuffleboard/Pre-match/Mode": "String Chooser",
       "/SmartDashboard/AutonomousMode": "String Chooser"
     }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "SmartDashboard": {
+        "TunableNumbers": {
+          "Wrist": {
+            "open": true
+          },
+          "open": true
+        },
+        "open": true
+      }
+    }
   }
 }

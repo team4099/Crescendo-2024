@@ -25,6 +25,7 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
+import com.team4099.robot2023.commands.wrist.WristPositioningCommand
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -145,9 +146,10 @@ object RobotContainer {
     ControlBoard.spinUpFlywheel.whileTrue(flywheel.flywheelSpinUpCommand())
     ControlBoard.openLoopFlywheel.whileTrue(flywheel.flywheelOpenLoopCommand())
 
-    ControlBoard.resetWrist.whileTrue(wrist.wristResetCommand())
+    //ControlBoard.resetWrist.whileTrue(wrist.wristResetCommand())
     ControlBoard.spinUpWrist.whileTrue(wrist.wristPositionCommand())
     ControlBoard.openLoopWrist.whileTrue(wrist.wristOpenLoopCommand())
+    ControlBoard.wristPID.whileTrue(WristPositioningCommand(wrist))
   }
 
   fun mapTestControls() {}
