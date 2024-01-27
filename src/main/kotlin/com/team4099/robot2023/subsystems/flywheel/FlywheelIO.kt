@@ -66,11 +66,11 @@ interface FlywheelIO {
       table.get("rightFlywheelSupplyCurrent", rightFlywheelSupplyCurrent.inAmperes).let {
         rightFlywheelSupplyCurrent = it.amps
       }
-      table.get("rightFlywheelTempreature", rightFlywheelTemperature.inCelsius).let {
+      table.get("rightFlywheelTemperature", rightFlywheelTemperature.inCelsius).let {
         rightFlywheelTemperature = it.celsius
       }
 
-      // LeFt motor
+      // Left motor
       table.get("leftFlywheelVelocityRPM", leftFlywheelVelocity.inRadiansPerSecond).let {
         leftFlywheelVelocity = it.radians.perSecond
       }
@@ -83,7 +83,7 @@ interface FlywheelIO {
       table.get("leftFlywheelSupplyCurrent", leftFlywheelSupplyCurrent.inAmperes).let {
         leftFlywheelSupplyCurrent = it.amps
       }
-      table.get("leftFlywheelTempreature", leftFlywheelTemperature.inCelsius).let {
+      table.get("leftFlywheelTemperature", leftFlywheelTemperature.inCelsius).let {
         leftFlywheelTemperature = it.celsius
       }
     }

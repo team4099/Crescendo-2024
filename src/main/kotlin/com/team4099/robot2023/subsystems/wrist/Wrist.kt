@@ -33,7 +33,7 @@ import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inDegreesPerSecond
 import org.team4099.lib.units.perSecond
 
-class Wrist(val io: WristIO):SubsystemBase() {
+class Wrist(val io: WristIO) : SubsystemBase() {
   val inputs = WristIO.WristIOInputs()
 
   private val wristkS =
@@ -186,7 +186,7 @@ class Wrist(val io: WristIO):SubsystemBase() {
 
           val postProfileGenerate = Clock.fpgaTime
           Logger.recordOutput(
-            "/Shooter/ProfileGenerationMS",
+            "/Wrist/ProfileGenerationMS",
             postProfileGenerate.inSeconds - preProfileGenerate.inSeconds
           )
 
@@ -196,7 +196,7 @@ class Wrist(val io: WristIO):SubsystemBase() {
         val timeElapsed = Clock.fpgaTime - timeProfileGeneratedAt
         val setPoint: TrapezoidProfile.State<Radian> = wristProfile.calculate(timeElapsed)
         setWristPosition(setPoint)
-        Logger.recordOutput("Shooter/completedMotionProfile", wristProfile.isFinished(timeElapsed))
+        Logger.recordOutput("Wrist/completedMotionProfile", wristProfile.isFinished(timeElapsed))
         nextState = fromRequestToState(currentRequest)
         // if we're transitioning out of targeting position, we want to make sure the next time we
         // enter targeting position, we regenerate profile (even if the arm setpoint is the same as
@@ -247,7 +247,7 @@ class Wrist(val io: WristIO):SubsystemBase() {
 
   fun wristPositionCommand(): Command {
     return Commands.runOnce({
-      currentRequest = Request.WristRequest.TargetingPosition(120.degrees)
+      currentRequest = Request.WristRequest.TargetingPosition(45.degrees)
     })
   }
 

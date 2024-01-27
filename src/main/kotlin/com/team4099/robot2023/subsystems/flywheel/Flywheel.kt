@@ -2,10 +2,9 @@ package com.team4099.robot2023.subsystems.flywheel
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FlywheelConstants
-import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
-import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.Wrist.Companion.fromRequestToState
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
@@ -24,10 +23,11 @@ import org.team4099.lib.units.derived.inVoltsPerRotationsPerMinute
 import org.team4099.lib.units.derived.inVoltsPerRotationsPerMinutePerSecond
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
+import org.team4099.lib.units.inRadiansPerSecond
 import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 
-class Flywheel(val io: FlywheelIO): SubsystemBase() {
+class Flywheel(val io: FlywheelIO) : SubsystemBase() {
   private val kP =
     LoggedTunableValue(
       "Flywheel/kP",
@@ -110,16 +110,15 @@ class Flywheel(val io: FlywheelIO): SubsystemBase() {
       )
   }
   override fun periodic() {
-
+    io.updateInputs(inputs)
     Logger.processInputs("Flywheel", inputs)
 
-    Logger.recordOutput("Flywheel/currentState", currentState.name)
+    if (Constants.Tuning.DEBUGING_MODE) {
+      Logger.recordOutput("Flywheel/FlywheelTargetVoltage", flywheelTargetVoltage.inVolts)
+      Logger.recordOutput("Flywheel/FlywheelTargetVelocity", flywheelTargetVelocity.inRadiansPerSecond)
+      Logger.recordOutput("Flywheel/FlywheelLastVoltage", lastFlywheelVoltage.inVolts)
+    }
 
-    Logger.recordOutput("Flywheel/requestedState", currentRequest.javaClass.simpleName)
-
-    Logger.recordOutput("Flywheel/isAtTargetedPosition", isAtTargetedVelocity)
-
-    io.updateInputs(inputs)
     if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
       io.configPID(kP.get(), kI.get(), kD.get())
     }
@@ -135,6 +134,7 @@ class Flywheel(val io: FlywheelIO): SubsystemBase() {
         nextState = Companion.FlywheelStates.OPEN_LOOP
       }
       Companion.FlywheelStates.OPEN_LOOP -> {
+        println("aryan is a monkey")
         setFlywheelVoltage(flywheelTargetVoltage)
         lastFlywheelRunTime = Clock.fpgaTime
 
@@ -147,13 +147,7 @@ class Flywheel(val io: FlywheelIO): SubsystemBase() {
       }
     }
   }
-  val isAtTargetedVelocity: Boolean
-    get() =
-      (
-              currentState == FlywheelStates.TARGETING_VELOCITY &&
-                      (inputs.rightFlywheelVelocity - flywheelTargetVelocity).absoluteValue <=
-                      FlywheelConstants.FLYWHEEL_TOLERANCE
-              )
+
   fun setFlywheelVoltage(appliedVoltage: ElectricalPotential) {
     io.setFlywheelVoltage(appliedVoltage)
   }
@@ -181,15 +175,17 @@ class Flywheel(val io: FlywheelIO): SubsystemBase() {
     enum class FlywheelStates {
       UNINITIALIZED,
       OPEN_LOOP,
-      TARGETING_VELOCITY,
+      TARGETING_VELOCITY;
+      fun equivalentToRequest(request: Request.FlywheelRequest) : Boolean {
+        //Hey Google, where is the nearest bridge? (stupid syntax)
+        return (request is Request.FlywheelRequest.OpenLoop && this == OPEN_LOOP) ||
+                (request is Request.FlywheelRequest.TargetingVelocity && this == TARGETING_VELOCITY)
+      }
     }
-    inline fun fromRequestToState(
-      request: Request.FlywheelRequest
-    ): Flywheel.Companion.FlywheelStates {
+    inline fun fromRequestToState(request: Request.FlywheelRequest): FlywheelStates {
       return when (request) {
-        is Request.FlywheelRequest.OpenLoop -> Flywheel.Companion.FlywheelStates.OPEN_LOOP
-        is Request.FlywheelRequest.TargetingVelocity ->
-          Flywheel.Companion.FlywheelStates.TARGETING_VELOCITY
+        is Request.FlywheelRequest.OpenLoop -> FlywheelStates.OPEN_LOOP
+        is Request.FlywheelRequest.TargetingVelocity -> FlywheelStates.TARGETING_VELOCITY
       }
     }
   }
