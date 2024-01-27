@@ -21,7 +21,6 @@ class WristPositioningCommand(wrist: Wrist) : Command()  {
     }
 
     override fun isFinished(): Boolean {
-        setWristPosition(0.degrees, 5.volts)
-        return false
+        return true
     }
 }

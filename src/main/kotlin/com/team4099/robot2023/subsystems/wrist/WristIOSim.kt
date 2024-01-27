@@ -20,12 +20,15 @@ import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
+import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inKilogramsMeterSquared
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
+import kotlin.math.PI
 
 object WristIOSim : WristIO {
 
@@ -80,7 +83,7 @@ object WristIOSim : WristIO {
   private val wristController =
     PIDController(WristConstants.PID.SIM_KP, WristConstants.PID.SIM_KI, WristConstants.PID.SIM_KD)
 
-  val appliedVoltage = 0.volts
+  var appliedVoltage = 0.volts
 
   override fun updateInputs(inputs: WristIO.WristIOInputs) {
     wristSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
@@ -102,14 +105,16 @@ object WristIOSim : WristIO {
    * @param voltage the voltage to set the roller motor to
    */
   override fun setWristVoltage(voltage: ElectricalPotential) {
-    wristSim.setInputVoltage(
-      clamp(voltage, -WristConstants.VOLTAGE_COMPENSATION, WristConstants.VOLTAGE_COMPENSATION)
-        .inVolts
-    )
+    val clampedVoltage = clamp(voltage, 5.volts, (WristConstants.VOLTAGE_COMPENSATION))
+    wristSim.setInputVoltage(clampedVoltage.inVolts)
+    println("stupid kotlin")
+    println(appliedVoltage)
+    println(voltage)
+    appliedVoltage = clampedVoltage
   }
 
-  override fun setWristPosition(wristPosition: Angle, feedforward: ElectricalPotential) {
-    val feedback = wristController.calculate(wristSim.angleRads.radians, wristPosition)
+  override fun setWristPosition(position: Angle, feedforward: ElectricalPotential) {
+    val feedback = wristController.calculate(wristSim.angleRads.radians * 180 / PI, position)
     setWristVoltage(feedback + feedforward)
   }
 
