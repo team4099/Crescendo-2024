@@ -21,7 +21,6 @@ class PositionVoltage(
     private var limitForwardMotion: Boolean = false,
     private var limitReverseMotion: Boolean = false,
     private var velocity: AngularVelocity = 0.0.degrees.perSecond,
-
 ) {
 
   val positionVoltagePhoenix6 =

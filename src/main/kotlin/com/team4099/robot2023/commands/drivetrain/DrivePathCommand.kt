@@ -6,7 +6,10 @@ import com.team4099.lib.trajectory.CustomTrajectoryGenerator
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+<<<<<<< HEAD
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest
+=======
+>>>>>>> elevator
 import com.team4099.robot2023.util.AllianceFlipUtil
 import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -55,6 +58,7 @@ import org.team4099.lib.units.inRadiansPerSecondPerSecond
 import org.team4099.lib.units.perSecond
 import java.util.function.Supplier
 import kotlin.math.PI
+import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 class DrivePathCommand(
   val drivetrain: Drivetrain,

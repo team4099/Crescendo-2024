@@ -108,7 +108,7 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
 
       fun equivalentToRequest(request: Request.FeederRequest): Boolean {
         return (
-          (request is Request.FeederRequest.OpenLoopIntake && this == OPEN_LOOP_SHOOT) ||
+          (request is Request.FeederRequest.OpenLoopShoot && this == OPEN_LOOP_SHOOT) ||
             (request is Request.FeederRequest.OpenLoopIntake && this == OPEN_LOOP_INTAKE)
           )
       }
@@ -122,3 +122,4 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
     }
   }
 }
+

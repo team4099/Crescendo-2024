@@ -12,6 +12,9 @@ import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
 import com.team4099.robot2023.subsystems.feeder.FeederIOSim
+import com.team4099.robot2023.subsystems.elevator.Elevator
+import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
+import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
 import com.team4099.robot2023.subsystems.vision.Vision
@@ -28,6 +31,7 @@ object RobotContainer {
   private val vision: Vision
   private val limelight: LimelightVision
   private val feeder: Feeder
+  private val elevator: Elevator
 
   init {
     if (RobotBase.isReal()) {
@@ -46,6 +50,7 @@ object RobotContainer {
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
       feeder = Feeder(FeederIONeo)
+      elevator = Elevator(ElevatorIONEO)
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
@@ -57,6 +62,7 @@ object RobotContainer {
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
       feeder = Feeder(FeederIOSim)
+      elevator = Elevator(ElevatorIOSim)
     }
 
     vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
@@ -133,9 +139,6 @@ object RobotContainer {
     //        Constants.Universal.Substation.SINGLE_SUBSTATION
     //      )
     //    )
-
-    ControlBoard.feederShootTest.whileTrue(feeder.feederOpenLoopIntakeTestCommand())
-    ControlBoard.feederIntakeTest.whileTrue(feeder.feederOpenLoopShootTestCommand())
   }
 
   fun mapTestControls() {}
