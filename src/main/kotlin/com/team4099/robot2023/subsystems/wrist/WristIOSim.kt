@@ -20,15 +20,12 @@ import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
-import org.team4099.lib.units.derived.degrees
-import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inKilogramsMeterSquared
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
-import kotlin.math.PI
 
 object WristIOSim : WristIO {
 
@@ -105,7 +102,8 @@ object WristIOSim : WristIO {
    * @param voltage the voltage to set the roller motor to
    */
   override fun setWristVoltage(voltage: ElectricalPotential) {
-    val clampedVoltage = clamp(voltage, -WristConstants.VOLTAGE_COMPENSATION, WristConstants.VOLTAGE_COMPENSATION)
+    val clampedVoltage =
+      clamp(voltage, -WristConstants.VOLTAGE_COMPENSATION, WristConstants.VOLTAGE_COMPENSATION)
     wristSim.setInputVoltage(clampedVoltage.inVolts)
     appliedVoltage = clampedVoltage
   }

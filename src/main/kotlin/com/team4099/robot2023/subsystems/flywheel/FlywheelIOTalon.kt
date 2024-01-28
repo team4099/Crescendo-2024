@@ -15,7 +15,6 @@ import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
-import com.team4099.robot2023.subsystems.wrist.WristIOTalon
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.amps
@@ -31,6 +30,7 @@ import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inVolts
+import org.team4099.lib.units.derived.newtons
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
 
@@ -44,7 +44,10 @@ object FlywheelIOTalon : FlywheelIO {
 
   private val flywheelRightConfiguration: TalonFXConfiguration = TalonFXConfiguration()
 
- var velocityRequest = VelocityVoltage(-1337.degrees.perSecond, slot = 0, feedforward = -1337.volts)
+  var leftVelocityRequest =
+    VelocityVoltage(-1337.degrees.perSecond, slot = 0, feedforward = -1337.volts)
+  var rightVelocityRequest =
+    VelocityVoltage(-1337.degrees.perSecond, slot = 0, feedforward = -1337.volts)
 
   private val flywheelLeftSensor =
     ctreAngularMechanismSensor(
@@ -65,13 +68,12 @@ object FlywheelIOTalon : FlywheelIO {
   var leftFlywheelTempSignal: StatusSignal<Double>
   var leftFlywheelDutyCycle: StatusSignal<Double>
 
-
   var rightFlywheelStatorCurrentSignal: StatusSignal<Double>
   var rightFlywheelSupplyCurrentSignal: StatusSignal<Double>
   var rightFlywheelTempSignal: StatusSignal<Double>
   var rightFlywheelDutyCycle: StatusSignal<Double>
-  var motorVoltage : StatusSignal<Double>
-  var motorTorque :StatusSignal<Double>
+  var motorVoltage: StatusSignal<Double>
+  var motorTorque: StatusSignal<Double>
 
   init {
 
@@ -82,18 +84,18 @@ object FlywheelIOTalon : FlywheelIO {
     flywheelRightTalon.clearStickyFaults()
 
     flywheelLeftConfiguration.Slot0.kP =
-      flywheelLeftSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KP)
+      flywheelLeftSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.PID.LEFT_REAL_KP)
     flywheelLeftConfiguration.Slot0.kI =
-      flywheelLeftSensor.integralVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KI)
+      flywheelLeftSensor.integralVelocityGainToRawUnits(FlywheelConstants.PID.LEFT_REAL_KI)
     flywheelLeftConfiguration.Slot0.kD =
-      flywheelLeftSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KD)
+      flywheelLeftSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.PID.LEFT_REAL_KD)
 
     flywheelRightConfiguration.Slot0.kP =
-      flywheelRightSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KP)
+      flywheelRightSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.PID.RIGHT_REAL_KP)
     flywheelRightConfiguration.Slot0.kI =
-      flywheelRightSensor.integralVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KI)
+      flywheelRightSensor.integralVelocityGainToRawUnits(FlywheelConstants.PID.RIGHT_REAL_KI)
     flywheelRightConfiguration.Slot0.kD =
-      flywheelRightSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KD)
+      flywheelRightSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.PID.RIGHT_REAL_KD)
     //
     // flywheelSensor.velocityFeedforwardToRawUnits(FlywheelConstantsConstants.PID.flywheel_KFF)
 
@@ -119,7 +121,6 @@ object FlywheelIOTalon : FlywheelIO {
       FlywheelConstants.RIGHT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
     flywheelRightConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
 
-
     flywheelLeftConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
     flywheelRightConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
 
@@ -132,14 +133,12 @@ object FlywheelIOTalon : FlywheelIO {
     rightFlywheelTempSignal = flywheelRightTalon.deviceTemp
     rightFlywheelDutyCycle = flywheelRightTalon.dutyCycle
     motorVoltage = flywheelRightTalon.motorVoltage
-    motorTorque =flywheelRightTalon.torqueCurrent
+    motorTorque = flywheelRightTalon.torqueCurrent
 
     leftFlywheelStatorCurrentSignal = flywheelLeftTalon.statorCurrent
     leftFlywheelSupplyCurrentSignal = flywheelLeftTalon.supplyCurrent
     leftFlywheelTempSignal = flywheelLeftTalon.deviceTemp
     leftFlywheelDutyCycle = flywheelLeftTalon.dutyCycle
-
-
 
     MotorChecker.add(
       "Shooter",
@@ -177,27 +176,51 @@ object FlywheelIOTalon : FlywheelIO {
   }
 
   override fun configPID(
-    kP: ProportionalGain<Velocity<Radian>, Volt>,
-    kI: IntegralGain<Velocity<Radian>, Volt>,
-    kD: DerivativeGain<Velocity<Radian>, Volt>
+    rightkP: ProportionalGain<Velocity<Radian>, Volt>,
+    rightkI: IntegralGain<Velocity<Radian>, Volt>,
+    rightkD: DerivativeGain<Velocity<Radian>, Volt>,
+    leftkP: ProportionalGain<Velocity<Radian>, Volt>,
+    leftkI: IntegralGain<Velocity<Radian>, Volt>,
+    leftkD: DerivativeGain<Velocity<Radian>, Volt>
   ) {
-    val PIDConfig = Slot0Configs()
-    PIDConfig.kP = flywheelRightSensor.proportionalVelocityGainToRawUnits(kP)
-    PIDConfig.kI = flywheelRightSensor.integralVelocityGainToRawUnits(kI)
-    PIDConfig.kD = flywheelRightSensor.derivativeVelocityGainToRawUnits(kD)
+    val PIDRightConfig = Slot0Configs()
+    PIDRightConfig.kP = flywheelRightSensor.proportionalVelocityGainToRawUnits(rightkP)
+    PIDRightConfig.kI = flywheelRightSensor.integralVelocityGainToRawUnits(rightkI)
+    PIDRightConfig.kD = flywheelRightSensor.derivativeVelocityGainToRawUnits(rightkD)
 
-    flywheelLeftTalon.configurator.apply(PIDConfig)
-    flywheelRightTalon.configurator.apply(PIDConfig)
+    val PIDLeftConfig = Slot0Configs()
+    PIDLeftConfig.kP = flywheelLeftSensor.proportionalVelocityGainToRawUnits(leftkP)
+    PIDLeftConfig.kI = flywheelLeftSensor.integralVelocityGainToRawUnits(leftkI)
+    PIDLeftConfig.kD = flywheelLeftSensor.derivativeVelocityGainToRawUnits(leftkD)
+
+    flywheelLeftTalon.configurator.apply(PIDLeftConfig)
+    flywheelRightTalon.configurator.apply(PIDRightConfig)
   }
 
-  override fun setFlywheelVoltage(voltage: ElectricalPotential) {
-    flywheelRightTalon.setVoltage(voltage.inVolts)
+  override fun setFlywheelVoltage(
+    voltageRight: ElectricalPotential,
+    voltageLeft: ElectricalPotential
+  ) {
+    flywheelRightTalon.setVoltage(voltageRight.inVolts)
+    flywheelLeftTalon.setVoltage(voltageLeft.inVolts)
   }
 
-  override fun setFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {
-    FlywheelIOTalon.velocityRequest.setFeedforward(feedforward)
-    FlywheelIOTalon.velocityRequest.setVelocity(velocity)
-    FlywheelIOTalon.flywheelRightTalon.setControl(FlywheelIOTalon.velocityRequest.velocityVoltagePhoenix6)
+  override fun setFlywheelVelocity(
+    rightVelocity: AngularVelocity,
+    leftVelocity: AngularVelocity,
+    feedforwardLeft: ElectricalPotential,
+    feedforwardRight: ElectricalPotential
+  ) {
+    FlywheelIOTalon.rightVelocityRequest.setFeedforward(feedforwardRight)
+    FlywheelIOTalon.rightVelocityRequest.setVelocity(rightVelocity)
+    FlywheelIOTalon.flywheelRightTalon.setControl(
+      FlywheelIOTalon.rightVelocityRequest.velocityVoltagePhoenix6
+    )
+    FlywheelIOTalon.leftVelocityRequest.setFeedforward(feedforwardLeft)
+    FlywheelIOTalon.leftVelocityRequest.setVelocity(leftVelocity)
+    FlywheelIOTalon.flywheelRightTalon.setControl(
+      FlywheelIOTalon.leftVelocityRequest.velocityVoltagePhoenix6
+    )
   }
   override fun updateInputs(inputs: FlywheelIO.FlywheelIOInputs) {
     inputs.rightFlywheelVelocity = flywheelRightSensor.velocity
@@ -205,8 +228,8 @@ object FlywheelIOTalon : FlywheelIO {
     inputs.rightFlywheelStatorCurrent = rightFlywheelStatorCurrentSignal.value.amps
     inputs.rightFlywheelSupplyCurrent = rightFlywheelSupplyCurrentSignal.value.amps
     inputs.rightFlywheelTemperature = rightFlywheelTempSignal.value.celsius
-    //TODO fix unit for torque
-    inputs.rightFlywheelTorque = motorTorque.value
+    // TODO fix unit for torque
+    inputs.rightFlywheelTorque = motorTorque.value.newtons
     inputs.rightFlywheelDutyCycle = rightFlywheelDutyCycle.value.volts
 
     inputs.leftFlywheelVelocity = flywheelLeftSensor.velocity
@@ -214,7 +237,6 @@ object FlywheelIOTalon : FlywheelIO {
     inputs.leftFlywheelStatorCurrent = leftFlywheelStatorCurrentSignal.value.amps
     inputs.leftFlywheelSupplyCurrent = leftFlywheelSupplyCurrentSignal.value.amps
     inputs.leftFlywheelTemperature = leftFlywheelTempSignal.value.celsius
-
   }
 
   override fun setFlywheelBrakeMode(brake: Boolean) {

@@ -57,8 +57,8 @@ object WristIOTalon : WristIO {
   var supplyCurrentSignal: StatusSignal<Double>
   var tempSignal: StatusSignal<Double>
   var dutyCycle: StatusSignal<Double>
-  var motorVoltage : StatusSignal<Double>
-  var motorTorque :StatusSignal<Double>
+  var motorVoltage: StatusSignal<Double>
+  var motorTorque: StatusSignal<Double>
   init {
     wristTalon.configurator.apply(TalonFXConfiguration())
 
@@ -78,11 +78,11 @@ object WristIOTalon : WristIO {
     wristConfiguration.Feedback.RotorToSensorRatio = WristConstants.WRIST_ENCODER_GEAR_RATIO
 
     wristConfiguration.Slot0.kP =
-      wristSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KP)
+      wristSensor.proportionalPositionGainToRawUnits(WristConstants.PID.REAL_KP)
     wristConfiguration.Slot0.kI =
-      wristSensor.integralVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KI)
+      wristSensor.integralPositionGainToRawUnits(WristConstants.PID.REAL_KI)
     wristConfiguration.Slot0.kD =
-      wristSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KD)
+      wristSensor.derivativePositionGainToRawUnits(WristConstants.PID.REAL_KD)
 
     wristConfiguration.CurrentLimits.SupplyCurrentLimit =
       FlywheelConstants.LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT.inAmperes
@@ -144,7 +144,7 @@ object WristIOTalon : WristIO {
   override fun updateInputs(inputs: WristIO.WristIOInputs) {
     inputs.wristPostion = wristSensor.position
     inputs.wristVelocity = wristSensor.velocity
-    //TODO fix unit for torque
+    // TODO fix unit for torque
     inputs.wristTorque = motorTorque.value
     inputs.wristAppliedVoltage = motorVoltage.value.volts
     inputs.wristDutyCycle = dutyCycle.value.volts

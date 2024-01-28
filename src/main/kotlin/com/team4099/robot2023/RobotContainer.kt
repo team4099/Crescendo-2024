@@ -145,10 +145,10 @@ object RobotContainer {
     ControlBoard.spinUpFlywheel.whileTrue(flywheel.flywheelSpinUpCommand())
     ControlBoard.openLoopFlywheel.whileTrue(flywheel.flywheelOpenLoopCommand())
 
-    //ControlBoard.resetWrist.whileTrue(wrist.wristResetCommand())
-    //ControlBoard.openLoopWrist.whileTrue(wrist.wristOpenLoopCommand())
-    ControlBoard.wristReset.whileTrue(wrist.wristResetCommand()) //matthew's reset cmd
-    ControlBoard.wristPID.whileTrue(wrist.wristPositionCommand()) //cmd made thursday by nathan
+    // ControlBoard.resetWrist.whileTrue(wrist.wristResetCommand())
+    // ControlBoard.openLoopWrist.whileTrue(wrist.wristOpenLoopCommand())
+    ControlBoard.wristReset.whileTrue(wrist.wristResetCommand()) // matthew's reset cmd
+    ControlBoard.wristPID.whileTrue(wrist.wristPositionCommand()) // cmd made thursday by nathan
   }
 
   fun mapTestControls() {}

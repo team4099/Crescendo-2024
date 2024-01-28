@@ -34,7 +34,6 @@ interface FlywheelIO {
     var rightFlywheelDutyCycle = 0.0.volts
     var rightFlywheelTorque = 0.0.newtons
 
-
     var leftFlywheelVelocity = 0.0.rotations.perMinute
     var leftFlywheelAppliedVoltage = 0.volts
     var leftFlywheelStatorCurrent = 0.amps
@@ -114,7 +113,12 @@ interface FlywheelIO {
 
   fun setFlywheelVoltage(voltageRight: ElectricalPotential, voltageLeft: ElectricalPotential) {}
 
-  fun setFlywheelVelocity(rightVelocity: AngularVelocity, leftVelocity : AngularVelocity, feedforwardLeft: ElectricalPotential, feedforwardRight: ElectricalPotential) {}
+  fun setFlywheelVelocity(
+    rightVelocity: AngularVelocity,
+    leftVelocity: AngularVelocity,
+    feedforwardLeft: ElectricalPotential,
+    feedforwardRight: ElectricalPotential
+  ) {}
 
   fun setFlywheelBrakeMode(brake: Boolean) {}
 

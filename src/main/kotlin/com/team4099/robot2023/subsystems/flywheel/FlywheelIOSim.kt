@@ -25,11 +25,21 @@ object FlywheelIOSim : FlywheelIO {
       FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
 
-  private var appliedVoltage = 0.volts
+  private var appliedRightVoltage = 0.0.volts
+  private var appliedLeftVoltage = 0.0.volts
 
-  private val flywheelController =
+  private val rightFlywheelController =
     PIDController(
-      FlywheelConstants.PID.SIM_KP, FlywheelConstants.PID.SIM_KI, FlywheelConstants.PID.SIM_KD
+      FlywheelConstants.PID.RIGHT_SIM_KP,
+      FlywheelConstants.PID.RIGHT_SIM_KI,
+      FlywheelConstants.PID.RIGHT_SIM_KD
+    )
+
+  private val leftFlywheelController =
+    PIDController(
+      FlywheelConstants.PID.LEFT_SIM_KP,
+      FlywheelConstants.PID.LEFT_SIM_KI,
+      FlywheelConstants.PID.LEFT_SIM_KD
     )
 
   override fun updateInputs(inputs: FlywheelIO.FlywheelIOInputs) {
@@ -37,14 +47,14 @@ object FlywheelIOSim : FlywheelIO {
 
     inputs.leftFlywheelVelocity = flywheelSim.getAngularVelocityRPM().rotations.perMinute
     inputs.leftFlywheelVelocity = flywheelSim.getAngularVelocityRPM().rotations.perMinute
-    inputs.leftFlywheelAppliedVoltage = appliedVoltage
+    inputs.leftFlywheelAppliedVoltage = appliedLeftVoltage
     inputs.leftFlywheelSupplyCurrent = 0.amps
     inputs.leftFlywheelStatorCurrent = flywheelSim.currentDrawAmps.amps
     inputs.leftFlywheelTemperature = 0.0.celsius
 
     inputs.rightFlywheelVelocity = flywheelSim.getAngularVelocityRPM().rotations.perMinute
     inputs.rightFlywheelVelocity = flywheelSim.getAngularVelocityRPM().rotations.perMinute
-    inputs.rightFlywheelAppliedVoltage = appliedVoltage
+    inputs.rightFlywheelAppliedVoltage = appliedRightVoltage
     inputs.rightFlywheelSupplyCurrent = 0.amps
     inputs.rightFlywheelStatorCurrent = flywheelSim.currentDrawAmps.amps
     inputs.rightFlywheelTemperature = 0.0.celsius
@@ -52,11 +62,24 @@ object FlywheelIOSim : FlywheelIO {
     inputs.isSimulated = true
   }
 
-  override fun setFlywheelVoltage(leftVoltage: ElectricalPotential) {
-    appliedVoltage = leftVoltage
+  override fun setFlywheelVoltage(
+    voltageRight: ElectricalPotential,
+    voltageLeft: ElectricalPotential
+  ) {
+    appliedRightVoltage = voltageRight
     flywheelSim.setInputVoltage(
       clamp(
-        leftVoltage,
+        voltageRight,
+        -FlywheelConstants.VOLTAGE_COMPENSATION,
+        FlywheelConstants.VOLTAGE_COMPENSATION
+      )
+        .inVolts
+    )
+
+    appliedLeftVoltage = voltageLeft
+    flywheelSim.setInputVoltage(
+      clamp(
+        voltageLeft,
         -FlywheelConstants.VOLTAGE_COMPENSATION,
         FlywheelConstants.VOLTAGE_COMPENSATION
       )
@@ -64,14 +87,25 @@ object FlywheelIOSim : FlywheelIO {
     )
   }
 
-  override fun setFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {
-    val feedback =
-      flywheelController.calculate(
-        flywheelSim.getAngularVelocityRPM().rotations.perMinute, velocity
+  override fun setFlywheelVelocity(
+    rightVelocity: AngularVelocity,
+    leftVelocity: AngularVelocity,
+    feedforwardLeft: ElectricalPotential,
+    feedforwardRight: ElectricalPotential
+  ) {
+    val rightFeedback =
+      rightFlywheelController.calculate(
+        flywheelSim.getAngularVelocityRPM().rotations.perMinute, rightVelocity
       )
-    setFlywheelVoltage(feedback + feedforward)
+    val leftFeedback =
+      leftFlywheelController.calculate(
+        flywheelSim.getAngularVelocityRPM().rotations.perMinute, leftVelocity
+      )
 
-    appliedVoltage = feedback + feedforward
+    setFlywheelVoltage(rightFeedback + feedforwardRight, leftFeedback + feedforwardLeft)
+
+    appliedRightVoltage = rightFeedback + feedforwardRight
+    appliedLeftVoltage = leftFeedback + feedforwardLeft
   }
 
   override fun setFlywheelBrakeMode(brake: Boolean) {}

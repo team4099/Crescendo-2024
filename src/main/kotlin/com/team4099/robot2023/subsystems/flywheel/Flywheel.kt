@@ -67,7 +67,9 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
   val inputs = FlywheelIO.FlywheelIOInputs()
   private val flywheelRightkS =
     LoggedTunableValue(
-      "Flywheel/Right kS", FlywheelConstants.PID.RIGHT_FLYWHEEL_KS, Pair({ it.inVolts }, { it.volts })
+      "Flywheel/Right kS",
+      FlywheelConstants.PID.RIGHT_FLYWHEEL_KS,
+      Pair({ it.inVolts }, { it.volts })
     )
   private val flywheelRightkV =
     LoggedTunableValue(
@@ -87,7 +89,9 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
 
   private val flywheelLeftkS =
     LoggedTunableValue(
-      "Flywheel/Left kS", FlywheelConstants.PID.LEFT_FLYWHEEL_KS, Pair({ it.inVolts }, { it.volts })
+      "Flywheel/Left kS",
+      FlywheelConstants.PID.LEFT_FLYWHEEL_KS,
+      Pair({ it.inVolts }, { it.volts })
     )
   private val flywheelLeftkV =
     LoggedTunableValue(
@@ -104,7 +108,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         { it.volts / 1.0.rotations.perMinute.perSecond }
       )
     )
-  
+
   var flywheelRightFeedForward: SimpleMotorFeedforward<Radian, Volt>
   var flywheelLeftFeedForward: SimpleMotorFeedforward<Radian, Volt>
 
@@ -128,8 +132,8 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         }
         is Request.FlywheelRequest.TargetingVelocity -> {
           flywheelRightTargetVelocity = value.flywheelVelocity
-          //left needs to be half of the right one
-          flywheelRightTargetVelocity = value.flywheelVelocity/2
+          // left needs to be half of the right one
+          flywheelRightTargetVelocity = value.flywheelVelocity / 2
         }
         else -> {}
       }
@@ -138,13 +142,21 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
 
   init {
     if (RobotBase.isReal()) {
-      rightkP.initDefault(FlywheelConstants.PID.REAL_KP)
-      rightkI.initDefault(FlywheelConstants.PID.REAL_KI)
-      rightkD.initDefault(FlywheelConstants.PID.REAL_KD)
+      rightkP.initDefault(FlywheelConstants.PID.RIGHT_REAL_KP)
+      rightkI.initDefault(FlywheelConstants.PID.RIGHT_REAL_KI)
+      rightkD.initDefault(FlywheelConstants.PID.RIGHT_REAL_KD)
+
+      leftkP.initDefault(FlywheelConstants.PID.LEFT_REAL_KP)
+      leftkI.initDefault(FlywheelConstants.PID.LEFT_REAL_KI)
+      leftkD.initDefault(FlywheelConstants.PID.LEFT_REAL_KD)
     } else {
-      rightkP.initDefault(FlywheelConstants.PID.SIM_KP)
-      rightkI.initDefault(FlywheelConstants.PID.SIM_KI)
-      rightkD.initDefault(FlywheelConstants.PID.SIM_KD)
+      rightkP.initDefault(FlywheelConstants.PID.RIGHT_SIM_KP)
+      rightkI.initDefault(FlywheelConstants.PID.RIGHT_SIM_KI)
+      rightkD.initDefault(FlywheelConstants.PID.RIGHT_SIM_KD)
+
+      leftkP.initDefault(FlywheelConstants.PID.LEFT_SIM_KP)
+      leftkI.initDefault(FlywheelConstants.PID.LEFT_SIM_KI)
+      leftkD.initDefault(FlywheelConstants.PID.LEFT_SIM_KD)
     }
 
     flywheelRightFeedForward =
@@ -167,18 +179,32 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
 
     if (Constants.Tuning.DEBUGING_MODE) {
       Logger.recordOutput("Flywheel/FlywheelTargetVoltage", flywheelRightTargetVoltage.inVolts)
-      Logger.recordOutput("Flywheel/FlywheelTargetVelocity", flywheelRightTargetVelocity.inRadiansPerSecond)
+      Logger.recordOutput(
+        "Flywheel/FlywheelTargetVelocity", flywheelRightTargetVelocity.inRadiansPerSecond
+      )
       Logger.recordOutput("Flywheel/FlywheelLastVoltage", lastRightFlywheelVoltage.inVolts)
     }
 
-    if (rightkP.hasChanged() || rightkI.hasChanged() || rightkD.hasChanged()
-      ||leftkP.hasChanged() || leftkI.hasChanged() || leftkD.hasChanged()) {
-      io.configPID(rightkP.get(), rightkI.get(), rightkD.get(), leftkP.get(), leftkI.get(), leftkD.get())
+    if (rightkP.hasChanged() ||
+      rightkI.hasChanged() ||
+      rightkD.hasChanged() ||
+      leftkP.hasChanged() ||
+      leftkI.hasChanged() ||
+      leftkD.hasChanged()
+    ) {
+      io.configPID(
+        rightkP.get(), rightkI.get(), rightkD.get(), leftkP.get(), leftkI.get(), leftkD.get()
+      )
     }
 
-    if (flywheelRightkA.hasChanged() || flywheelRightkV.hasChanged() || flywheelRightkS.hasChanged()) {
+    if (flywheelRightkA.hasChanged() ||
+      flywheelRightkV.hasChanged() ||
+      flywheelRightkS.hasChanged()
+    ) {
       flywheelRightFeedForward =
-        SimpleMotorFeedforward(flywheelRightkS.get(), flywheelRightkV.get(), flywheelRightkA.get())
+        SimpleMotorFeedforward(
+          flywheelRightkS.get(), flywheelRightkV.get(), flywheelRightkA.get()
+        )
     }
 
     if (flywheelLeftkA.hasChanged() || flywheelLeftkV.hasChanged() || flywheelLeftkS.hasChanged()) {
@@ -206,14 +232,22 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     }
   }
 
-  fun setFlywheelVoltage(appliedVoltageRight: ElectricalPotential, appliedVoltageLeft: ElectricalPotential) {
+  fun setFlywheelVoltage(
+    appliedVoltageRight: ElectricalPotential,
+    appliedVoltageLeft: ElectricalPotential
+  ) {
     io.setFlywheelVoltage(appliedVoltageRight, appliedVoltageLeft)
   }
 
-  fun setFlywheelVelocity(flywheelRightVelocity: AngularVelocity, flywheelLeftVelocity: AngularVelocity) {
+  fun setFlywheelVelocity(
+    flywheelRightVelocity: AngularVelocity,
+    flywheelLeftVelocity: AngularVelocity
+  ) {
     val rightFeedForward = flywheelRightFeedForward.calculate(flywheelRightVelocity)
     val leftFeedForward = flywheelLeftFeedForward.calculate(flywheelLeftVelocity)
-    io.setFlywheelVelocity(flywheelRightVelocity, flywheelLeftVelocity, leftFeedForward, rightFeedForward)
+    io.setFlywheelVelocity(
+      flywheelRightVelocity, flywheelLeftVelocity, leftFeedForward, rightFeedForward
+    )
   }
 
   fun flywheelSpinUpCommand(): Command {
@@ -235,10 +269,10 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       UNINITIALIZED,
       OPEN_LOOP,
       TARGETING_VELOCITY;
-      fun equivalentToRequest(request: Request.FlywheelRequest) : Boolean {
-        //Hey Google, where is the nearest bridge? (stupid syntax)
+      fun equivalentToRequest(request: Request.FlywheelRequest): Boolean {
+        // Hey Google, where is the nearest bridge? (stupid syntax)
         return (request is Request.FlywheelRequest.OpenLoop && this == OPEN_LOOP) ||
-                (request is Request.FlywheelRequest.TargetingVelocity && this == TARGETING_VELOCITY)
+          (request is Request.FlywheelRequest.TargetingVelocity && this == TARGETING_VELOCITY)
       }
     }
     inline fun fromRequestToState(request: Request.FlywheelRequest): FlywheelStates {
