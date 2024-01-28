@@ -96,16 +96,4 @@ object ControlBoard {
   val characterizeIntake = Trigger { technician.xButton }
 
   // for testing
-  val setArmCommand = Trigger { technician.yButton }
-
-<<<<<<< HEAD
-  val feederIntakeTest = Trigger { driver.aButton }
-  val feederShootTest = Trigger { driver.bButton }
-=======
-  val elevatorOpenLoopExtend = Trigger { driver.aButton }
-  val elevatorOpenLoopRetract = Trigger { driver.bButton }
-  val elevatorClosedLoopHigh = Trigger { driver.xButton }
-  val elevatorClosedLoopLow = Trigger { driver.yButton }
->>>>>>> elevator
 }
-

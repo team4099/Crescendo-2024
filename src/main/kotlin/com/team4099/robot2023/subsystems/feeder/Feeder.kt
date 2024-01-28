@@ -70,7 +70,7 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
       FeederStates.OPEN_LOOP_INTAKE -> {
         if (!hasNote) {
           setFeederVoltage(feederTargetVoltage)
-          }
+        }
         nextState = fromRequestToState(currentRequest)
       }
       FeederStates.OPEN_LOOP_SHOOT -> {
@@ -99,7 +99,6 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
     })
   }
 
-
   companion object {
     enum class FeederStates {
       UNINITIALIZED,
@@ -122,4 +121,3 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
     }
   }
 }
-

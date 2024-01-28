@@ -19,7 +19,6 @@ import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inKilograms
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inSeconds
-import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.ElectricalPotential
@@ -99,15 +98,15 @@ object ElevatorIOSim : ElevatorIO {
    */
   override fun setOutputVoltage(voltage: ElectricalPotential) {
     Logger.recordOutput("Elevator/OutputTest", voltage)
-      val clampedVoltage =
-        clamp(
-          voltage,
-          -ElevatorConstants.VOLTAGE_COMPENSATION,
-          ElevatorConstants.VOLTAGE_COMPENSATION
-        )
-      lastAppliedVoltage = clampedVoltage
+    val clampedVoltage =
+      clamp(
+        voltage,
+        -ElevatorConstants.VOLTAGE_COMPENSATION,
+        ElevatorConstants.VOLTAGE_COMPENSATION
+      )
+    lastAppliedVoltage = clampedVoltage
 
-      elevatorSim.setInputVoltage(clampedVoltage.inVolts)
+    elevatorSim.setInputVoltage(clampedVoltage.inVolts)
   }
 
   /**
@@ -131,8 +130,7 @@ object ElevatorIOSim : ElevatorIO {
   }
 
   /** set the current encoder position to be the encoders zero value */
-  override fun zeroEncoder() {
-  }
+  override fun zeroEncoder() {}
 
   /**
    * updates the PID controller values using the sensor measurement for proportional intregral and

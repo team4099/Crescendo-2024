@@ -4,7 +4,6 @@ import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
-import org.team4099.lib.units.base.percent
 import org.team4099.lib.units.base.pounds
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.DerivativeGain
@@ -56,7 +55,6 @@ object ElevatorConstants {
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_RETRACTION = 0.0.inches
   val ELEVATOR_SAFE_THRESHOLD = 5.0.inches
 
-
   val ELEVATOR_TOLERANCE = 0.2.inches
 
   val MAX_VELOCITY = 0.82.meters.perSecond
@@ -84,5 +82,4 @@ object ElevatorConstants {
   val FOLLOWER_STATOR_CURRENT_LIMIT = 0.0.amps
   val FOLLOWER_SUPPLY_CURRENT_LIMIT = 0.0.amps
   val FOLLOWER_THRESHOLD_CURRENT_LIMIT = 0.0.amps
-
 }

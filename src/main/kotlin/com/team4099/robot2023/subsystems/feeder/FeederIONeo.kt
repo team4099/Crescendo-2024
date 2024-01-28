@@ -8,7 +8,6 @@ import com.team4099.robot2023.config.constants.FeederConstants
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
 import com.team4099.robot2023.subsystems.falconspin.Neo
-import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
@@ -64,7 +63,6 @@ object FeederIONeo : FeederIO {
     inputs.feederSupplyCurrent =
       inputs.feederStatorCurrent * feederSparkMax.appliedOutput.absoluteValue
     inputs.feederTemp = feederSparkMax.motorTemperature.celsius
-
   }
 
   /**

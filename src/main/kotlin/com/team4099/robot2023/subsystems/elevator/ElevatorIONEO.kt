@@ -15,7 +15,6 @@ import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
-import org.team4099.lib.units.base.inPercentOutputPerSecond
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.ElectricalPotential
@@ -144,7 +143,10 @@ object ElevatorIONEO : ElevatorIO {
   override fun setOutputVoltage(voltage: ElectricalPotential) {
     // divide by 2 cause full power elevator is scary
     if (((leaderSensor.position < 0.5.inches) && (voltage < 0.volts)) ||
-      (leaderSensor.position > ElevatorConstants.ELEVATOR_MAX_EXTENSION - 0.5.inches && (voltage > 0.volts))
+      (
+        leaderSensor.position > ElevatorConstants.ELEVATOR_MAX_EXTENSION - 0.5.inches &&
+          (voltage > 0.volts)
+        )
     ) {
       leaderSparkMax.setVoltage(0.0)
     } else {

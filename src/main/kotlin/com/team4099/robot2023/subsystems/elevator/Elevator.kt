@@ -30,7 +30,6 @@ import org.team4099.lib.units.derived.perInchSeconds
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inInchesPerSecond
 import org.team4099.lib.units.perSecond
-import kotlin.time.Duration.Companion.seconds
 import com.team4099.robot2023.subsystems.superstructure.Request.ElevatorRequest as ElevatorRequest
 
 class Elevator(val io: ElevatorIO) : SubsystemBase() {
@@ -53,27 +52,26 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
     LoggedTunableValue(
       "Elevator/kD", Pair({ it.inVoltsPerInchPerSecond }, { it.volts / 1.0.inches.perSecond })
     )
-  private val kS =
-    LoggedTunableValue(
-      "Elevator/kS", Pair({ it.inVolts}, {it.volts})
-    )
-  private val kG =
-    LoggedTunableValue(
-      "Elevator/kG", Pair({ it.inVolts}, {it.volts})
-    )
+  private val kS = LoggedTunableValue("Elevator/kS", Pair({ it.inVolts }, { it.volts }))
+  private val kG = LoggedTunableValue("Elevator/kG", Pair({ it.inVolts }, { it.volts }))
   private val kV =
     LoggedTunableValue(
-      "Elevator/kG", Pair({it.inVoltsPerInchPerSecond}, {it.volts / 1.0.inches.perSecond})
+      "Elevator/kG", Pair({ it.inVoltsPerInchPerSecond }, { it.volts / 1.0.inches.perSecond })
     )
   private val kA =
     LoggedTunableValue(
-      "Elevator/kA", Pair({it.inVoltsPerMeterPerSecondPerSecond}, {it.volts / 1.0.meters.perSecond.perSecond})
+      "Elevator/kA",
+      Pair(
+        { it.inVoltsPerMeterPerSecondPerSecond },
+        { it.volts / 1.0.meters.perSecond.perSecond }
+      )
     )
 
   object TunableElevatorHeights {
     val enableElevator =
-      LoggedTunableNumber("Elevator/enableMovementElevator",
-      if (ElevatorConstants.ENABLE_ELEVATOR) 1.0 else 0.0)
+      LoggedTunableNumber(
+        "Elevator/enableMovementElevator", if (ElevatorConstants.ENABLE_ELEVATOR) 1.0 else 0.0
+      )
 
     val minPosition =
       LoggedTunableValue(
@@ -91,11 +89,15 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
     // TODO: change voltages
     val openLoopExtendVoltage =
       LoggedTunableValue(
-        "Elevator/openLoopExtendVoltage", ElevatorConstants.ELEVATOR_OPEN_LOOP_EXTEND_VOLTAGE, Pair({ it.inVolts }, { it.volts })
+        "Elevator/openLoopExtendVoltage",
+        ElevatorConstants.ELEVATOR_OPEN_LOOP_EXTEND_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
       )
     val openLoopRetractVoltage =
       LoggedTunableValue(
-        "Elevator/openLoopRetractVoltage", ElevatorConstants.ELEVATOR_OPEN_LOOP_RETRACT_VOLTAGE, Pair({ it.inVolts }, { it.volts })
+        "Elevator/openLoopRetractVoltage",
+        ElevatorConstants.ELEVATOR_OPEN_LOOP_RETRACT_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
       )
 
     val shootSpeakerPosition =
@@ -190,7 +192,10 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
     get() =
       currentRequest is ElevatorRequest.TargetingPosition &&
         (
-          ((inputs.elevatorPosition - elevatorPositionTarget).absoluteValue <= ElevatorConstants.ELEVATOR_SAFE_THRESHOLD) ||
+          (
+            (inputs.elevatorPosition - elevatorPositionTarget).absoluteValue <=
+              ElevatorConstants.ELEVATOR_SAFE_THRESHOLD
+            ) ||
             elevatorProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt)
           ) &&
         lastRequestedPosition == elevatorPositionTarget
@@ -222,8 +227,6 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
         ElevatorConstants.ELEVATOR_KV,
         ElevatorConstants.ELEVATOR_KA
       )
-
-
   }
 
   override fun periodic() {

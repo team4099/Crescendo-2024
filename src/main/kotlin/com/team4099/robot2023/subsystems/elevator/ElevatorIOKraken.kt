@@ -3,7 +3,6 @@ package com.team4099.robot2023.subsystems.elevator
 import com.ctre.phoenix6.StatusSignal
 import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
-import com.ctre.phoenix6.controls.PositionDutyCycle
 import com.ctre.phoenix6.controls.PositionVoltage
 import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.NeutralModeValue
@@ -26,7 +25,6 @@ import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.inVolts
-import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 
 object ElevatorIOKraken : ElevatorIO {
@@ -155,10 +153,13 @@ object ElevatorIOKraken : ElevatorIO {
 
   override fun setOutputVoltage(voltage: ElectricalPotential) {
     if (((leaderSensor.position < 0.5.inches) && (voltage < 0.volts)) ||
-      (leaderSensor.position > ElevatorConstants.ELEVATOR_MAX_EXTENSION - 0.5.inches && (voltage > 0.volts))) {
+      (
+        leaderSensor.position > ElevatorConstants.ELEVATOR_MAX_EXTENSION - 0.5.inches &&
+          (voltage > 0.volts)
+        )
+    ) {
       elevatorLeaderKraken.setVoltage(0.0)
-    }
-    else {
+    } else {
       elevatorLeaderKraken.setVoltage(voltage.inVolts)
     }
   }
@@ -166,14 +167,7 @@ object ElevatorIOKraken : ElevatorIO {
   override fun setPosition(position: Length, feedForward: ElectricalPotential) {
     elevatorLeaderKraken.setControl(
       PositionVoltage(
-        leaderSensor.getRawPosition(),
-        0.0,
-        true,
-        feedForward.inVolts,
-        0,
-        false,
-        false,
-        false
+        leaderSensor.getRawPosition(), 0.0, true, feedForward.inVolts, 0, false, false, false
       )
     )
   }

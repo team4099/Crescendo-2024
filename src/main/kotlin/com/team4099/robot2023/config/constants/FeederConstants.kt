@@ -5,10 +5,8 @@ import org.team4099.lib.units.base.grams
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
-import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.kilo
-import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 
 object FeederConstants {
@@ -27,8 +25,6 @@ object FeederConstants {
 
   var WAIT_BEFORE_DETECT_VELOCITY_DROP = 1.seconds
 
-
   val INTAKE_NOTE_VOLTAGE = 6.volts
   val SHOOT_NOTE_VOLTAGE = 11.9.volts
-
 }
