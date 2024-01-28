@@ -97,4 +97,8 @@ object ControlBoard {
 
   // for testing
   val setArmCommand = Trigger { technician.yButton }
+
+  val feederIntakeTest = Trigger { driver.aButton }
+  val feederShootTest = Trigger { driver.bButton }
 }
+

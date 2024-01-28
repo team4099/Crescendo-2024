@@ -9,34 +9,31 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIO
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
-import com.team4099.robot2023.subsystems.intake.Intake
-import com.team4099.robot2023.subsystems.intake.IntakeIONEO
-import com.team4099.robot2023.subsystems.intake.IntakeIOSim
+import com.team4099.robot2023.subsystems.feeder.Feeder
+import com.team4099.robot2023.subsystems.feeder.FeederIONeo
+import com.team4099.robot2023.subsystems.feeder.FeederIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
-import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
-import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.smoothDeadband
-import org.team4099.lib.units.base.feet
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
+import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 object RobotContainer {
   private val drivetrain: Drivetrain
-  private val intake: Intake
   private val vision: Vision
   private val limelight: LimelightVision
+  private val feeder: Feeder
 
   init {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
       drivetrain = Drivetrain(object : GyroIO {}, object : DrivetrainIO {})
-      intake = Intake(IntakeIONEO)
       vision =
         Vision(
           //          object: CameraIO {}
@@ -48,10 +45,10 @@ object RobotContainer {
           //        CameraIONorthstar("backward")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
+      feeder = Feeder(FeederIONeo)
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
-      intake = Intake(IntakeIOSim)
       vision =
         Vision(
           CameraIONorthstar("northstar_1"),
@@ -59,6 +56,7 @@ object RobotContainer {
           CameraIONorthstar("northstar_3"),
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
+      feeder = Feeder(FeederIOSim)
     }
 
     vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
@@ -135,6 +133,9 @@ object RobotContainer {
     //        Constants.Universal.Substation.SINGLE_SUBSTATION
     //      )
     //    )
+
+    ControlBoard.feederShootTest.whileTrue(feeder.feederOpenLoopIntakeTestCommand())
+    ControlBoard.feederIntakeTest.whileTrue(feeder.feederOpenLoopShootTestCommand())
   }
 
   fun mapTestControls() {}
