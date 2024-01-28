@@ -12,6 +12,7 @@ import org.team4099.lib.units.perSecond
 import com.ctre.phoenix6.controls.PositionVoltage as PositionVoltagePhoenix6
 
 class PositionVoltage(
+
     private var position: Angle, // Assuming an AngularPosition type exists similar to AngularVelocity
     private var enableFOC: Boolean = true,
     private var feedforward: ElectricalPotential = 0.0.volts,
@@ -20,6 +21,7 @@ class PositionVoltage(
     private var limitForwardMotion: Boolean = false,
     private var limitReverseMotion: Boolean = false,
     private var velocity: AngularVelocity = 0.0.degrees.perSecond,
+
 ) {
 
     val positionVoltagePhoenix6 = PositionVoltagePhoenix6(position.inRotations, velocity.inRotationsPerSecond, enableFOC, feedforward.inVolts, slot, overrideBrakeDurNeutral, limitForwardMotion, limitReverseMotion)

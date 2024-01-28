@@ -17,51 +17,6 @@ import org.team4099.lib.units.perSecond
 
 sealed interface Request {
 
-  sealed interface SuperstructureRequest : Request {
-    class Idle() : SuperstructureRequest
-    class Home() : SuperstructureRequest
-
-    class GroundIntakeCube() : SuperstructureRequest
-    class GroundIntakeCone() : SuperstructureRequest
-
-    class EjectGamePiece() : SuperstructureRequest
-
-    class DoubleSubstationIntakePrep(val gamePiece: GamePiece) : SuperstructureRequest
-    class SingleSubstationIntakePrep(val gamePiece: GamePiece) : SuperstructureRequest
-
-    class DoubleSubstationIntake() : SuperstructureRequest
-    class SingleSubstationIntake(val gamePiece: GamePiece) : SuperstructureRequest
-
-    class PrepScore(val gamePiece: GamePiece, val nodeTier: NodeTier) : SuperstructureRequest
-
-    class Score() : SuperstructureRequest
-
-    class Tuning() : SuperstructureRequest
-  }
-
-  // Implements RequestStructure to ensure standardized structure
-  sealed interface ManipulatorRequest : Request {
-    class TargetingPosition(val position: Length, val rollerVoltage: ElectricalPotential) :
-      ManipulatorRequest
-    class OpenLoop(val voltage: ElectricalPotential, val rollerVoltage: ElectricalPotential) :
-      ManipulatorRequest
-    class Home() : ManipulatorRequest
-  }
-
-  sealed interface ElevatorRequest : Request {
-    class TargetingPosition(
-      val position: Length,
-      val finalVelocity: LinearVelocity = 0.0.inches.perSecond,
-      val canContinueBuffer: Length = 5.0.inches
-    ) : ElevatorRequest
-    class OpenLoop(val voltage: ElectricalPotential) : ElevatorRequest
-    class Home : ElevatorRequest
-  }
-
-  sealed interface IntakeRequest : Request {
-    class OpenLoop(val rollerVoltage: ElectricalPotential) : IntakeRequest
-  }
-
   sealed interface DrivetrainRequest : Request {
     class OpenLoop(
       val angularVelocity: AngularVelocity,
@@ -75,5 +30,9 @@ sealed interface Request {
     ) : DrivetrainRequest
     class ZeroSensors : DrivetrainRequest
     class Idle : DrivetrainRequest
+  }
+
+  sealed interface IntakeRequest : Request {
+    class OpenLoop(val rollerVoltage: ElectricalPotential) : IntakeRequest
   }
 }
