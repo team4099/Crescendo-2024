@@ -18,7 +18,6 @@ import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 
 object FlywheelConstants {
-  val FLYWHEEL_VOLTAGE_COMPENSATION = 12.volts
   val LEFT_GEAR_RATIO = 1.0
 
   val RIGHT_GEAR_RATIO = 24.0/48.0

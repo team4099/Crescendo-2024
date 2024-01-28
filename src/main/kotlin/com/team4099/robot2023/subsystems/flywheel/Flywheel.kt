@@ -4,7 +4,9 @@ import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FlywheelConstants
+import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.subsystems.wrist.Wrist
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
@@ -16,9 +18,16 @@ import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.inVolts
+import org.team4099.lib.units.derived.inVoltsPerRadianPerSecond
+import org.team4099.lib.units.derived.inVoltsPerRadianPerSecondPerSecond
+import org.team4099.lib.units.derived.inVoltsPerRadiansPerSecond
+import org.team4099.lib.units.derived.inVoltsPerRadiansPerSecondPerSecond
 import org.team4099.lib.units.derived.inVoltsPerRotations
 import org.team4099.lib.units.derived.inVoltsPerRotationsPerMinute
 import org.team4099.lib.units.derived.inVoltsPerRotationsPerMinutePerSecond
+import org.team4099.lib.units.derived.perRadian
+import org.team4099.lib.units.derived.perRadianPerSecond
+import org.team4099.lib.units.derived.radiansPerSecondPerRadiansPerSecond
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inRadiansPerSecond
@@ -75,15 +84,15 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     LoggedTunableValue(
       "Flywheel/Right kV",
       FlywheelConstants.PID.RIGHT_FLYWHEEL_KV,
-      Pair({ it.inVoltsPerRotationsPerMinute }, { it.volts / 1.0.rotations.perMinute })
+      Pair({ it.inVoltsPerRadianPerSecond }, { it.volts.perRadianPerSecond })
     )
   private val flywheelRightkA =
     LoggedTunableValue(
       "Flywheel/Right kA",
       FlywheelConstants.PID.RIGHT_FLYWHEEL_KA,
       Pair(
-        { it.inVoltsPerRotationsPerMinutePerSecond },
-        { it.volts / 1.0.rotations.perMinute.perSecond }
+        { it.inVoltsPerRadiansPerSecondPerSecond },
+        { it.volts.radians.perSecond.perSecond }
       )
     )
 
@@ -120,6 +129,16 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
 
   var flywheelLeftTargetVoltage = 0.0.volts
   var flywheelLeftTargetVelocity: AngularVelocity = 0.0.rotations.perMinute
+
+  val isAtTargetedVelocity: Boolean
+    get() =
+      (
+              currentState == FlywheelStates.TARGETING_VELOCITY &&
+                      (inputs.rightFlywheelVelocity - flywheelRightTargetVelocity).absoluteValue <=
+                      FlywheelConstants.FLYWHEEL_TOLERANCE &&
+                      (inputs.leftFlywheelVelocity - flywheelLeftTargetVelocity).absoluteValue <=
+                      FlywheelConstants.FLYWHEEL_TOLERANCE
+              )
 
   var currentState = Companion.FlywheelStates.UNINITIALIZED
 
@@ -176,6 +195,11 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
   override fun periodic() {
     io.updateInputs(inputs)
     Logger.processInputs("Flywheel", inputs)
+    Logger.recordOutput("Flywheel/currentState", currentState.name)
+
+    Logger.recordOutput("Flywheel/requestedState", currentRequest.javaClass.simpleName)
+
+    Logger.recordOutput("Flywheel/isAtTargetedVelocity", isAtTargetedVelocity)
 
     if (Constants.Tuning.DEBUGING_MODE) {
       Logger.recordOutput("Flywheel/FlywheelTargetVoltage", flywheelRightTargetVoltage.inVolts)
@@ -230,6 +254,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         nextState = fromRequestToState(currentRequest)
       }
     }
+    currentState= nextState
   }
 
   fun setFlywheelVoltage(
@@ -252,7 +277,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
 
   fun flywheelSpinUpCommand(): Command {
     return runOnce({
-      currentRequest = Request.FlywheelRequest.TargetingVelocity(6000.rotations.perSecond)
+      currentRequest = Request.FlywheelRequest.TargetingVelocity(10000.rotations.perSecond)
     })
   }
 
@@ -270,7 +295,6 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       OPEN_LOOP,
       TARGETING_VELOCITY;
       fun equivalentToRequest(request: Request.FlywheelRequest): Boolean {
-        // Hey Google, where is the nearest bridge? (stupid syntax)
         return (request is Request.FlywheelRequest.OpenLoop && this == OPEN_LOOP) ||
           (request is Request.FlywheelRequest.TargetingVelocity && this == TARGETING_VELOCITY)
       }
