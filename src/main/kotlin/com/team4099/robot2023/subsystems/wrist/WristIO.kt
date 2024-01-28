@@ -24,12 +24,14 @@ import org.team4099.lib.units.perSecond
 interface WristIO {
   class WristIOInputs : LoggableInputs {
 
-    var wristPostion = 0.degrees
-    var wristVelocity = 0.radians.perSecond
-    var wristAppliedVoltage = 0.volts
-    var wristStatorCurrent = 0.amps
-    var wristSupplyCurrent = 0.amps
-    var wristTemperature = 0.celsius
+    var wristPostion = 0.0.degrees
+    var wristVelocity = 0.0.radians.perSecond
+    var wristAppliedVoltage = 0.0.volts
+    var wristDutyCycle = 0.0.volts
+    var wristTorque = 0.0
+    var wristStatorCurrent = 0.0.amps
+    var wristSupplyCurrent = 0.0.amps
+    var wristTemperature = 0.0.celsius
 
     var isSimulated = false
 

@@ -29,6 +29,8 @@ interface FlywheelIO {
     var rightFlywheelStatorCurrent = 0.amps
     var rightFlywheelSupplyCurrent = 0.amps
     var rightFlywheelTemperature = 0.celsius
+    var rightFlywheelDutyCycle = 0.0.volts
+    var rightFlywheelTorque = 0.0
 
     var leftFlywheelVelocity = 0.0.rotations.perMinute
     var leftFlywheelAppliedVoltage = 0.volts

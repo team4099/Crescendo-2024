@@ -30,6 +30,7 @@ import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
+import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
@@ -43,6 +44,8 @@ object WristIOTalon : WristIO {
   private val absoluteEncoder: CANcoder = CANcoder(Constants.WRIST.CANCODER_ID)
   private val absoluteEncoderConfiguration: MagnetSensorConfigs = MagnetSensorConfigs()
 
+  var positionRequest = PositionVoltage(-1337.degrees, slot = 0, feedforward = -1337.volts)
+
   private val wristSensor =
     ctreAngularMechanismSensor(
       wristTalon,
@@ -54,6 +57,8 @@ object WristIOTalon : WristIO {
   var supplyCurrentSignal: StatusSignal<Double>
   var tempSignal: StatusSignal<Double>
   var dutyCycle: StatusSignal<Double>
+  var motorVoltage : StatusSignal<Double>
+  var motorTorque :StatusSignal<Double>
   init {
     wristTalon.configurator.apply(TalonFXConfiguration())
 
@@ -98,6 +103,8 @@ object WristIOTalon : WristIO {
     supplyCurrentSignal = wristTalon.supplyCurrent
     tempSignal = wristTalon.deviceTemp
     dutyCycle = wristTalon.dutyCycle
+    motorVoltage = wristTalon.motorVoltage
+    motorTorque = wristTalon.torqueCurrent
 
     MotorChecker.add(
       "Wrist",
@@ -130,14 +137,17 @@ object WristIOTalon : WristIO {
   }
 
   override fun setWristPosition(position: Angle, feedforward: ElectricalPotential) {
-    wristTalon.setControl(
-      PositionVoltage(position, slot = 0, feedforward = feedforward).positionVoltagePhoenix6
-    )
+    positionRequest.setFeedforward(feedforward)
+    positionRequest.setPosition(position)
+    wristTalon.setControl(positionRequest.positionVoltagePhoenix6)
   }
   override fun updateInputs(inputs: WristIO.WristIOInputs) {
     inputs.wristPostion = wristSensor.position
     inputs.wristVelocity = wristSensor.velocity
-    inputs.wristAppliedVoltage = dutyCycle.value.volts
+    //TODO fix unit for torque
+    inputs.wristTorque = motorTorque.value
+    inputs.wristAppliedVoltage = motorVoltage.value.volts
+    inputs.wristDutyCycle = dutyCycle.value.volts
     inputs.wristStatorCurrent = statorCurrentSignal.value.amps
     inputs.wristSupplyCurrent = supplyCurrentSignal.value.amps
     inputs.wristTemperature = tempSignal.value.celsius
