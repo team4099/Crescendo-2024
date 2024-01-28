@@ -18,10 +18,17 @@ import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perMinute
 
 object FlywheelIOSim : FlywheelIO {
-  private val flywheelSim: FlywheelSim =
+  private val flywheelRightSim: FlywheelSim =
     FlywheelSim(
-      DCMotor.getNEO(1),
+      DCMotor.getKrakenX60Foc(1),
       FlywheelConstants.LEFT_GEAR_RATIO,
+      FlywheelConstants.INERTIA.inKilogramsMeterSquared
+    )
+
+  private val flywheelLeftSim: FlywheelSim =
+    FlywheelSim(
+      DCMotor.getKrakenX60Foc(1),
+      FlywheelConstants.RIGHT_GEAR_RATIO,
       FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
 
@@ -43,20 +50,21 @@ object FlywheelIOSim : FlywheelIO {
     )
 
   override fun updateInputs(inputs: FlywheelIO.FlywheelIOInputs) {
-    flywheelSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
+    flywheelLeftSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
+    flywheelRightSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
 
-    inputs.leftFlywheelVelocity = flywheelSim.getAngularVelocityRPM().rotations.perMinute
-    inputs.leftFlywheelVelocity = flywheelSim.getAngularVelocityRPM().rotations.perMinute
+    inputs.leftFlywheelVelocity = flywheelLeftSim.getAngularVelocityRPM().rotations.perMinute
+    inputs.leftFlywheelVelocity = flywheelLeftSim.getAngularVelocityRPM().rotations.perMinute
     inputs.leftFlywheelAppliedVoltage = appliedLeftVoltage
     inputs.leftFlywheelSupplyCurrent = 0.amps
-    inputs.leftFlywheelStatorCurrent = flywheelSim.currentDrawAmps.amps
+    inputs.leftFlywheelStatorCurrent = flywheelLeftSim.currentDrawAmps.amps
     inputs.leftFlywheelTemperature = 0.0.celsius
 
-    inputs.rightFlywheelVelocity = flywheelSim.getAngularVelocityRPM().rotations.perMinute
-    inputs.rightFlywheelVelocity = flywheelSim.getAngularVelocityRPM().rotations.perMinute
+    inputs.rightFlywheelVelocity = flywheelRightSim.getAngularVelocityRPM().rotations.perMinute
+    inputs.rightFlywheelVelocity = flywheelRightSim.getAngularVelocityRPM().rotations.perMinute
     inputs.rightFlywheelAppliedVoltage = appliedRightVoltage
     inputs.rightFlywheelSupplyCurrent = 0.amps
-    inputs.rightFlywheelStatorCurrent = flywheelSim.currentDrawAmps.amps
+    inputs.rightFlywheelStatorCurrent = flywheelRightSim.currentDrawAmps.amps
     inputs.rightFlywheelTemperature = 0.0.celsius
 
     inputs.isSimulated = true
@@ -67,7 +75,7 @@ object FlywheelIOSim : FlywheelIO {
     voltageLeft: ElectricalPotential
   ) {
     appliedRightVoltage = voltageRight
-    flywheelSim.setInputVoltage(
+    flywheelRightSim.setInputVoltage(
       clamp(
         voltageRight,
         -FlywheelConstants.VOLTAGE_COMPENSATION,
@@ -77,7 +85,7 @@ object FlywheelIOSim : FlywheelIO {
     )
 
     appliedLeftVoltage = voltageLeft
-    flywheelSim.setInputVoltage(
+    flywheelLeftSim.setInputVoltage(
       clamp(
         voltageLeft,
         -FlywheelConstants.VOLTAGE_COMPENSATION,
@@ -95,11 +103,11 @@ object FlywheelIOSim : FlywheelIO {
   ) {
     val rightFeedback =
       rightFlywheelController.calculate(
-        flywheelSim.getAngularVelocityRPM().rotations.perMinute, rightVelocity
+        flywheelRightSim.getAngularVelocityRPM().rotations.perMinute, rightVelocity
       )
     val leftFeedback =
       leftFlywheelController.calculate(
-        flywheelSim.getAngularVelocityRPM().rotations.perMinute, leftVelocity
+        flywheelLeftSim.getAngularVelocityRPM().rotations.perMinute, leftVelocity
       )
 
     setFlywheelVoltage(rightFeedback + feedforwardRight, leftFeedback + feedforwardLeft)

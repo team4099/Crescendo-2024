@@ -19,9 +19,9 @@ import org.team4099.lib.units.perSecond
 
 object FlywheelConstants {
   val FLYWHEEL_VOLTAGE_COMPENSATION = 12.volts
-  val LEFT_GEAR_RATIO = 24.0 / 48.0
+  val LEFT_GEAR_RATIO = 1.0
 
-  val RIGHT_GEAR_RATIO = 1.0
+  val RIGHT_GEAR_RATIO = 24.0/48.0
 
   val VOLTAGE_COMPENSATION = 12.volts
 
@@ -68,13 +68,12 @@ object FlywheelConstants {
       0.0.volts / (1.0.rotations.perMinute.perSecond)
 
     val RIGHT_FLYWHEEL_KS = 0.001.volts
-    val RIGHT_FLYWHEEL_KV = 0.01.volts / 1.radians.perSecond
-    val RIGHT_FLYWHEEL_KA = 0.03.volts / 1.radians.perSecond.perSecond
+    val RIGHT_FLYWHEEL_KV = 0.0075.volts / 1.radians.perSecond
+    val RIGHT_FLYWHEEL_KA = 0.09.volts / 1.radians.perSecond.perSecond
 
     val LEFT_FLYWHEEL_KS = 0.001.volts
-    val LEFT_FLYWHEEL_KV = 0.01.volts / 1.radians.perSecond
+    val LEFT_FLYWHEEL_KV = 0.015.volts / 1.radians.perSecond
     val LEFT_FLYWHEEL_KA = 0.03.volts / 1.radians.perSecond.perSecond
 
-    val FLYWHEEL_INIT_VOLTAGE = 0.0.volts
   }
 }
