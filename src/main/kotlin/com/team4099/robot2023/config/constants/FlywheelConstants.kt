@@ -51,9 +51,13 @@ object FlywheelConstants {
     val SIM_KD: DerivativeGain<Velocity<Radian>, Volt> =
       0.0.volts / (1.0.rotations.perMinute.perSecond)
 
-    val FLYWHEEL_KS = 0.001.volts
-    val FLYWHEEL_KV = 0.01.volts / 1.radians.perSecond
-    val FLYWHEEL_KA = 0.03.volts / 1.radians.perSecond.perSecond
+    val RIGHT_FLYWHEEL_KS = 0.001.volts
+    val RIGHT_FLYWHEEL_KV = 0.01.volts / 1.radians.perSecond
+    val RIGHT_FLYWHEEL_KA = 0.03.volts / 1.radians.perSecond.perSecond
+    
+    val LEFT_FLYWHEEL_KS = 0.001.volts
+    val LEFT_FLYWHEEL_KV = 0.01.volts / 1.radians.perSecond
+    val LEFT_FLYWHEEL_KA = 0.03.volts / 1.radians.perSecond.perSecond
 
     val FLYWHEEL_INIT_VOLTAGE = 0.0.volts
 

@@ -14,7 +14,9 @@ import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
+import org.team4099.lib.units.derived.inNewtons
 import org.team4099.lib.units.derived.inVolts
+import org.team4099.lib.units.derived.newtons
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
@@ -30,13 +32,16 @@ interface FlywheelIO {
     var rightFlywheelSupplyCurrent = 0.amps
     var rightFlywheelTemperature = 0.celsius
     var rightFlywheelDutyCycle = 0.0.volts
-    var rightFlywheelTorque = 0.0
+    var rightFlywheelTorque = 0.0.newtons
+
 
     var leftFlywheelVelocity = 0.0.rotations.perMinute
     var leftFlywheelAppliedVoltage = 0.volts
     var leftFlywheelStatorCurrent = 0.amps
     var leftFlywheelSupplyCurrent = 0.amps
     var leftFlywheelTemperature = 0.celsius
+    var leftFlywheelDutyCycle = 0.0.volts
+    var leftFlywheelTorque = 0.0.newtons
 
     var isSimulated = false
 
@@ -46,12 +51,16 @@ interface FlywheelIO {
       table.put("flywheelRightStatorCurrent", rightFlywheelStatorCurrent.inAmperes)
       table.put("flywheelRightSupplyCurrent", rightFlywheelSupplyCurrent.inAmperes)
       table.put("flywheelRightTemperature", rightFlywheelTemperature.inCelsius)
+      table.put("rightFlywheelDutyCycle", rightFlywheelDutyCycle.inVolts)
+      table.put("rightFlywheelTorque", rightFlywheelTorque.inNewtons)
 
       table.put("flywheelLeftVelocityRPM", leftFlywheelVelocity.inRadiansPerSecond)
       table.put("flywheelLeftAppliedVoltage", leftFlywheelAppliedVoltage.inVolts)
       table.put("flywheelLeftStatorCurrent", leftFlywheelStatorCurrent.inAmperes)
       table.put("flywheelLeftSupplyCurrent", leftFlywheelSupplyCurrent.inAmperes)
       table.put("flywheelLeftTemperature", leftFlywheelTemperature.inCelsius)
+      table.put("leftFlywheelDutyCycle", leftFlywheelDutyCycle.inVolts)
+      table.put("leftFlywheelTorque", leftFlywheelTorque.inNewtons)
     }
 
     override fun fromLog(table: LogTable) {
@@ -71,6 +80,12 @@ interface FlywheelIO {
       table.get("rightFlywheelTemperature", rightFlywheelTemperature.inCelsius).let {
         rightFlywheelTemperature = it.celsius
       }
+      table.get("rightFlywheelDutyCycle", rightFlywheelDutyCycle.inVolts).let {
+        rightFlywheelDutyCycle = it.volts
+      }
+      table.get("rightFlywheelTorque", rightFlywheelTorque.inNewtons).let {
+        rightFlywheelTorque = it.newtons
+      }
 
       // Left motor
       table.get("leftFlywheelVelocityRPM", leftFlywheelVelocity.inRadiansPerSecond).let {
@@ -88,20 +103,29 @@ interface FlywheelIO {
       table.get("leftFlywheelTemperature", leftFlywheelTemperature.inCelsius).let {
         leftFlywheelTemperature = it.celsius
       }
+      table.get("leftFlywheelDutyCycle", leftFlywheelDutyCycle.inVolts).let {
+        leftFlywheelDutyCycle = it.volts
+      }
+      table.get("leftFlywheelTorque", leftFlywheelTorque.inNewtons).let {
+        leftFlywheelTorque = it.newtons
+      }
     }
   }
 
-  fun setFlywheelVoltage(voltage: ElectricalPotential) {}
+  fun setFlywheelVoltage(voltageRight: ElectricalPotential, voltageLeft: ElectricalPotential) {}
 
-  fun setFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {}
+  fun setFlywheelVelocity(rightVelocity: AngularVelocity, leftVelocity : AngularVelocity, feedforwardLeft: ElectricalPotential, feedforwardRight: ElectricalPotential) {}
 
   fun setFlywheelBrakeMode(brake: Boolean) {}
 
   fun updateInputs(inputs: FlywheelIOInputs) {}
 
   fun configPID(
-    kP: ProportionalGain<Velocity<Radian>, Volt>,
-    kI: IntegralGain<Velocity<Radian>, Volt>,
-    kD: DerivativeGain<Velocity<Radian>, Volt>
+    rightkP: ProportionalGain<Velocity<Radian>, Volt>,
+    rightkI: IntegralGain<Velocity<Radian>, Volt>,
+    rightkD: DerivativeGain<Velocity<Radian>, Volt>,
+    leftkP: ProportionalGain<Velocity<Radian>, Volt>,
+    leftkI: IntegralGain<Velocity<Radian>, Volt>,
+    leftkD: DerivativeGain<Velocity<Radian>, Volt>
   ) {}
 }
