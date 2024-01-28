@@ -92,7 +92,7 @@ object WristIOSim : WristIO {
     inputs.wristPostion = wristSim.angleRads.radians
     inputs.wristVelocity = wristSim.velocityRadPerSec.radians.perSecond
     inputs.wristSupplyCurrent = 0.amps
-    inputs.wristAppliedVoltage = 0.volts
+    inputs.wristAppliedVoltage = appliedVoltage
     inputs.wristStatorCurrent = wristSim.currentDrawAmps.amps
     inputs.wristTemperature = 0.0.celsius
 
@@ -105,16 +105,13 @@ object WristIOSim : WristIO {
    * @param voltage the voltage to set the roller motor to
    */
   override fun setWristVoltage(voltage: ElectricalPotential) {
-    val clampedVoltage = clamp(voltage, 5.volts, (WristConstants.VOLTAGE_COMPENSATION))
+    val clampedVoltage = clamp(voltage, -WristConstants.VOLTAGE_COMPENSATION, WristConstants.VOLTAGE_COMPENSATION)
     wristSim.setInputVoltage(clampedVoltage.inVolts)
-    println("stupid kotlin")
-    println(appliedVoltage)
-    println(voltage)
     appliedVoltage = clampedVoltage
   }
 
   override fun setWristPosition(position: Angle, feedforward: ElectricalPotential) {
-    val feedback = wristController.calculate(wristSim.angleRads.radians * 180 / PI, position)
+    val feedback = wristController.calculate(wristSim.angleRads.radians, position)
     setWristVoltage(feedback + feedforward)
   }
 

@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.NeutralModeValue
 import com.team4099.lib.phoenix6.VelocityVoltage
 import com.team4099.robot2023.config.constants.Constants
+import com.team4099.robot2023.config.constants.Constants.Shooter.FLYWHEEL_LEFT_MOTOR_ID
 import com.team4099.robot2023.config.constants.Constants.Shooter.FLYWHEEL_RIGHT_MOTOR_ID
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
@@ -35,11 +36,22 @@ import org.team4099.lib.units.perSecond
 
 object FlywheelIOTalon : FlywheelIO {
 
+  private val flywheelLeftTalon: TalonFX = TalonFX(FLYWHEEL_LEFT_MOTOR_ID)
+
   private val flywheelRightTalon: TalonFX = TalonFX(FLYWHEEL_RIGHT_MOTOR_ID)
+
+  private val flywheelLeftConfiguration: TalonFXConfiguration = TalonFXConfiguration()
 
   private val flywheelRightConfiguration: TalonFXConfiguration = TalonFXConfiguration()
 
  var velocityRequest = VelocityVoltage(-1337.degrees.perSecond, slot = 0, feedforward = -1337.volts)
+
+  private val flywheelLeftSensor =
+    ctreAngularMechanismSensor(
+      flywheelLeftTalon,
+      FlywheelConstants.LEFT_GEAR_RATIO,
+      FlywheelConstants.VOLTAGE_COMPENSATION,
+    )
 
   private val flywheelRightSensor =
     ctreAngularMechanismSensor(
@@ -47,6 +59,11 @@ object FlywheelIOTalon : FlywheelIO {
       FlywheelConstants.RIGHT_GEAR_RATIO,
       FlywheelConstants.VOLTAGE_COMPENSATION,
     )
+
+  var leftFlywheelStatorCurrentSignal: StatusSignal<Double>
+  var leftFlywheelSupplyCurrentSignal: StatusSignal<Double>
+  var leftFlywheelTempSignal: StatusSignal<Double>
+  var leftFlywheelDutyCycle: StatusSignal<Double>
 
 
   var rightFlywheelStatorCurrentSignal: StatusSignal<Double>
@@ -58,6 +75,19 @@ object FlywheelIOTalon : FlywheelIO {
 
   init {
 
+    flywheelLeftTalon.configurator.apply(TalonFXConfiguration())
+    flywheelRightTalon.configurator.apply(TalonFXConfiguration())
+
+    flywheelLeftTalon.clearStickyFaults()
+    flywheelRightTalon.clearStickyFaults()
+
+    flywheelLeftConfiguration.Slot0.kP =
+      flywheelLeftSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KP)
+    flywheelLeftConfiguration.Slot0.kI =
+      flywheelLeftSensor.integralVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KI)
+    flywheelLeftConfiguration.Slot0.kD =
+      flywheelLeftSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KD)
+
     flywheelRightConfiguration.Slot0.kP =
       flywheelRightSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KP)
     flywheelRightConfiguration.Slot0.kI =
@@ -66,6 +96,17 @@ object FlywheelIOTalon : FlywheelIO {
       flywheelRightSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KD)
     //
     // flywheelSensor.velocityFeedforwardToRawUnits(FlywheelConstantsConstants.PID.flywheel_KFF)
+
+    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimit =
+      FlywheelConstants.LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT.inAmperes
+    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentThreshold =
+      FlywheelConstants.LEFT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT.inAmperes
+    flywheelLeftConfiguration.CurrentLimits.SupplyTimeThreshold =
+      FlywheelConstants.LEFT_flywheel_TRIGGER_THRESHOLD_TIME.inSeconds
+    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
+    flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimit =
+      FlywheelConstants.LEFT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
+    flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
 
     flywheelRightConfiguration.CurrentLimits.SupplyCurrentLimit =
       FlywheelConstants.RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT.inAmperes
@@ -78,11 +119,13 @@ object FlywheelIOTalon : FlywheelIO {
       FlywheelConstants.RIGHT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
     flywheelRightConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
 
+
+    flywheelLeftConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
     flywheelRightConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
 
     flywheelRightTalon.configurator.apply(flywheelRightConfiguration)
 
-    flywheelRightTalon.setControl(Follower(Constants.Shooter.FLYWHEEL_RIGHT_MOTOR_ID, true))
+    flywheelLeftTalon.setControl(Follower(Constants.Shooter.FLYWHEEL_RIGHT_MOTOR_ID, true))
 
     rightFlywheelStatorCurrentSignal = flywheelRightTalon.statorCurrent
     rightFlywheelSupplyCurrentSignal = flywheelRightTalon.supplyCurrent
@@ -90,6 +133,11 @@ object FlywheelIOTalon : FlywheelIO {
     rightFlywheelDutyCycle = flywheelRightTalon.dutyCycle
     motorVoltage = flywheelRightTalon.motorVoltage
     motorTorque =flywheelRightTalon.torqueCurrent
+
+    leftFlywheelStatorCurrentSignal = flywheelLeftTalon.statorCurrent
+    leftFlywheelSupplyCurrentSignal = flywheelLeftTalon.supplyCurrent
+    leftFlywheelTempSignal = flywheelLeftTalon.deviceTemp
+    leftFlywheelDutyCycle = flywheelLeftTalon.dutyCycle
 
 
 
@@ -108,10 +156,10 @@ object FlywheelIOTalon : FlywheelIO {
       "Shooter",
       "Flywheel",
       MotorCollection(
-        mutableListOf(Falcon500(flywheelRightTalon, "Flywheel Right Motor")),
-        FlywheelConstants.RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT,
+        mutableListOf(Falcon500(flywheelLeftTalon, "Flywheel Left Motor")),
+        FlywheelConstants.LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT,
         90.celsius,
-        FlywheelConstants.RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT - 30.amps,
+        FlywheelConstants.LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT - 30.amps,
         110.celsius
       )
     )
@@ -138,7 +186,7 @@ object FlywheelIOTalon : FlywheelIO {
     PIDConfig.kI = flywheelRightSensor.integralVelocityGainToRawUnits(kI)
     PIDConfig.kD = flywheelRightSensor.derivativeVelocityGainToRawUnits(kD)
 
-
+    flywheelLeftTalon.configurator.apply(PIDConfig)
     flywheelRightTalon.configurator.apply(PIDConfig)
   }
 
@@ -161,6 +209,11 @@ object FlywheelIOTalon : FlywheelIO {
     inputs.rightFlywheelTorque = motorTorque.value
     inputs.rightFlywheelDutyCycle = rightFlywheelDutyCycle.value.volts
 
+    inputs.leftFlywheelVelocity = flywheelLeftSensor.velocity
+    inputs.leftFlywheelAppliedVoltage = leftFlywheelDutyCycle.value.volts
+    inputs.leftFlywheelStatorCurrent = leftFlywheelStatorCurrentSignal.value.amps
+    inputs.leftFlywheelSupplyCurrent = leftFlywheelSupplyCurrentSignal.value.amps
+    inputs.leftFlywheelTemperature = leftFlywheelTempSignal.value.celsius
 
   }
 
