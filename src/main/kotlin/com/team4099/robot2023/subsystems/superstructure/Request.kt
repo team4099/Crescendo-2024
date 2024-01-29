@@ -9,6 +9,27 @@ import org.team4099.lib.units.derived.ElectricalPotential
 
 sealed interface Request {
 
+  sealed interface SuperstructureRequest : Request {
+    class Idle() : SuperstructureRequest
+    class Home() : SuperstructureRequest
+
+    class GroundIntake() : SuperstructureRequest
+
+    class EjectGamePiece() : SuperstructureRequest
+
+    class PrepScoreAmp() : SuperstructureRequest
+
+    class ScoreAmp() : SuperstructureRequest
+
+    class ScoreSpeaker() : SuperstructureRequest
+
+    class ClimbExtend() : SuperstructureRequest
+
+    class ClimbRetract() : SuperstructureRequest
+
+    class Tuning() : SuperstructureRequest
+  }
+
   sealed interface DrivetrainRequest : Request {
     class OpenLoop(
       val angularVelocity: AngularVelocity,
