@@ -12,27 +12,9 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.SimpleMotorFeedforward
-import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.*
 import org.team4099.lib.units.base.seconds
-import org.team4099.lib.units.derived.ElectricalPotential
-import org.team4099.lib.units.derived.Radian
-import org.team4099.lib.units.derived.Volt
-import org.team4099.lib.units.derived.inVolts
-import org.team4099.lib.units.derived.inVoltsPerRadianPerSecond
-import org.team4099.lib.units.derived.inVoltsPerRadianPerSecondPerSecond
-import org.team4099.lib.units.derived.inVoltsPerRadiansPerSecond
-import org.team4099.lib.units.derived.inVoltsPerRadiansPerSecondPerSecond
-import org.team4099.lib.units.derived.inVoltsPerRotations
-import org.team4099.lib.units.derived.inVoltsPerRotationsPerMinute
-import org.team4099.lib.units.derived.inVoltsPerRotationsPerMinutePerSecond
-import org.team4099.lib.units.derived.perRadian
-import org.team4099.lib.units.derived.perRadianPerSecond
-import org.team4099.lib.units.derived.radiansPerSecondPerRadiansPerSecond
-import org.team4099.lib.units.derived.rotations
-import org.team4099.lib.units.derived.volts
-import org.team4099.lib.units.inRadiansPerSecond
-import org.team4099.lib.units.perMinute
-import org.team4099.lib.units.perSecond
+import org.team4099.lib.units.derived.*
 
 class Flywheel(val io: FlywheelIO) : SubsystemBase() {
   private val rightkP =
@@ -74,7 +56,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     )
 
   val inputs = FlywheelIO.FlywheelIOInputs()
-  private val flywheelRightkS =
+  /*private val flywheelRightkS =
     LoggedTunableValue(
       "Flywheel/Right kS",
       FlywheelConstants.PID.RIGHT_FLYWHEEL_KS,
@@ -91,8 +73,8 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       "Flywheel/Right kA",
       FlywheelConstants.PID.RIGHT_FLYWHEEL_KA,
       Pair(
-        { it.inVoltsPerRadiansPerSecondPerSecond },
-        { it.volts.radians.perSecond.perSecond }
+        { it.inVoltsPerRadianPerSecondPerSecond },
+        { it.volts/1.0.radians.perSecond.perSecond }
       )
     )
 
@@ -106,17 +88,17 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     LoggedTunableValue(
       "Flywheel/Left kV",
       FlywheelConstants.PID.LEFT_FLYWHEEL_KV,
-      Pair({ it.inVoltsPerRotationsPerMinute }, { it.volts / 1.0.rotations.perMinute })
+      Pair({ it.inVoltsPerRadianPerSecond }, { it.volts.perRadianPerSecond })
     )
   private val flywheelLeftkA =
     LoggedTunableValue(
       "Flywheel/Left kA",
       FlywheelConstants.PID.LEFT_FLYWHEEL_KA,
       Pair(
-        { it.inVoltsPerRotationsPerMinutePerSecond },
-        { it.volts / 1.0.rotations.perMinute.perSecond }
+        { it.inVoltsPerRadianPerSecondPerSecond },
+        { it.volts / 1.0.radians.perSecond.perSecond }
       )
-    )
+    )*/
 
   var flywheelRightFeedForward: SimpleMotorFeedforward<Radian, Volt>
   var flywheelLeftFeedForward: SimpleMotorFeedforward<Radian, Volt>
@@ -152,7 +134,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         is Request.FlywheelRequest.TargetingVelocity -> {
           flywheelRightTargetVelocity = value.flywheelVelocity
           // left needs to be half of the right one
-          flywheelRightTargetVelocity = value.flywheelVelocity / 2
+          flywheelLeftTargetVelocity = value.flywheelVelocity / 2
         }
         else -> {}
       }
@@ -204,7 +186,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     if (Constants.Tuning.DEBUGING_MODE) {
       Logger.recordOutput("Flywheel/FlywheelTargetVoltage", flywheelRightTargetVoltage.inVolts)
       Logger.recordOutput(
-        "Flywheel/FlywheelTargetVelocity", flywheelRightTargetVelocity.inRadiansPerSecond
+        "Flywheel/FlywheelTargetVelocity", flywheelRightTargetVelocity.inRotationsPerMinute
       )
       Logger.recordOutput("Flywheel/FlywheelLastVoltage", lastRightFlywheelVoltage.inVolts)
     }
@@ -221,7 +203,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       )
     }
 
-    if (flywheelRightkA.hasChanged() ||
+    /*if (flywheelRightkA.hasChanged() ||
       flywheelRightkV.hasChanged() ||
       flywheelRightkS.hasChanged()
     ) {
@@ -234,7 +216,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     if (flywheelLeftkA.hasChanged() || flywheelLeftkV.hasChanged() || flywheelLeftkS.hasChanged()) {
       flywheelLeftFeedForward =
         SimpleMotorFeedforward(flywheelLeftkS.get(), flywheelLeftkV.get(), flywheelLeftkA.get())
-    }
+    }*/
 
     var nextState = currentState
     when (currentState) {
@@ -242,7 +224,6 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         nextState = Companion.FlywheelStates.OPEN_LOOP
       }
       Companion.FlywheelStates.OPEN_LOOP -> {
-        println("ryan lowkey the best")
         setFlywheelVoltage(flywheelRightTargetVoltage, flywheelLeftTargetVoltage)
         lastFlywheelRunTime = Clock.fpgaTime
 
@@ -270,6 +251,10 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
   ) {
     val rightFeedForward = flywheelRightFeedForward.calculate(flywheelRightVelocity)
     val leftFeedForward = flywheelLeftFeedForward.calculate(flywheelLeftVelocity)
+
+    Logger.recordOutput("Flywheel/rightFeedForward", rightFeedForward.inVolts)
+    Logger.recordOutput("Flywheel/leftFeedForward", leftFeedForward.inVolts)
+
     io.setFlywheelVelocity(
       flywheelRightVelocity, flywheelLeftVelocity, leftFeedForward, rightFeedForward
     )
@@ -277,7 +262,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
 
   fun flywheelSpinUpCommand(): Command {
     return runOnce({
-      currentRequest = Request.FlywheelRequest.TargetingVelocity(10000.rotations.perSecond)
+      currentRequest = Request.FlywheelRequest.TargetingVelocity(10000.rotations.perMinute)
     })
   }
 

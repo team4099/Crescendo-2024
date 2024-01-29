@@ -17,7 +17,7 @@
     "transitory": {
       "SmartDashboard": {
         "TunableNumbers": {
-          "Wrist": {
+          "Flywheel": {
             "open": true
           },
           "open": true

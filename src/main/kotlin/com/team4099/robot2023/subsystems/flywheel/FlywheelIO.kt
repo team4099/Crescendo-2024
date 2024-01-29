@@ -108,6 +108,8 @@ interface FlywheelIO {
       table.get("leftFlywheelTorque", leftFlywheelTorque.inNewtons).let {
         leftFlywheelTorque = it.newtons
       }
+
+
     }
   }
 
