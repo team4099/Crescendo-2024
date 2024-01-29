@@ -7,6 +7,7 @@ import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.Velocity
+import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
@@ -48,6 +49,9 @@ interface SwerveModuleIO {
     var driveTemp = 0.0.celsius
     var steeringTemp = 0.0.celsius
 
+    var odometryDrivePositions = arrayOf<Length>()
+    var odometrySteeringPositions = arrayOf<Angle>()
+
     var potentiometerOutputRaw = 0.0
     var potentiometerOutputRadians = 0.0.radians
 
@@ -72,46 +76,43 @@ interface SwerveModuleIO {
     }
 
     override fun fromLog(table: LogTable?) {
-      table?.getDouble("driveAppliedVoltage", driveAppliedVoltage.inVolts)?.let {
+      table?.get("driveAppliedVoltage", driveAppliedVoltage.inVolts)?.let {
         driveAppliedVoltage = it.volts
       }
-      table?.getDouble("steeringAppliedVoltage", steeringAppliedVoltage.inVolts)?.let {
+      table?.get("steeringAppliedVoltage", steeringAppliedVoltage.inVolts)?.let {
         steeringAppliedVoltage = it.volts
       }
-      table?.getDouble("driveStatorCurrentAmps", driveStatorCurrent.inAmperes)?.let {
+      table?.get("driveStatorCurrentAmps", driveStatorCurrent.inAmperes)?.let {
         driveStatorCurrent = it.amps
       }
-      table?.getDouble("driveSupplyCurrentAmps", driveSupplyCurrent.inAmperes)?.let {
+      table?.get("driveSupplyCurrentAmps", driveSupplyCurrent.inAmperes)?.let {
         driveSupplyCurrent = it.amps
       }
-      table?.getDouble("steeringStatorCurrentAmps", steeringStatorCurrent.inAmperes)?.let {
+      table?.get("steeringStatorCurrentAmps", steeringStatorCurrent.inAmperes)?.let {
         steeringStatorCurrent = it.amps
       }
-      table?.getDouble("steeringSupplyCurrentAmps", steeringSupplyCurrent.inAmperes)?.let {
+      table?.get("steeringSupplyCurrentAmps", steeringSupplyCurrent.inAmperes)?.let {
         steeringSupplyCurrent = it.amps
       }
-      table?.getDouble("drivePositionMeters", drivePosition.inMeters)?.let {
-        drivePosition = it.meters
-      }
-      table?.getDouble("steeringPositionRadians", steeringPosition.inRadians)?.let {
+      table?.get("drivePositionMeters", drivePosition.inMeters)?.let { drivePosition = it.meters }
+      table?.get("steeringPositionRadians", steeringPosition.inRadians)?.let {
         steeringPosition = it.radians
       }
-      table?.getDouble("driveVelocityMetersPerSecond", driveVelocity.inMetersPerSecond)?.let {
+      table?.get("driveVelocityMetersPerSecond", driveVelocity.inMetersPerSecond)?.let {
         driveVelocity = it.meters.perSecond
       }
-      table?.getDouble("steeringVelocityRadiansPerSecond", steeringVelocity.inRadiansPerSecond)
-        ?.let { steeringVelocity = it.radians.perSecond }
-      table?.getDouble("driveTempCelcius", driveTemp.inCelsius)?.let { driveTemp = it.celsius }
-      table?.getDouble("steeringTempCelcius", steeringTemp.inCelsius)?.let {
-        steeringTemp = it.celsius
+      table?.get("steeringVelocityRadiansPerSecond", steeringVelocity.inRadiansPerSecond)?.let {
+        steeringVelocity = it.radians.perSecond
       }
-      table?.getDouble("potentiometerOutputRaw", potentiometerOutputRaw)?.let {
+      table?.get("driveTempCelcius", driveTemp.inCelsius)?.let { driveTemp = it.celsius }
+      table?.get("steeringTempCelcius", steeringTemp.inCelsius)?.let { steeringTemp = it.celsius }
+      table?.get("potentiometerOutputRaw", potentiometerOutputRaw)?.let {
         potentiometerOutputRaw = it
       }
-      table?.getDouble("potentiometerOutputRaw", potentiometerOutputRadians.inRadians)?.let {
+      table?.get("potentiometerOutputRaw", potentiometerOutputRadians.inRadians)?.let {
         potentiometerOutputRadians = it.radians
       }
-      table?.getDouble("driftPositionMeters", drift.inMeters)?.let { drift = it.meters }
+      table?.get("driftPositionMeters", drift.inMeters)?.let { drift = it.meters }
     }
   }
 
