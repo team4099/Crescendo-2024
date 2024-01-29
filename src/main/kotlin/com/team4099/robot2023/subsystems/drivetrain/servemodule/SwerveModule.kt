@@ -169,6 +169,7 @@ class SwerveModule(val io: SwerveModuleIO) {
       (steering - inputs.steeringPosition).inRadians.IEEErem(2 * Math.PI).radians
 
     shouldInvert = (steeringDifference.absoluteValue > (Math.PI / 2).radians) && optimize
+
     if (shouldInvert) {
       steeringDifference -= Math.PI.withSign(steeringDifference.inRadians).radians
     }

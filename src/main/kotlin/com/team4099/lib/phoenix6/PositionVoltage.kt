@@ -20,7 +20,7 @@ class PositionVoltage(
   private var overrideBrakeDurNeutral: Boolean = false,
   private var limitForwardMotion: Boolean = false,
   private var limitReverseMotion: Boolean = false,
-  private var velocity: AngularVelocity = 0.0.degrees.perSecond,
+  private var velocity: AngularVelocity = 0.0.degrees.perSecond
 ) {
 
   val positionVoltagePhoenix6 =

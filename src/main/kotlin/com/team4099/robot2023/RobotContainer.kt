@@ -15,10 +15,16 @@ import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
 import com.team4099.robot2023.subsystems.feeder.FeederIOSim
+import com.team4099.robot2023.subsystems.flywheel.Flywheel
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
+import com.team4099.robot2023.subsystems.wrist.Wrist
+import com.team4099.robot2023.subsystems.wrist.WristIONeo
+import com.team4099.robot2023.subsystems.wrist.WristIOSim
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.smoothDeadband
@@ -32,6 +38,8 @@ object RobotContainer {
   private val limelight: LimelightVision
   private val feeder: Feeder
   private val elevator: Elevator
+  private val flywheel: Flywheel
+  private val wrist: Wrist
 
   init {
     if (RobotBase.isReal()) {
@@ -51,6 +59,8 @@ object RobotContainer {
       limelight = LimelightVision(object : LimelightVisionIO {})
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
+      flywheel = Flywheel(FlywheelIOTalon)
+      wrist = Wrist(WristIONeo)
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
@@ -63,6 +73,8 @@ object RobotContainer {
       limelight = LimelightVision(object : LimelightVisionIO {})
       feeder = Feeder(FeederIOSim)
       elevator = Elevator(ElevatorIOSim)
+      flywheel = Flywheel(FlywheelIOSim)
+      wrist = Wrist(WristIOSim)
     }
 
     vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })

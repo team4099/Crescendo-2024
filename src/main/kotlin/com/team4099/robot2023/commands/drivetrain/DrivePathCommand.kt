@@ -239,11 +239,6 @@ class DrivePathCommand(
     drivetrain.targetPose =
       Pose2d(Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position))
 
-    Logger.recordOutput(
-      "Pathfollow/target",
-      Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position)
-    )
-
     drivetrain.currentRequest =
       DrivetrainRequest.ClosedLoop(
         nextDriveState,
@@ -275,7 +270,6 @@ class DrivePathCommand(
       desiredRotation.velocityRadiansPerSec.radians.perSecond.inDegreesPerSecond
     )
 
-    Logger.recordOutput("Pathfollow/trajectory", trajectory)
     Logger.recordOutput("Pathfollow/isAtReference", swerveDriveController.atReference())
     Logger.recordOutput("Pathfollow/trajectoryTimeSeconds", trajectory.totalTimeSeconds)
 

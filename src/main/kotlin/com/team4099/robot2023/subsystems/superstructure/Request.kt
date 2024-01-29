@@ -4,6 +4,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.base.Length
+import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.ElectricalPotential
 
 sealed interface Request {
@@ -38,5 +39,14 @@ sealed interface Request {
     class TargetingPosition(val position: Length) : ElevatorRequest
     class OpenLoop(val voltage: ElectricalPotential) : ElevatorRequest
     class Home() : ElevatorRequest
+  }
+  sealed interface WristRequest : Request {
+    class OpenLoop(val wristVoltage: ElectricalPotential) : WristRequest
+    class TargetingPosition(val wristPosition: Angle) : WristRequest
+    class Zero() : WristRequest
+  }
+  sealed interface FlywheelRequest : Request {
+    class OpenLoop(val flywheelVoltage: ElectricalPotential) : FlywheelRequest
+    class TargetingVelocity(val flywheelVelocity: AngularVelocity) : FlywheelRequest
   }
 }

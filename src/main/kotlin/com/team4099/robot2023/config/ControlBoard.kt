@@ -94,6 +94,4 @@ object ControlBoard {
   val extendIntake = Trigger { technician.aButton }
   val retractIntake = Trigger { technician.bButton }
   val characterizeIntake = Trigger { technician.xButton }
-
-  // for testing
 }
