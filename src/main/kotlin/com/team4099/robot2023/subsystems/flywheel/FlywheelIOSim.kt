@@ -7,10 +7,16 @@ import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.wpilibj.simulation.FlywheelSim
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inSeconds
+import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.ElectricalPotential
+import org.team4099.lib.units.derived.IntegralGain
+import org.team4099.lib.units.derived.ProportionalGain
+import org.team4099.lib.units.derived.Radian
+import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.inKilogramsMeterSquared
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.rotations
@@ -21,14 +27,15 @@ object FlywheelIOSim : FlywheelIO {
   private val flywheelRightSim: FlywheelSim =
     FlywheelSim(
       DCMotor.getKrakenX60Foc(2),
-      FlywheelConstants.LEFT_GEAR_RATIO,
+      FlywheelConstants.RIGHT_MOTOR_REVOLUTIONS_PER_FLYWHEEL_REVOLUTIONS
+      ,
       FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
 
   private val flywheelLeftSim: FlywheelSim =
     FlywheelSim(
       DCMotor.getKrakenX60Foc(2),
-      FlywheelConstants.RIGHT_MOTOR_REVOLUTIONS_PER_FLYWHEEL_REVOLUTIONS,
+      FlywheelConstants.LEFT_GEAR_RATIO,
       FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
 
@@ -115,4 +122,17 @@ object FlywheelIOSim : FlywheelIO {
   }
 
   override fun setFlywheelBrakeMode(brake: Boolean) {}
+
+  override fun configPID(
+    rightkP: ProportionalGain<Velocity<Radian>, Volt>,
+    rightkI: IntegralGain<Velocity<Radian>, Volt>,
+    rightkD: DerivativeGain<Velocity<Radian>, Volt>,
+    leftkP: ProportionalGain<Velocity<Radian>, Volt>,
+    leftkI: IntegralGain<Velocity<Radian>, Volt>,
+    leftkD: DerivativeGain<Velocity<Radian>, Volt>
+  ) {
+    rightFlywheelController.setPID(rightkP, rightkI, rightkD)
+
+    leftFlywheelController.setPID(leftkP, leftkI, leftkD)
+  }
 }

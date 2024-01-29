@@ -56,22 +56,19 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     )
 
   val inputs = FlywheelIO.FlywheelIOInputs()
-  /*private val flywheelRightkS =
+  private val flywheelRightkS =
     LoggedTunableValue(
       "Flywheel/Right kS",
-      FlywheelConstants.PID.RIGHT_FLYWHEEL_KS,
       Pair({ it.inVolts }, { it.volts })
     )
   private val flywheelRightkV =
     LoggedTunableValue(
       "Flywheel/Right kV",
-      FlywheelConstants.PID.RIGHT_FLYWHEEL_KV,
       Pair({ it.inVoltsPerRadianPerSecond }, { it.volts.perRadianPerSecond })
     )
   private val flywheelRightkA =
     LoggedTunableValue(
       "Flywheel/Right kA",
-      FlywheelConstants.PID.RIGHT_FLYWHEEL_KA,
       Pair(
         { it.inVoltsPerRadianPerSecondPerSecond },
         { it.volts/1.0.radians.perSecond.perSecond }
@@ -81,24 +78,21 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
   private val flywheelLeftkS =
     LoggedTunableValue(
       "Flywheel/Left kS",
-      FlywheelConstants.PID.LEFT_FLYWHEEL_KS,
       Pair({ it.inVolts }, { it.volts })
     )
   private val flywheelLeftkV =
     LoggedTunableValue(
       "Flywheel/Left kV",
-      FlywheelConstants.PID.LEFT_FLYWHEEL_KV,
       Pair({ it.inVoltsPerRadianPerSecond }, { it.volts.perRadianPerSecond })
     )
   private val flywheelLeftkA =
     LoggedTunableValue(
       "Flywheel/Left kA",
-      FlywheelConstants.PID.LEFT_FLYWHEEL_KA,
       Pair(
         { it.inVoltsPerRadianPerSecondPerSecond },
         { it.volts / 1.0.radians.perSecond.perSecond }
       )
-    )*/
+    )
 
   var flywheelRightFeedForward: SimpleMotorFeedforward<Radian, Volt>
   var flywheelLeftFeedForward: SimpleMotorFeedforward<Radian, Volt>
@@ -150,6 +144,28 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       leftkP.initDefault(FlywheelConstants.PID.LEFT_REAL_KP)
       leftkI.initDefault(FlywheelConstants.PID.LEFT_REAL_KI)
       leftkD.initDefault(FlywheelConstants.PID.LEFT_REAL_KD)
+
+      flywheelRightFeedForward =
+        SimpleMotorFeedforward(
+          FlywheelConstants.PID.RIGHT_REAL_FLYWHEEL_KS,
+          FlywheelConstants.PID.RIGHT_REAL_FLYWHEEL_KV,
+          FlywheelConstants.PID.RIGHT_REAL_FLYWHEEL_KA
+        )
+
+      flywheelLeftFeedForward =
+        SimpleMotorFeedforward(
+          FlywheelConstants.PID.LEFT_REAL_FLYWHEEL_KS,
+          FlywheelConstants.PID.LEFT_REAL_FLYWHEEL_KV,
+          FlywheelConstants.PID.LEFT_REAL_FLYWHEEL_KA
+        )
+
+      flywheelLeftkS.initDefault(FlywheelConstants.PID.LEFT_REAL_FLYWHEEL_KS)
+      flywheelLeftkV.initDefault(FlywheelConstants.PID.LEFT_REAL_FLYWHEEL_KV)
+      flywheelLeftkA.initDefault(FlywheelConstants.PID.LEFT_REAL_FLYWHEEL_KA)
+
+      flywheelRightkS.initDefault(FlywheelConstants.PID.RIGHT_REAL_FLYWHEEL_KS)
+      flywheelRightkV.initDefault(FlywheelConstants.PID.RIGHT_REAL_FLYWHEEL_KV)
+      flywheelRightkA.initDefault(FlywheelConstants.PID.RIGHT_REAL_FLYWHEEL_KA)
     } else {
       rightkP.initDefault(FlywheelConstants.PID.RIGHT_SIM_KP)
       rightkI.initDefault(FlywheelConstants.PID.RIGHT_SIM_KI)
@@ -158,21 +174,31 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       leftkP.initDefault(FlywheelConstants.PID.LEFT_SIM_KP)
       leftkI.initDefault(FlywheelConstants.PID.LEFT_SIM_KI)
       leftkD.initDefault(FlywheelConstants.PID.LEFT_SIM_KD)
+
+      flywheelLeftkS.initDefault(FlywheelConstants.PID.LEFT_SIM_FLYWHEEL_KS)
+      flywheelLeftkV.initDefault(FlywheelConstants.PID.LEFT_SIM_FLYWHEEL_KV)
+      flywheelLeftkA.initDefault(FlywheelConstants.PID.LEFT_SIM_FLYWHEEL_KA)
+
+      flywheelRightkS.initDefault(FlywheelConstants.PID.RIGHT_SIM_FLYWHEEL_KS)
+      flywheelRightkV.initDefault(FlywheelConstants.PID.RIGHT_SIM_FLYWHEEL_KV)
+      flywheelRightkA.initDefault(FlywheelConstants.PID.RIGHT_SIM_FLYWHEEL_KA)
+
+      flywheelRightFeedForward =
+        SimpleMotorFeedforward(
+          FlywheelConstants.PID.RIGHT_SIM_FLYWHEEL_KS,
+          FlywheelConstants.PID.RIGHT_SIM_FLYWHEEL_KV,
+          FlywheelConstants.PID.RIGHT_SIM_FLYWHEEL_KA
+        )
+
+      flywheelLeftFeedForward =
+        SimpleMotorFeedforward(
+          FlywheelConstants.PID.LEFT_SIM_FLYWHEEL_KS,
+          FlywheelConstants.PID.LEFT_SIM_FLYWHEEL_KV,
+          FlywheelConstants.PID.LEFT_SIM_FLYWHEEL_KA
+        )
     }
 
-    flywheelRightFeedForward =
-      SimpleMotorFeedforward(
-        FlywheelConstants.PID.RIGHT_FLYWHEEL_KS,
-        FlywheelConstants.PID.RIGHT_FLYWHEEL_KV,
-        FlywheelConstants.PID.RIGHT_FLYWHEEL_KA
-      )
 
-    flywheelLeftFeedForward =
-      SimpleMotorFeedforward(
-        FlywheelConstants.PID.LEFT_FLYWHEEL_KS,
-        FlywheelConstants.PID.LEFT_FLYWHEEL_KV,
-        FlywheelConstants.PID.LEFT_FLYWHEEL_KA
-      )
     io.configPID(
       rightkP.get(), rightkI.get(), rightkD.get(), leftkP.get(), leftkI.get(), leftkD.get()
     )
@@ -206,7 +232,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       )
     }
 
-    /*if (flywheelRightkA.hasChanged() ||
+    if (flywheelRightkA.hasChanged() ||
       flywheelRightkV.hasChanged() ||
       flywheelRightkS.hasChanged()
     ) {
@@ -219,7 +245,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     if (flywheelLeftkA.hasChanged() || flywheelLeftkV.hasChanged() || flywheelLeftkS.hasChanged()) {
       flywheelLeftFeedForward =
         SimpleMotorFeedforward(flywheelLeftkS.get(), flywheelLeftkV.get(), flywheelLeftkA.get())
-    }*/
+    }
 
     var nextState = currentState
     when (currentState) {
@@ -265,7 +291,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
 
   fun flywheelSpinUpCommand(): Command {
     return runOnce({
-      currentRequest = Request.FlywheelRequest.TargetingVelocity(10000.rotations.perMinute)
+      currentRequest = Request.FlywheelRequest.TargetingVelocity(6000.rotations.perMinute)
     })
   }
 
