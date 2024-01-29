@@ -20,14 +20,14 @@ import org.team4099.lib.units.perMinute
 object FlywheelIOSim : FlywheelIO {
   private val flywheelRightSim: FlywheelSim =
     FlywheelSim(
-      DCMotor.getFalcon500(2),
+      DCMotor.getKrakenX60Foc(2),
       FlywheelConstants.LEFT_GEAR_RATIO,
       FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
 
   private val flywheelLeftSim: FlywheelSim =
     FlywheelSim(
-      DCMotor.getFalcon500(2),
+      DCMotor.getKrakenX60Foc(2),
       FlywheelConstants.RIGHT_MOTOR_REVOLUTIONS_PER_FLYWHEEL_REVOLUTIONS,
       FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
