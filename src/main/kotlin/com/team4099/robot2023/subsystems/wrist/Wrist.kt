@@ -38,6 +38,21 @@ import org.team4099.lib.units.perSecond
 class Wrist(val io: WristIO) : SubsystemBase() {
   val inputs = WristIO.WristIOInputs()
 
+  object TunableWristStates {
+    val idleAngle = LoggedTunableValue(
+      "Wrist/idleAngle", WristConstants.IDLE_ANGLE, Pair({ it.inDegrees}, { it.degrees })
+    )
+    val ampScoreAngle = LoggedTunableValue(
+      "Wrist/ampScoreAngle", WristConstants.AMP_SCORE_ANGLE, Pair({ it.inDegrees}, { it.degrees })
+    )
+    val subwooferSpeakerShotAngle = LoggedTunableValue(
+      "Wrist/subwooferSpeakerShotAngle", WristConstants.SUBWOOFER_SPEAKER_SHOT_ANGLE, Pair({ it.inDegrees}, { it.degrees })
+    )
+    val climbAngle = LoggedTunableValue(
+      "Wrist/climbAngle", WristConstants.CLIMB_ANGLE, Pair({ it.inDegrees}, { it.degrees })
+    )
+  }
+
   private val wristkS =
     LoggedTunableValue(
       "Wrist/kS", WristConstants.PID.WRIST_KS, Pair({ it.inVolts }, { it.volts })
@@ -84,6 +99,8 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     }
 
   var currentState: WristStates = WristStates.UNINITIALIZED
+
+  var isZeroed = false
 
   var wristTargetVoltage: ElectricalPotential = 0.0.volts
 
@@ -172,6 +189,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       }
       WristStates.ZERO -> {
         io.zeroEncoder()
+        isZeroed = true
         nextState = fromRequestToState(currentRequest)
       }
       WristStates.OPEN_LOOP -> {

@@ -82,4 +82,7 @@ object FlywheelConstants {
     val LEFT_SIM_FLYWHEEL_KV = 0.0197.volts / 1.radians.perSecond
     val LEFT_SIM_FLYWHEEL_KA = 0.03.volts / 1.radians.perSecond.perSecond
   }
+
+  val IDLE_VELOCITY = 0.0.rotations.perMinute
+  val SHOOT_VELOCITY = 10_000.rotations.perMinute
 }

@@ -25,6 +25,8 @@ object FeederConstants {
 
   var WAIT_BEFORE_DETECT_VELOCITY_DROP = 1.seconds
 
+  val IDLE_VOLTAGE = 0.volts
   val INTAKE_NOTE_VOLTAGE = 6.volts
+  val OUTTAKE_NOTE_VOLTAGE = (-6).volts
   val SHOOT_NOTE_VOLTAGE = 11.9.volts
 }

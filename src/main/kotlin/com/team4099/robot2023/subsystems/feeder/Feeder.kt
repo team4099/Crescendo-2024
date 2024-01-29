@@ -1,6 +1,7 @@
 package com.team4099.robot2023.subsystems.feeder
 
 import com.team4099.lib.hal.Clock
+import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.FeederConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
 import edu.wpi.first.wpilibj2.command.Command
@@ -9,10 +10,26 @@ import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.ElectricalPotential
+import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
 
 class Feeder(val io: FeederIO) : SubsystemBase() {
   val inputs = FeederIO.FeederIOInputs()
+
+  object TunableFeederStates {
+    val idleVoltage = LoggedTunableValue(
+      "Feeder/idleVoltage", FeederConstants.IDLE_VOLTAGE, Pair({ it.inVolts}, { it.volts })
+    )
+    val intakeVoltage = LoggedTunableValue(
+      "Feeder/intakeVoltage", FeederConstants.INTAKE_NOTE_VOLTAGE, Pair({ it.inVolts}, { it.volts })
+    )
+    val outtakeVoltage = LoggedTunableValue(
+      "Feeder/outtakeVoltage", FeederConstants.OUTTAKE_NOTE_VOLTAGE, Pair({ it.inVolts}, { it.volts })
+    )
+    val shootVoltage = LoggedTunableValue(
+      "Feeder/shootVoltage", FeederConstants.SHOOT_NOTE_VOLTAGE, Pair({ it.inVolts}, { it.volts })
+    )
+  }
 
   var feederTargetVoltage: ElectricalPotential = 0.0.volts
   var lastFeederRunTime = 0.0.seconds

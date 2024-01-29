@@ -1,7 +1,6 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.hal.Clock
-import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.subsystems.elevator.Elevator
 import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
@@ -13,7 +12,7 @@ import org.team4099.lib.units.base.inMilliseconds
 
 class Superstructure(
     private val intake: Intake,
-    private val feeder: Feeder
+    private val feeder: Feeder,
     private val elevator: Elevator,
     private val wrist: Wrist,
     private val flywheel: Flywheel
@@ -57,12 +56,35 @@ class Superstructure(
 
         var nextState = currentState
         when (currentState) {
-            SuperstructureStates.UNINITIALIZED -> {}
-            SuperstructureStates.TUNING -> {}
-            SuperstructureStates.IDLE -> {}
-            SuperstructureStates.HOME_PREP -> {
+            SuperstructureStates.UNINITIALIZED -> {
+                nextState = SuperstructureStates.HOME_PREP
             }
-            SuperstructureStates.HOME -> {}
+            SuperstructureStates.TUNING -> {}
+            SuperstructureStates.HOME_PREP -> {
+                wrist.currentRequest = Request.WristRequest.Zero()
+
+                if (wrist.isZeroed) {
+                    wrist.currentRequest = Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.idleAngle.get())
+
+                    if (wrist.isAtTargetedPosition) {
+                        nextState = SuperstructureStates.HOME
+                    }
+                }
+            }
+            SuperstructureStates.HOME -> {
+                elevator.currentRequest = Request.ElevatorRequest.Home()
+
+                if (elevator.isHomed) {
+                    nextState = SuperstructureStates.IDLE
+                }
+            }
+            SuperstructureStates.IDLE -> {
+                intake.currentRequest = Request.IntakeRequest.OpenLoop(Intake.TunableIntakeStates.idleVoltage.get())
+                feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.idleVoltage.get())
+                flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(Flywheel.TunableFlywheelStates.idleVelocity.get())
+                wrist.currentRequest = Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.idleAngle.get())
+                elevator.currentRequest = Request.ElevatorRequest.TargetingPosition(Elevator.TunableElevatorHeights.minPosition.get())
+            }
             SuperstructureStates.GROUND_INTAKE_PREP -> {}
             SuperstructureStates.GROUND_INTAKE -> {}
             SuperstructureStates.SCORE_AMP_PREP -> {}

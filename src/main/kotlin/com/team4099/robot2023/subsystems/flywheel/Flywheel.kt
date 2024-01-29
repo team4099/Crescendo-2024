@@ -3,6 +3,7 @@ package com.team4099.robot2023.subsystems.flywheel
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
+import com.team4099.robot2023.config.constants.FeederConstants
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
 import edu.wpi.first.wpilibj.RobotBase
@@ -30,6 +31,15 @@ import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 
 class Flywheel(val io: FlywheelIO) : SubsystemBase() {
+  object TunableFlywheelStates {
+    val idleVelocity = LoggedTunableValue(
+      "Flywheel/idleVelocity", FlywheelConstants.IDLE_VELOCITY, Pair({ it.inRotationsPerMinute}, { it.rotations.perMinute })
+    )
+    val shootVelocity = LoggedTunableValue(
+      "Flywheel/shootVelocity", FlywheelConstants.SHOOT_VELOCITY, Pair({ it.inRotationsPerMinute}, { it.rotations.perMinute })
+    )
+  }
+
   private val rightkP =
     LoggedTunableValue(
       "Flywheel/Right kP",
