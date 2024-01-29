@@ -267,7 +267,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
   }
 
   fun flywheelOpenLoopCommand(): Command {
-    return runOnce({ currentRequest = Request.FlywheelRequest.OpenLoop(10.volts) })
+    return runOnce({ currentRequest = Request.FlywheelRequest.OpenLoop(12.volts) })
   }
 
   fun flywheelResetCommand(): Command {

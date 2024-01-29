@@ -20,14 +20,14 @@ import org.team4099.lib.units.perMinute
 object FlywheelIOSim : FlywheelIO {
   private val flywheelRightSim: FlywheelSim =
     FlywheelSim(
-      DCMotor.getKrakenX60Foc(1),
+      DCMotor.getFalcon500(2),
       FlywheelConstants.LEFT_GEAR_RATIO,
       FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
 
   private val flywheelLeftSim: FlywheelSim =
     FlywheelSim(
-      DCMotor.getKrakenX60Foc(1),
+      DCMotor.getFalcon500(2),
       FlywheelConstants.RIGHT_GEAR_RATIO,
       FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
@@ -54,13 +54,11 @@ object FlywheelIOSim : FlywheelIO {
     flywheelRightSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
 
     inputs.leftFlywheelVelocity = flywheelLeftSim.getAngularVelocityRPM().rotations.perMinute
-    inputs.leftFlywheelVelocity = flywheelLeftSim.getAngularVelocityRPM().rotations.perMinute
     inputs.leftFlywheelAppliedVoltage = appliedLeftVoltage
     inputs.leftFlywheelSupplyCurrent = 0.amps
     inputs.leftFlywheelStatorCurrent = flywheelLeftSim.currentDrawAmps.amps
     inputs.leftFlywheelTemperature = 0.0.celsius
 
-    inputs.rightFlywheelVelocity = flywheelRightSim.getAngularVelocityRPM().rotations.perMinute
     inputs.rightFlywheelVelocity = flywheelRightSim.getAngularVelocityRPM().rotations.perMinute
     inputs.rightFlywheelAppliedVoltage = appliedRightVoltage
     inputs.rightFlywheelSupplyCurrent = 0.amps

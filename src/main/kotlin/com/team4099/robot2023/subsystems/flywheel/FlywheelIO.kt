@@ -21,6 +21,7 @@ import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inRadiansPerSecond
+import org.team4099.lib.units.inRotationsPerMinute
 import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 
@@ -45,7 +46,7 @@ interface FlywheelIO {
     var isSimulated = false
 
     override fun toLog(table: LogTable) {
-      table.put("flywheelRightVelocityRPM", rightFlywheelVelocity.inRadiansPerSecond)
+      table.put("flywheelRightVelocityRPM", rightFlywheelVelocity.inRotationsPerMinute)
       table.put("flywheelRightAppliedVoltage", rightFlywheelAppliedVoltage.inVolts)
       table.put("flywheelRightStatorCurrent", rightFlywheelStatorCurrent.inAmperes)
       table.put("flywheelRightSupplyCurrent", rightFlywheelSupplyCurrent.inAmperes)
@@ -53,7 +54,7 @@ interface FlywheelIO {
       table.put("rightFlywheelDutyCycle", rightFlywheelDutyCycle.inVolts)
       table.put("rightFlywheelTorque", rightFlywheelTorque.inNewtons)
 
-      table.put("flywheelLeftVelocityRPM", leftFlywheelVelocity.inRadiansPerSecond)
+      table.put("flywheelLeftVelocityRPM", leftFlywheelVelocity.inRotationsPerMinute)
       table.put("flywheelLeftAppliedVoltage", leftFlywheelAppliedVoltage.inVolts)
       table.put("flywheelLeftStatorCurrent", leftFlywheelStatorCurrent.inAmperes)
       table.put("flywheelLeftSupplyCurrent", leftFlywheelSupplyCurrent.inAmperes)
@@ -64,8 +65,8 @@ interface FlywheelIO {
 
     override fun fromLog(table: LogTable) {
       // Flywheel logs
-      table.get("rightFlywheelVelocityRPM", rightFlywheelVelocity.inRadiansPerSecond).let {
-        rightFlywheelVelocity = it.radians.perSecond
+      table.get("rightFlywheelVelocityRPM", rightFlywheelVelocity.inRotationsPerMinute).let {
+        rightFlywheelVelocity = it.rotations.perMinute
       }
       table.get("rightFlywheelAppliedVoltage", rightFlywheelAppliedVoltage.inVolts).let {
         rightFlywheelAppliedVoltage = it.volts
@@ -87,8 +88,8 @@ interface FlywheelIO {
       }
 
       // Left motor
-      table.get("leftFlywheelVelocityRPM", leftFlywheelVelocity.inRadiansPerSecond).let {
-        leftFlywheelVelocity = it.radians.perSecond
+      table.get("leftFlywheelVelocityRPM", leftFlywheelVelocity.inRotationsPerMinute).let {
+        leftFlywheelVelocity = it.rotations.perMinute
       }
       table.get("leftFlywheelAppliedVoltage", leftFlywheelAppliedVoltage.inVolts).let {
         leftFlywheelAppliedVoltage = it.volts
