@@ -1,6 +1,7 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.lib.pathfollow.Trajectory
 import com.team4099.lib.trajectory.CustomHolonomicDriveController
 import com.team4099.lib.trajectory.CustomTrajectoryGenerator
 import com.team4099.lib.trajectory.Waypoint
@@ -14,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGenerationException
 import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint
+import edu.wpi.first.math.trajectory.proto.TrajectoryStateProto
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
@@ -240,7 +242,7 @@ class DrivePathCommand(
       Pose2d(Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position))
 
     Logger.recordOutput(
-      "Pathfollow/target",
+      "Pathfollow/target", Pose2dWPILIB.struct,
       Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position)
     )
 
@@ -275,7 +277,7 @@ class DrivePathCommand(
       desiredRotation.velocityRadiansPerSec.radians.perSecond.inDegreesPerSecond
     )
 
-    Logger.recordOutput("Pathfollow/trajectory", trajectory)
+    Logger.recordOutput("Pathfollow/trajectory", edu.wpi.first.math.trajectory.Trajectory.proto , trajectory)
     Logger.recordOutput("Pathfollow/isAtReference", swerveDriveController.atReference())
     Logger.recordOutput("Pathfollow/trajectoryTimeSeconds", trajectory.totalTimeSeconds)
 

@@ -50,11 +50,11 @@ import org.opencv.imgproc.Imgproc
 import edu.wpi.first.math.geometry.Rotation2d
 import java.util.stream.Collectors
 import edu.wpi.first.cameraserver.CameraServer
-import edu.wpi.first.cscore.VideoMode.PixelFormat
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.Pair
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Pose3d
+import edu.wpi.first.util.PixelFormat
 import edu.wpi.first.wpilibj.Timer
 import org.opencv.core.Size
 import org.photonvision.PhotonVersion

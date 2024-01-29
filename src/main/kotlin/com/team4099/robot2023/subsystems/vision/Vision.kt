@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
+import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Pose3dWPILIB
 import org.team4099.lib.geometry.Quaternion
@@ -230,24 +231,24 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
         )
 
         Logger.recordOutput(
-          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/estimatedRobotPose", robotPose.pose2d
+          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/estimatedRobotPose", Pose2dWPILIB.struct, robotPose.pose2d
         )
 
         Logger.recordOutput(
-          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/tagPoses",
+          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/tagPoses", Pose3dWPILIB.struct,
           *tagPoses.map { it.pose3d }.toTypedArray()
         )
       }
 
       if (inputs[instance].timestamps.isEmpty()) {
         Logger.recordOutput(
-          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/estimatedRobotPose", Pose2d().pose2d
+          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/estimatedRobotPose", Pose2dWPILIB.struct, Pose2d().pose2d
         )
       }
 
       if (Clock.fpgaTime - lastFrameTimes[instance]!! > targetLogTime) {
         Logger.recordOutput(
-          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/tagPoses", *arrayOf<Pose3dWPILIB>()
+          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/tagPoses", Pose3dWPILIB.struct, *arrayOf<Pose3dWPILIB>()
         )
       }
     }
@@ -259,7 +260,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
     //      }
     //    }
 
-    Logger.recordOutput("Vision/allTagPoses", *allTagPoses.map { it.pose3d }.toTypedArray())
+    Logger.recordOutput("Vision/allTagPoses",Pose3dWPILIB.struct, *allTagPoses.map { it.pose3d }.toTypedArray())
 
     visionConsumer.accept(visionUpdates)
 

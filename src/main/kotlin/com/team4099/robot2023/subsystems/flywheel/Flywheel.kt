@@ -177,7 +177,6 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       OPEN_LOOP,
       TARGETING_VELOCITY;
       fun equivalentToRequest(request: Request.FlywheelRequest) : Boolean {
-        //Hey Google, where is the nearest bridge? (stupid syntax)
         return (request is Request.FlywheelRequest.OpenLoop && this == OPEN_LOOP) ||
                 (request is Request.FlywheelRequest.TargetingVelocity && this == TARGETING_VELOCITY)
       }

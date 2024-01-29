@@ -19,7 +19,9 @@ import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
+import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Pose3d
+import org.team4099.lib.geometry.Pose3dWPILIB
 import org.team4099.lib.geometry.Rotation3d
 import org.team4099.lib.geometry.Transform2d
 import org.team4099.lib.geometry.Translation2d
@@ -250,8 +252,10 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     Logger.recordOutput("Drivetrain/yVelocityMetersPerSecond", fieldVelocity.y.inMetersPerSecond)
 
     Logger.processInputs("Drivetrain/Gyro", gyroInputs)
-    Logger.recordOutput("Drivetrain/ModuleStates", *measuredStates)
-    Logger.recordOutput("Drivetrain/SetPointStates", *setPointStates.toTypedArray())
+
+    Logger.recordOutput("Drivetrain/ModuleStates", SwerveModuleState.struct, *measuredStates)
+    Logger.recordOutput("Drivetrain/setPointStates", SwerveModuleState.struct, *setPointStates.toTypedArray())
+
 
     Logger.recordOutput(
       VisionConstants.POSE_TOPIC_NAME,
@@ -260,7 +264,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
       )
     )
     Logger.recordOutput(
-      "Odometry/pose3d",
+      "Odometry/pose3d", Pose3dWPILIB.struct,
       Pose3d(
         odometryPose.x,
         odometryPose.y,
@@ -368,7 +372,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
       drift = undriftedPose.minus(odometryPose)
 
-      Logger.recordOutput(VisionConstants.SIM_POSE_TOPIC_NAME, undriftedPose.pose2d)
+      Logger.recordOutput(VisionConstants.SIM_POSE_TOPIC_NAME, Pose2dWPILIB.struct, undriftedPose.pose2d)
     }
 
     swerveDrivePoseEstimator.addDriveData(Clock.fpgaTime.inSeconds, Twist2d(driveTwist))
