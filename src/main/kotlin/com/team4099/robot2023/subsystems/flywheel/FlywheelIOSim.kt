@@ -28,7 +28,7 @@ object FlywheelIOSim : FlywheelIO {
   private val flywheelLeftSim: FlywheelSim =
     FlywheelSim(
       DCMotor.getFalcon500(2),
-      FlywheelConstants.RIGHT_GEAR_RATIO,
+      FlywheelConstants.RIGHT_MOTOR_REVOLUTIONS_PER_FLYWHEEL_REVOLUTIONS,
       FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
 

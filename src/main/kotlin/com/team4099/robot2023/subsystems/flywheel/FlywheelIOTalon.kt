@@ -59,7 +59,7 @@ object FlywheelIOTalon : FlywheelIO {
   private val flywheelRightSensor =
     ctreAngularMechanismSensor(
       flywheelRightTalon,
-      FlywheelConstants.RIGHT_GEAR_RATIO,
+      FlywheelConstants.RIGHT_MOTOR_REVOLUTIONS_PER_FLYWHEEL_REVOLUTIONS,
       FlywheelConstants.VOLTAGE_COMPENSATION,
     )
 

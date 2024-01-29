@@ -173,6 +173,9 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         FlywheelConstants.PID.LEFT_FLYWHEEL_KV,
         FlywheelConstants.PID.LEFT_FLYWHEEL_KA
       )
+    io.configPID(
+      rightkP.get(), rightkI.get(), rightkD.get(), leftkP.get(), leftkI.get(), leftkD.get()
+    )
   }
   override fun periodic() {
     io.updateInputs(inputs)

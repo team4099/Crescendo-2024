@@ -49,7 +49,7 @@ object WristIOTalon : WristIO {
   private val wristSensor =
     ctreAngularMechanismSensor(
       wristTalon,
-      FlywheelConstants.RIGHT_GEAR_RATIO,
+      FlywheelConstants.RIGHT_MOTOR_REVOLUTIONS_PER_FLYWHEEL_REVOLUTIONS,
       FlywheelConstants.VOLTAGE_COMPENSATION,
     )
 
