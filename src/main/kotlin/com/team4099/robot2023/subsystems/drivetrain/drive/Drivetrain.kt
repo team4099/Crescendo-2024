@@ -267,7 +267,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     Logger.recordOutput("Drivetrain/setPointStates", SwerveModuleState.struct, *setPointStates.toTypedArray())
 
 
-    Logger.recordOutput(VisionConstants.POSE_TOPIC_NAME, doubleArrayOf(odometryPose.x.inMeters, odometryPose.y.inMeters, odometryPose.rotation.inRadians))
+    Logger.recordOutput(VisionConstants.POSE_TOPIC_NAME, Pose2dWPILIB.struct, odometryPose.pose2d)
     Logger.recordOutput(
       "Odometry/pose3d", Pose3dWPILIB.struct,
       Pose3d(
@@ -337,7 +337,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     for (deltaIndex in 0..deltaCount-1) {
       // Read wheel deltas from each module
       val wheelDeltas = arrayOfNulls<SwerveModulePosition>(4)
-      for (moduleIndex in 0..4) {
+      for (moduleIndex in 0..3) {
         wheelDeltas[moduleIndex] = swerveModules[moduleIndex].positionDeltas[deltaIndex]
       }
 

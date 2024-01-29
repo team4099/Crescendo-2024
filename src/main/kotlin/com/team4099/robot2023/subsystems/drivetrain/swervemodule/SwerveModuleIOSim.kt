@@ -40,9 +40,11 @@ import org.team4099.lib.units.derived.inVoltsPerDegree
 import org.team4099.lib.units.derived.inVoltsPerDegreePerSecond
 import org.team4099.lib.units.derived.inVoltsPerDegreeSeconds
 import org.team4099.lib.units.derived.radians
+import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.perSecond
+import java.util.*
 import kotlin.random.Random
 
 class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
@@ -60,6 +62,7 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
       1 / DrivetrainConstants.STEERING_SENSOR_GEAR_RATIO,
       DrivetrainConstants.STEERING_WHEEL_INERTIA.inKilogramsMeterSquared
     )
+
 
   init {
     MotorChecker.add(
@@ -183,6 +186,10 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
 
     inputs.potentiometerOutputRadians = turnAbsolutePosition
     inputs.potentiometerOutputRaw = turnAbsolutePosition.inRadians
+
+
+    inputs.odometryDrivePositions = arrayOf(inputs.drivePosition)
+    inputs.odometrySteeringPositions = arrayOf(inputs.steeringPosition)
 
     // Setting a more accurate simulated voltage under load
     RoboRioSim.setVInVoltage(
