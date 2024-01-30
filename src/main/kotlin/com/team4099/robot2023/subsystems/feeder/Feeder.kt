@@ -17,18 +17,28 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
   val inputs = FeederIO.FeederIOInputs()
 
   object TunableFeederStates {
-    val idleVoltage = LoggedTunableValue(
-      "Feeder/idleVoltage", FeederConstants.IDLE_VOLTAGE, Pair({ it.inVolts}, { it.volts })
-    )
-    val intakeVoltage = LoggedTunableValue(
-      "Feeder/intakeVoltage", FeederConstants.INTAKE_NOTE_VOLTAGE, Pair({ it.inVolts}, { it.volts })
-    )
-    val outtakeVoltage = LoggedTunableValue(
-      "Feeder/outtakeVoltage", FeederConstants.OUTTAKE_NOTE_VOLTAGE, Pair({ it.inVolts}, { it.volts })
-    )
-    val shootVoltage = LoggedTunableValue(
-      "Feeder/shootVoltage", FeederConstants.SHOOT_NOTE_VOLTAGE, Pair({ it.inVolts}, { it.volts })
-    )
+    val idleVoltage =
+      LoggedTunableValue(
+        "Feeder/idleVoltage", FeederConstants.IDLE_VOLTAGE, Pair({ it.inVolts }, { it.volts })
+      )
+    val intakeVoltage =
+      LoggedTunableValue(
+        "Feeder/intakeVoltage",
+        FeederConstants.INTAKE_NOTE_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+    val outtakeVoltage =
+      LoggedTunableValue(
+        "Feeder/outtakeVoltage",
+        FeederConstants.OUTTAKE_NOTE_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+    val shootVoltage =
+      LoggedTunableValue(
+        "Feeder/shootVoltage",
+        FeederConstants.SHOOT_NOTE_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
   }
 
   var feederTargetVoltage: ElectricalPotential = 0.0.volts

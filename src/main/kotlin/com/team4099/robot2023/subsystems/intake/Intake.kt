@@ -4,15 +4,12 @@ import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.IntakeConstants
-import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.derived.ElectricalPotential
-import org.team4099.lib.units.derived.degrees
-import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
 
@@ -20,15 +17,22 @@ class Intake(val io: IntakeIO) : SubsystemBase() {
   val inputs = IntakeIO.IntakeIOInputs()
 
   object TunableIntakeStates {
-    val idleVoltage = LoggedTunableValue(
-      "Intake/idleVoltage", IntakeConstants.IDLE_VOLTAGE, Pair({ it.inVolts}, { it.volts })
-    )
-    val intakeVoltage = LoggedTunableValue(
-      "Intake/intakeVoltage", IntakeConstants.INTAKE_VOLTAGE, Pair({ it.inVolts}, { it.volts })
-    )
-    val outtakeVoltage = LoggedTunableValue(
-      "Intake/outtakeVoltage", IntakeConstants.OUTTAKE_VOLTAGE, Pair({ it.inVolts}, { it.volts })
-    )
+    val idleVoltage =
+      LoggedTunableValue(
+        "Intake/idleVoltage", IntakeConstants.IDLE_VOLTAGE, Pair({ it.inVolts }, { it.volts })
+      )
+    val intakeVoltage =
+      LoggedTunableValue(
+        "Intake/intakeVoltage",
+        IntakeConstants.INTAKE_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+    val outtakeVoltage =
+      LoggedTunableValue(
+        "Intake/outtakeVoltage",
+        IntakeConstants.OUTTAKE_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
   }
 
   var rollerVoltageTarget: ElectricalPotential = 0.0.volts

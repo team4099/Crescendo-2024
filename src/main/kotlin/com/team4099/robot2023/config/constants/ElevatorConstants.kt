@@ -24,6 +24,7 @@ object ElevatorConstants {
 
   val ELEVATOR_MAX_RETRACTION = 0.0.inches
   val ELEVATOR_MAX_EXTENSION = 18.0.inches
+  val ELEVATOR_CLIMB_EXTENSION = 12.0.inches
 
   val LEADER_INVERTED = false
   val FOLLOWER_INVERTED = true

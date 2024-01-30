@@ -39,18 +39,50 @@ class Wrist(val io: WristIO) : SubsystemBase() {
   val inputs = WristIO.WristIOInputs()
 
   object TunableWristStates {
-    val idleAngle = LoggedTunableValue(
-      "Wrist/idleAngle", WristConstants.IDLE_ANGLE, Pair({ it.inDegrees}, { it.degrees })
-    )
-    val ampScoreAngle = LoggedTunableValue(
-      "Wrist/ampScoreAngle", WristConstants.AMP_SCORE_ANGLE, Pair({ it.inDegrees}, { it.degrees })
-    )
-    val subwooferSpeakerShotAngle = LoggedTunableValue(
-      "Wrist/subwooferSpeakerShotAngle", WristConstants.SUBWOOFER_SPEAKER_SHOT_ANGLE, Pair({ it.inDegrees}, { it.degrees })
-    )
-    val climbAngle = LoggedTunableValue(
-      "Wrist/climbAngle", WristConstants.CLIMB_ANGLE, Pair({ it.inDegrees}, { it.degrees })
-    )
+    val idleAngle =
+      LoggedTunableValue(
+        "Wrist/idleAngle", WristConstants.IDLE_ANGLE, Pair({ it.inDegrees }, { it.degrees })
+      )
+    val idleAngleHasGamepiece =
+      LoggedTunableValue(
+        "Wrist/idleAngleHasGamepiece",
+        WristConstants.IDLE_ANGLE_HAS_GAMEPEICE,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
+    val intakeAngle =
+      LoggedTunableValue(
+        "Wrist/intakeAngle",
+        WristConstants.INTAKE_ANGLE,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
+    val ampScoreAngle =
+      LoggedTunableValue(
+        "Wrist/ampScoreAngle",
+        WristConstants.AMP_SCORE_ANGLE,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
+    val subwooferSpeakerShotAngleLow =
+      LoggedTunableValue(
+        "Wrist/subwooferSpeakerShotAngleLow",
+        WristConstants.SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
+    val subwooferSpeakerShotAngleMid =
+      LoggedTunableValue(
+        "Wrist/subwooferSpeakerShotAngleLow",
+        WristConstants.SUBWOOFER_SPEAKER_SHOT_ANGLE_MID,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
+    val subwooferSpeakerShotAngleHigh =
+      LoggedTunableValue(
+        "Wrist/subwooferSpeakerShotAngleLow",
+        WristConstants.SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
+    val climbAngle =
+      LoggedTunableValue(
+        "Wrist/climbAngle", WristConstants.CLIMB_ANGLE, Pair({ it.inDegrees }, { it.degrees })
+      )
   }
 
   private val wristkS =
