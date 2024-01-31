@@ -126,6 +126,8 @@ class SwerveModule(val io: SwerveModuleIO) {
     val deltaCount =
       Math.min(inputs.odometryDrivePositions.size, inputs.odometrySteeringPositions.size)
 
+    positionDeltas.clear()
+
     for (i in 0..deltaCount-1) {
       val newDrivePosition = inputs.odometryDrivePositions[i]
       val newSteeringAngle = inputs.odometrySteeringPositions[i]
@@ -135,6 +137,13 @@ class SwerveModule(val io: SwerveModuleIO) {
         )
       )
       lastDrivePosition = newDrivePosition
+    }
+
+    if (positionDeltas.size > 0) {
+      Logger.recordOutput("Drivetrain/PositionDeltas", positionDeltas[0].distanceMeters)
+    }
+     else {
+       Logger.recordOutput("Drivetrain/PositionDeltas", -1337)
     }
 
     // Updating SwerveModulePosition every loop cycle

@@ -13,6 +13,7 @@ import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
 import org.team4099.lib.units.base.inCelsius
+import org.team4099.lib.units.base.inDecameters
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Angle
@@ -22,6 +23,7 @@ import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.radians
@@ -73,6 +75,18 @@ interface SwerveModuleIO {
       table?.put("potentiometerOutputRaw", potentiometerOutputRaw)
       table?.put("potentiometerOutputRadians", potentiometerOutputRadians.inRadians)
       table?.put("driftPositionMeters", drift.inMeters)
+
+      if (odometryDrivePositions.size > 0) {
+        table?.put("odometryDrivePositionsMeters", odometryDrivePositions[0].inMeters)
+      } else {
+        table?.put("odometryDrivePositionsMeters", 0.0)
+      }
+      if (odometrySteeringPositions.size > 0) {
+        table?.put("odometrySteeringPositionsDegrees", odometrySteeringPositions[0].inDegrees)
+      } else {
+        table?.put("odometrySteeringPositionsDegrees", 0.0)
+      }
+
     }
 
     override fun fromLog(table: LogTable?) {

@@ -41,10 +41,12 @@ import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inRotation2ds
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.inMetersPerSecond
+import org.team4099.lib.units.inRadiansPerSecond
 import org.team4099.lib.units.perSecond
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
@@ -267,7 +269,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     Logger.recordOutput("Drivetrain/setPointStates", SwerveModuleState.struct, *setPointStates.toTypedArray())
 
 
-    Logger.recordOutput(VisionConstants.POSE_TOPIC_NAME, Pose2dWPILIB.struct, odometryPose.pose2d)
+    Logger.recordOutput(VisionConstants.POSE_TOPIC_NAME, doubleArrayOf(odometryPose.x.inMeters, odometryPose.y.inMeters, odometryPose.rotation.inRadians))
     Logger.recordOutput(
       "Odometry/pose3d", Pose3dWPILIB.struct,
       Pose3d(
@@ -305,7 +307,8 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
       DrivetrainState.OPEN_LOOP -> {
         // Outputs
         setOpenLoop(velocityTarget, targetedDriveVector, fieldOrientation)
-
+        Logger.recordOutput("Drivetrain/TargetVelocityX", targetedDriveVector.first.inMetersPerSecond)
+        Logger.recordOutput("Drivetrain/TargetVelocityY", targetedDriveVector.second.inMetersPerSecond)
         // Transitions
         nextState = fromRequestToState(currentRequest)
       }
