@@ -18,8 +18,12 @@ import com.team4099.robot2023.subsystems.feeder.FeederIOSim
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
+import com.team4099.robot2023.subsystems.intake.Intake
+import com.team4099.robot2023.subsystems.intake.IntakeIONEO
+import com.team4099.robot2023.subsystems.intake.IntakeIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
+import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.subsystems.wrist.Wrist
@@ -36,10 +40,12 @@ object RobotContainer {
   private val drivetrain: Drivetrain
   private val vision: Vision
   private val limelight: LimelightVision
+  private val intake: Intake
   private val feeder: Feeder
   private val elevator: Elevator
   private val flywheel: Flywheel
   private val wrist: Wrist
+  val superstructure: Superstructure
 
   init {
     if (RobotBase.isReal()) {
@@ -57,6 +63,7 @@ object RobotContainer {
           //        CameraIONorthstar("backward")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
+      intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
       flywheel = Flywheel(FlywheelIOTalon)
@@ -71,12 +78,14 @@ object RobotContainer {
           CameraIONorthstar("northstar_3"),
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
+      intake = Intake(IntakeIOSim)
       feeder = Feeder(FeederIOSim)
       elevator = Elevator(ElevatorIOSim)
       flywheel = Flywheel(FlywheelIOSim)
       wrist = Wrist(WristIOSim)
     }
 
+    superstructure = Superstructure(intake, feeder, elevator, wrist, flywheel)
     vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
     limelight.poseSupplier = { drivetrain.odometryPose }
   }
@@ -133,24 +142,12 @@ object RobotContainer {
 
   fun mapTeleopControls() {
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
-    //    ControlBoard.autoLevel.whileActiveContinuous(
-    //      GoToAngle(drivetrain).andThen(AutoLevel(drivetrain))
-    //    )
-
-    // ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
-    //    ControlBoard.dpadDown.whileTrue(PickupFromSubstationCommand(drivetrain, superstructure))
-
-    //    ControlBoard.doubleSubstationIntake.whileTrue(AutoScoreCommand(drivetrain,
-    // superstructure))
-
-    //    ControlBoard.doubleSubstationIntake.whileTrue(
-    //      PickupFromSubstationCommand(
-    //        drivetrain,
-    //        superstructure,
-    //        Constants.Universal.GamePiece.CONE,
-    //        Constants.Universal.Substation.SINGLE_SUBSTATION
-    //      )
-    //    )
+    ControlBoard.testIntake.whileTrue(superstructure.testIntakeCommand())
+    ControlBoard.testFeederIntake.whileTrue(superstructure.testFeederIntakeCommand())
+    ControlBoard.testFeederShoot.whileTrue(superstructure.testFeederShootCommand())
+    ControlBoard.testFlywheel.whileTrue(superstructure.testFlywheelCommand())
+    ControlBoard.testWrist.whileTrue(superstructure.testWristCommand())
+    ControlBoard.testElevator.whileTrue(superstructure.testElevatorCommand())
   }
 
   fun mapTestControls() {}

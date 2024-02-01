@@ -83,6 +83,13 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       LoggedTunableValue(
         "Wrist/climbAngle", WristConstants.CLIMB_ANGLE, Pair({ it.inDegrees }, { it.degrees })
       )
+
+    val testAngle =
+      LoggedTunableValue(
+        "Wrist/testAngle",
+        WristConstants.AMP_SCORE_ANGLE,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
   }
 
   private val wristkS =

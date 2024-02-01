@@ -38,10 +38,10 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         FlywheelConstants.IDLE_VELOCITY,
         Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
       )
-    val shootVelocity =
+    val speakerVelocity =
       LoggedTunableValue(
-        "Flywheel/shootVelocity",
-        FlywheelConstants.SHOOT_VELOCITY,
+        "Flywheel/speakerVelocity",
+        FlywheelConstants.SPEAKER_VELOCITY,
         Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
       )
     val ampVelocity =
@@ -66,6 +66,13 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       LoggedTunableValue(
         "Flywheel/ejectVelocity",
         FlywheelConstants.EJECT_VELOCITY,
+        Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+      )
+
+    val testVelocity =
+      LoggedTunableValue(
+        "Flywheel/testVelocity",
+        FlywheelConstants.AMP_VELOCITY,
         Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
       )
   }

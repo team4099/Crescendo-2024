@@ -80,7 +80,6 @@ class Superstructure(
       SuperstructureStates.UNINITIALIZED -> {
         nextState = SuperstructureStates.HOME_PREP
       }
-      SuperstructureStates.TUNING -> {}
       SuperstructureStates.HOME_PREP -> {
         wrist.currentRequest = Request.WristRequest.Zero()
 
@@ -210,7 +209,7 @@ class Superstructure(
           )
         flywheel.currentRequest =
           Request.FlywheelRequest.TargetingVelocity(
-            Flywheel.TunableFlywheelStates.shootVelocity.get()
+            Flywheel.TunableFlywheelStates.speakerVelocity.get()
           )
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(
@@ -240,7 +239,7 @@ class Superstructure(
           )
         flywheel.currentRequest =
           Request.FlywheelRequest.TargetingVelocity(
-            Flywheel.TunableFlywheelStates.shootVelocity.get()
+            Flywheel.TunableFlywheelStates.speakerVelocity.get()
           )
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(
@@ -269,7 +268,7 @@ class Superstructure(
           )
         flywheel.currentRequest =
           Request.FlywheelRequest.TargetingVelocity(
-            Flywheel.TunableFlywheelStates.shootVelocity.get()
+            Flywheel.TunableFlywheelStates.speakerVelocity.get()
           )
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(
@@ -369,7 +368,7 @@ class Superstructure(
       runOnce { currentRequest = Request.SuperstructureRequest.Idle() }.until {
         isAtRequestedState && currentState == SuperstructureStates.IDLE
       }
-    returnCommand.name = "RequestIdleCommmand"
+    returnCommand.name = "RequestIdleCommand"
     return returnCommand
   }
 
@@ -381,6 +380,7 @@ class Superstructure(
     returnCommand.name = "EjectGamePieceCommand"
     return returnCommand
   }
+
   fun groundIntakeCommand(): Command {
     val returnCommand =
       runOnce { currentRequest = Request.SuperstructureRequest.GroundIntake() }.until {
@@ -468,6 +468,70 @@ class Superstructure(
         isAtRequestedState && currentState == SuperstructureStates.TUNING
       }
     returnCommand.name = "TuningCommand"
+    return returnCommand
+  }
+
+  fun testIntakeCommand(): Command {
+    val returnCommand = runOnce {
+      currentRequest = Request.SuperstructureRequest.Tuning()
+      intake.currentRequest =
+        Request.IntakeRequest.OpenLoop(Intake.TunableIntakeStates.testVoltage.get())
+    }
+    returnCommand.name = "TestIntakeCommand"
+    return returnCommand
+  }
+
+  fun testFeederIntakeCommand(): Command {
+    val returnCommand = runOnce {
+      currentRequest = Request.SuperstructureRequest.Tuning()
+      feeder.currentRequest =
+        Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.testIntakeVoltage.get())
+    }
+    returnCommand.name = "TestFeederIntakeCommand"
+    return returnCommand
+  }
+
+  fun testFeederShootCommand(): Command {
+    val returnCommand = runOnce {
+      currentRequest = Request.SuperstructureRequest.Tuning()
+      feeder.currentRequest =
+        Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.testShootVoltage.get())
+    }
+    returnCommand.name = "TestFeederShootCommand"
+    return returnCommand
+  }
+
+  fun testFlywheelCommand(): Command {
+    val returnCommand = runOnce {
+      currentRequest = Request.SuperstructureRequest.Tuning()
+      flywheel.currentRequest =
+        Request.FlywheelRequest.TargetingVelocity(
+          Flywheel.TunableFlywheelStates.testVelocity.get()
+        )
+    }
+    returnCommand.name = "TestFlywheelCommand"
+    return returnCommand
+  }
+
+  fun testWristCommand(): Command {
+    val returnCommand = runOnce {
+      currentRequest = Request.SuperstructureRequest.Tuning()
+      wrist.currentRequest =
+        Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.testAngle.get())
+    }
+    returnCommand.name = "TestWristCommand"
+    return returnCommand
+  }
+
+  fun testElevatorCommand(): Command {
+    val returnCommand = runOnce {
+      currentRequest = Request.SuperstructureRequest.Tuning()
+      elevator.currentRequest =
+        Request.ElevatorRequest.TargetingPosition(
+          Elevator.TunableElevatorHeights.testPosition.get()
+        )
+    }
+    returnCommand.name = "TestElevatorCommand"
     return returnCommand
   }
 

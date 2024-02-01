@@ -85,6 +85,12 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
         ElevatorConstants.ELEVATOR_SOFT_LIMIT_EXTENSION,
         Pair({ it.inInches }, { it.inches })
       )
+    val testPosition =
+      LoggedTunableValue(
+        "Elevator/testPosition",
+        ElevatorConstants.SHOOT_SPEAKER_MID_POSITION,
+        Pair({ it.inInches }, { it.inches })
+      )
     val climbExtend =
       LoggedTunableValue(
         "Elevator/climbExtend",

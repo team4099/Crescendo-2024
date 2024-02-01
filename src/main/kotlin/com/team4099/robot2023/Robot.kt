@@ -167,6 +167,8 @@ object Robot : LoggedRobot() {
       (Clock.realTimestamp - motorCheckerStartTime).inMilliseconds
     )
 
+    RobotContainer.superstructure.periodic()
+
     Logger.recordOutput(
       "LoggedRobot/RemainingRamMB", Runtime.getRuntime().freeMemory() / 1024 / 1024
     )

@@ -33,6 +33,8 @@ object FeederIOSim : FeederIO {
     inputs.feederSupplyCurrent = 0.amps
     inputs.feederStatorCurrent = feederSim.currentDrawAmps.amps
     inputs.feederTemp = 0.0.celsius
+
+    inputs.isSimulated = true
   }
 
   override fun setFeederVoltage(voltage: ElectricalPotential) {

@@ -33,6 +33,13 @@ class Intake(val io: IntakeIO) : SubsystemBase() {
         IntakeConstants.OUTTAKE_VOLTAGE,
         Pair({ it.inVolts }, { it.volts })
       )
+
+    val testVoltage =
+      LoggedTunableValue(
+        "Intake/testVoltage",
+        IntakeConstants.INTAKE_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
   }
 
   var rollerVoltageTarget: ElectricalPotential = 0.0.volts
@@ -57,17 +64,17 @@ class Intake(val io: IntakeIO) : SubsystemBase() {
   override fun periodic() {
     io.updateInputs(inputs)
 
-    Logger.processInputs("GroundIntake", inputs)
-    Logger.recordOutput("GroundIntake/currentState", currentState.name)
-    Logger.recordOutput("GroundIntake/requestedState", currentRequest.javaClass.simpleName)
-    Logger.recordOutput("GroundIntake/isZeroed", isZeroed)
+    Logger.processInputs("Intake", inputs)
+    Logger.recordOutput("Intake/currentState", currentState.name)
+    Logger.recordOutput("Intake/requestedState", currentRequest.javaClass.simpleName)
+    Logger.recordOutput("Intake/isZeroed", isZeroed)
 
     if (Constants.Tuning.DEBUGING_MODE) {
       Logger.recordOutput(
-        "GroundIntake/isAtCommandedState", currentState.equivalentToRequest(currentRequest)
+        "Intake/isAtCommandedState", currentState.equivalentToRequest(currentRequest)
       )
-      Logger.recordOutput("GroundIntake/timeProfileGeneratedAt", timeProfileGeneratedAt.inSeconds)
-      Logger.recordOutput("GroundIntake/rollerVoltageTarget", rollerVoltageTarget.inVolts)
+      Logger.recordOutput("Intake/timeProfileGeneratedAt", timeProfileGeneratedAt.inSeconds)
+      Logger.recordOutput("Intake/rollerVoltageTarget", rollerVoltageTarget.inVolts)
     }
 
     var nextState = currentState
