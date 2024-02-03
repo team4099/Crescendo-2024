@@ -59,8 +59,6 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
   var gyroYawOffset = 0.0.radians
 
-  var rawGyroAngle = odometryPose.rotation
-
   var swerveDrivePoseEstimator = PoseEstimator(VecBuilder.fill(0.003, 0.003, 0.0001))
 
   var angularVelocityTarget = 0.degrees.perSecond
@@ -180,6 +178,8 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
       )
     }
 
+  var rawGyroAngle = odometryPose.rotation
+
 
 
 
@@ -190,8 +190,6 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
   override fun periodic() {
     val startTime = Clock.realTimestamp
-
-    odometryLock.lock() // Prevents odometry updates while reading data
 
     //Read new gyro and wheel data from sensors
     odometryLock.lock() // Prevents odometry updates while reading data
