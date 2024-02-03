@@ -2,7 +2,6 @@ package com.team4099.robot2023.subsystems.wrist
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
-import com.team4099.lib.phoenix6.PositionVoltage
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
@@ -20,26 +19,20 @@ import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
-import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.inVoltsPerDegree
 import org.team4099.lib.units.derived.inVoltsPerDegreePerSecond
-import org.team4099.lib.units.derived.inVoltsPerDegreePerSecondPerSecond
 import org.team4099.lib.units.derived.inVoltsPerDegreeSeconds
 import org.team4099.lib.units.derived.inVoltsPerRadianPerSecond
 import org.team4099.lib.units.derived.inVoltsPerRadianPerSecondPerSecond
 import org.team4099.lib.units.derived.perDegree
 import org.team4099.lib.units.derived.perDegreePerSecond
-import org.team4099.lib.units.derived.perDegreePerSecondPerSecond
 import org.team4099.lib.units.derived.perDegreeSeconds
-import org.team4099.lib.units.derived.perRadian
 import org.team4099.lib.units.derived.perRadianPerSecond
 import org.team4099.lib.units.derived.perRadianPerSecondPerSecond
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inDegreesPerSecond
-import org.team4099.lib.units.inRadiansPerSecond
-import org.team4099.lib.units.inRadiansPerSecondPerSecond
 import org.team4099.lib.units.perSecond
 
 class Wrist(val io: WristIO) : SubsystemBase() {
@@ -51,13 +44,12 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     )
   private val wristkV =
     LoggedTunableValue(
-      "Wrist/kV",
-      Pair({ it.inVoltsPerRadianPerSecond}, { it.volts.perRadianPerSecond})
+      "Wrist/kV", Pair({ it.inVoltsPerRadianPerSecond }, { it.volts.perRadianPerSecond })
     )
   private val wristkA =
     LoggedTunableValue(
       "Wrist/kA",
-      Pair({ it.inVoltsPerRadianPerSecondPerSecond}, { it.volts.perRadianPerSecondPerSecond })
+      Pair({ it.inVoltsPerRadianPerSecondPerSecond }, { it.volts.perRadianPerSecondPerSecond })
     )
   private val wristkG =
     LoggedTunableValue(

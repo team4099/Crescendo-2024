@@ -15,7 +15,6 @@ import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
-import com.team4099.robot2023.subsystems.wrist.WristIOTalon
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.amps
@@ -44,7 +43,8 @@ object FlywheelIOTalon : FlywheelIO {
 
   private val flywheelRightConfiguration: TalonFXConfiguration = TalonFXConfiguration()
 
- var velocityRequest = VelocityVoltage(-1337.degrees.perSecond, slot = 0, feedforward = -1337.volts)
+  var velocityRequest =
+    VelocityVoltage(-1337.degrees.perSecond, slot = 0, feedforward = -1337.volts)
 
   private val flywheelLeftSensor =
     ctreAngularMechanismSensor(
@@ -65,13 +65,12 @@ object FlywheelIOTalon : FlywheelIO {
   var leftFlywheelTempSignal: StatusSignal<Double>
   var leftFlywheelDutyCycle: StatusSignal<Double>
 
-
   var rightFlywheelStatorCurrentSignal: StatusSignal<Double>
   var rightFlywheelSupplyCurrentSignal: StatusSignal<Double>
   var rightFlywheelTempSignal: StatusSignal<Double>
   var rightFlywheelDutyCycle: StatusSignal<Double>
-  var motorVoltage : StatusSignal<Double>
-  var motorTorque :StatusSignal<Double>
+  var motorVoltage: StatusSignal<Double>
+  var motorTorque: StatusSignal<Double>
 
   init {
 
@@ -119,7 +118,6 @@ object FlywheelIOTalon : FlywheelIO {
       FlywheelConstants.RIGHT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
     flywheelRightConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
 
-
     flywheelLeftConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
     flywheelRightConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
 
@@ -132,14 +130,12 @@ object FlywheelIOTalon : FlywheelIO {
     rightFlywheelTempSignal = flywheelRightTalon.deviceTemp
     rightFlywheelDutyCycle = flywheelRightTalon.dutyCycle
     motorVoltage = flywheelRightTalon.motorVoltage
-    motorTorque =flywheelRightTalon.torqueCurrent
+    motorTorque = flywheelRightTalon.torqueCurrent
 
     leftFlywheelStatorCurrentSignal = flywheelLeftTalon.statorCurrent
     leftFlywheelSupplyCurrentSignal = flywheelLeftTalon.supplyCurrent
     leftFlywheelTempSignal = flywheelLeftTalon.deviceTemp
     leftFlywheelDutyCycle = flywheelLeftTalon.dutyCycle
-
-
 
     MotorChecker.add(
       "Shooter",
@@ -197,7 +193,9 @@ object FlywheelIOTalon : FlywheelIO {
   override fun setFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {
     FlywheelIOTalon.velocityRequest.setFeedforward(feedforward)
     FlywheelIOTalon.velocityRequest.setVelocity(velocity)
-    FlywheelIOTalon.flywheelRightTalon.setControl(FlywheelIOTalon.velocityRequest.velocityVoltagePhoenix6)
+    FlywheelIOTalon.flywheelRightTalon.setControl(
+      FlywheelIOTalon.velocityRequest.velocityVoltagePhoenix6
+    )
   }
   override fun updateInputs(inputs: FlywheelIO.FlywheelIOInputs) {
     inputs.rightFlywheelVelocity = flywheelRightSensor.velocity
@@ -205,7 +203,7 @@ object FlywheelIOTalon : FlywheelIO {
     inputs.rightFlywheelStatorCurrent = rightFlywheelStatorCurrentSignal.value.amps
     inputs.rightFlywheelSupplyCurrent = rightFlywheelSupplyCurrentSignal.value.amps
     inputs.rightFlywheelTemperature = rightFlywheelTempSignal.value.celsius
-    //TODO fix unit for torque
+    // TODO fix unit for torque
     inputs.rightFlywheelTorque = motorTorque.value
     inputs.rightFlywheelDutyCycle = rightFlywheelDutyCycle.value.volts
 
@@ -214,7 +212,6 @@ object FlywheelIOTalon : FlywheelIO {
     inputs.leftFlywheelStatorCurrent = leftFlywheelStatorCurrentSignal.value.amps
     inputs.leftFlywheelSupplyCurrent = leftFlywheelSupplyCurrentSignal.value.amps
     inputs.leftFlywheelTemperature = leftFlywheelTempSignal.value.celsius
-
   }
 
   override fun setFlywheelBrakeMode(brake: Boolean) {

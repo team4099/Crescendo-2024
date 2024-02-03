@@ -13,7 +13,6 @@ import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
 import org.team4099.lib.units.base.inCelsius
-import org.team4099.lib.units.base.inDecameters
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Angle
@@ -86,7 +85,6 @@ interface SwerveModuleIO {
       } else {
         table?.put("odometrySteeringPositionsDegrees", 0.0)
       }
-
     }
 
     override fun fromLog(table: LogTable?) {

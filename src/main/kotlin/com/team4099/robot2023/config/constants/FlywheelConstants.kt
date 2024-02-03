@@ -56,6 +56,5 @@ object FlywheelConstants {
     val FLYWHEEL_KA = 0.03.volts / 1.radians.perSecond.perSecond
 
     val FLYWHEEL_INIT_VOLTAGE = 0.0.volts
-
   }
 }

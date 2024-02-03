@@ -110,7 +110,11 @@ class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
       if (update.value.visionUpdates.size > 0 && update.value.visionUpdates[0].fromVision) {
         Logger.recordOutput("Vision/Buffer/Vision", update.key)
 
-        Logger.recordOutput("Vision/Buffer/VisionPose", Pose2dWPILIB.struct, update.value.visionUpdates[0].pose.pose2d)
+        Logger.recordOutput(
+          "Vision/Buffer/VisionPose",
+          Pose2dWPILIB.struct,
+          update.value.visionUpdates[0].pose.pose2d
+        )
       } else {
         Logger.recordOutput("Vision/Buffer/Drivetrain", update.key)
       }

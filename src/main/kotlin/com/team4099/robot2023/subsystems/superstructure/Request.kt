@@ -26,6 +26,8 @@ sealed interface Request {
     ) : DrivetrainRequest
     class ZeroSensors : DrivetrainRequest
     class Idle : DrivetrainRequest
+
+    class LockWheels : DrivetrainRequest
   }
   sealed interface WristRequest : Request {
     class OpenLoop(val wristVoltage: ElectricalPotential) : WristRequest

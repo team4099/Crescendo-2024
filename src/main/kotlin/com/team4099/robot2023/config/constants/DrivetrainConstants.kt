@@ -10,6 +10,7 @@ import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
+import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
@@ -90,6 +91,11 @@ object DrivetrainConstants {
 
   val DRIVE_WHEEL_INERTIA = 0.025.kilo.grams.meterSquared
   val STEERING_WHEEL_INERTIA = 0.004096955.kilo.grams.meterSquared
+
+  val FL_LOCKING_ANGLE: Angle = 45.degrees
+  val FR_LOCKING_ANGLE: Angle = 315.degrees
+  val BL_LOCKING_ANGLE: Angle = 135.degrees
+  val BR_LOCKING_ANGLE: Angle = 225.degrees
 
   object PID {
     val AUTO_POS_KP: ProportionalGain<Meter, Velocity<Meter>>

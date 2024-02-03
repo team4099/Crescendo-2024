@@ -40,11 +40,9 @@ import org.team4099.lib.units.derived.inVoltsPerDegree
 import org.team4099.lib.units.derived.inVoltsPerDegreePerSecond
 import org.team4099.lib.units.derived.inVoltsPerDegreeSeconds
 import org.team4099.lib.units.derived.radians
-import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.perSecond
-import java.util.*
 import kotlin.random.Random
 
 class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
@@ -62,7 +60,6 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
       1 / DrivetrainConstants.STEERING_SENSOR_GEAR_RATIO,
       DrivetrainConstants.STEERING_WHEEL_INERTIA.inKilogramsMeterSquared
     )
-
 
   init {
     MotorChecker.add(
@@ -157,15 +154,15 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     // pi * d * rotations = distance travelled
     inputs.drivePosition =
       inputs.drivePosition +
-              DrivetrainConstants.WHEEL_DIAMETER *
-              Math.PI *
-              (
-                      driveMotorSim.angularVelocityRadPerSec *
-                              Constants.Universal.LOOP_PERIOD_TIME.inSeconds
-                      )
-                .radians
-                .inRotations +
-              loopCycleDrift // adding a random amount of drift
+      DrivetrainConstants.WHEEL_DIAMETER *
+      Math.PI *
+      (
+        driveMotorSim.angularVelocityRadPerSec *
+          Constants.Universal.LOOP_PERIOD_TIME.inSeconds
+        )
+        .radians
+        .inRotations +
+      loopCycleDrift // adding a random amount of drift
     inputs.steeringPosition = turnAbsolutePosition
     inputs.drift = drift
 
@@ -189,7 +186,6 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
 
     inputs.potentiometerOutputRadians = turnAbsolutePosition
     inputs.potentiometerOutputRaw = turnAbsolutePosition.inRadians
-
 
     inputs.odometryDrivePositions = arrayOf(inputs.drivePosition)
     inputs.odometrySteeringPositions = arrayOf(inputs.steeringPosition)

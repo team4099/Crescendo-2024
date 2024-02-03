@@ -115,7 +115,9 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
 
     if (Constants.Tuning.DEBUGING_MODE) {
       Logger.recordOutput("Flywheel/FlywheelTargetVoltage", flywheelTargetVoltage.inVolts)
-      Logger.recordOutput("Flywheel/FlywheelTargetVelocity", flywheelTargetVelocity.inRadiansPerSecond)
+      Logger.recordOutput(
+        "Flywheel/FlywheelTargetVelocity", flywheelTargetVelocity.inRadiansPerSecond
+      )
       Logger.recordOutput("Flywheel/FlywheelLastVoltage", lastFlywheelVoltage.inVolts)
     }
 
@@ -176,9 +178,9 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       UNINITIALIZED,
       OPEN_LOOP,
       TARGETING_VELOCITY;
-      fun equivalentToRequest(request: Request.FlywheelRequest) : Boolean {
+      fun equivalentToRequest(request: Request.FlywheelRequest): Boolean {
         return (request is Request.FlywheelRequest.OpenLoop && this == OPEN_LOOP) ||
-                (request is Request.FlywheelRequest.TargetingVelocity && this == TARGETING_VELOCITY)
+          (request is Request.FlywheelRequest.TargetingVelocity && this == TARGETING_VELOCITY)
       }
     }
     inline fun fromRequestToState(request: Request.FlywheelRequest): FlywheelStates {

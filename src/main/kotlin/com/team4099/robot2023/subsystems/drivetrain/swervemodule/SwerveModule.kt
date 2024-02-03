@@ -128,7 +128,7 @@ class SwerveModule(val io: SwerveModuleIO) {
 
     positionDeltas.clear()
 
-    for (i in 0..deltaCount-1) {
+    for (i in 0..deltaCount - 1) {
       val newDrivePosition = inputs.odometryDrivePositions[i]
       val newSteeringAngle = inputs.odometrySteeringPositions[i]
       positionDeltas.add(
@@ -141,9 +141,8 @@ class SwerveModule(val io: SwerveModuleIO) {
 
     if (positionDeltas.size > 0) {
       Logger.recordOutput("Drivetrain/PositionDeltas", positionDeltas[0].distanceMeters)
-    }
-     else {
-       Logger.recordOutput("Drivetrain/PositionDeltas", -1337)
+    } else {
+      Logger.recordOutput("Drivetrain/PositionDeltas", -1337)
     }
 
     // Updating SwerveModulePosition every loop cycle
@@ -261,12 +260,12 @@ class SwerveModule(val io: SwerveModuleIO) {
       io.setOpenLoop(
         optimizedState.angle.angle,
         optimizedState.speedMetersPerSecond.meters.perSecond *
-                Math.cos(
-                  abs(
-                    (optimizedState.angle.angle - inputs.steeringPosition)
-                      .inRadians
-                  )
-                ) // consider desaturating wheel speeds here if it doesn't work
+          Math.cos(
+            abs(
+              (optimizedState.angle.angle - inputs.steeringPosition)
+                .inRadians
+            )
+          ) // consider desaturating wheel speeds here if it doesn't work
         // from drivetrain
       )
       Logger.recordOutput("${io.label}/steeringSetpointOptimized", optimizedState.angle.degrees)
@@ -274,7 +273,7 @@ class SwerveModule(val io: SwerveModuleIO) {
       io.setOpenLoop(
         desiredState.angle.angle,
         desiredState.speedMetersPerSecond.meters.perSecond *
-                Math.cos(abs((desiredState.angle.angle - inputs.steeringPosition).inRadians))
+          Math.cos(abs((desiredState.angle.angle - inputs.steeringPosition).inRadians))
       )
       Logger.recordOutput("${io.label}/steeringSetpointNonOptimized", desiredState.angle.degrees)
     }

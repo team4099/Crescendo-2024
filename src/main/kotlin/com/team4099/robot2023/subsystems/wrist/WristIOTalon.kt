@@ -57,8 +57,8 @@ object WristIOTalon : WristIO {
   var supplyCurrentSignal: StatusSignal<Double>
   var tempSignal: StatusSignal<Double>
   var dutyCycle: StatusSignal<Double>
-  var motorVoltage : StatusSignal<Double>
-  var motorTorque :StatusSignal<Double>
+  var motorVoltage: StatusSignal<Double>
+  var motorTorque: StatusSignal<Double>
   init {
     wristTalon.configurator.apply(TalonFXConfiguration())
 
@@ -144,7 +144,7 @@ object WristIOTalon : WristIO {
   override fun updateInputs(inputs: WristIO.WristIOInputs) {
     inputs.wristPostion = wristSensor.position
     inputs.wristVelocity = wristSensor.velocity
-    //TODO fix unit for torque
+    // TODO fix unit for torque
     inputs.wristTorque = motorTorque.value
     inputs.wristAppliedVoltage = motorVoltage.value.volts
     inputs.wristDutyCycle = dutyCycle.value.volts
