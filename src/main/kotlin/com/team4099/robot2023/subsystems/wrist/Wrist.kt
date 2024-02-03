@@ -219,6 +219,8 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
     Logger.recordOutput("Wrist/isAtTargetedPosition", isAtTargetedPosition)
 
+    Logger.recordOutput("Wrist/requestedPosition", wristPositionTarget.inDegrees)
+
     if (Constants.Tuning.DEBUGING_MODE) {}
 
     var nextState = currentState

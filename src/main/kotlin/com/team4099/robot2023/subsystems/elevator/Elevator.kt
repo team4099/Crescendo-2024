@@ -257,6 +257,8 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
       "Elevator/elevatorHeight",
       inputs.elevatorPosition - ElevatorConstants.ELEVATOR_GROUND_OFFSET
     )
+    Logger.recordOutput("Elevator/requestedPosition", elevatorPositionTarget.inInches)
+
     if (Constants.Tuning.DEBUGING_MODE) {
       Logger.recordOutput("Elevator/isHomed", isHomed)
       Logger.recordOutput("Elevator/canContinueSafely", canContinueSafely)
