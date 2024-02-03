@@ -53,6 +53,7 @@ object GyroIOPigeon2 : GyroIO {
       }
     }
 
+
   val gyroRoll: Angle
     get() {
       if (isConnected) {
@@ -109,26 +110,25 @@ object GyroIOPigeon2 : GyroIO {
     pigeon2.configurator.apply(pigeon2Configuration)
   }
 
-  override fun updateInputs(inputs: GyroIO.GyroIOInputs) {
+      override fun updateInputs(inputs: GyroIO.GyroIOInputs) {
 
-    inputs.rawGyroYaw = pigeon2.yaw.value.degrees
+        inputs.rawGyroYaw = pigeon2.yaw.value.degrees
 
-    inputs.gyroConnected = isConnected
+        inputs.gyroConnected = isConnected
 
-    inputs.gyroYaw = gyroYaw
-    inputs.gyroPitch = gyroPitch
-    inputs.gyroRoll = gyroRoll
+        inputs.gyroYaw = gyroYaw
+        inputs.gyroPitch = gyroPitch
+        inputs.gyroRoll = gyroRoll
 
-    inputs.gyroYawRate = gyroYawRate
-    inputs.gyroPitchRate = gyroPitchRate
-    inputs.gyroRollRate = gyroRollRate
+        inputs.gyroYawRate = gyroYawRate
+        inputs.gyroPitchRate = gyroPitchRate
+        inputs.gyroRollRate = gyroRollRate
 
-    inputs.odometryYawPositions =
-      yawPositionQueue.stream().map { value: Double -> value.degrees }.toArray() as Array<Angle>
-    yawPositionQueue.clear()
+        inputs.odometryYawPositions = (yawPositionQueue.stream().map { value: Double -> value.degrees }.toArray() as Array<Angle>).toMutableList()
+        yawPositionQueue.clear()
 
-    Logger.recordOutput("Gyro/rawYawDegrees", pigeon2.yaw.value)
-  }
+        Logger.recordOutput("Gyro/rawYawDegrees", pigeon2.yaw.value)
+      }
 
   override fun zeroGyroYaw(toAngle: Angle) {
     gyroYawOffset = toAngle - pigeon2.yaw.value.IEEErem(360.0).degrees

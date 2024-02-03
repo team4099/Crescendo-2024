@@ -121,14 +121,12 @@ class SwerveModule(val io: SwerveModuleIO) {
   }
 
   fun periodic() {
-    io.updateInputs(inputs)
 
     val deltaCount =
       Math.min(inputs.odometryDrivePositions.size, inputs.odometrySteeringPositions.size)
 
-    positionDeltas.clear()
 
-    for (i in 0..deltaCount - 1) {
+    for (i in 0..deltaCount-1) {
       val newDrivePosition = inputs.odometryDrivePositions[i]
       val newSteeringAngle = inputs.odometrySteeringPositions[i]
       positionDeltas.add(
@@ -231,12 +229,10 @@ class SwerveModule(val io: SwerveModuleIO) {
   fun setOpenLoop(steering: Angle, speed: LinearVelocity, optimize: Boolean = true) {
     var steeringDifference =
       (steering - inputs.steeringPosition).inRadians.IEEErem(2 * Math.PI).radians
-
     shouldInvert = steeringDifference.absoluteValue > (Math.PI / 2).radians && optimize
     if (shouldInvert) {
       steeringDifference -= Math.PI.withSign(steeringDifference.inRadians).radians
     }
-
     val outputSpeed =
       if (shouldInvert) {
         speed * -1
