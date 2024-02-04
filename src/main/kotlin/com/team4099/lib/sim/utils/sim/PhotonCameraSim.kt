@@ -23,11 +23,11 @@
 */
 package com.team4099.lib.sim.utils.sim
 
+import com.team4099.lib.sim.utils.estimation.CameraProperties
 import com.team4099.lib.sim.utils.util.VideoSimUtil.updateVideoProp
 import com.team4099.lib.sim.utils.util.VideoSimUtil.warp16h5TagImage
 import com.team4099.lib.sim.utils.util.VideoSimUtil.drawTagDetection
 import kotlin.jvm.JvmOverloads
-import com.team4099.lib.sim.utils.estimation.CameraProperties
 import edu.wpi.first.networktables.NetworkTableEntry
 import org.photonvision.PhotonTargetSortMode
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer
