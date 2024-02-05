@@ -161,11 +161,11 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     )
 
   private var prevWristSetpoint: TrapezoidProfile.State<Radian> =
-    TrapezoidProfile.State(inputs.wristPostion, inputs.wristVelocity)
+    TrapezoidProfile.State(inputs.wristPosition, inputs.wristVelocity)
   val forwardLimitReached: Boolean
-    get() = inputs.wristPostion >= WristConstants.WRIST_MAX_ROTATION
+    get() = inputs.wristPosition >= WristConstants.WRIST_MAX_ROTATION
   val reverseLimitReached: Boolean
-    get() = inputs.wristPostion <= WristConstants.WRIST_MIN_ROTATION
+    get() = inputs.wristPosition <= WristConstants.WRIST_MIN_ROTATION
 
   private fun isOutOfBounds(velocity: AngularVelocity): Boolean {
     return (velocity > 0.0.degrees.perSecond && forwardLimitReached) ||
@@ -246,7 +246,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
             TrapezoidProfile(
               wristConstraints,
               TrapezoidProfile.State(wristPositionTarget, 0.0.radians.perSecond),
-              TrapezoidProfile.State(inputs.wristPostion, inputs.wristVelocity)
+              TrapezoidProfile.State(inputs.wristPosition, inputs.wristVelocity)
             )
 
           val postProfileGenerate = Clock.fpgaTime
@@ -286,7 +286,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     // When the forward or reverse limit is reached, set the voltage to 0
     // Else move the arm to the setpoint position
     if (isOutOfBounds(setPoint.velocity)) {
-      io.setWristVoltage(wristFeedForward.calculate(inputs.wristPostion, 0.degrees.perSecond))
+      io.setWristVoltage(wristFeedForward.calculate(inputs.wristPosition, 0.degrees.perSecond))
     } else {
       io.setWristPosition(setPoint.position, feedforward)
     }
@@ -302,7 +302,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       (
         currentState == WristStates.TARGETING_POSITION &&
           wristProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
-          (inputs.wristPostion - wristPositionTarget).absoluteValue <=
+          (inputs.wristPosition - wristPositionTarget).absoluteValue <=
           WristConstants.WRIST_TOLERANCE
         )
 

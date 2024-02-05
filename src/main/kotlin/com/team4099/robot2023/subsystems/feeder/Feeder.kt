@@ -90,8 +90,8 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
   var lastBeamState = false
   val hasNote: Boolean
     get() {
-      return inputs.beamBroken &&
-        Clock.fpgaTime - firstTripBeamBreakTime > FeederConstants.BEAM_BREAK_WAIT_TIME
+      return (inputs.beamBroken &&
+        Clock.fpgaTime - firstTripBeamBreakTime > FeederConstants.BEAM_BREAK_WAIT_TIME) || inputs.isSimulated
     }
 
   private var timeProfileGeneratedAt = Clock.fpgaTime

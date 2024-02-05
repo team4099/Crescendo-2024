@@ -33,6 +33,8 @@ object WristConstants {
   val WRIST_VOLTAGE_COMPENSATION = 12.0.volts
   val WRIST_STATOR_CURRENT_LIMIT = 40.0.amps
 
+  val WRIST_ZERO_SIM_OFFSET = 27.5.degrees
+
   val WRIST_MAX_ROTATION = 45.degrees
   val WRIST_MIN_ROTATION = (-47.0).degrees
 
@@ -53,14 +55,14 @@ object WristConstants {
     val WRIST_KS = 0.0.volts
   }
 
-  val WRIST_TOLERANCE = 0.01.degrees
+  val WRIST_TOLERANCE = 0.1.degrees
 
-  val IDLE_ANGLE = (-40.0).degrees
+  val IDLE_ANGLE = (-35.0).degrees
   val AMP_SCORE_ANGLE = 0.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = 0.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = 30.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH = 50.0.degrees
   val CLIMB_ANGLE = 20.0.degrees
-  val INTAKE_ANGLE = (-40.0).degrees
-  val IDLE_ANGLE_HAS_GAMEPEICE = 40.0.degrees
+  val INTAKE_ANGLE = (-35.0).degrees
+  val IDLE_ANGLE_HAS_GAMEPEICE = -35.0.degrees
 }

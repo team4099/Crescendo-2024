@@ -142,7 +142,7 @@ object WristIOTalon : WristIO {
     wristTalon.setControl(positionRequest.positionVoltagePhoenix6)
   }
   override fun updateInputs(inputs: WristIO.WristIOInputs) {
-    inputs.wristPostion = wristSensor.position
+    inputs.wristPosition = wristSensor.position
     inputs.wristVelocity = wristSensor.velocity
     // TODO fix unit for torque
     inputs.wristTorque = motorTorque.value

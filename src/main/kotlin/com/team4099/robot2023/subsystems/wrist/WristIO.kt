@@ -24,7 +24,7 @@ import org.team4099.lib.units.perSecond
 interface WristIO {
   class WristIOInputs : LoggableInputs {
 
-    var wristPostion = 0.0.degrees
+    var wristPosition = 0.0.degrees
     var wristVelocity = 0.0.radians.perSecond
     var wristAppliedVoltage = 0.0.volts
     var wristDutyCycle = 0.0.volts
@@ -36,7 +36,7 @@ interface WristIO {
     var isSimulated = false
 
     override fun toLog(table: LogTable) {
-      table.put("wristPostion", wristPostion.inDegrees)
+      table.put("wristPostion", wristPosition.inDegrees)
       table.put("wristVelocityRPM", wristVelocity.inRadiansPerSecond)
       table.put("wristAppliedVoltage", wristAppliedVoltage.inVolts)
       table.put("wristStatorCurrent", wristStatorCurrent.inAmperes)
@@ -47,7 +47,7 @@ interface WristIO {
     override fun fromLog(table: LogTable) {
 
       // wrist logs
-      table.get("wristPostion", wristPostion.inDegrees).let { wristPostion = it.degrees }
+      table.get("wristPostion", wristPosition.inDegrees).let { wristPosition = it.degrees }
       table.get("wristVelocity", wristVelocity.inRadiansPerSecond).let {
         wristVelocity = it.radians.perSecond
       }

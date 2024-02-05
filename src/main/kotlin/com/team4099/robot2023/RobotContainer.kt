@@ -141,13 +141,31 @@ object RobotContainer {
   }
 
   fun mapTeleopControls() {
+
+
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
+    ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
+    ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
+    ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())
+    ControlBoard.ampScore.whileTrue(superstructure.scoreAmpCommand())
+    ControlBoard.scoreSpeakerLow.whileTrue(superstructure.scoreSpeakerLowCommand())
+    ControlBoard.scoreSpeakerMid.whileTrue(superstructure.scoreSpeakerMidCommand())
+    ControlBoard.scoreSpeakerHigh.whileTrue(superstructure.scoreSpeakerHighCommand())
+    ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
+    ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
+    ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
+
+
+    /*
+    TUNING COMMANDS
     ControlBoard.testIntake.whileTrue(superstructure.testIntakeCommand())
     ControlBoard.testFeederIntake.whileTrue(superstructure.testFeederIntakeCommand())
     ControlBoard.testFeederShoot.whileTrue(superstructure.testFeederShootCommand())
     ControlBoard.testFlywheel.whileTrue(superstructure.testFlywheelCommand())
     ControlBoard.testWrist.whileTrue(superstructure.testWristCommand())
     ControlBoard.testElevator.whileTrue(superstructure.testElevatorCommand())
+
+     */
   }
 
   fun mapTestControls() {}

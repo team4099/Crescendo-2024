@@ -1,6 +1,7 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.hal.Clock
+import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.elevator.Elevator
 import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
@@ -42,15 +43,15 @@ class Superstructure(
   var lastTransitionTime = Clock.fpgaTime
 
   fun toDoubleArray(somePose: Pose3d) : DoubleArray {
-    return doubleArrayOf(somePose.x.inMeters, somePose.y.inMeters, somePose.z.inMeters, somePose.rotation.quaternion.w.inRadians, somePose.rotation.x.inRadians, somePose.rotation.y.inRadians, somePose.rotation.z.inRadians)
+    return doubleArrayOf(somePose.x.inMeters, somePose.y.inMeters, somePose.z.inMeters, somePose.rotation.rotation3d.quaternion.w, somePose.rotation.rotation3d.quaternion.x, somePose.rotation.rotation3d.quaternion.y, somePose.rotation.rotation3d.quaternion.z)
   }
 
   override fun periodic() {
 
 
     Logger.recordOutput(
-        "SimulatedMechanisms/0",
-        toDoubleArray(Pose3d().transformBy(
+        "SimulatedMechanisms/0", toDoubleArray(
+      Pose3d().transformBy(
           Transform3d(
             Translation3d(
               0.0.inches,
@@ -58,8 +59,8 @@ class Superstructure(
               elevator.inputs.elevatorPosition
             ), Rotation3d()
           )
-        ))
-      )
+      ))
+    )
 
     Logger.recordOutput(
       "SimulatedMechanisms/1",
@@ -70,7 +71,7 @@ class Superstructure(
             0.013.meters,
             0.0.inches,
             elevator.inputs.elevatorPosition + 0.58.meters
-          ), Rotation3d(0.0.degrees, wrist.inputs.wristPostion + 23.degrees, 0.0.degrees))
+          ), Rotation3d(0.0.degrees, wrist.inputs.wristPosition + WristConstants.WRIST_ZERO_SIM_OFFSET, 0.0.degrees))
         )
       ))
 
@@ -215,6 +216,7 @@ class Superstructure(
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.intakeVoltage.get())
         if (feeder.hasNote) {
+          currentRequest = Request.SuperstructureRequest.Idle()
           nextState = SuperstructureStates.IDLE
         }
         when (currentRequest) {
