@@ -6,6 +6,7 @@ import com.team4099.lib.trajectory.CustomTrajectoryGenerator
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.superstructure.StaticRequests
 import com.team4099.robot2023.util.AllianceFlipUtil
 import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -304,18 +305,12 @@ class DrivePathCommand(
     Logger.recordOutput("ActiveCommands/DrivePathCommand", false)
     if (interrupted) {
       // Stop where we are if interrupted
-      drivetrain.currentRequest =
-        DrivetrainRequest.OpenLoop(
-          0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
-        )
+      drivetrain.currentRequest = StaticRequests.Drivetrain.openLoopToZero
     } else {
       // Execute one last time to end up in the final state of the trajectory
       // Since we weren't interrupted, we know curTime > endTime
       execute()
-      drivetrain.currentRequest =
-        DrivetrainRequest.OpenLoop(
-          0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
-        )
+      drivetrain.currentRequest = StaticRequests.Drivetrain.openLoopToZero
     }
   }
 }
