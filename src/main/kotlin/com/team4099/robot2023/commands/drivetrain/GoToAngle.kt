@@ -3,6 +3,7 @@ package com.team4099.robot2023.commands.drivetrain
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.superstructure.StaticRequests
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
@@ -29,6 +30,9 @@ import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainReques
 
 class GoToAngle(val drivetrain: Drivetrain) : Command() {
   private val thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
+  private val currentDrivetrainRequest = Request.DrivetrainRequest.OpenLoop(
+    0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
+  )
 
   val thetakP =
     LoggedTunableValue(
@@ -93,7 +97,7 @@ class GoToAngle(val drivetrain: Drivetrain) : Command() {
 
     val thetaFeedback = thetaPID.calculate(drivetrain.odometryPose.rotation, desiredAngle)
 
-    drivetrain.currentRequest = StaticRequests.Drivetrain.openLoopToZero
+    drivetrain.currentRequest = currentDrivetrainRequest
 
     Logger.recordOutput("AutoLevel/CurrentYawDegrees", drivetrain.odometryPose.rotation.inDegrees)
     Logger.recordOutput("AutoLevel/DesiredYawDegrees", desiredAngle.inDegrees)
@@ -101,12 +105,11 @@ class GoToAngle(val drivetrain: Drivetrain) : Command() {
   }
 
   override fun isFinished(): Boolean {
-
     return (drivetrain.odometryPose.rotation - desiredAngle).absoluteValue <
       DrivetrainConstants.PID.AUTO_THETA_ALLOWED_ERROR
   }
 
   override fun end(interrupted: Boolean) {
-    drivetrain.currentRequest = StaticRequests.Drivetrain.openLoopToZero
+    drivetrain.currentRequest = currentDrivetrainRequest
   }
 }

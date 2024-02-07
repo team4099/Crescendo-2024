@@ -4,6 +4,7 @@ import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.superstructure.StaticRequests
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
@@ -26,6 +27,7 @@ import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainReques
 
 class GyroAutoLevel(val drivetrain: Drivetrain) : Command() {
   private val gyroPID: ProfiledPIDController<Radian, Velocity<Meter>>
+  private var currentDrivetrainRequest = DrivetrainRequest.OpenLoop(0.0.radians.perSecond, gyroFeedback, fieldOriented = true)
 
   var alignmentAngle = drivetrain.odometryPose.rotation
 
@@ -101,8 +103,7 @@ class GyroAutoLevel(val drivetrain: Drivetrain) : Command() {
   override fun execute() {
     Logger.recordOutput("ActiveCommands/AutoLevelCommand", true)
 
-    drivetrain.currentRequest =
-      DrivetrainRequest.OpenLoop(0.0.radians.perSecond, gyroFeedback, fieldOriented = true)
+    drivetrain.currentRequest = currentDrivetrainRequest
 
     Logger.recordOutput(
       "AutoLevel/DesiredPitchDegrees", DrivetrainConstants.DOCKING_GYRO_SETPOINT.inDegrees
@@ -128,6 +129,8 @@ class GyroAutoLevel(val drivetrain: Drivetrain) : Command() {
   }
 
   override fun end(interrupted: Boolean) {
-    drivetrain.currentRequest = StaticRequests.Drivetrain.openLoopToZero
+    currentDrivetrainRequest.angularVelocity = 0.0.radians.perSecond
+    currentDrivetrainRequest.driveVector = Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
+    drivetrain.currentRequest = currentDrivetrainRequest
   }
 }
