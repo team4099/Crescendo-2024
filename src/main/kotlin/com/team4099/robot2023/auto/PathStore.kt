@@ -1,3 +1,8 @@
 package com.team4099.robot2023.auto
 
-object PathStore
+import com.pathplanner.lib.path.PathPlannerPath
+
+object PathStore {
+    val strafeRightPath = PathPlannerPath.fromPathFile("")
+
+}
