@@ -1,6 +1,7 @@
 package com.team4099.robot2023
 
 import com.team4099.robot2023.auto.AutonomousSelector
+import com.team4099.robot2023.auto.mode.ExamplePathAuto
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
@@ -133,6 +134,7 @@ object RobotContainer {
 
   fun mapTeleopControls() {
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
+    ControlBoard.aButton.whileTrue(ExamplePathAuto(drivetrain))
     //    ControlBoard.autoLevel.whileActiveContinuous(
     //      GoToAngle(drivetrain).andThen(AutoLevel(drivetrain))
     //    )

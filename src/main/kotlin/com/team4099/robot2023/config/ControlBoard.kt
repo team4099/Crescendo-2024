@@ -34,6 +34,8 @@ object ControlBoard {
 
   val resetGyro = Trigger { driver.startButton && driver.selectButton }
 
+  val aButton = Trigger { driver.aButton }
+
   val extendArm = Trigger { operator.aButton }
 
   val retractArm = Trigger { operator.bButton }
