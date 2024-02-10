@@ -14,10 +14,19 @@
     }
   },
   "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
     "transitory": {
+      "AdvantageKit": {
+        "open": true
+      },
       "SmartDashboard": {
         "TunableNumbers": {
           "Flywheel": {
+            "open": true
+          },
+          "Pathfollow": {
             "open": true
           },
           "open": true

@@ -14,17 +14,22 @@ import org.team4099.lib.hal.Clock
 import org.team4099.lib.pplib.PathPlannerHolonomicDriveController
 import org.team4099.lib.pplib.PathPlannerRotationPID
 import org.team4099.lib.pplib.PathPlannerTranslationPID
+import org.team4099.lib.units.base.inInches
+import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
+import org.team4099.lib.units.derived.angle
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inDegreesPerSecondPerDegree
 import org.team4099.lib.units.derived.inDegreesPerSecondPerDegreePerSecond
 import org.team4099.lib.units.derived.inDegreesPerSecondPerDegreeSeconds
 import org.team4099.lib.units.derived.inMetersPerSecondPerMeter
 import org.team4099.lib.units.derived.inMetersPerSecondPerMeterSeconds
 import org.team4099.lib.units.derived.inMetersPerSecondPerMetersPerSecond
+import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inRotation2ds
 import org.team4099.lib.units.derived.metersPerSecondPerMetersPerSecond
 import org.team4099.lib.units.derived.perDegree
@@ -49,8 +54,8 @@ class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPla
     private val atReference: Boolean
         get() = (
                 (lastSampledPose.translation - drivetrain.odometryPose.translation).magnitude.meters <= translationToleranceAtEnd
-                && ((lastSampledPose.rotation - drivetrain.odometryPose.rotation).absoluteValue <= thetaToleranceAtEnd)
-            )
+                && (lastSampledPose.rotation - drivetrain.odometryPose.rotation).absoluteValue <= thetaToleranceAtEnd
+        )
 
     val thetakP =
         LoggedTunableValue(
@@ -104,6 +109,12 @@ class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPla
 
     var translationPID: PathPlannerTranslationPID
     var rotationPID: PathPlannerRotationPID
+//    private val pathConstraints = PathPlannerHolonomicDriveController.Companion.PathConstraints(
+//        maxVelocity = DrivetrainConstants.MAX_AUTO_VEL,
+//        maxAcceleration = DrivetrainConstants.MAX_AUTO_ACCEL,
+//        maxAngularVelocity = thetaMaxVel.get(),
+//        maxAngularAcceleration = thetaMaxAccel.get()
+//    )
 
     init {
         addRequirements(drivetrain)
@@ -118,6 +129,10 @@ class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPla
                 DrivetrainConstants.MAX_AUTO_VEL,
                 Translation2d(DrivetrainConstants.DRIVETRAIN_LENGTH / 2, DrivetrainConstants.DRIVETRAIN_WIDTH / 2).magnitude.meters,
             )
+    }
+
+    override fun initialize() {
+        trajStartTime = Clock.fpgaTime
     }
 
     override fun execute() {
@@ -148,15 +163,26 @@ class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPla
         // Sampling the trajectory for a state that we're trying to target
         val stateFromTrajectory = generatedTrajectory.sample(trajCurTime.inSeconds)
 
-        // Retrieves the last sampled pose so we can keep our `atReference` variable updated
+        // Retrieves the last sampled pose, so we can keep our `atReference` variable updated
+        Logger.recordOutput(
+            "Odometry/targetPose",
+            doubleArrayOf(lastSampledPose.x.inMeters, lastSampledPose.y.inMeters, lastSampledPose.rotation.inRadians)
+        )
+        Logger.recordOutput(
+            "Pathfollow/thetaSetpoint",
+            stateFromTrajectory.targetHolonomicPose.rotation.degrees
+        )
+        Logger.recordOutput(
+            "Pathfollow/currentTheta",
+            drivetrain.odometryPose.rotation.inDegrees
+        )
+
         lastSampledPose = Pose2d(stateFromTrajectory.targetHolonomicPose)
 
         val targetedChassisSpeeds = swerveDriveController.calculateRobotRelativeSpeeds(
             drivetrain.odometryPose,
             stateFromTrajectory
         )
-
-        Logger.recordOutput("Odometry/targetPose", stateFromTrajectory.targetHolonomicPose)
 
         // Set closed loop request
         pathFollowRequest.chassisSpeeds = targetedChassisSpeeds.chassisSpeedsWPILIB
@@ -177,7 +203,6 @@ class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPla
     }
 
     override fun end(interrupted: Boolean) {
-        Logger.recordOutput("ActiveCommands/DrivePathCommand", false)
         if (interrupted) {
             // Stop where we are if interrupted
             drivetrain.currentRequest =
