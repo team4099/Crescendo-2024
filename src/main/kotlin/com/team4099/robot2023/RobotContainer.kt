@@ -1,10 +1,14 @@
 package com.team4099.robot2023
 
+import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.auto.AutonomousSelector
+import com.team4099.robot2023.commands.drivetrain.DrivePathCommand
+import com.team4099.robot2023.commands.drivetrain.DriveToPoseCommand
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
+import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIO
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
@@ -26,10 +30,15 @@ import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.WristIONeo
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
 import com.team4099.robot2023.util.driver.Ryan
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.RobotBase
+import org.team4099.lib.geometry.Transform2d
+import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.smoothDeadband
+import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inRotation2ds
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 object RobotContainer {
@@ -133,6 +142,12 @@ object RobotContainer {
 
   fun mapTeleopControls() {
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
+    ControlBoard.aButton.whileTrue(
+      DriveToPoseCommand(
+        drivetrain,
+        endPose = { drivetrain.odometryPose.transformBy(Transform2d(Translation2d(6.0.meters, 0.0.meters), 180.degrees))}
+      )
+    )
     //    ControlBoard.autoLevel.whileActiveContinuous(
     //      GoToAngle(drivetrain).andThen(AutoLevel(drivetrain))
     //    )
