@@ -117,16 +117,8 @@ object ElevatorIOSim : ElevatorIO {
    * @param feedforward change in voltage to account for external forces on the system
    */
   override fun setPosition(position: Length, feedforward: ElectricalPotential) {
-    val ff =
-      clamp(
-        feedforward,
-        -ElevatorConstants.VOLTAGE_COMPENSATION,
-        ElevatorConstants.VOLTAGE_COMPENSATION
-      )
     val feedback = elevatorController.calculate(elevatorSim.positionMeters.meters, position)
-
-    setOutputVoltage(ff + feedback)
-    elevatorSim.setInputVoltage((ff + feedback).inVolts)
+    setOutputVoltage(feedforward + feedback)
   }
 
   /** set the current encoder position to be the encoders zero value */

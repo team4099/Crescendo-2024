@@ -175,7 +175,7 @@ class Superstructure(
             nextState = SuperstructureStates.GROUND_INTAKE_PREP
           }
           is Request.SuperstructureRequest.EjectGamePiece -> {
-            nextState = SuperstructureStates.EJECT_GAME_PIECE
+            nextState = SuperstructureStates.EJECT_GAMER_PIECE_PREP
           }
           is Request.SuperstructureRequest.PrepScoreAmp -> {
             nextState = SuperstructureStates.SCORE_AMP_PREP
@@ -209,6 +209,12 @@ class Superstructure(
         if (wrist.isAtTargetedPosition) {
           nextState = SuperstructureStates.GROUND_INTAKE
         }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+        }
       }
       SuperstructureStates.GROUND_INTAKE -> {
         intake.currentRequest =
@@ -226,18 +232,25 @@ class Superstructure(
         }
       }
       SuperstructureStates.SCORE_AMP_PREP -> {
+        elevator.currentRequest = Request.ElevatorRequest.TargetingPosition(Elevator.TunableElevatorHeights.shootAmpPosition.get())
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.ampScoreAngle.get())
         flywheel.currentRequest =
           Request.FlywheelRequest.TargetingVelocity(
             Flywheel.TunableFlywheelStates.ampVelocity.get()
           )
-        if (wrist.isAtTargetedPosition &&
+        if (elevator.isAtTargetedPosition && wrist.isAtTargetedPosition &&
           flywheel.isAtTargetedVelocity &&
           currentRequest is Request.SuperstructureRequest.ScoreAmp
         ) {
           nextState = SuperstructureStates.SCORE_AMP
           shootStartTime = Clock.fpgaTime
+        }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
         }
       }
       SuperstructureStates.SCORE_AMP -> {
@@ -247,6 +260,12 @@ class Superstructure(
           Clock.fpgaTime - shootStartTime > Flywheel.TunableFlywheelStates.ampScoreTime.get()
         ) {
           nextState = SuperstructureStates.IDLE
+        }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
         }
       }
       SuperstructureStates.SCORE_SPEAKER_LOW_PREP -> {
@@ -268,6 +287,12 @@ class Superstructure(
         ) {
           nextState = SuperstructureStates.SCORE_SPEAKER_LOW
         }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+        }
       }
       SuperstructureStates.SCORE_SPEAKER_LOW -> {
         feeder.currentRequest =
@@ -277,6 +302,12 @@ class Superstructure(
           Flywheel.TunableFlywheelStates.speakerScoreTime.get()
         ) {
           nextState = SuperstructureStates.IDLE
+        }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
         }
       }
       SuperstructureStates.SCORE_SPEAKER_MID_PREP -> {
@@ -298,6 +329,12 @@ class Superstructure(
         ) {
           nextState = SuperstructureStates.SCORE_SPEAKER_MID
         }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+        }
       }
       SuperstructureStates.SCORE_SPEAKER_MID -> {
         feeder.currentRequest =
@@ -306,6 +343,12 @@ class Superstructure(
           Clock.fpgaTime - shootStartTime > Flywheel.TunableFlywheelStates.ampScoreTime.get()
         ) {
           nextState = SuperstructureStates.IDLE
+        }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
         }
       }
       SuperstructureStates.SCORE_SPEAKER_HIGH_PREP -> {
@@ -327,6 +370,12 @@ class Superstructure(
         ) {
           nextState = SuperstructureStates.SCORE_SPEAKER_HIGH
         }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+        }
       }
       SuperstructureStates.SCORE_SPEAKER_HIGH -> {
         feeder.currentRequest =
@@ -335,6 +384,12 @@ class Superstructure(
           Clock.fpgaTime - shootStartTime > Flywheel.TunableFlywheelStates.ampScoreTime.get()
         ) {
           nextState = SuperstructureStates.IDLE
+        }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
         }
       }
       SuperstructureStates.CLIMB_EXTEND -> {
@@ -375,6 +430,13 @@ class Superstructure(
         ) {
           nextState = SuperstructureStates.IDLE
         }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+        }
+
       }
       SuperstructureStates.EJECT_GAMER_PIECE_PREP -> {
         wrist.currentRequest =
@@ -385,6 +447,12 @@ class Superstructure(
           )
         if (wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity) {
           nextState = SuperstructureStates.EJECT_GAME_PIECE
+        }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
         }
       }
       SuperstructureStates.TUNING -> {

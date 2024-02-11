@@ -113,31 +113,20 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
       )
 
     val shootSpeakerLow =
-      LoggedTunableValue("Elevator/shootSpeakerLow", ElevatorConstants.SHOOT_SPEAKER_LOW_POSITION)
+      LoggedTunableValue("Elevator/shootSpeakerLow", ElevatorConstants.SHOOT_SPEAKER_LOW_POSITION, Pair({ it.inInches }, { it.inches }))
     val shootSpeakerMid =
-      LoggedTunableValue("Elevator/shootSpeakerMid", ElevatorConstants.SHOOT_SPEAKER_MID_POSITION)
+      LoggedTunableValue("Elevator/shootSpeakerMid", ElevatorConstants.SHOOT_SPEAKER_MID_POSITION, Pair({ it.inInches }, { it.inches }))
     val shootSpeakerHigh =
       LoggedTunableValue(
-        "Elevator/shootSpeakerHigh", ElevatorConstants.SHOOT_SPEAKER_HIGH_POSITION
+        "Elevator/shootSpeakerHigh", ElevatorConstants.SHOOT_SPEAKER_HIGH_POSITION,
+        Pair({ it.inInches }, { it.inches })
       )
     val shootAmpPosition =
-      LoggedTunableValue("Elevator/shootAmpPosition", ElevatorConstants.SHOOT_AMP_POSITION)
+      LoggedTunableValue("Elevator/shootAmpPosition", ElevatorConstants.SHOOT_AMP_POSITION,
+        Pair({ it.inInches }, { it.inches }))
     val sourceNoteOffset =
-      LoggedTunableValue("Elevator/sourceNoteOffset", ElevatorConstants.SOURCE_NOTE_OFFSET)
-
-    val xPos = LoggedTunableValue("Elevator/xPos", 0.0.inches)
-    val yPos = LoggedTunableValue("Elevator/yPos", 0.0.inches)
-    val zPos = LoggedTunableValue("Elevator/zPos", 0.0.inches)
-    val thetaPos = LoggedTunableValue("Elevator/thetaPos", 0.0.degrees)
-    val xPos1 = LoggedTunableValue("Elevator/xPos1", 0.0.inches)
-    val yPos1 = LoggedTunableValue("Elevator/yPos1", 0.0.inches)
-    val zPos1 = LoggedTunableValue("Elevator/zPos1", 0.0.inches)
-    val thetaPos1 =
-      LoggedTunableValue(
-        "Elevator/thetaPos1",
-        ElevatorConstants.ELEVATOR_THETA_POS,
-        Pair({ it.inDegrees }, { it.degrees })
-      )
+      LoggedTunableValue("Elevator/sourceNoteOffset", ElevatorConstants.SOURCE_NOTE_OFFSET,
+        Pair({ it.inInches }, { it.inches }))
   }
 
   val forwardLimitReached: Boolean
@@ -324,6 +313,7 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
           "Elevator/profileTargetVelocity", profilePosition.velocity.inInchesPerSecond
         )
         Logger.recordOutput("Elevator/profileTargetPosition", profilePosition.position.inInches)
+        Logger.recordOutput("Elevator/timeElapsed", timeElapsed.inSeconds)
         nextState = fromElevatorRequestToState(currentRequest)
         if (!(currentState.equivalentToRequest(currentRequest))) {
           lastRequestedVelocity = -999.inches.perSecond

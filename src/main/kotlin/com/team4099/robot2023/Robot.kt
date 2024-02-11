@@ -33,7 +33,6 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 object Robot : LoggedRobot() {
-
   val logFolderAlert =
     Alert("Log folder path does not exist. Data will NOT be logged.", AlertType.ERROR)
   val logReceiverQueueAlert =
