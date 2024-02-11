@@ -65,7 +65,7 @@ object ElevatorIONEO : ElevatorIO {
     leaderSparkMax.enableVoltageCompensation(ElevatorConstants.VOLTAGE_COMPENSATION.inVolts)
     followerSparkMax.enableVoltageCompensation(ElevatorConstants.VOLTAGE_COMPENSATION.inVolts)
 
-    leaderSparkMax.inverted = true
+    leaderSparkMax.inverted = ElevatorConstants.LEADER_INVERTED
 
     leaderSparkMax.setSmartCurrentLimit(
       ElevatorConstants.LEADER_STATOR_CURRENT_LIMIT.inAmperes.toInt()
@@ -76,6 +76,7 @@ object ElevatorIONEO : ElevatorIO {
 
     leaderSparkMax.idleMode = CANSparkMax.IdleMode.kBrake
     followerSparkMax.idleMode = CANSparkMax.IdleMode.kBrake
+
 
     // makes follower motor output exact same power as leader
     followerSparkMax.follow(leaderSparkMax, ElevatorConstants.FOLLOWER_INVERTED)

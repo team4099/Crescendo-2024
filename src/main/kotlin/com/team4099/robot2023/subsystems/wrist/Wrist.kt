@@ -69,6 +69,11 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       "Wrist/kD", Pair({ it.inVoltsPerDegreePerSecond }, { it.volts.perDegreePerSecond })
     )
 
+  private val testAngleUp =
+    LoggedTunableValue("Wrist/testAngleUp", Pair({ it.inDegrees }, { it.degrees }))
+  private val testAngleDown =
+    LoggedTunableValue("Wrist/testAngleDown", Pair({ it.inDegrees }, { it.degrees }))
+
   var currentRequest: Request.WristRequest = Request.WristRequest.Zero()
     set(value) {
       when (value) {
@@ -87,7 +92,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
   var wristTargetVoltage: ElectricalPotential = 0.0.volts
 
-  private var lastWristPositionTarget = 0.0.degrees
+  private var lastWristPositionTarget = -1337.0.degrees
   private var wristPositionTarget = 0.0.degrees
 
   private var timeProfileGeneratedAt = 0.0.seconds
@@ -100,8 +105,8 @@ class Wrist(val io: WristIO) : SubsystemBase() {
   private var wristProfile =
     TrapezoidProfile(
       wristConstraints,
-      TrapezoidProfile.State(-1337.radians, -1337.radians.perSecond),
-      TrapezoidProfile.State(-1337.radians, -1337.radians.perSecond)
+      TrapezoidProfile.State(-1337.degrees, -1337.degrees.perSecond),
+      TrapezoidProfile.State(-1337.degrees, -1337.degrees.perSecond)
     )
 
   private var prevWristSetpoint: TrapezoidProfile.State<Radian> =
@@ -131,6 +136,9 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     wristkG.initDefault(WristConstants.PID.WRIST_KG)
     wristkV.initDefault(WristConstants.PID.WRIST_KV)
     wristkA.initDefault(WristConstants.PID.WRIST_KA)
+
+    testAngleDown.initDefault(-30.degrees)
+    testAngleUp.initDefault(5.degrees)
 
     wristFeedForward =
       ArmFeedforward(
@@ -171,7 +179,8 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         nextState = fromRequestToState(currentRequest)
       }
       WristStates.ZERO -> {
-        io.zeroEncoder()
+        io.zeroEncoder(-36.25.degrees)
+        currentRequest = Request.WristRequest.OpenLoop(0.volts)
         nextState = fromRequestToState(currentRequest)
       }
       WristStates.OPEN_LOOP -> {
@@ -180,6 +189,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         nextState = fromRequestToState(currentRequest)
       }
       WristStates.TARGETING_POSITION -> {
+        Logger.recordOutput("Wrist/RequestedPosition", wristPositionTarget.inDegrees)
 
         if (wristPositionTarget != lastWristPositionTarget) {
           val preProfileGenerate = Clock.fpgaTime
@@ -251,9 +261,14 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     io.setWristVoltage(appliedVoltage)
   }
 
-  fun wristPositionCommand(): Command {
+  fun wristPositionDownCommand(): Command {
     return Commands.runOnce({
-      currentRequest = Request.WristRequest.TargetingPosition(-15.degrees)
+      currentRequest = Request.WristRequest.TargetingPosition(testAngleDown.get())
+    })
+  }
+  fun wristPositionUpCommand(): Command {
+    return Commands.runOnce({
+      currentRequest = Request.WristRequest.TargetingPosition(testAngleUp.get())
     })
   }
 

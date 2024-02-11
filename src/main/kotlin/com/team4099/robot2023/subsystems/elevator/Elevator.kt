@@ -267,6 +267,7 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
     when (currentState) {
       ElevatorState.UNINITIALIZED -> {
         nextState = fromElevatorRequestToState(currentRequest)
+        zeroEncoder()
       }
       ElevatorState.OPEN_LOOP -> {
         setOutputVoltage(elevatorVoltageTarget)
@@ -400,10 +401,11 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
   }
 
   fun elevatorClosedLoopRetractCommand(): Command {
-    return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(4.inches) })
+    return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(2.inches) })
   }
 
   fun testElevatorClosedLoopExtendCommand(): Command {
-    return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(16.inches) })
+    return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(10.inches) })
   }
+
 }

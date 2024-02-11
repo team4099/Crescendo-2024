@@ -135,7 +135,9 @@ object Constants {
     const val REV_ENCODER_PORT = 7
   }
 
-  object Feeder
+  object Feeder {
+    const val FEEDER_MOTOR_ID = 61
+  }
 
   object Led {
     const val LED_CANDLE_ID = 61

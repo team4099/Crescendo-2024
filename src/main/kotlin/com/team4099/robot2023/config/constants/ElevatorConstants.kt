@@ -57,8 +57,8 @@ object ElevatorConstants {
 
   val ELEVATOR_TOLERANCE = 0.2.inches
 
-  val MAX_VELOCITY = 0.82.meters.perSecond
-  val MAX_ACCELERATION = 2.meters.perSecond.perSecond
+  val MAX_VELOCITY = 1.5.meters.perSecond
+  val MAX_ACCELERATION = 2.0.meters.perSecond.perSecond
 
   val SHOOT_SPEAKER_POSITION = 0.0.inches
   val SHOOT_AMP_POSITION = 0.0.inches
@@ -70,7 +70,7 @@ object ElevatorConstants {
   val ELEVATOR_GROUND_OFFSET = 0.0.inches
 
   val VOLTAGE_COMPENSATION = 12.0.volts
-  val ELEVATOR_PULLEY_TO_MOTOR = 4.0 / 1 * 4.0 / 1
+  val ELEVATOR_PULLEY_TO_MOTOR = 1 / 4.0 * 1 / 4.0
   val SPOOL_DIAMETER = 1.591.inches
 
   val LEADER_SUPPLY_CURRENT_LIMIT = 0.0.amps

@@ -10,9 +10,11 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIO
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.elevator.Elevator
+import com.team4099.robot2023.subsystems.elevator.ElevatorIO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.feeder.Feeder
+import com.team4099.robot2023.subsystems.feeder.FeederIO
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
 import com.team4099.robot2023.subsystems.feeder.FeederIOSim
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
@@ -23,8 +25,8 @@ import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.subsystems.wrist.Wrist
-import com.team4099.robot2023.subsystems.wrist.WristIONeo
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
+import com.team4099.robot2023.subsystems.wrist.WristIOTalon
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.smoothDeadband
@@ -60,7 +62,7 @@ object RobotContainer {
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
       flywheel = Flywheel(FlywheelIOTalon)
-      wrist = Wrist(WristIONeo)
+      wrist = Wrist(WristIOTalon)
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
@@ -138,7 +140,7 @@ object RobotContainer {
     //    )
 
     // ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
-    //    ControlBoard.dpadDown.whileTrue(PickupFromSubstationCommand(drivetrain, superstructure))
+    //    ControlBoard.dpadDown.whilweTrue(PickupFromSubstationCommand(drivetrain, superstructure))
 
     //    ControlBoard.doubleSubstationIntake.whileTrue(AutoScoreCommand(drivetrain,
     // superstructure))
@@ -151,6 +153,14 @@ object RobotContainer {
     //        Constants.Universal.Substation.SINGLE_SUBSTATION
     //      )
     //    )
+
+    ControlBoard.shooterDown.whileTrue(flywheel.flywheelSpinUpCommand())
+    ControlBoard.shooterUp.whileTrue(flywheel.flywheelStopCommand())
+    ControlBoard.wristTestUp.whileTrue(wrist.wristPositionUpCommand())
+    ControlBoard.wristTestDown.whileTrue(wrist.wristPositionDownCommand())
+    ControlBoard.feederTest.whileTrue(feeder.feederOpenLoopShootTestCommand())
+    ControlBoard.elevatorDown.whileTrue(elevator.elevatorClosedLoopRetractCommand())
+    ControlBoard.elevatorUp.whileTrue(elevator.testElevatorClosedLoopExtendCommand())
   }
 
   fun mapTestControls() {}

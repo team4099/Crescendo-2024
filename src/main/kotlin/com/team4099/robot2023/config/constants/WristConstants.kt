@@ -29,28 +29,30 @@ object WristConstants {
 
   val WRIST_ENCODER_GEAR_RATIO = 0.0
 
-  val WRIST_GEAR_RATIO = 90.0 / 12 * 90 / 24 * 90 / 30
+  val WRIST_GEAR_RATIO = 12.0 / 90.0 * 24.0 / 90.0 * 32.0 / 90.0
   val WRIST_VOLTAGE_COMPENSATION = 12.0.volts
   val WRIST_STATOR_CURRENT_LIMIT = 40.0.amps
 
-  val WRIST_MAX_ROTATION = 45.degrees
-  val WRIST_MIN_ROTATION = (-47.0).degrees
+  val WRIST_MAX_ROTATION = 90.degrees
+  val WRIST_MIN_ROTATION = (-40.0).degrees
 
-  val MAX_WRIST_VELOCITY = 1.radians.perSecond
-  val MAX_WRIST_ACCELERATION = 2.radians.perSecond.perSecond
+  val MAX_WRIST_VELOCITY = 300.degrees.perSecond
+  val MAX_WRIST_ACCELERATION = 600.degrees.perSecond.perSecond
+
+  val HARDSTOP_OFFSET = 47.degrees
   object PID {
-    val REAL_KP: ProportionalGain<Radian, Volt> = 0.001.volts / 1.0.degrees
+    val REAL_KP: ProportionalGain<Radian, Volt> = 0.07.volts / 1.0.degrees
     val REAL_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
-    val REAL_KD: DerivativeGain<Radian, Volt> = 0.0.volts / (1.0.rotations / 1.0.seconds)
+    val REAL_KD: DerivativeGain<Radian, Volt> = 0.0175.volts / (1.0.rotations / 1.0.seconds)
 
-    val SIM_KP: ProportionalGain<Radian, Volt> = 1.volts / 1.0.degrees
+    val SIM_KP: ProportionalGain<Radian, Volt> = 0.volts / 1.0.degrees
     val SIM_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val SIM_KD: DerivativeGain<Radian, Volt> = 0.00.volts / (1.0.degrees / 1.0.seconds)
 
-    val WRIST_KG = 1.25.volts
-    val WRIST_KV = 1.61.volts / 1.0.radians.perSecond
-    val WRIST_KA = 0.03.volts / 1.0.radians.perSecond.perSecond
-    val WRIST_KS = 0.0.volts
+    val WRIST_KG = 0.36.volts
+    val WRIST_KV = 1.6.volts / 1.0.radians.perSecond
+    val WRIST_KA = 0.175.volts / 1.0.radians.perSecond.perSecond
+    val WRIST_KS = 0.15.volts
   }
 
   val WRIST_TOLERANCE = 0.01.degrees

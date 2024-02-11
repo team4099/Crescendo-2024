@@ -1,6 +1,7 @@
 package com.team4099.robot2023.subsystems.feeder
 
 import com.team4099.lib.hal.Clock
+import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.FeederConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
 import edu.wpi.first.wpilibj2.command.Command
@@ -9,6 +10,7 @@ import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.ElectricalPotential
+import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
 
 class Feeder(val io: FeederIO) : SubsystemBase() {
@@ -16,6 +18,9 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
 
   var feederTargetVoltage: ElectricalPotential = 0.0.volts
   var lastFeederRunTime = 0.0.seconds
+
+  private val shootNoteVoltage =
+    LoggedTunableValue("Feeder/ShootNoteVoltage", FeederConstants.SHOOT_NOTE_VOLTAGE, Pair({ it.inVolts }, { it.volts }))
 
   var currentState: FeederStates = FeederStates.UNINITIALIZED
   var currentRequest: Request.FeederRequest =
@@ -47,8 +52,12 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
   var lastBeamState = false
   val hasNote: Boolean
     get() {
+      return true
+      /*
       return inputs.beamBroken &&
         Clock.fpgaTime - firstTripBeamBreakTime > FeederConstants.BEAM_BREAK_WAIT_TIME
+
+       */
     }
 
   override fun periodic() {
@@ -81,6 +90,10 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
       }
     }
     currentState = nextState
+
+    Logger.recordOutput("Feeder/currentState", currentState.toString())
+    Logger.recordOutput("Feeder/currentRequest", currentRequest.javaClass.toString())
+    Logger.recordOutput("Feeder/targetVoltage", feederTargetVoltage.inVolts)
   }
 
   fun setFeederVoltage(appliedVoltage: ElectricalPotential) {
@@ -95,7 +108,7 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
 
   fun feederOpenLoopShootTestCommand(): Command {
     return runOnce({
-      currentRequest = Request.FeederRequest.OpenLoopShoot(FeederConstants.SHOOT_NOTE_VOLTAGE)
+      currentRequest = Request.FeederRequest.OpenLoopShoot(shootNoteVoltage.get())
     })
   }
 

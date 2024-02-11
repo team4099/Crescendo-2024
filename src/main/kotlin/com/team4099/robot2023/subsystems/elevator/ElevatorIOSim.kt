@@ -34,7 +34,7 @@ object ElevatorIOSim : ElevatorIO {
   val elevatorSim: ElevatorSim =
     ElevatorSim(
       DCMotor.getNEO(2),
-      ElevatorConstants.ELEVATOR_PULLEY_TO_MOTOR,
+      1 / ElevatorConstants.ELEVATOR_PULLEY_TO_MOTOR,
       ElevatorConstants.CARRIAGE_MASS.inKilograms,
       ElevatorConstants.SPOOL_DIAMETER.inMeters / 2,
       ElevatorConstants.ELEVATOR_MAX_RETRACTION.inMeters,

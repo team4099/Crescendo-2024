@@ -39,7 +39,7 @@ object FlywheelConstants {
   val FLYWHEEL_TOLERANCE = 50.0.rotations.perMinute
   object PID {
     val RIGHT_REAL_KP: ProportionalGain<Velocity<Radian>, Volt> =
-      0.01.volts / 1.0.rotations.perMinute
+      0.00.volts / 1.0.rotations.perMinute
     val RIGHT_REAL_KI: IntegralGain<Velocity<Radian>, Volt> =
       0.0.volts / (1.0.rotations.perMinute * 1.0.seconds)
     val RIGHT_REAL_KD: DerivativeGain<Velocity<Radian>, Volt> =
@@ -52,8 +52,7 @@ object FlywheelConstants {
     val RIGHT_SIM_KD: DerivativeGain<Velocity<Radian>, Volt> =
       0.0.volts / (1.0.rotations.perMinute.perSecond)
 
-    val LEFT_REAL_KP: ProportionalGain<Velocity<Radian>, Volt> =
-      0.015.volts / 1.0.rotations.perMinute
+    val LEFT_REAL_KP: ProportionalGain<Velocity<Radian>, Volt> = 0.0.volts / 1.0.rotations.perMinute
     val LEFT_REAL_KI: IntegralGain<Velocity<Radian>, Volt> =
       0.0.volts / (1.0.rotations.perMinute * 1.0.seconds)
     val LEFT_REAL_KD: DerivativeGain<Velocity<Radian>, Volt> =

@@ -168,7 +168,7 @@ object WristIONeo : WristIO {
     }
   }
 
-  override fun zeroEncoder() {
+  override fun zeroEncoder(encoderOffset: Angle) {
     wristSparkMax.encoder.position = wristSensor.positionToRawUnits(armAbsolutePosition)
   }
 }

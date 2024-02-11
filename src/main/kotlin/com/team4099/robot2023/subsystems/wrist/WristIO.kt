@@ -16,16 +16,16 @@ import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inVolts
-import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
-import org.team4099.lib.units.inRadiansPerSecond
+import org.team4099.lib.units.inDegreesPerSecond
+import org.team4099.lib.units.inDegreesPerSecondPerSecond
 import org.team4099.lib.units.perSecond
 
 interface WristIO {
   class WristIOInputs : LoggableInputs {
 
     var wristPostion = 0.0.degrees
-    var wristVelocity = 0.0.radians.perSecond
+    var wristVelocity = 0.0.degrees.perSecond
     var wristAppliedVoltage = 0.0.volts
     var wristDutyCycle = 0.0.volts
     var wristTorque = 0.0
@@ -33,23 +33,26 @@ interface WristIO {
     var wristSupplyCurrent = 0.0.amps
     var wristTemperature = 0.0.celsius
 
+    var wristAcceleration = 0.0.degrees.perSecond.perSecond
+
     var isSimulated = false
 
     override fun toLog(table: LogTable) {
       table.put("wristPostion", wristPostion.inDegrees)
-      table.put("wristVelocityRPM", wristVelocity.inRadiansPerSecond)
+      table.put("wristVelocity", wristVelocity.inDegreesPerSecond)
       table.put("wristAppliedVoltage", wristAppliedVoltage.inVolts)
       table.put("wristStatorCurrent", wristStatorCurrent.inAmperes)
       table.put("wristSupplyCurrent", wristSupplyCurrent.inAmperes)
       table.put("wristTemperature", wristTemperature.inCelsius)
+      table.put("wristAcceleration", wristAcceleration.inDegreesPerSecondPerSecond)
     }
 
     override fun fromLog(table: LogTable) {
 
       // wrist logs
       table.get("wristPostion", wristPostion.inDegrees).let { wristPostion = it.degrees }
-      table.get("wristVelocity", wristVelocity.inRadiansPerSecond).let {
-        wristVelocity = it.radians.perSecond
+      table.get("wristVelocity", wristVelocity.inDegreesPerSecond).let {
+        wristVelocity = it.degrees.perSecond
       }
       table.get("wristAppliedVoltage", wristAppliedVoltage.inVolts).let {
         wristAppliedVoltage = it.volts
@@ -62,6 +65,9 @@ interface WristIO {
       }
       table.get("wristTemperature", wristTemperature.inCelsius).let {
         wristTemperature = it.celsius
+      }
+      table.get("wristAcceleration", wristAcceleration.inDegreesPerSecondPerSecond).let {
+        wristAcceleration = it.degrees.perSecond.perSecond
       }
     }
   }
@@ -92,5 +98,5 @@ interface WristIO {
     kD: DerivativeGain<Radian, Volt>
   ) {}
 
-  fun zeroEncoder() {}
+  fun zeroEncoder(encoderOffset: Angle) {}
 }

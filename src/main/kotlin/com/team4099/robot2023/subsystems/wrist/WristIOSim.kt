@@ -32,7 +32,7 @@ object WristIOSim : WristIO {
   val wristSim =
     SingleJointedArmSim(
       DCMotor.getNEO(1),
-      WristConstants.WRIST_GEAR_RATIO,
+      1 / WristConstants.WRIST_GEAR_RATIO,
       WristConstants.WRIST_INERTIA.inKilogramsMeterSquared,
       WristConstants.WRIST_LENGTH.inMeters,
       WristConstants.WRIST_MIN_ROTATION.inRadians,
@@ -84,7 +84,6 @@ object WristIOSim : WristIO {
 
   override fun updateInputs(inputs: WristIO.WristIOInputs) {
     wristSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
-    wristSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
 
     inputs.wristPostion = wristSim.angleRads.radians
     inputs.wristVelocity = wristSim.velocityRadPerSec.radians.perSecond
@@ -130,5 +129,5 @@ object WristIOSim : WristIO {
   }
 
   /** recalculates the current position of the neo encoder using value from the absolute encoder */
-  override fun zeroEncoder() {}
+  override fun zeroEncoder(encoderOffet: Angle) {}
 }

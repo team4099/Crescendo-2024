@@ -94,4 +94,13 @@ object ControlBoard {
   val extendIntake = Trigger { technician.aButton }
   val retractIntake = Trigger { technician.bButton }
   val characterizeIntake = Trigger { technician.xButton }
+
+  val shooterUp = Trigger { driver.bButton }
+  val shooterDown = Trigger { driver.xButton }
+  val wristTestUp = Trigger { driver.yButton }
+  val wristTestDown = Trigger { driver.aButton }
+  val feederTest = Trigger { driver.rightShoulderButton }
+
+  val elevatorUp = Trigger {driver.rightTriggerAxis > 0.5}
+  val elevatorDown = Trigger {driver.leftTriggerAxis > 0.5}
 }

@@ -101,6 +101,11 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       )
     )
 
+  private val flywheelTestVelocity =
+    LoggedTunableValue(
+      "Flywheel/testVelocity", Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+    )
+
   var flywheelRightFeedForward: SimpleMotorFeedforward<Radian, Volt>
   var flywheelLeftFeedForward: SimpleMotorFeedforward<Radian, Volt>
 
@@ -151,6 +156,8 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       leftkP.initDefault(FlywheelConstants.PID.LEFT_REAL_KP)
       leftkI.initDefault(FlywheelConstants.PID.LEFT_REAL_KI)
       leftkD.initDefault(FlywheelConstants.PID.LEFT_REAL_KD)
+
+      flywheelTestVelocity.initDefault(1000.rotations.perMinute)
 
       flywheelRightFeedForward =
         SimpleMotorFeedforward(
@@ -296,13 +303,19 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
   }
 
   fun flywheelSpinUpCommand(): Command {
-    return runOnce({
-      currentRequest = Request.FlywheelRequest.TargetingVelocity(6000.rotations.perMinute)
-    })
+    return runOnce {
+      currentRequest = Request.FlywheelRequest.TargetingVelocity(flywheelTestVelocity.get())
+    }
+  }
+
+  fun flywheelStopCommand(): Command {
+    return runOnce {
+      currentRequest = Request.FlywheelRequest.TargetingVelocity(0.rotations.perMinute)
+    }
   }
 
   fun flywheelOpenLoopCommand(): Command {
-    return runOnce({ currentRequest = Request.FlywheelRequest.OpenLoop(12.volts) })
+    return runOnce({ currentRequest = Request.FlywheelRequest.OpenLoop(3.volts) })
   }
 
   fun flywheelResetCommand(): Command {

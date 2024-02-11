@@ -19,7 +19,7 @@ import kotlin.math.absoluteValue
 
 object FeederIONeo : FeederIO {
   private val feederSparkMax =
-    CANSparkMax(Constants.Intake.ROLLER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
+    CANSparkMax(Constants.Feeder.FEEDER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
 
   private val feederSensor =
     sparkMaxAngularMechanismSensor(
