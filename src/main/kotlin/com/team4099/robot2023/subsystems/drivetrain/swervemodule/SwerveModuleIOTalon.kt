@@ -1,5 +1,6 @@
 package com.team4099.robot2023.subsystems.drivetrain.swervemodule
 
+import com.ctre.phoenix6.BaseStatusSignal
 import com.ctre.phoenix6.StatusSignal
 import com.ctre.phoenix6.configs.MotionMagicConfigs
 import com.ctre.phoenix6.configs.MotorOutputConfigs
@@ -7,6 +8,7 @@ import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.DutyCycleOut
 import com.ctre.phoenix6.controls.PositionDutyCycle
+import com.ctre.phoenix6.controls.PositionVoltage
 import com.ctre.phoenix6.controls.VelocityDutyCycle
 import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.NeutralModeValue
@@ -251,6 +253,17 @@ class SwerveModuleIOTalon(
         DrivetrainConstants.STEERING_SUPPLY_CURRENT_LIMIT - 10.amps,
         110.celsius
       )
+    )
+  }
+
+  fun updateSignals(){
+    BaseStatusSignal.refreshAll(
+      driveStatorCurrentSignal,
+      driveSupplyCurrentSignal,
+      steeringSupplyCurrentSignal,
+      steeringStatorCurrentSignal,
+      driveTempSignal,
+      steeringTempSignal
     )
   }
 
