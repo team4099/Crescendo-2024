@@ -94,7 +94,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
   private val wristkS =
     LoggedTunableValue(
-      "Wrist/kS", WristConstants.PID.WRIST_KS, Pair({ it.inVolts }, { it.volts })
+      "Wrist/kS", Pair({ it.inVolts }, { it.volts })
     )
   private val wristkV =
     LoggedTunableValue(
@@ -107,7 +107,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     )
   private val wristkG =
     LoggedTunableValue(
-      "Wrist/kG", WristConstants.PID.WRIST_KG, Pair({ it.inVolts }, { it.volts })
+      "Wrist/kG", Pair({ it.inVolts }, { it.volts })
     )
 
   var wristFeedForward: ArmFeedforward
@@ -182,27 +182,44 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       wristkP.initDefault(WristConstants.PID.REAL_KP)
       wristkI.initDefault(WristConstants.PID.REAL_KI)
       wristkD.initDefault(WristConstants.PID.REAL_KD)
+
+      wristkS.initDefault(WristConstants.PID.REAL_WRIST_KS)
+      wristkG.initDefault(WristConstants.PID.REAL_WRIST_KG)
+      wristkV.initDefault(WristConstants.PID.REAL_WRIST_KV)
+      wristkA.initDefault(WristConstants.PID.REAL_WRIST_KA)
+
+      wristFeedForward =
+        ArmFeedforward(
+          WristConstants.PID.REAL_WRIST_KS,
+          WristConstants.PID.REAL_WRIST_KG,
+          WristConstants.PID.REAL_WRIST_KV,
+          WristConstants.PID.REAL_WRIST_KA
+        )
     } else {
       wristkP.initDefault(WristConstants.PID.SIM_KP)
       wristkI.initDefault(WristConstants.PID.SIM_KI)
       wristkD.initDefault(WristConstants.PID.SIM_KD)
+
+      wristkS.initDefault(WristConstants.PID.SIM_WRIST_KS)
+      wristkG.initDefault(WristConstants.PID.SIM_WRIST_KG)
+      wristkV.initDefault(WristConstants.PID.SIM_WRIST_KV)
+      wristkA.initDefault(WristConstants.PID.SIM_WRIST_KA)
+
+      wristFeedForward =
+        ArmFeedforward(
+          WristConstants.PID.SIM_WRIST_KS,
+          WristConstants.PID.SIM_WRIST_KG,
+          WristConstants.PID.SIM_WRIST_KV,
+          WristConstants.PID.SIM_WRIST_KA
+        )
     }
 
-    wristkS.initDefault(WristConstants.PID.WRIST_KS)
-    wristkG.initDefault(WristConstants.PID.WRIST_KG)
-    wristkV.initDefault(WristConstants.PID.WRIST_KV)
-    wristkA.initDefault(WristConstants.PID.WRIST_KA)
+
 
     testAngleDown.initDefault(-30.degrees)
     testAngleUp.initDefault(5.degrees)
 
-    wristFeedForward =
-      ArmFeedforward(
-        WristConstants.PID.WRIST_KS,
-        WristConstants.PID.WRIST_KG,
-        WristConstants.PID.WRIST_KV,
-        WristConstants.PID.WRIST_KA
-      )
+
   }
 
   override fun periodic() {
