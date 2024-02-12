@@ -33,7 +33,6 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 object Robot : LoggedRobot() {
-
   val logFolderAlert =
     Alert("Log folder path does not exist. Data will NOT be logged.", AlertType.ERROR)
   val logReceiverQueueAlert =
@@ -166,6 +165,8 @@ object Robot : LoggedRobot() {
       "LoggedRobot/Subsystems/MotorCheckerLoopTimeMS",
       (Clock.realTimestamp - motorCheckerStartTime).inMilliseconds
     )
+
+    RobotContainer.superstructure.periodic()
 
     Logger.recordOutput(
       "LoggedRobot/RemainingRamMB", Runtime.getRuntime().freeMemory() / 1024 / 1024

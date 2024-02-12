@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.Radian
@@ -30,6 +31,53 @@ import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 
 class Flywheel(val io: FlywheelIO) : SubsystemBase() {
+
+  object TunableFlywheelStates {
+    val idleVelocity =
+      LoggedTunableValue(
+        "Flywheel/idleVelocity",
+        FlywheelConstants.IDLE_VELOCITY,
+        Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+      )
+    val speakerVelocity =
+      LoggedTunableValue(
+        "Flywheel/speakerVelocity",
+        FlywheelConstants.SPEAKER_VELOCITY,
+        Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+      )
+    val ampVelocity =
+      LoggedTunableValue(
+        "Flywheel/ampVelocity",
+        FlywheelConstants.AMP_VELOCITY,
+        Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+      )
+    val ampScoreTime =
+      LoggedTunableValue(
+        "Flywheel/ampScoreTime",
+        FlywheelConstants.AMP_SCORE_TIME,
+        Pair({ it.inSeconds }, { it.seconds })
+      )
+    val speakerScoreTime =
+      LoggedTunableValue(
+        "Flywheel/speakerScoreTime",
+        FlywheelConstants.SPEAKER_SCORE_TIME,
+        Pair({ it.inSeconds }, { it.seconds })
+      )
+    val ejectVelocity =
+      LoggedTunableValue(
+        "Flywheel/ejectVelocity",
+        FlywheelConstants.EJECT_VELOCITY,
+        Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+      )
+
+    val testVelocity =
+      LoggedTunableValue(
+        "Flywheel/testVelocity",
+        FlywheelConstants.AMP_VELOCITY,
+        Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+      )
+  }
+
   private val kP =
     LoggedTunableValue(
       "Flywheel/kP",

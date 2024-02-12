@@ -2,12 +2,14 @@ package com.team4099.robot2023.subsystems.feeder
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FeederConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.amps
+import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.inVolts
@@ -15,6 +17,45 @@ import org.team4099.lib.units.derived.volts
 
 class Feeder(val io: FeederIO) : SubsystemBase() {
   val inputs = FeederIO.FeederIOInputs()
+
+  object TunableFeederStates {
+    val idleVoltage =
+      LoggedTunableValue(
+        "Feeder/idleVoltage", FeederConstants.IDLE_VOLTAGE, Pair({ it.inVolts }, { it.volts })
+      )
+    val intakeVoltage =
+      LoggedTunableValue(
+        "Feeder/intakeVoltage",
+        FeederConstants.INTAKE_NOTE_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+    val outtakeVoltage =
+      LoggedTunableValue(
+        "Feeder/outtakeVoltage",
+        FeederConstants.OUTTAKE_NOTE_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+    val shootVoltage =
+      LoggedTunableValue(
+        "Feeder/shootVoltage",
+        FeederConstants.SHOOT_NOTE_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+
+    val testIntakeVoltage =
+      LoggedTunableValue(
+        "Feeder/testIntakeVoltage",
+        FeederConstants.INTAKE_NOTE_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+
+    val testShootVoltage =
+      LoggedTunableValue(
+        "Feeder/testShootVoltage",
+        FeederConstants.SHOOT_NOTE_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+  }
 
   var feederTargetVoltage: ElectricalPotential = 0.0.volts
   var lastFeederRunTime = 0.0.seconds
@@ -58,16 +99,27 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
     get() {
       return true
       /*
-      return inputs.beamBroken &&
-        Clock.fpgaTime - firstTripBeamBreakTime > FeederConstants.BEAM_BREAK_WAIT_TIME
-
+      return (inputs.beamBroken &&
+        Clock.fpgaTime - firstTripBeamBreakTime > FeederConstants.BEAM_BREAK_WAIT_TIME) || inputs.isSimulated
        */
     }
+
+  private var timeProfileGeneratedAt = Clock.fpgaTime
 
   override fun periodic() {
     io.updateInputs(inputs)
 
     Logger.processInputs("Feeder", inputs)
+    Logger.recordOutput("Feeder/currentState", currentState)
+    Logger.recordOutput("Feeder/requestedState", currentRequest.javaClass.simpleName)
+
+    if (Constants.Tuning.DEBUGING_MODE) {
+      Logger.recordOutput(
+        "Feeder/isAtCommandedState", currentState.equivalentToRequest(currentRequest)
+      )
+      Logger.recordOutput("Feeder/timeProfileGeneratedAt", timeProfileGeneratedAt.inSeconds)
+      Logger.recordOutput("Feeder/feederVoltageTarget", feederTargetVoltage.inVolts)
+    }
 
     if (!lastBeamState && inputs.beamBroken) {
       firstTripBeamBreakTime = Clock.fpgaTime

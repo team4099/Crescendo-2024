@@ -85,7 +85,7 @@ object WristIOSim : WristIO {
   override fun updateInputs(inputs: WristIO.WristIOInputs) {
     wristSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
 
-    inputs.wristPostion = wristSim.angleRads.radians
+    inputs.wristPosition = wristSim.angleRads.radians
     inputs.wristVelocity = wristSim.velocityRadPerSec.radians.perSecond
     inputs.wristSupplyCurrent = 0.amps
     inputs.wristAppliedVoltage = appliedVoltage

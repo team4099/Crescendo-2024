@@ -53,7 +53,7 @@ interface FeederIO {
         feederSupplyCurrent = it.amps
       }
 
-      table?.get("feederTempCelcius", feederTemp.inCelsius)?.let { feederTemp = it.celsius }
+      table?.get("feederTempCelsius", feederTemp.inCelsius)?.let { feederTemp = it.celsius }
       table?.get("feederBeamBroken", beamBroken)?.let { beamBroken = it }
     }
   }

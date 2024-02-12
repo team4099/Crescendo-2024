@@ -163,7 +163,7 @@ object WristIOTalon : WristIO {
 
     updateSignals()
 
-    inputs.wristPostion = wristSensor.position
+    inputs.wristPosition = wristSensor.position
     inputs.wristAcceleration =
       (motorAcceleration.value * WristConstants.WRIST_GEAR_RATIO).rotations.perSecond.perSecond
     inputs.wristVelocity = wristSensor.velocity

@@ -42,4 +42,25 @@ object ControlBoard {
 
   val elevatorUp = Trigger { driver.rightTriggerAxis > 0.5 }
   val elevatorDown = Trigger { driver.leftTriggerAxis > 0.5 }
+
+  val runGroundIntake = Trigger { driver.aButton }
+  val ejectGamePiece = Trigger { driver.bButton }
+  val prepAmpScore = Trigger { driver.xButton }
+  val ampScore = Trigger { driver.yButton }
+
+  val scoreSpeakerLow = Trigger { operator.aButton }
+  val scoreSpeakerMid = Trigger { operator.bButton }
+  val scoreSpeakerHigh = Trigger { operator.xButton }
+  val requestIdle = Trigger { operator.yButton }
+
+  val climbExtend = Trigger { technician.aButton }
+  val climbRetract = Trigger { technician.bButton }
+
+  // testing Trigger
+  val testIntake = Trigger { driver.aButton }
+  val testFeederIntake = Trigger { driver.bButton }
+  val testFeederShoot = Trigger { driver.xButton }
+  val testFlywheel = Trigger { driver.yButton }
+  val testWrist = Trigger { operator.aButton }
+  val testElevator = Trigger { operator.bButton }
 }

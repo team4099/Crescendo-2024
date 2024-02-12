@@ -14,4 +14,8 @@ object IntakeConstants {
 
   // TODO: Update the idle roller voltage later
   val IDLE_ROLLER_VOLTAGE = 1.0.volts
+
+  val IDLE_VOLTAGE = 0.0.volts
+  val INTAKE_VOLTAGE = 10.volts
+  val OUTTAKE_VOLTAGE = (-10).volts
 }
