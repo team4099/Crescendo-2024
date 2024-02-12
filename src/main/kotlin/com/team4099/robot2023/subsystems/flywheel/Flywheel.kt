@@ -30,38 +30,19 @@ import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 
 class Flywheel(val io: FlywheelIO) : SubsystemBase() {
-  private val rightkP =
+  private val kP =
     LoggedTunableValue(
-      "Flywheel/Right kP",
+      "Flywheel/kP",
       Pair({ it.inVoltsPerRotationsPerMinute }, { it.volts / 1.0.rotations.perMinute })
     )
-  private val rightkI =
+  private val kI =
     LoggedTunableValue(
-      "Flywheel/Right kI",
+      "Flywheel/kI",
       Pair({ it.inVoltsPerRotations }, { it.volts / (1.0.rotations.perMinute * 1.0.seconds) })
     )
-  private val rightkD =
+  private val kD =
     LoggedTunableValue(
-      "Flywheel/Right kD",
-      Pair(
-        { it.inVoltsPerRotationsPerMinutePerSecond },
-        { it.volts / 1.0.rotations.perMinute.perSecond }
-      )
-    )
-
-  private val leftkP =
-    LoggedTunableValue(
-      "Flywheel/Left kP",
-      Pair({ it.inVoltsPerRotationsPerMinute }, { it.volts / 1.0.rotations.perMinute })
-    )
-  private val leftkI =
-    LoggedTunableValue(
-      "Flywheel/Left kI",
-      Pair({ it.inVoltsPerRotations }, { it.volts / (1.0.rotations.perMinute * 1.0.seconds) })
-    )
-  private val leftkD =
-    LoggedTunableValue(
-      "Flywheel/Left kD",
+      "Flywheel/kD",
       Pair(
         { it.inVoltsPerRotationsPerMinutePerSecond },
         { it.volts / 1.0.rotations.perMinute.perSecond }
@@ -69,32 +50,14 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     )
 
   val inputs = FlywheelIO.FlywheelIOInputs()
-  private val flywheelRightkS =
-    LoggedTunableValue("Flywheel/Right kS", Pair({ it.inVolts }, { it.volts }))
-  private val flywheelRightkV =
+  private val flywheelkS = LoggedTunableValue("Flywheel/kS", Pair({ it.inVolts }, { it.volts }))
+  private val flywheelkV =
     LoggedTunableValue(
-      "Flywheel/Right kV",
-      Pair({ it.inVoltsPerRadianPerSecond }, { it.volts.perRadianPerSecond })
+      "Flywheel/kV", Pair({ it.inVoltsPerRadianPerSecond }, { it.volts.perRadianPerSecond })
     )
-  private val flywheelRightkA =
+  private val flywheelkA =
     LoggedTunableValue(
-      "Flywheel/Right kA",
-      Pair(
-        { it.inVoltsPerRadianPerSecondPerSecond },
-        { it.volts / 1.0.radians.perSecond.perSecond }
-      )
-    )
-
-  private val flywheelLeftkS =
-    LoggedTunableValue("Flywheel/Left kS", Pair({ it.inVolts }, { it.volts }))
-  private val flywheelLeftkV =
-    LoggedTunableValue(
-      "Flywheel/Left kV",
-      Pair({ it.inVoltsPerRadianPerSecond }, { it.volts.perRadianPerSecond })
-    )
-  private val flywheelLeftkA =
-    LoggedTunableValue(
-      "Flywheel/Left kA",
+      "Flywheel/kA",
       Pair(
         { it.inVoltsPerRadianPerSecondPerSecond },
         { it.volts / 1.0.radians.perSecond.perSecond }
@@ -106,16 +69,13 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       "Flywheel/testVelocity", Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
     )
 
-  var flywheelRightFeedForward: SimpleMotorFeedforward<Radian, Volt>
-  var flywheelLeftFeedForward: SimpleMotorFeedforward<Radian, Volt>
+  var flywheelFeedForward: SimpleMotorFeedforward<Radian, Volt>
 
   var lastFlywheelRunTime = 0.0.seconds
   private var lastRightFlywheelVoltage = 0.0.volts
 
-  var flywheelRightTargetVoltage = 0.0.volts
+  var flywheelTargetVoltage = 0.volts
   var flywheelRightTargetVelocity: AngularVelocity = 0.0.rotations.perMinute
-
-  var flywheelLeftTargetVoltage = 0.0.volts
   var flywheelLeftTargetVelocity: AngularVelocity = 0.0.rotations.perMinute
 
   val isAtTargetedVelocity: Boolean
@@ -134,8 +94,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     set(value) {
       when (value) {
         is Request.FlywheelRequest.OpenLoop -> {
-          flywheelRightTargetVoltage = value.flywheelVoltage
-          flywheelLeftTargetVoltage = value.flywheelVoltage
+          flywheelTargetVoltage = value.flywheelVoltage
         }
         is Request.FlywheelRequest.TargetingVelocity -> {
           flywheelRightTargetVelocity = value.flywheelVelocity
@@ -149,72 +108,40 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
 
   init {
     if (RobotBase.isReal()) {
-      rightkP.initDefault(FlywheelConstants.PID.RIGHT_REAL_KP)
-      rightkI.initDefault(FlywheelConstants.PID.RIGHT_REAL_KI)
-      rightkD.initDefault(FlywheelConstants.PID.RIGHT_REAL_KD)
-
-      leftkP.initDefault(FlywheelConstants.PID.LEFT_REAL_KP)
-      leftkI.initDefault(FlywheelConstants.PID.LEFT_REAL_KI)
-      leftkD.initDefault(FlywheelConstants.PID.LEFT_REAL_KD)
+      kP.initDefault(FlywheelConstants.PID.REAL_KP)
+      kI.initDefault(FlywheelConstants.PID.REAL_KI)
+      kD.initDefault(FlywheelConstants.PID.REAL_KD)
 
       flywheelTestVelocity.initDefault(1000.rotations.perMinute)
 
-      flywheelRightFeedForward =
+      flywheelFeedForward =
         SimpleMotorFeedforward(
-          FlywheelConstants.PID.RIGHT_REAL_FLYWHEEL_KS,
-          FlywheelConstants.PID.RIGHT_REAL_FLYWHEEL_KV,
-          FlywheelConstants.PID.RIGHT_REAL_FLYWHEEL_KA
+          FlywheelConstants.PID.REAL_FLYWHEEL_KS,
+          FlywheelConstants.PID.REAL_FLYWHEEL_KV,
+          FlywheelConstants.PID.REAL_FLYWHEEL_KA
         )
 
-      flywheelLeftFeedForward =
-        SimpleMotorFeedforward(
-          FlywheelConstants.PID.LEFT_REAL_FLYWHEEL_KS,
-          FlywheelConstants.PID.LEFT_REAL_FLYWHEEL_KV,
-          FlywheelConstants.PID.LEFT_REAL_FLYWHEEL_KA
-        )
-
-      flywheelLeftkS.initDefault(FlywheelConstants.PID.LEFT_REAL_FLYWHEEL_KS)
-      flywheelLeftkV.initDefault(FlywheelConstants.PID.LEFT_REAL_FLYWHEEL_KV)
-      flywheelLeftkA.initDefault(FlywheelConstants.PID.LEFT_REAL_FLYWHEEL_KA)
-
-      flywheelRightkS.initDefault(FlywheelConstants.PID.RIGHT_REAL_FLYWHEEL_KS)
-      flywheelRightkV.initDefault(FlywheelConstants.PID.RIGHT_REAL_FLYWHEEL_KV)
-      flywheelRightkA.initDefault(FlywheelConstants.PID.RIGHT_REAL_FLYWHEEL_KA)
+      flywheelkS.initDefault(FlywheelConstants.PID.REAL_FLYWHEEL_KS)
+      flywheelkV.initDefault(FlywheelConstants.PID.REAL_FLYWHEEL_KV)
+      flywheelkA.initDefault(FlywheelConstants.PID.REAL_FLYWHEEL_KA)
     } else {
-      rightkP.initDefault(FlywheelConstants.PID.RIGHT_SIM_KP)
-      rightkI.initDefault(FlywheelConstants.PID.RIGHT_SIM_KI)
-      rightkD.initDefault(FlywheelConstants.PID.RIGHT_SIM_KD)
+      kP.initDefault(FlywheelConstants.PID.SIM_KP)
+      kI.initDefault(FlywheelConstants.PID.SIM_KI)
+      kD.initDefault(FlywheelConstants.PID.SIM_KD)
 
-      leftkP.initDefault(FlywheelConstants.PID.LEFT_SIM_KP)
-      leftkI.initDefault(FlywheelConstants.PID.LEFT_SIM_KI)
-      leftkD.initDefault(FlywheelConstants.PID.LEFT_SIM_KD)
+      flywheelkS.initDefault(FlywheelConstants.PID.SIM_FLYWHEEL_KS)
+      flywheelkV.initDefault(FlywheelConstants.PID.SIM_FLYWHEEL_KV)
+      flywheelkA.initDefault(FlywheelConstants.PID.SIM_FLYWHEEL_KA)
 
-      flywheelLeftkS.initDefault(FlywheelConstants.PID.LEFT_SIM_FLYWHEEL_KS)
-      flywheelLeftkV.initDefault(FlywheelConstants.PID.LEFT_SIM_FLYWHEEL_KV)
-      flywheelLeftkA.initDefault(FlywheelConstants.PID.LEFT_SIM_FLYWHEEL_KA)
-
-      flywheelRightkS.initDefault(FlywheelConstants.PID.RIGHT_SIM_FLYWHEEL_KS)
-      flywheelRightkV.initDefault(FlywheelConstants.PID.RIGHT_SIM_FLYWHEEL_KV)
-      flywheelRightkA.initDefault(FlywheelConstants.PID.RIGHT_SIM_FLYWHEEL_KA)
-
-      flywheelRightFeedForward =
+      flywheelFeedForward =
         SimpleMotorFeedforward(
-          FlywheelConstants.PID.RIGHT_SIM_FLYWHEEL_KS,
-          FlywheelConstants.PID.RIGHT_SIM_FLYWHEEL_KV,
-          FlywheelConstants.PID.RIGHT_SIM_FLYWHEEL_KA
-        )
-
-      flywheelLeftFeedForward =
-        SimpleMotorFeedforward(
-          FlywheelConstants.PID.LEFT_SIM_FLYWHEEL_KS,
-          FlywheelConstants.PID.LEFT_SIM_FLYWHEEL_KV,
-          FlywheelConstants.PID.LEFT_SIM_FLYWHEEL_KA
+          FlywheelConstants.PID.SIM_FLYWHEEL_KS,
+          FlywheelConstants.PID.SIM_FLYWHEEL_KV,
+          FlywheelConstants.PID.SIM_FLYWHEEL_KA
         )
     }
 
-    io.configPID(
-      rightkP.get(), rightkI.get(), rightkD.get(), leftkP.get(), leftkI.get(), leftkD.get()
-    )
+    io.configPID(kP.get(), kI.get(), kD.get())
   }
   override fun periodic() {
     io.updateInputs(inputs)
@@ -226,38 +153,20 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     Logger.recordOutput("Flywheel/isAtTargetedVelocity", isAtTargetedVelocity)
 
     if (Constants.Tuning.DEBUGING_MODE) {
-      Logger.recordOutput("Flywheel/FlywheelTargetVoltage", flywheelRightTargetVoltage.inVolts)
+      Logger.recordOutput("Flywheel/FlywheelTargetVoltage", flywheelTargetVoltage.inVolts)
       Logger.recordOutput(
         "Flywheel/FlywheelTargetVelocity", flywheelRightTargetVelocity.inRotationsPerMinute
       )
       Logger.recordOutput("Flywheel/FlywheelLastVoltage", lastRightFlywheelVoltage.inVolts)
     }
 
-    if (rightkP.hasChanged() ||
-      rightkI.hasChanged() ||
-      rightkD.hasChanged() ||
-      leftkP.hasChanged() ||
-      leftkI.hasChanged() ||
-      leftkD.hasChanged()
-    ) {
-      io.configPID(
-        rightkP.get(), rightkI.get(), rightkD.get(), leftkP.get(), leftkI.get(), leftkD.get()
-      )
+    if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
+      io.configPID(kP.get(), kI.get(), kD.get())
     }
 
-    if (flywheelRightkA.hasChanged() ||
-      flywheelRightkV.hasChanged() ||
-      flywheelRightkS.hasChanged()
-    ) {
-      flywheelRightFeedForward =
-        SimpleMotorFeedforward(
-          flywheelRightkS.get(), flywheelRightkV.get(), flywheelRightkA.get()
-        )
-    }
-
-    if (flywheelLeftkA.hasChanged() || flywheelLeftkV.hasChanged() || flywheelLeftkS.hasChanged()) {
-      flywheelLeftFeedForward =
-        SimpleMotorFeedforward(flywheelLeftkS.get(), flywheelLeftkV.get(), flywheelLeftkA.get())
+    if (flywheelkA.hasChanged() || flywheelkV.hasChanged() || flywheelkS.hasChanged()) {
+      flywheelFeedForward =
+        SimpleMotorFeedforward(flywheelkS.get(), flywheelkV.get(), flywheelkA.get())
     }
 
     var nextState = currentState
@@ -266,13 +175,13 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         nextState = Companion.FlywheelStates.OPEN_LOOP
       }
       Companion.FlywheelStates.OPEN_LOOP -> {
-        setFlywheelVoltage(flywheelRightTargetVoltage, flywheelLeftTargetVoltage)
+        setFlywheelVoltage(flywheelTargetVoltage)
         lastFlywheelRunTime = Clock.fpgaTime
 
         nextState = fromRequestToState(currentRequest)
       }
       Companion.FlywheelStates.TARGETING_VELOCITY -> {
-        setFlywheelVelocity(flywheelRightTargetVelocity, flywheelLeftTargetVelocity)
+        setFlywheelVelocity(flywheelRightTargetVelocity)
         lastFlywheelRunTime = Clock.fpgaTime
         nextState = fromRequestToState(currentRequest)
       }
@@ -280,26 +189,18 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     currentState = nextState
   }
 
-  fun setFlywheelVoltage(
-    appliedVoltageRight: ElectricalPotential,
-    appliedVoltageLeft: ElectricalPotential
-  ) {
-    io.setFlywheelVoltage(appliedVoltageRight, appliedVoltageLeft)
+  fun setFlywheelVoltage(appliedVoltage: ElectricalPotential) {
+    io.setFlywheelVoltage(appliedVoltage)
   }
 
   fun setFlywheelVelocity(
-    flywheelRightVelocity: AngularVelocity,
-    flywheelLeftVelocity: AngularVelocity
+    velocity: AngularVelocity,
   ) {
-    val rightFeedForward = flywheelRightFeedForward.calculate(flywheelRightVelocity)
-    val leftFeedForward = flywheelLeftFeedForward.calculate(flywheelLeftVelocity)
+    val feedforward = flywheelFeedForward.calculate(velocity)
 
-    Logger.recordOutput("Flywheel/rightFeedForward", rightFeedForward.inVolts)
-    Logger.recordOutput("Flywheel/leftFeedForward", leftFeedForward.inVolts)
+    Logger.recordOutput("Flywheel/FeedForward", feedforward.inVolts)
 
-    io.setFlywheelVelocity(
-      flywheelRightVelocity, flywheelLeftVelocity, leftFeedForward, rightFeedForward
-    )
+    io.setFlywheelVelocity(velocity, feedforward)
   }
 
   fun flywheelSpinUpCommand(): Command {

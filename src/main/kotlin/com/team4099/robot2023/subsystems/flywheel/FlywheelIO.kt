@@ -109,25 +109,17 @@ interface FlywheelIO {
     }
   }
 
-  fun setFlywheelVoltage(voltageRight: ElectricalPotential, voltageLeft: ElectricalPotential) {}
+  fun setFlywheelVoltage(voltage: ElectricalPotential) {}
 
-  fun setFlywheelVelocity(
-    rightVelocity: AngularVelocity,
-    leftVelocity: AngularVelocity,
-    feedforwardLeft: ElectricalPotential,
-    feedforwardRight: ElectricalPotential
-  ) {}
+  fun setFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {}
 
   fun setFlywheelBrakeMode(brake: Boolean) {}
 
   fun updateInputs(inputs: FlywheelIOInputs) {}
 
   fun configPID(
-    rightkP: ProportionalGain<Velocity<Radian>, Volt>,
-    rightkI: IntegralGain<Velocity<Radian>, Volt>,
-    rightkD: DerivativeGain<Velocity<Radian>, Volt>,
-    leftkP: ProportionalGain<Velocity<Radian>, Volt>,
-    leftkI: IntegralGain<Velocity<Radian>, Volt>,
-    leftkD: DerivativeGain<Velocity<Radian>, Volt>
+    kP: ProportionalGain<Velocity<Radian>, Volt>,
+    kI: IntegralGain<Velocity<Radian>, Volt>,
+    kD: DerivativeGain<Velocity<Radian>, Volt>,
   ) {}
 }

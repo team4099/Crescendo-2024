@@ -134,7 +134,7 @@ object Robot : LoggedRobot() {
 
   override fun autonomousInit() {
     RobotContainer.zeroSensors()
-    FMSData.allianceColor = DriverStation.getAlliance().get()
+    FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
     RobotContainer.setDriveBrakeMode()
     RobotContainer.setSteeringBrakeMode()
     RobotContainer.getAutonomousCommand().schedule()
@@ -183,7 +183,7 @@ object Robot : LoggedRobot() {
   }
 
   override fun teleopInit() {
-    FMSData.allianceColor = DriverStation.getAlliance().get()
+    FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
     RobotContainer.mapTeleopControls()
     RobotContainer.getAutonomousCommand().cancel()
     RobotContainer.setDriveBrakeMode()

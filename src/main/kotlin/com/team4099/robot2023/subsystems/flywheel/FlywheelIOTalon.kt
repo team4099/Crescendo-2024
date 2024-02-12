@@ -46,9 +46,7 @@ object FlywheelIOTalon : FlywheelIO {
 
   private val flywheelRightConfiguration: TalonFXConfiguration = TalonFXConfiguration()
 
-  var leftVelocityRequest =
-    VelocityVoltage(-1337.degrees.perSecond, slot = 0, feedforward = -1337.volts)
-  var rightVelocityRequest =
+  var velocityRequest =
     VelocityVoltage(-1337.degrees.perSecond, slot = 0, feedforward = -1337.volts)
 
   private val flywheelLeftSensor =
@@ -87,11 +85,11 @@ object FlywheelIOTalon : FlywheelIO {
     flywheelRightTalon.clearStickyFaults()
 
     flywheelRightConfiguration.Slot0.kP =
-      flywheelRightSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.PID.RIGHT_REAL_KP)
+      flywheelRightSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KP)
     flywheelRightConfiguration.Slot0.kI =
-      flywheelRightSensor.integralVelocityGainToRawUnits(FlywheelConstants.PID.RIGHT_REAL_KI)
+      flywheelRightSensor.integralVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KI)
     flywheelRightConfiguration.Slot0.kD =
-      flywheelRightSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.PID.RIGHT_REAL_KD)
+      flywheelRightSensor.derivativeVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KD)
     //
     // flywheelSensor.velocityFeedforwardToRawUnits(FlywheelConstantsConstants.PID.flywheel_KFF)
 
@@ -173,45 +171,26 @@ object FlywheelIOTalon : FlywheelIO {
   }
 
   override fun configPID(
-    rightkP: ProportionalGain<Velocity<Radian>, Volt>,
-    rightkI: IntegralGain<Velocity<Radian>, Volt>,
-    rightkD: DerivativeGain<Velocity<Radian>, Volt>,
-    leftkP: ProportionalGain<Velocity<Radian>, Volt>,
-    leftkI: IntegralGain<Velocity<Radian>, Volt>,
-    leftkD: DerivativeGain<Velocity<Radian>, Volt>
+    kP: ProportionalGain<Velocity<Radian>, Volt>,
+    kI: IntegralGain<Velocity<Radian>, Volt>,
+    kD: DerivativeGain<Velocity<Radian>, Volt>
   ) {
     val PIDRightConfig = Slot0Configs()
-    PIDRightConfig.kP = flywheelRightSensor.proportionalVelocityGainToRawUnits(rightkP)
-    PIDRightConfig.kI = flywheelRightSensor.integralVelocityGainToRawUnits(rightkI)
-    PIDRightConfig.kD = flywheelRightSensor.derivativeVelocityGainToRawUnits(rightkD)
+    PIDRightConfig.kP = flywheelRightSensor.proportionalVelocityGainToRawUnits(kP)
+    PIDRightConfig.kI = flywheelRightSensor.integralVelocityGainToRawUnits(kI)
+    PIDRightConfig.kD = flywheelRightSensor.derivativeVelocityGainToRawUnits(kD)
 
-    val PIDLeftConfig = Slot0Configs()
-    PIDLeftConfig.kP = flywheelLeftSensor.proportionalVelocityGainToRawUnits(leftkP)
-    PIDLeftConfig.kI = flywheelLeftSensor.integralVelocityGainToRawUnits(leftkI)
-    PIDLeftConfig.kD = flywheelLeftSensor.derivativeVelocityGainToRawUnits(leftkD)
-
-    flywheelLeftTalon.configurator.apply(PIDLeftConfig)
     flywheelRightTalon.configurator.apply(PIDRightConfig)
   }
 
-  override fun setFlywheelVoltage(
-    voltageRight: ElectricalPotential,
-    voltageLeft: ElectricalPotential
-  ) {
-    flywheelRightTalon.setControl(VoltageOut(voltageRight.inVolts))
+  override fun setFlywheelVoltage(voltage: ElectricalPotential) {
+    flywheelRightTalon.setControl(VoltageOut(voltage.inVolts))
   }
 
-  override fun setFlywheelVelocity(
-    rightVelocity: AngularVelocity,
-    leftVelocity: AngularVelocity,
-    feedforwardLeft: ElectricalPotential,
-    feedforwardRight: ElectricalPotential
-  ) {
-    FlywheelIOTalon.rightVelocityRequest.setFeedforward(feedforwardRight)
-    FlywheelIOTalon.rightVelocityRequest.setVelocity(rightVelocity)
-    FlywheelIOTalon.flywheelRightTalon.setControl(
-      FlywheelIOTalon.rightVelocityRequest.velocityVoltagePhoenix6
-    )
+  override fun setFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {
+    velocityRequest.setFeedforward(feedforward)
+    velocityRequest.setVelocity(velocity)
+    flywheelRightTalon.setControl(velocityRequest.velocityVoltagePhoenix6)
   }
 
   private fun updateSignals() {

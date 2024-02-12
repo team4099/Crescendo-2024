@@ -118,6 +118,9 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     steeringFeedback.errorTolerance = DrivetrainConstants.ALLOWED_STEERING_ANGLE_ERROR
   }
 
+  var driveAppliedVolts = 0.0.volts
+  var turnAppliedVolts = 0.0.volts
+
   override fun updateInputs(inputs: SwerveModuleIO.SwerveModuleIOInputs) {
     driveMotorSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
     steerMotorSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
@@ -166,7 +169,7 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     inputs.driveVelocity = driveVelocity
     inputs.steeringVelocity = steerMotorSim.angularVelocityRadPerSec.radians.perSecond
 
-    inputs.driveAppliedVoltage = (-1337).volts
+    inputs.driveAppliedVoltage = driveAppliedVolts
     inputs.driveSupplyCurrent = driveMotorSim.currentDrawAmps.amps
     inputs.driveStatorCurrent =
       (-1337).amps // no way to get applied voltage to motor so can't actually calculate stator
@@ -175,7 +178,7 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     inputs.driveTemp = (-1337).celsius
     inputs.steeringTemp = (-1337).celsius
 
-    inputs.steeringAppliedVoltage = (-1337).volts
+    inputs.steeringAppliedVoltage = turnAppliedVolts
     inputs.steeringSupplyCurrent = steerMotorSim.currentDrawAmps.amps
     inputs.steeringStatorCurrent =
       (-1337).amps // no way to get applied voltage to motor so can't actually calculate stator
@@ -183,6 +186,9 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
 
     inputs.potentiometerOutputRadians = turnAbsolutePosition
     inputs.potentiometerOutputRaw = turnAbsolutePosition.inRadians
+
+    inputs.odometryDrivePositions = arrayOf(inputs.drivePosition)
+    inputs.odometrySteeringPositions = arrayOf(inputs.steeringPosition)
 
     // Setting a more accurate simulated voltage under load
     RoboRioSim.setVInVoltage(
@@ -194,12 +200,12 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
 
   // helper functions to clamp all inputs and set sim motor voltages properly
   private fun setDriveVoltage(volts: ElectricalPotential) {
-    val driveAppliedVolts = clamp(volts, -12.0.volts, 12.0.volts)
+    driveAppliedVolts = clamp(volts, -12.0.volts, 12.0.volts)
     driveMotorSim.setInputVoltage(driveAppliedVolts.inVolts)
   }
 
   private fun setSteeringVoltage(volts: ElectricalPotential) {
-    val turnAppliedVolts = clamp(volts, -12.0.volts, 12.0.volts)
+    turnAppliedVolts = clamp(volts, -12.0.volts, 12.0.volts)
     steerMotorSim.setInputVoltage(turnAppliedVolts.inVolts)
   }
 

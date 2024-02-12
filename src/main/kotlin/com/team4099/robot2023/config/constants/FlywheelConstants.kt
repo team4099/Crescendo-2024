@@ -38,47 +38,24 @@ object FlywheelConstants {
 
   val FLYWHEEL_TOLERANCE = 50.0.rotations.perMinute
   object PID {
-    val RIGHT_REAL_KP: ProportionalGain<Velocity<Radian>, Volt> =
-      0.00.volts / 1.0.rotations.perMinute
-    val RIGHT_REAL_KI: IntegralGain<Velocity<Radian>, Volt> =
+    val REAL_KP: ProportionalGain<Velocity<Radian>, Volt> = 0.00.volts / 1.0.rotations.perMinute
+    val REAL_KI: IntegralGain<Velocity<Radian>, Volt> =
       0.0.volts / (1.0.rotations.perMinute * 1.0.seconds)
-    val RIGHT_REAL_KD: DerivativeGain<Velocity<Radian>, Volt> =
+    val REAL_KD: DerivativeGain<Velocity<Radian>, Volt> =
       0.0.volts / (1.0.rotations.perMinute.perSecond)
 
-    val RIGHT_SIM_KP: ProportionalGain<Velocity<Radian>, Volt> =
-      0.015.volts / 1.0.rotations.perMinute
-    val RIGHT_SIM_KI: IntegralGain<Velocity<Radian>, Volt> =
+    val SIM_KP: ProportionalGain<Velocity<Radian>, Volt> = 0.015.volts / 1.0.rotations.perMinute
+    val SIM_KI: IntegralGain<Velocity<Radian>, Volt> =
       0.0.volts / (1.0.rotations.perMinute * 1.0.seconds)
-    val RIGHT_SIM_KD: DerivativeGain<Velocity<Radian>, Volt> =
+    val SIM_KD: DerivativeGain<Velocity<Radian>, Volt> =
       0.0.volts / (1.0.rotations.perMinute.perSecond)
 
-    val LEFT_REAL_KP: ProportionalGain<Velocity<Radian>, Volt> = 0.0.volts / 1.0.rotations.perMinute
-    val LEFT_REAL_KI: IntegralGain<Velocity<Radian>, Volt> =
-      0.0.volts / (1.0.rotations.perMinute * 1.0.seconds)
-    val LEFT_REAL_KD: DerivativeGain<Velocity<Radian>, Volt> =
-      0.0.volts / (1.0.rotations.perMinute.perSecond)
+    val REAL_FLYWHEEL_KS = 0.0.volts
+    val REAL_FLYWHEEL_KV = 0.0099.volts / 1.radians.perSecond
+    val REAL_FLYWHEEL_KA = 0.09.volts / 1.radians.perSecond.perSecond
 
-    val LEFT_SIM_KP: ProportionalGain<Velocity<Radian>, Volt> =
-      0.0015.volts / 1.0.rotations.perMinute
-    val LEFT_SIM_KI: IntegralGain<Velocity<Radian>, Volt> =
-      0.0.volts / (1.0.rotations.perMinute * 1.0.seconds)
-    val LEFT_SIM_KD: DerivativeGain<Velocity<Radian>, Volt> =
-      0.0.volts / (1.0.rotations.perMinute.perSecond)
-
-    val RIGHT_REAL_FLYWHEEL_KS = 0.0.volts
-    val RIGHT_REAL_FLYWHEEL_KV = 0.0099.volts / 1.radians.perSecond
-    val RIGHT_REAL_FLYWHEEL_KA = 0.09.volts / 1.radians.perSecond.perSecond
-
-    val LEFT_REAL_FLYWHEEL_KS = 0.0.volts
-    val LEFT_REAL_FLYWHEEL_KV = 0.0197.volts / 1.radians.perSecond
-    val LEFT_REAL_FLYWHEEL_KA = 0.03.volts / 1.radians.perSecond.perSecond
-
-    val RIGHT_SIM_FLYWHEEL_KS = 0.0.volts
-    val RIGHT_SIM_FLYWHEEL_KV = 0.0099.volts / 1.radians.perSecond
-    val RIGHT_SIM_FLYWHEEL_KA = 0.09.volts / 1.radians.perSecond.perSecond
-
-    val LEFT_SIM_FLYWHEEL_KS = 0.0.volts
-    val LEFT_SIM_FLYWHEEL_KV = 0.0197.volts / 1.radians.perSecond
-    val LEFT_SIM_FLYWHEEL_KA = 0.03.volts / 1.radians.perSecond.perSecond
+    val SIM_FLYWHEEL_KS = 0.0.volts
+    val SIM_FLYWHEEL_KV = 0.0099.volts / 1.radians.perSecond
+    val SIM_FLYWHEEL_KA = 0.09.volts / 1.radians.perSecond.perSecond
   }
 }

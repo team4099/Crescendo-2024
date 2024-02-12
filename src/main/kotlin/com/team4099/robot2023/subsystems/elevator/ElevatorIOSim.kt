@@ -10,7 +10,6 @@ import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.wpilibj.simulation.BatterySim
 import edu.wpi.first.wpilibj.simulation.ElevatorSim
 import edu.wpi.first.wpilibj.simulation.RoboRioSim
-import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Meter
@@ -97,7 +96,6 @@ object ElevatorIOSim : ElevatorIO {
    * @param voltage the voltage to set the motor to
    */
   override fun setOutputVoltage(voltage: ElectricalPotential) {
-    Logger.recordOutput("Elevator/OutputTest", voltage)
     val clampedVoltage =
       clamp(
         voltage,

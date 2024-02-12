@@ -20,7 +20,11 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
   var lastFeederRunTime = 0.0.seconds
 
   private val shootNoteVoltage =
-    LoggedTunableValue("Feeder/ShootNoteVoltage", FeederConstants.SHOOT_NOTE_VOLTAGE, Pair({ it.inVolts }, { it.volts }))
+    LoggedTunableValue(
+      "Feeder/ShootNoteVoltage",
+      FeederConstants.SHOOT_NOTE_VOLTAGE,
+      Pair({ it.inVolts }, { it.volts })
+    )
 
   var currentState: FeederStates = FeederStates.UNINITIALIZED
   var currentRequest: Request.FeederRequest =
@@ -107,9 +111,7 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
   }
 
   fun feederOpenLoopShootTestCommand(): Command {
-    return runOnce({
-      currentRequest = Request.FeederRequest.OpenLoopShoot(shootNoteVoltage.get())
-    })
+    return runOnce({ currentRequest = Request.FeederRequest.OpenLoopShoot(shootNoteVoltage.get()) })
   }
 
   companion object {

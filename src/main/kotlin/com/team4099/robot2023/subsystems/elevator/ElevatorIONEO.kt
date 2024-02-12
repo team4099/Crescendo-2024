@@ -77,7 +77,6 @@ object ElevatorIONEO : ElevatorIO {
     leaderSparkMax.idleMode = CANSparkMax.IdleMode.kBrake
     followerSparkMax.idleMode = CANSparkMax.IdleMode.kBrake
 
-
     // makes follower motor output exact same power as leader
     followerSparkMax.follow(leaderSparkMax, ElevatorConstants.FOLLOWER_INVERTED)
 

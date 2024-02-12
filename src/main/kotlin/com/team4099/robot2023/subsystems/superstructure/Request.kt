@@ -24,6 +24,8 @@ sealed interface Request {
 
     class ZeroSensors : DrivetrainRequest
     class Idle : DrivetrainRequest
+
+    class LockWheels : DrivetrainRequest
   }
 
   sealed interface IntakeRequest : Request {

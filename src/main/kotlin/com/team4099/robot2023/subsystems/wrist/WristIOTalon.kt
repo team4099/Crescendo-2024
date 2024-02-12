@@ -1,5 +1,6 @@
 package com.team4099.robot2023.subsystems.wrist
 
+import com.ctre.phoenix6.BaseStatusSignal
 import com.ctre.phoenix6.StatusSignal
 import com.ctre.phoenix6.configs.MagnetSensorConfigs
 import com.ctre.phoenix6.configs.MotorOutputConfigs

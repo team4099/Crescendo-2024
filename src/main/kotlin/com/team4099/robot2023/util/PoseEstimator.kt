@@ -8,6 +8,7 @@ import edu.wpi.first.math.numbers.N3
 import edu.wpi.first.wpilibj.Timer
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
+import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Twist2d
 import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inMeters
@@ -109,7 +110,11 @@ class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
       if (update.value.visionUpdates.size > 0 && update.value.visionUpdates[0].fromVision) {
         Logger.recordOutput("Vision/Buffer/Vision", update.key)
 
-        Logger.recordOutput("Vision/Buffer/VisionPose", update.value.visionUpdates[0].pose.pose2d)
+        Logger.recordOutput(
+          "Vision/Buffer/VisionPose",
+          Pose2dWPILIB.struct,
+          update.value.visionUpdates[0].pose.pose2d
+        )
       } else {
         Logger.recordOutput("Vision/Buffer/Drivetrain", update.key)
       }

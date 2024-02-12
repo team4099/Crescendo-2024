@@ -239,7 +239,7 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
     Logger.recordOutput("Elevator/currentRequest", currentRequest.javaClass.simpleName)
     Logger.recordOutput(
       "Elevator/elevatorHeight",
-      inputs.elevatorPosition - ElevatorConstants.ELEVATOR_GROUND_OFFSET
+      (inputs.elevatorPosition - ElevatorConstants.ELEVATOR_GROUND_OFFSET).inInches
     )
     if (Constants.Tuning.DEBUGING_MODE) {
       Logger.recordOutput("Elevator/isHomed", isHomed)
@@ -407,5 +407,4 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
   fun testElevatorClosedLoopExtendCommand(): Command {
     return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(10.inches) })
   }
-
 }

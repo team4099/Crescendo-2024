@@ -10,6 +10,7 @@ import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
+import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
@@ -91,6 +92,11 @@ object DrivetrainConstants {
   val DRIVE_WHEEL_INERTIA = 0.025.kilo.grams.meterSquared
   val STEERING_WHEEL_INERTIA = 0.004096955.kilo.grams.meterSquared
 
+  val FL_LOCKING_ANGLE: Angle = 45.degrees
+  val FR_LOCKING_ANGLE: Angle = 315.degrees
+  val BL_LOCKING_ANGLE: Angle = 135.degrees
+  val BR_LOCKING_ANGLE: Angle = 225.degrees
+
   object PID {
     val AUTO_POS_KP: ProportionalGain<Meter, Velocity<Meter>>
       get() {
@@ -159,14 +165,14 @@ object DrivetrainConstants {
     //    val DRIVE_KV = 2.2678.volts / 1.0.meters.perSecond
     //    val DRIVE_KA = 0.40499.volts / 1.0.meters.perSecond.perSecond
 
-    val SIM_DRIVE_KS = 0.116970.volts
+    val SIM_DRIVE_KS = 0.0.volts
     val SIM_DRIVE_KV = 2.7.volts / 1.0.meters.perSecond
 
     val SIM_DRIVE_KP = 1.5.volts / 1.meters.perSecond
     val SIM_DRIVE_KI = 0.0.volts / (1.meters.perSecond * 1.seconds)
     val SIM_DRIVE_KD = 0.0.volts / 1.meters.perSecond.perSecond
 
-    val SIM_STEERING_KP = 0.4.volts.perDegree
+    val SIM_STEERING_KP = 0.3.volts.perDegree
     val SIM_STEERING_KI = 0.0.volts.perDegreeSeconds
     val SIM_STEERING_KD = 0.0.volts.perDegreePerSecond
   }
