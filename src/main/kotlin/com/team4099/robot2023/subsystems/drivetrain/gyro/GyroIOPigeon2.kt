@@ -124,7 +124,7 @@ object GyroIOPigeon2 : GyroIO {
     inputs.gyroRollRate = gyroRollRate
 
     inputs.odometryYawPositions =
-      (yawPositionQueue.stream().map { value: Double -> value.degrees }.toArray() as Array<Angle>)
+      (yawPositionQueue.stream().map { value: Double -> value.degrees }.toList() as List<Angle>)
         .toMutableList()
     yawPositionQueue.clear()
 

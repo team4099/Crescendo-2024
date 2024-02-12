@@ -1,6 +1,7 @@
 package com.team4099.robot2023.subsystems.drivetrain.drive
 
 import com.team4099.lib.hal.Clock
+import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.config.constants.VisionConstants
@@ -30,16 +31,23 @@ import org.team4099.lib.geometry.Twist2d
 import org.team4099.lib.kinematics.ChassisSpeeds
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearVelocity
+import org.team4099.lib.units.Value
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.meters
+import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inRotation2ds
+import org.team4099.lib.units.derived.inVoltsPerRotations
 import org.team4099.lib.units.derived.radians
+import org.team4099.lib.units.derived.rotations
+import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
+import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
@@ -82,6 +90,20 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   var lastGyroYaw = 0.0.radians
 
   var currentState: DrivetrainState = DrivetrainState.UNINITIALIZED
+
+  private val testAngle =
+    LoggedTunableValue(
+      "Drivetrain/testAngle",
+      0.degrees,
+      Pair({ it.inDegrees }, { it.degrees })
+    )
+
+  private val swerveModuleID =
+    LoggedTunableValue(
+      "Drivetrain/testModule",
+      0.degrees,
+      Pair({ it.inDegrees }, { it.degrees })
+    )
 
   val closestAlignmentAngle: Angle
     get() {
@@ -562,6 +584,12 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   /** Zeros the drive motors for each swerve module. */
   private fun zeroDrive() {
     swerveModules.forEach { it.zeroDrive() }
+  }
+
+  fun driveSetpointTestCommand(): Command {
+    return runOnce {
+      swerveModules[swerveModuleID.get().inDegrees.toInt()].setOpenLoop(testAngle.get(), 0.meters.perSecond, false)
+    }
   }
 
   fun addVisionData(visionData: List<PoseEstimator.TimestampedVisionUpdate>) {

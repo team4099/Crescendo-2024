@@ -240,6 +240,7 @@ class SwerveModule(val io: SwerveModuleIO) {
       }
     steeringSetPoint = inputs.steeringPosition + steeringDifference
     io.setOpenLoop(steeringSetPoint, outputSpeed)
+
   }
 
   /**

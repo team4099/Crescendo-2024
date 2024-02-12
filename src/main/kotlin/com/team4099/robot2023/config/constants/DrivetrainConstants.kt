@@ -43,7 +43,7 @@ object DrivetrainConstants {
   val DOCKING_GYRO_TOLERANCE = 2.5.degrees
   val DOCKING_TIME_THRESHOLD = 1.0.seconds
 
-  var DRIVE_SETPOINT_MAX = 15.feet.perSecond
+  var DRIVE_SETPOINT_MAX = 16.feet.perSecond
   val TURN_SETPOINT_MAX =
     (DRIVE_SETPOINT_MAX.inMetersPerSecond / DRIVETRAIN_LENGTH.inMeters / 2 * sqrt(2.0))
       .radians
@@ -68,7 +68,7 @@ object DrivetrainConstants {
   const val STEERING_SENSOR_CPR = 2048
 
   const val DRIVE_SENSOR_GEAR_RATIO = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0)
-  const val STEERING_SENSOR_GEAR_RATIO = 7.0 / 150.0
+  const val STEERING_SENSOR_GEAR_RATIO =   7.0 / 150.0
 
   val ALLOWED_STEERING_ANGLE_ERROR = 1.degrees
 
@@ -81,10 +81,10 @@ object DrivetrainConstants {
   val DRIVE_STATOR_THRESHOLD_CURRENT_LIMIT = 80.0.amps
   val DRIVE_STATOR_TRIGGER_THRESHOLD_TIME = 1.0.seconds
 
-  val FRONT_LEFT_MODULE_ZERO = 1.3.radians + 180.degrees
-  val FRONT_RIGHT_MODULE_ZERO = 4.49.radians + 180.degrees
-  val BACK_LEFT_MODULE_ZERO = 3.22.radians + 180.degrees
-  val BACK_RIGHT_MODULE_ZERO = 0.99.radians - 180.degrees
+  val FRONT_LEFT_MODULE_ZERO = 6.06.radians // good
+  val FRONT_RIGHT_MODULE_ZERO = 0.25.radians // good
+  val BACK_LEFT_MODULE_ZERO = 6.19.radians //good
+  val BACK_RIGHT_MODULE_ZERO = 4.12.radians //good
 
   val STEERING_COMPENSATION_VOLTAGE = 10.volts
   val DRIVE_COMPENSATION_VOLTAGE = 12.volts

@@ -6,9 +6,10 @@ import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIO
+import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOReal
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
+import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
@@ -37,7 +38,7 @@ object RobotContainer {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
-      drivetrain = Drivetrain(object : GyroIO {}, object : DrivetrainIO {})
+      drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
       vision =
         Vision(
           //          object: CameraIO {}
@@ -71,6 +72,7 @@ object RobotContainer {
   }
 
   fun mapDefaultCommands() {
+
     drivetrain.defaultCommand =
       TeleopDriveCommand(
         driver = Ryan(),
@@ -141,14 +143,7 @@ object RobotContainer {
     //      )
     //    )
 
-    ControlBoard.resetFlywheel.whileTrue(flywheel.flywheelResetCommand())
-    ControlBoard.spinUpFlywheel.whileTrue(flywheel.flywheelSpinUpCommand())
-    ControlBoard.openLoopFlywheel.whileTrue(flywheel.flywheelOpenLoopCommand())
-
-    // ControlBoard.resetWrist.whileTrue(wrist.wristResetCommand())
-    // ControlBoard.openLoopWrist.whileTrue(wrist.wristOpenLoopCommand())
-    ControlBoard.wristReset.whileTrue(wrist.wristResetCommand()) // matthew's reset cmd
-    ControlBoard.wristPID.whileTrue(wrist.wristPositionCommand()) // cmd made thursday by nathan
+    ControlBoard.resetFlywheel.whileTrue(drivetrain.driveSetpointTestCommand())
   }
 
   fun mapTestControls() {}
