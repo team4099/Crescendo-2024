@@ -139,18 +139,16 @@ class Superstructure(
         wrist.currentRequest = Request.WristRequest.Zero()
 
         if (wrist.isZeroed) {
-          wrist.currentRequest =
-            Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.idleAngle.get())
-
-          if (wrist.isAtTargetedPosition) {
-            nextState = SuperstructureStates.HOME
-          }
+          nextState = SuperstructureStates.HOME
         }
         if (currentRequest is Request.SuperstructureRequest.Tuning) {
           nextState = SuperstructureStates.TUNING
         }
       }
       SuperstructureStates.HOME -> {
+        wrist.currentRequest =
+          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.idleAngle.get())
+
         elevator.currentRequest = Request.ElevatorRequest.Home()
 
         if (elevator.isHomed) {
@@ -159,7 +157,10 @@ class Superstructure(
       }
       SuperstructureStates.IDLE -> {
         intake.currentRequest =
-          Request.IntakeRequest.OpenLoop(Intake.TunableIntakeStates.idleVoltage.get())
+          Request.IntakeRequest.OpenLoop(
+            Intake.TunableIntakeStates.idleRollerVoltage.get(),
+            Intake.TunableIntakeStates.idleCenterWheelVoltage.get()
+          )
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.idleVoltage.get())
         flywheel.currentRequest =
@@ -230,7 +231,10 @@ class Superstructure(
       }
       SuperstructureStates.GROUND_INTAKE -> {
         intake.currentRequest =
-          Request.IntakeRequest.OpenLoop(Intake.TunableIntakeStates.intakeVoltage.get())
+          Request.IntakeRequest.OpenLoop(
+            Intake.TunableIntakeStates.intakeRollerVoltage.get(),
+            Intake.TunableIntakeStates.intakeCenterWheelVoltage.get()
+          )
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.intakeVoltage.get())
         if (feeder.hasNote) {
@@ -605,7 +609,10 @@ class Superstructure(
     val returnCommand = runOnce {
       currentRequest = Request.SuperstructureRequest.Tuning()
       intake.currentRequest =
-        Request.IntakeRequest.OpenLoop(Intake.TunableIntakeStates.testVoltage.get())
+        Request.IntakeRequest.OpenLoop(
+          Intake.TunableIntakeStates.testRollerVoltage.get(),
+          Intake.TunableIntakeStates.testCenterWheelVoltage.get()
+        )
     }
     returnCommand.name = "TestIntakeCommand"
     return returnCommand

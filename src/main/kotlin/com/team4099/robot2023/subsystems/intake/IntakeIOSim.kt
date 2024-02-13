@@ -20,29 +20,59 @@ object IntakeIOSim : IntakeIO {
       DCMotor.getNEO(1), IntakeConstants.ROLLER_GEAR_RATIO, IntakeConstants.ROLLER_INERTIA
     )
 
-  private var appliedVoltage = 0.volts
+  private val centerWheelSim: FlywheelSim =
+    FlywheelSim(
+      DCMotor.getNEO(1),
+      IntakeConstants.CENTER_WHEEL_GEAR_RATIO,
+      IntakeConstants.CENTER_WHEEL_INERTIA
+    )
+
+  private var rollerAppliedVoltage = 0.volts
+  private var centerWheelAppliedVoltage = 0.volts
   init {}
 
   override fun updateInputs(inputs: IntakeIO.IntakeIOInputs) {
 
     rollerSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
 
-    inputs.rollerVelocity = rollerSim.getAngularVelocityRPM().rotations.perMinute
-    inputs.rollerAppliedVoltage = appliedVoltage
+    inputs.rollerVelocity = rollerSim.angularVelocityRPM.rotations.perMinute
+    inputs.rollerAppliedVoltage = rollerAppliedVoltage
     inputs.rollerSupplyCurrent = 0.amps
     inputs.rollerStatorCurrent = rollerSim.currentDrawAmps.amps
     inputs.rollerTemp = 0.0.celsius
 
+    inputs.centerWheelVelocity = centerWheelSim.angularVelocityRPM.rotations.perMinute
+    inputs.centerWheelAppliedVotlage = centerWheelAppliedVoltage
+    inputs.centerWheelSupplyCurrent = 0.amps
+    inputs.centerWheelStatorCurrent = centerWheelSim.currentDrawAmps.amps
+    inputs.centerWheelTemp = 0.celsius
+
     inputs.isSimulated = true
   }
 
-  override fun setRollerVoltage(voltage: ElectricalPotential) {
-    appliedVoltage = voltage
+  override fun setVoltage(
+    rollerVoltage: ElectricalPotential,
+    centerWheelVoltage: ElectricalPotential
+  ) {
+    rollerAppliedVoltage = rollerVoltage
+    centerWheelAppliedVoltage = centerWheelVoltage
     rollerSim.setInputVoltage(
-      clamp(voltage, -IntakeConstants.VOLTAGE_COMPENSATION, IntakeConstants.VOLTAGE_COMPENSATION)
+      clamp(
+        rollerVoltage,
+        -IntakeConstants.VOLTAGE_COMPENSATION,
+        IntakeConstants.VOLTAGE_COMPENSATION
+      )
+        .inVolts
+    )
+    centerWheelSim.setInputVoltage(
+      clamp(
+        rollerVoltage,
+        -IntakeConstants.VOLTAGE_COMPENSATION,
+        IntakeConstants.VOLTAGE_COMPENSATION
+      )
         .inVolts
     )
   }
 
-  override fun setRollerBrakeMode(brake: Boolean) {}
+  override fun setBrakeMode(rollerBrake: Boolean, centerWheelBrake: Boolean) {}
 }

@@ -35,6 +35,7 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
+import com.team4099.robot2023.subsystems.intake.IntakeIO
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -63,7 +64,7 @@ object RobotContainer {
           //        CameraIONorthstar("backward")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
-      intake = Intake(IntakeIONEO)
+      intake = Intake(object: IntakeIO {})
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
       flywheel = Flywheel(FlywheelIOTalon)
@@ -143,6 +144,7 @@ object RobotContainer {
   fun mapTeleopControls() {
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
+
     ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
     ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
     ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())
@@ -154,6 +156,7 @@ object RobotContainer {
     ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
     ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
 
+
     /*
     TUNING COMMANDS
     ControlBoard.testIntake.whileTrue(superstructure.testIntakeCommand())
@@ -162,7 +165,9 @@ object RobotContainer {
     ControlBoard.testFlywheel.whileTrue(superstructure.testFlywheelCommand())
     ControlBoard.testWrist.whileTrue(superstructure.testWristCommand())
     ControlBoard.testElevator.whileTrue(superstructure.testElevatorCommand())
+    */
 
+    /*
 
     ControlBoard.shooterDown.whileTrue(flywheel.flywheelSpinUpCommand())
     ControlBoard.shooterUp.whileTrue(flywheel.flywheelStopCommand())
@@ -171,6 +176,7 @@ object RobotContainer {
     ControlBoard.feederTest.whileTrue(feeder.feederOpenLoopShootTestCommand())
     ControlBoard.elevatorDown.whileTrue(elevator.elevatorClosedLoopRetractCommand())
     ControlBoard.elevatorUp.whileTrue(elevator.testElevatorClosedLoopExtendCommand())
+    ControlBoard.setTuningMode.whileTrue(superstructure.tuningCommand())
      */
   }
 

@@ -23,17 +23,17 @@ object ElevatorConstants {
   val CARRIAGE_MASS = 30.892.pounds
 
   val ELEVATOR_MAX_RETRACTION = 0.0.inches
-  val ELEVATOR_MAX_EXTENSION = 18.0.inches
+  val ELEVATOR_MAX_EXTENSION = 15.0.inches
   val ELEVATOR_CLIMB_EXTENSION = 12.0.inches
 
   val LEADER_INVERTED = false
   val FOLLOWER_INVERTED = true
 
-  val LEADER_KP: ProportionalGain<Meter, Volt> = 0.0.volts / 1.inches
+  val LEADER_KP: ProportionalGain<Meter, Volt> = 0.325.volts / 1.inches
   val LEADER_KI: IntegralGain<Meter, Volt> = 0.0.volts / (1.inches * 1.seconds)
   val LEADER_KD: DerivativeGain<Meter, Volt> = 0.0.volts / (1.inches.perSecond)
 
-  val FOLLOWER_KP: ProportionalGain<Meter, Volt> = 0.0.volts / 1.inches
+  val FOLLOWER_KP: ProportionalGain<Meter, Volt> = 0.325.volts / 1.inches
   val FOLLOWER_KI: IntegralGain<Meter, Volt> = 0.0.volts / (1.inches * 1.seconds)
   val FOLLOWER_KD: DerivativeGain<Meter, Volt> = 0.0.volts / (1.inches.perSecond)
 
@@ -42,34 +42,34 @@ object ElevatorConstants {
   val SIM_KD = 0.0.volts / (1.inches.perSecond)
 
   val ELEVATOR_KS = 0.0.volts
-  val ELEVATOR_KG = 0.4.volts
-  val ELEVATOR_KV = 0.1725.volts / 1.inches.perSecond
-  val ELEVATOR_KA = 0.005.volts / 1.inches.perSecond.perSecond
+  val ELEVATOR_KG = 0.33.volts
+  val ELEVATOR_KV = 0.5.volts / 1.inches.perSecond
+  val ELEVATOR_KA = 0.075.volts / 1.inches.perSecond.perSecond
   val ELEVATOR_OPEN_LOOP_EXTEND_VOLTAGE = 8.0.volts
   val ELEVATOR_OPEN_LOOP_RETRACT_VOLTAGE = -12.0.volts
 
   val ENABLE_ELEVATOR = true
-  val ELEVATOR_IDLE_HEIGHT = 0.0.inches
+  val ELEVATOR_IDLE_HEIGHT = 0.25.inches
   val ELEVATOR_SOFT_LIMIT_EXTENSION = 17.5.inches
-  val ELEVATOR_SOFT_LIMIT_RETRACTION = -1.0.inches
+  val ELEVATOR_SOFT_LIMIT_RETRACTION = -0.75.inches
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_EXTENSION = 0.0.inches
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_RETRACTION = 0.0.inches
   val ELEVATOR_SAFE_THRESHOLD = 5.0.inches
 
   val ELEVATOR_TOLERANCE = 0.2.inches
 
-  val MAX_VELOCITY = 1.5.meters.perSecond
+  val MAX_VELOCITY = 1.meters.perSecond
   val MAX_ACCELERATION = 2.0.meters.perSecond.perSecond
 
   val SHOOT_SPEAKER_LOW_POSITION = 0.0.inches
   val SHOOT_SPEAKER_MID_POSITION = 9.0.inches
-  val SHOOT_SPEAKER_HIGH_POSITION = 17.0.inches
+  val SHOOT_SPEAKER_HIGH_POSITION = 14.0.inches
   val SHOOT_AMP_POSITION = 0.0.inches
   val SOURCE_NOTE_OFFSET = 0.0.inches
   val ELEVATOR_THETA_POS = 0.0.degrees
-  val HOMING_STATOR_CURRENT = 0.0.amps
-  val HOMING_STALL_TIME_THRESHOLD = 0.0.seconds
-  val HOMING_APPLIED_VOLTAGE = 0.0.volts
+  val HOMING_STATOR_CURRENT = 3.0.amps
+  val HOMING_STALL_TIME_THRESHOLD = 0.2.seconds
+  val HOMING_APPLIED_VOLTAGE = -1.volts
   val ELEVATOR_GROUND_OFFSET = 0.0.inches
 
   val VOLTAGE_COMPENSATION = 12.0.volts

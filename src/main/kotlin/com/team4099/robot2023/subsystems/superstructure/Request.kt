@@ -51,7 +51,10 @@ sealed interface Request {
   }
 
   sealed interface IntakeRequest : Request {
-    class OpenLoop(val rollerVoltage: ElectricalPotential) : IntakeRequest
+    class OpenLoop(
+      val rollerVoltage: ElectricalPotential,
+      val centerWheelVoltage: ElectricalPotential
+    ) : IntakeRequest
   }
 
   sealed interface FeederRequest : Request {

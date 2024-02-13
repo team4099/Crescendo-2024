@@ -335,13 +335,21 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
         }
       }
       ElevatorState.HOME -> {
-        if (inputs.leaderStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT) {
+        zeroEncoder()
+        isHomed = true
+
+        if (isHomed) {
+          nextState = fromElevatorRequestToState(currentRequest)
+        }
+        /*
+
+        if (inputs.leaderStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT || inputs.followerStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT ) {
           lastHomingStatorCurrentTripTime = Clock.fpgaTime
         }
         if (!inputs.isSimulating &&
           (
             !isHomed &&
-              inputs.leaderStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT &&
+                    (inputs.leaderStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT || inputs.followerStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT ) &&
               Clock.fpgaTime - lastHomingStatorCurrentTripTime <
               ElevatorConstants.HOMING_STALL_TIME_THRESHOLD
             )
@@ -351,9 +359,8 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
           zeroEncoder()
           isHomed = true
         }
-        if (isHomed) {
-          nextState = fromElevatorRequestToState(currentRequest)
-        }
+
+         */
       }
     }
     currentState = nextState

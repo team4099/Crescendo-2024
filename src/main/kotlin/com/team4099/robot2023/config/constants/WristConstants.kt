@@ -51,7 +51,7 @@ object WristConstants {
     val SIM_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val SIM_KD: DerivativeGain<Radian, Volt> = 0.0175.volts / (1.0.degrees / 1.0.seconds)
 
-    val REAL_WRIST_KG = 0.36.volts
+    val REAL_WRIST_KG = 0.3.volts
     val REAL_WRIST_KV = 1.6.volts / 1.0.radians.perSecond
     val REAL_WRIST_KA = 0.175.volts / 1.0.radians.perSecond.perSecond
     val REAL_WRIST_KS = 0.15.volts

@@ -8,7 +8,6 @@ import com.team4099.robot2023.config.constants.IntakeConstants
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
 import com.team4099.robot2023.subsystems.falconspin.Neo
-import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
@@ -27,6 +26,14 @@ object IntakeIONEO : IntakeIO {
       rollerSparkMax, IntakeConstants.ROLLER_GEAR_RATIO, IntakeConstants.VOLTAGE_COMPENSATION
     )
 
+  private val centerWheelSparkMax =
+    CANSparkMax(Constants.Intake.ROLLER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
+
+  private val centerWheelSensor =
+    sparkMaxAngularMechanismSensor(
+      rollerSparkMax, IntakeConstants.ROLLER_GEAR_RATIO, IntakeConstants.VOLTAGE_COMPENSATION
+    )
+
   init {
     rollerSparkMax.restoreFactoryDefaults()
     rollerSparkMax.clearFaults()
@@ -40,10 +47,33 @@ object IntakeIONEO : IntakeIO {
     rollerSparkMax.burnFlash()
 
     MotorChecker.add(
-      "Ground Intake",
+      "Intake",
       "Roller",
       MotorCollection(
         mutableListOf(Neo(rollerSparkMax, "Roller Motor")),
+        IntakeConstants.ROLLER_CURRENT_LIMIT,
+        70.celsius,
+        30.amps,
+        90.celsius
+      ),
+    )
+
+    centerWheelSparkMax.restoreFactoryDefaults()
+    centerWheelSparkMax.clearFaults()
+
+    centerWheelSparkMax.enableVoltageCompensation(IntakeConstants.VOLTAGE_COMPENSATION.inVolts)
+    centerWheelSparkMax.setSmartCurrentLimit(IntakeConstants.ROLLER_CURRENT_LIMIT.inAmperes.toInt())
+    centerWheelSparkMax.inverted = IntakeConstants.ROLLER_MOTOR_INVERTED
+
+    centerWheelSparkMax.idleMode = CANSparkMax.IdleMode.kCoast
+
+    centerWheelSparkMax.burnFlash()
+
+    MotorChecker.add(
+      "Intake",
+      "Center Wheel",
+      MotorCollection(
+        mutableListOf(Neo(rollerSparkMax, "Center Wheel Motor")),
         IntakeConstants.ROLLER_CURRENT_LIMIT,
         70.celsius,
         30.amps,
@@ -65,11 +95,14 @@ object IntakeIONEO : IntakeIO {
       inputs.rollerStatorCurrent * rollerSparkMax.appliedOutput.absoluteValue
     inputs.rollerTemp = rollerSparkMax.motorTemperature.celsius
 
-    Logger.recordOutput(
-      "Intake/rollerMotorOvercurrentFault",
-      rollerSparkMax.getFault(CANSparkMax.FaultID.kOvercurrent)
-    )
-    Logger.recordOutput("Intake/busVoltage", rollerSparkMax.busVoltage)
+    inputs.centerWheelVelocity = centerWheelSensor.velocity
+    inputs.centerWheelAppliedVotlage =
+      centerWheelSparkMax.busVoltage.volts * centerWheelSparkMax.appliedOutput
+    inputs.centerWheelStatorCurrent = centerWheelSparkMax.outputCurrent.amps
+
+    inputs.centerWheelSupplyCurrent =
+      inputs.centerWheelStatorCurrent * centerWheelSparkMax.appliedOutput.absoluteValue
+    inputs.centerWheelTemp = centerWheelSparkMax.motorTemperature.celsius
   }
 
   /**
@@ -77,9 +110,25 @@ object IntakeIONEO : IntakeIO {
    *
    * @param voltage the voltage to set the roller motor to
    */
-  override fun setRollerVoltage(voltage: ElectricalPotential) {
+  override fun setVoltage(
+    rollerVoltage: ElectricalPotential,
+    centerWheelVoltage: ElectricalPotential
+  ) {
     rollerSparkMax.setVoltage(
-      clamp(voltage, -IntakeConstants.VOLTAGE_COMPENSATION, IntakeConstants.VOLTAGE_COMPENSATION)
+      clamp(
+        rollerVoltage,
+        -IntakeConstants.VOLTAGE_COMPENSATION,
+        IntakeConstants.VOLTAGE_COMPENSATION
+      )
+        .inVolts
+    )
+
+    centerWheelSparkMax.setVoltage(
+      clamp(
+        centerWheelVoltage,
+        -IntakeConstants.VOLTAGE_COMPENSATION,
+        IntakeConstants.VOLTAGE_COMPENSATION
+      )
         .inVolts
     )
   }
@@ -89,11 +138,17 @@ object IntakeIONEO : IntakeIO {
    *
    * @param brake if it brakes
    */
-  override fun setRollerBrakeMode(brake: Boolean) {
-    if (brake) {
+  override fun setBrakeMode(rollerBrake: Boolean, centerWheelBrake: Boolean) {
+    if (rollerBrake) {
       rollerSparkMax.idleMode = CANSparkMax.IdleMode.kBrake
     } else {
       rollerSparkMax.idleMode = CANSparkMax.IdleMode.kCoast
+    }
+
+    if (centerWheelBrake) {
+      centerWheelSparkMax.idleMode = CANSparkMax.IdleMode.kBrake
+    } else {
+      centerWheelSparkMax.idleMode = CANSparkMax.IdleMode.kCoast
     }
   }
 }

@@ -142,16 +142,8 @@ object ElevatorIONEO : ElevatorIO {
    */
   override fun setOutputVoltage(voltage: ElectricalPotential) {
     // divide by 2 cause full power elevator is scary
-    if (((leaderSensor.position < 0.5.inches) && (voltage < 0.volts)) ||
-      (
-        leaderSensor.position > ElevatorConstants.ELEVATOR_MAX_EXTENSION - 0.5.inches &&
-          (voltage > 0.volts)
-        )
-    ) {
-      leaderSparkMax.setVoltage(0.0)
-    } else {
-      leaderSparkMax.setVoltage(voltage.inVolts)
-    }
+
+    leaderSparkMax.setVoltage(voltage.inVolts)
   }
 
   /**

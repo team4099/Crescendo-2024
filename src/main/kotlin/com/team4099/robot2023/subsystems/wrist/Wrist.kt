@@ -92,10 +92,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       )
   }
 
-  private val wristkS =
-    LoggedTunableValue(
-      "Wrist/kS", Pair({ it.inVolts }, { it.volts })
-    )
+  private val wristkS = LoggedTunableValue("Wrist/kS", Pair({ it.inVolts }, { it.volts }))
   private val wristkV =
     LoggedTunableValue(
       "Wrist/kV", Pair({ it.inVoltsPerRadianPerSecond }, { it.volts.perRadianPerSecond })
@@ -105,10 +102,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       "Wrist/kA",
       Pair({ it.inVoltsPerRadianPerSecondPerSecond }, { it.volts.perRadianPerSecondPerSecond })
     )
-  private val wristkG =
-    LoggedTunableValue(
-      "Wrist/kG", Pair({ it.inVolts }, { it.volts })
-    )
+  private val wristkG = LoggedTunableValue("Wrist/kG", Pair({ it.inVolts }, { it.volts }))
 
   var wristFeedForward: ArmFeedforward
 
@@ -214,12 +208,8 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         )
     }
 
-
-
     testAngleDown.initDefault(-30.degrees)
     testAngleUp.initDefault(5.degrees)
-
-
   }
 
   override fun periodic() {
