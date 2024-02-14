@@ -17,6 +17,7 @@ import org.team4099.lib.units.inDegreesPerSecond
 import org.team4099.lib.units.perSecond
 import java.util.Queue
 import kotlin.math.IEEErem
+import kotlin.streams.toList
 
 object GyroIOPigeon2 : GyroIO {
   private var pigeon2 = Pigeon2(Constants.Gyro.PIGEON_2_ID, Constants.Universal.CANIVORE_NAME)
@@ -124,7 +125,7 @@ object GyroIOPigeon2 : GyroIO {
     inputs.gyroRollRate = gyroRollRate
 
     inputs.odometryYawPositions =
-      (yawPositionQueue.stream().map { value: Double -> value.degrees }.toArray() as Array<Angle>)
+      (yawPositionQueue.stream().map { value: Double -> value.degrees }.toList() as List<Angle>)
         .toMutableList()
     yawPositionQueue.clear()
 

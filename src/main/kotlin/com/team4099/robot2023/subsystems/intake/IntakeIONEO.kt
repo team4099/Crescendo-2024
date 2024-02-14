@@ -27,9 +27,8 @@ object IntakeIONEO : IntakeIO {
     )
 
   /*private val centerWheelSparkMax =
-    CANSparkMax(Constants.Intake.ROLLER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
-   */
-
+   CANSparkMax(Constants.Intake.ROLLER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
+  */
 
   private val centerWheelSensor =
     sparkMaxAngularMechanismSensor(

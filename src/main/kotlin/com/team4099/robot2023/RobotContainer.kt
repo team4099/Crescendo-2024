@@ -6,7 +6,7 @@ import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIO
+import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOReal
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.elevator.Elevator
@@ -35,7 +35,7 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
-import com.team4099.robot2023.subsystems.intake.IntakeIO
+import com.team4099.robot2023.subsystems.elevator.ElevatorIO
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -52,7 +52,7 @@ object RobotContainer {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
-      drivetrain = Drivetrain(object : GyroIO {}, object : DrivetrainIO {})
+      drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOReal)
       vision =
         Vision(
           //          object: CameraIO {}
@@ -66,7 +66,7 @@ object RobotContainer {
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
-      elevator = Elevator(ElevatorIONEO)
+      elevator = Elevator(object: ElevatorIO {})
       flywheel = Flywheel(FlywheelIOTalon)
       wrist = Wrist(WristIOTalon)
     } else {
@@ -155,7 +155,6 @@ object RobotContainer {
     ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
     ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
     ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
-
 
     /*
     TUNING COMMANDS

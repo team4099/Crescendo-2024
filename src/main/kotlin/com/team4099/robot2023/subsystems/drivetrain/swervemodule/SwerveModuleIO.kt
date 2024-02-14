@@ -50,8 +50,8 @@ interface SwerveModuleIO {
     var driveTemp = 0.0.celsius
     var steeringTemp = 0.0.celsius
 
-    var odometryDrivePositions = arrayOf<Length>()
-    var odometrySteeringPositions = arrayOf<Angle>()
+    var odometryDrivePositions = listOf<Length>()
+    var odometrySteeringPositions = listOf<Angle>()
 
     var potentiometerOutputRaw = 0.0
     var potentiometerOutputRadians = 0.0.radians
