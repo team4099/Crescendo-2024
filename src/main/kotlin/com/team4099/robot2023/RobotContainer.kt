@@ -9,8 +9,9 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOReal
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
+import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
 import com.team4099.robot2023.subsystems.elevator.Elevator
-import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
+import com.team4099.robot2023.subsystems.elevator.ElevatorIO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
@@ -35,7 +36,6 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
-import com.team4099.robot2023.subsystems.elevator.ElevatorIO
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -52,7 +52,8 @@ object RobotContainer {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
-      drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOReal)
+
+      drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
       vision =
         Vision(
           //          object: CameraIO {}
@@ -66,7 +67,7 @@ object RobotContainer {
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
-      elevator = Elevator(object: ElevatorIO {})
+      elevator = Elevator(object : ElevatorIO {})
       flywheel = Flywheel(FlywheelIOTalon)
       wrist = Wrist(WristIOTalon)
     } else {
@@ -92,6 +93,7 @@ object RobotContainer {
   }
 
   fun mapDefaultCommands() {
+
     drivetrain.defaultCommand =
       TeleopDriveCommand(
         driver = Ryan(),
@@ -168,15 +170,16 @@ object RobotContainer {
 
     /*
 
-    ControlBoard.shooterDown.whileTrue(flywheel.flywheelSpinUpCommand())
-    ControlBoard.shooterUp.whileTrue(flywheel.flywheelStopCommand())
-    ControlBoard.wristTestUp.whileTrue(wrist.wristPositionUpCommand())
-    ControlBoard.wristTestDown.whileTrue(wrist.wristPositionDownCommand())
-    ControlBoard.feederTest.whileTrue(feeder.feederOpenLoopShootTestCommand())
-    ControlBoard.elevatorDown.whileTrue(elevator.elevatorClosedLoopRetractCommand())
-    ControlBoard.elevatorUp.whileTrue(elevator.testElevatorClosedLoopExtendCommand())
-    ControlBoard.setTuningMode.whileTrue(superstructure.tuningCommand())
-     */
+    <<<<<<< HEAD
+        ControlBoard.shooterDown.whileTrue(flywheel.flywheelSpinUpCommand())
+        ControlBoard.shooterUp.whileTrue(flywheel.flywheelStopCommand())
+        ControlBoard.wristTestUp.whileTrue(wrist.wristPositionUpCommand())
+        ControlBoard.wristTestDown.whileTrue(wrist.wristPositionDownCommand())
+        ControlBoard.feederTest.whileTrue(feeder.feederOpenLoopShootTestCommand())
+        ControlBoard.elevatorDown.whileTrue(elevator.elevatorClosedLoopRetractCommand())
+        ControlBoard.elevatorUp.whileTrue(elevator.testElevatorClosedLoopExtendCommand())
+        ControlBoard.setTuningMode.whileTrue(superstructure.tuningCommand())
+         */
   }
 
   fun mapTestControls() {}

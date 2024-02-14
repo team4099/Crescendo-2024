@@ -189,6 +189,7 @@ class SwerveModuleIOTalon(
       steeringSensor.accelerationToRawUnits(DrivetrainConstants.STEERING_ACCEL_MAX)
     steeringConfiguration.CurrentLimits.SupplyCurrentLimit =
       DrivetrainConstants.STEERING_SUPPLY_CURRENT_LIMIT.inAmperes
+
     // steeringConfiguration.ClosedLoopGeneral.ContinuousWrap = true
     steeringConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
     // steeringConfiguration.Feedback.SensorToMechanismRatio = 1 /
@@ -287,6 +288,7 @@ class SwerveModuleIOTalon(
 
     inputs.drivePosition = driveSensor.position
     inputs.steeringPosition = steeringSensor.position
+    Logger.recordOutput("$label/rawSteeringValue", steeringFalcon.position.value)
     Logger.recordOutput("$label/rawSteeringValue", steeringFalcon.position.value)
 
     steeringFalcon.position.value
