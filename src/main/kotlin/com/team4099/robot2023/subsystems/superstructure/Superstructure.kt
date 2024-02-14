@@ -20,6 +20,7 @@ import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.volts
 
 class Superstructure(
   private val intake: Intake,
@@ -237,6 +238,7 @@ class Superstructure(
           )
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.intakeVoltage.get())
+        flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(2.volts)
         if (feeder.hasNote) {
           currentRequest = Request.SuperstructureRequest.Idle()
           nextState = SuperstructureStates.IDLE

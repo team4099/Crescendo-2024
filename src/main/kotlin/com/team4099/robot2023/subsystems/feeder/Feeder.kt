@@ -97,7 +97,7 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
   var lastBeamState = false
   val hasNote: Boolean
     get() {
-      return true
+      return false
       /*
       return (inputs.beamBroken &&
         Clock.fpgaTime - firstTripBeamBreakTime > FeederConstants.BEAM_BREAK_WAIT_TIME) || inputs.isSimulated

@@ -64,7 +64,7 @@ object RobotContainer {
           //        CameraIONorthstar("backward")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
-      intake = Intake(object: IntakeIO {})
+      intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
       flywheel = Flywheel(FlywheelIOTalon)
