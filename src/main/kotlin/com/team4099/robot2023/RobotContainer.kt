@@ -36,6 +36,7 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
+import com.team4099.robot2023.subsystems.wrist.WristIO
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -69,7 +70,7 @@ object RobotContainer {
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(object : ElevatorIO {})
       flywheel = Flywheel(FlywheelIOTalon)
-      wrist = Wrist(WristIOTalon)
+      wrist = Wrist(object : WristIO {} )
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)

@@ -22,7 +22,11 @@ import kotlin.streams.toList
 object GyroIOPigeon2 : GyroIO {
   private var pigeon2 = Pigeon2(Constants.Gyro.PIGEON_2_ID, Constants.Universal.CANIVORE_NAME)
 
-  private val isConnected: Boolean = pigeon2.upTime.value > 0.0
+  private val isConnected: Boolean
+    get() {
+      return pigeon2.upTime.value > 0.0
+    }
+
 
   var gyroYawOffset: Angle = 0.0.degrees
   var gyroPitchOffset: Angle = 0.0.degrees
