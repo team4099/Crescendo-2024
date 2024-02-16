@@ -24,6 +24,7 @@ import com.team4099.robot2023.subsystems.intake.IntakeIONEO
 import com.team4099.robot2023.subsystems.intake.IntakeIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
+import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
@@ -142,6 +143,10 @@ object RobotContainer {
 
   fun setDriveBrakeMode() {
     drivetrain.swerveModules.forEach { it.setDriveBrakeMode(true) }
+  }
+
+  fun requestIdle(){
+    superstructure.currentRequest = Request.SuperstructureRequest.Idle()
   }
 
   fun mapTeleopControls() {

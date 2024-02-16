@@ -50,7 +50,7 @@ object FeederIONeo : FeederIO {
         mutableListOf(Neo(feederSparkMax, "Roller Motor")),
         FeederConstants.FEEDER_CURRENT_LIMIT,
         70.celsius,
-        30.amps,
+        FeederConstants.FEEDER_CURRENT_LIMIT - 10.amps,
         90.celsius
       ),
     )

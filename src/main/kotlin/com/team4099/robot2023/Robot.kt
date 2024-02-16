@@ -143,6 +143,7 @@ object Robot : LoggedRobot() {
     RobotContainer.getAutonomousCommand().cancel()
     RobotContainer.setSteeringCoastMode()
     RobotContainer.setDriveBrakeMode()
+    RobotContainer.requestIdle()
     // autonomousCommand.cancel()
   }
 

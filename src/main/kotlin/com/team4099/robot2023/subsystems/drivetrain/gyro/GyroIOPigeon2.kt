@@ -1,5 +1,6 @@
 package com.team4099.robot2023.subsystems.drivetrain.gyro
 
+import com.ctre.phoenix6.BaseStatusSignal
 import com.ctre.phoenix6.configs.Pigeon2Configuration
 import com.ctre.phoenix6.hardware.Pigeon2
 import com.team4099.robot2023.config.constants.Constants
@@ -22,9 +23,19 @@ import kotlin.streams.toList
 object GyroIOPigeon2 : GyroIO {
   private var pigeon2 = Pigeon2(Constants.Gyro.PIGEON_2_ID, Constants.Universal.CANIVORE_NAME)
 
+
+  private val yawSignal = pigeon2.yaw
+  private val upTimeSignal = pigeon2.upTime
+  private val pitchSignal = pigeon2.pitch
+  private val rollSignal = pigeon2.roll
+  private val rollVelSignal = pigeon2.angularVelocityXWorld
+  private val pitchVelSignal = pigeon2.angularVelocityYWorld
+  private val yawVelSignal = pigeon2.angularVelocityZWorld
+
+
   private val isConnected: Boolean
     get() {
-      return pigeon2.upTime.value > 0.0
+      return upTimeSignal.value > 0.0
     }
 
   var gyroYawOffset: Angle = 0.0.degrees
@@ -39,7 +50,7 @@ object GyroIOPigeon2 : GyroIO {
   val gyroYaw: Angle
     get() {
       if (isConnected) {
-        var rawYaw = pigeon2.yaw.value + gyroYawOffset.inDegrees
+        var rawYaw = yawSignal.value + gyroYawOffset.inDegrees
         rawYaw += DrivetrainConstants.GYRO_RATE_COEFFICIENT * gyroYawRate.inDegreesPerSecond
         return rawYaw.IEEErem(360.0).degrees
       } else {
@@ -50,7 +61,7 @@ object GyroIOPigeon2 : GyroIO {
   val gyroPitch: Angle
     get() {
       if (isConnected) {
-        val rawPitch = pigeon2.pitch.value + gyroPitchOffset.inDegrees
+        val rawPitch = pitchSignal.value + gyroPitchOffset.inDegrees
         return rawPitch.IEEErem(360.0).degrees
       } else {
         return (-1.337).degrees
@@ -60,7 +71,7 @@ object GyroIOPigeon2 : GyroIO {
   val gyroRoll: Angle
     get() {
       if (isConnected) {
-        val rawRoll = pigeon2.roll.value + gyroRollOffset.inDegrees
+        val rawRoll = rollSignal.value + gyroRollOffset.inDegrees
         return rawRoll.IEEErem(360.0).degrees
       } else {
         return -1.337.degrees
@@ -70,7 +81,7 @@ object GyroIOPigeon2 : GyroIO {
   val gyroYawRate: AngularVelocity
     get() {
       if (isConnected) {
-        return pigeon2.angularVelocityZWorld.value.degrees.perSecond
+        return yawVelSignal.value.degrees.perSecond
       } else {
         return -1.337.degrees.perSecond
       }
@@ -79,7 +90,7 @@ object GyroIOPigeon2 : GyroIO {
   val gyroPitchRate: AngularVelocity
     get() {
       if (isConnected) {
-        return pigeon2.angularVelocityYWorld.value.degrees.perSecond
+        return pitchVelSignal.value.degrees.perSecond
       } else {
         return -1.337.degrees.perSecond
       }
@@ -88,7 +99,7 @@ object GyroIOPigeon2 : GyroIO {
   val gyroRollRate: AngularVelocity
     get() {
       if (isConnected) {
-        return pigeon2.angularVelocityXWorld.value.degrees.perSecond
+        return rollVelSignal.value.degrees.perSecond
       } else {
         return -1.337.degrees.perSecond
       }
@@ -114,8 +125,8 @@ object GyroIOPigeon2 : GyroIO {
   }
 
   override fun updateInputs(inputs: GyroIO.GyroIOInputs) {
-
-    inputs.rawGyroYaw = pigeon2.yaw.value.degrees
+    BaseStatusSignal.refreshAll(yawSignal, upTimeSignal, pitchSignal, rollSignal, yawVelSignal, pitchVelSignal, rollVelSignal)
+    inputs.rawGyroYaw = yawSignal.value.degrees
 
     inputs.gyroConnected = isConnected
 

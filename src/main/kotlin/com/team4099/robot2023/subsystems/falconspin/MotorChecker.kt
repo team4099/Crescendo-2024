@@ -10,6 +10,10 @@ object MotorChecker {
 
   val subsystemHardware = HashMap<String, HashMap<String, MutableList<MotorCollection>>>()
 
+  private val baseStageCurrentLimitTriggered = ArrayList<String>()
+  private val firstStageCurrentLimitTriggered = ArrayList<String>()
+  private val shutdownTriggered = ArrayList<String>()
+
   fun add(subsystemName: String, subCategory: String, subsystemMotorCollections: MotorCollection) {
     if (subsystemHardware[subsystemName] == null) {
       subsystemHardware[subsystemName] = HashMap()
@@ -36,6 +40,7 @@ object MotorChecker {
           if (motorCollection.maxMotorTemperature < motorCollection.firstStageTemperatureLimit &&
             motorCollection.currentLimitStage != CURRENT_STAGE_LIMIT.BASE
           ) {
+            baseStageCurrentLimitTriggered.add(subCategory.key)
             motorCollection.setCurrentLimit(motorCollection.baseCurrentLimit)
           }
 
@@ -44,6 +49,7 @@ object MotorChecker {
             motorCollection.firstStageTemperatureLimit..motorCollection.motorShutDownThreshold &&
             motorCollection.currentLimitStage != CURRENT_STAGE_LIMIT.FIRST
           ) {
+            firstStageCurrentLimitTriggered.add(subCategory.key)
             motorCollection.setCurrentLimit(motorCollection.firstStageCurrentLimit)
           }
 
@@ -51,15 +57,23 @@ object MotorChecker {
             // complete motor shutdown but we don't want to shut down all motors at once
             if (!DriverStation.isFMSAttached()) {
               if (motor.temperature > motor.motorShutDownThreshold) {
+                shutdownTriggered.add(subCategory.key)
                 motor.shutdown()
               }
             }
 
-            logMotor(subsystemName, motor)
+//            logMotor(subsystemName, motor)
           }
         }
       }
       Logger.recordOutput("MotorChecker/$subsystemName/motorNames", motorNames.toTypedArray())
+
+      Logger.recordOutput("MotorChecker/baseStageTriggered", baseStageCurrentLimitTriggered.toTypedArray())
+      Logger.recordOutput("MotorChecker/firstStageTriggered", firstStageCurrentLimitTriggered.toTypedArray())
+      Logger.recordOutput("MotorChecker/shutdownTriggered", shutdownTriggered.toTypedArray())
+      baseStageCurrentLimitTriggered.clear()
+      firstStageCurrentLimitTriggered.clear()
+      shutdownTriggered.clear()
     }
   }
 }
