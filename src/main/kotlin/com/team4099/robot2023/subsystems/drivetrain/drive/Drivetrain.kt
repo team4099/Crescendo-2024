@@ -186,6 +186,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
   var rawGyroAngle = odometryPose.rotation
 
+
   init {
     // Wheel speeds
     zeroSteering()
@@ -233,6 +234,9 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
     // updating odometry every loop cycle
     updateOdometry()
+
+    Logger.recordOutput("Drivetrain/OdometryGyroRotationValue", odometryPose.rotation.inDegrees
+    )
 
     Logger.recordOutput(
       "Drivetrain/xRobotVelocityMetersPerSecond", robotVelocity.x.inMetersPerSecond
@@ -353,12 +357,12 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
       // generate twist from wheel and gyro deltas
       var driveTwist = swerveDriveKinematics.toTwist2d(*wheelDeltas)
       if (gyroInputs.gyroConnected) {
-        val currentGyroYaw = gyroInputs.odometryYawPositions.removeFirst()
+        val currentGyroYaw = gyroInputs.rawGyroYaw
         driveTwist =
           edu.wpi.first.math.geometry.Twist2d(
-            driveTwist.dx, driveTwist.dy, (currentGyroYaw - lastGyroYaw).inRadians
+            driveTwist.dx, driveTwist.dy, -(currentGyroYaw - lastGyroYaw).inRadians
           )
-        lastGyroYaw = currentGyroYaw
+        lastGyroYaw = gyroInputs.rawGyroYaw
       }
 
       swerveDrivePoseEstimator.addDriveData(Clock.fpgaTime.inSeconds, Twist2d(driveTwist))
@@ -395,6 +399,8 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     driveVector: Pair<LinearVelocity, LinearVelocity>,
     fieldOriented: Boolean = true
   ) {
+
+    Logger.recordOutput("Drivetrain/isFieldOriented", fieldOriented)
     // flip the direction base don alliance color
     val flipDrive = if (FMSData.allianceColor == DriverStation.Alliance.Red) -1 else 1
     val allianceFlippedDriveVector =

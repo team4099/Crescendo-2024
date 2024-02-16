@@ -27,7 +27,6 @@ object GyroIOPigeon2 : GyroIO {
       return pigeon2.upTime.value > 0.0
     }
 
-
   var gyroYawOffset: Angle = 0.0.degrees
   var gyroPitchOffset: Angle = 0.0.degrees
   var gyroRollOffset: Angle = 0.0.degrees
@@ -105,7 +104,7 @@ object GyroIOPigeon2 : GyroIO {
       if (Constants.Drivetrain.DRIVETRAIN_TYPE ==
         Constants.Drivetrain.DrivetrainType.PHOENIX_TALON
       ) {
-        PhoenixOdometryThread.getInstance().registerSignal(pigeon2, pigeon2.getYaw())
+        PhoenixOdometryThread.getInstance().registerSignal(pigeon2, pigeon2.yaw)
       } else {
         SparkMaxOdometryThread.getInstance().registerSignal { pigeon2.yaw.getValueAsDouble() }
       }

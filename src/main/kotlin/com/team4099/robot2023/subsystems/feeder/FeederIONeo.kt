@@ -2,6 +2,7 @@ package com.team4099.robot2023.subsystems.feeder
 
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
+import com.revrobotics.SparkMaxLimitSwitch
 import com.team4099.lib.math.clamp
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FeederConstants
@@ -26,6 +27,8 @@ object FeederIONeo : FeederIO {
       feederSparkMax, FeederConstants.FEEDER_GEAR_RATIO, FeederConstants.VOLTAGE_COMPENSATION
     )
 
+  private val beamBreakPort = feederSparkMax.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed)
+
   init {
     feederSparkMax.restoreFactoryDefaults()
     feederSparkMax.clearFaults()
@@ -35,6 +38,8 @@ object FeederIONeo : FeederIO {
     feederSparkMax.inverted = FeederConstants.FEEDER_MOTOR_INVERTED
 
     feederSparkMax.idleMode = CANSparkMax.IdleMode.kCoast
+
+    beamBreakPort.enableLimitSwitch(false)
 
     feederSparkMax.burnFlash()
 
