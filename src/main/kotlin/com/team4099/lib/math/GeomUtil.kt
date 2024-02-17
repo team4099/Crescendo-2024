@@ -4,7 +4,9 @@ import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Transform2d
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.geometry.Twist2d
+import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.radians
 
 /**
  * Multiplies a twist by a scaling factor
@@ -26,4 +28,14 @@ fun multiplyTwist(twist: Twist2d, factor: Double): Twist2d {
  */
 fun Pose2d.purelyTranslateBy(translation2d: Translation2d): Pose2d {
   return this.transformBy(Transform2d(translation2d.rotateBy(-this.rotation), 0.0.degrees))
+}
+
+/**
+ * Returns the transform between the frame origin of the pose and the current pose state -- for
+ * example, if the pose describes the pose of the robot in the odometry frame, the returned
+ * transform will be the transform between the odometry frame and the robot frame.
+ * @return
+ */
+fun Pose2d.asTransform2d(): Transform2d {
+  return Transform2d(Pose2d(0.meters, 0.meters, 0.radians), this)
 }
