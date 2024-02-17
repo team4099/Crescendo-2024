@@ -62,14 +62,18 @@ object MotorChecker {
               }
             }
 
-//            logMotor(subsystemName, motor)
+            //            logMotor(subsystemName, motor)
           }
         }
       }
       Logger.recordOutput("MotorChecker/$subsystemName/motorNames", motorNames.toTypedArray())
 
-      Logger.recordOutput("MotorChecker/baseStageTriggered", baseStageCurrentLimitTriggered.toTypedArray())
-      Logger.recordOutput("MotorChecker/firstStageTriggered", firstStageCurrentLimitTriggered.toTypedArray())
+      Logger.recordOutput(
+        "MotorChecker/baseStageTriggered", baseStageCurrentLimitTriggered.toTypedArray()
+      )
+      Logger.recordOutput(
+        "MotorChecker/firstStageTriggered", firstStageCurrentLimitTriggered.toTypedArray()
+      )
       Logger.recordOutput("MotorChecker/shutdownTriggered", shutdownTriggered.toTypedArray())
       baseStageCurrentLimitTriggered.clear()
       firstStageCurrentLimitTriggered.clear()

@@ -2,8 +2,6 @@ package com.team4099.robot2023.subsystems.drivetrain.swervemodule
 
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
-import com.team4099.robot2023.util.rotateBy
-import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.RobotBase.isReal
@@ -125,30 +123,31 @@ class SwerveModule(val io: SwerveModuleIO) {
   fun periodic() {
     positionDeltas.add(
       SwerveModulePosition(
-        (inputs.drivePosition - lastDrivePosition).inMeters, inputs.steeringPosition.inRotation2ds
+        (inputs.drivePosition - lastDrivePosition).inMeters,
+        inputs.steeringPosition.inRotation2ds
       )
     )
     lastDrivePosition = inputs.drivePosition
 
-//    val deltaCount =
-//      Math.min(inputs.odometryDrivePositions.size, inputs.odometrySteeringPositions.size)
-//
-//    for (i in 0 until deltaCount) {
-//      val newDrivePosition = inputs.odometryDrivePositions[i]
-//      val newSteeringAngle = inputs.odometrySteeringPositions[i]
-//      positionDeltas.add(
-//        SwerveModulePosition(
-//          (newDrivePosition - lastDrivePosition).inMeters, newSteeringAngle.inRotation2ds
-//        )
-//      )
-//      lastDrivePosition = newDrivePosition
-//    }
-//
-//    if (positionDeltas.size > 0) {
-//      Logger.recordOutput("Drivetrain/PositionDeltas", positionDeltas[0].distanceMeters)
-//    } else {
-//      Logger.recordOutput("Drivetrain/PositionDeltas", -1337)
-//  }
+    //    val deltaCount =
+    //      Math.min(inputs.odometryDrivePositions.size, inputs.odometrySteeringPositions.size)
+    //
+    //    for (i in 0 until deltaCount) {
+    //      val newDrivePosition = inputs.odometryDrivePositions[i]
+    //      val newSteeringAngle = inputs.odometrySteeringPositions[i]
+    //      positionDeltas.add(
+    //        SwerveModulePosition(
+    //          (newDrivePosition - lastDrivePosition).inMeters, newSteeringAngle.inRotation2ds
+    //        )
+    //      )
+    //      lastDrivePosition = newDrivePosition
+    //    }
+    //
+    //    if (positionDeltas.size > 0) {
+    //      Logger.recordOutput("Drivetrain/PositionDeltas", positionDeltas[0].distanceMeters)
+    //    } else {
+    //      Logger.recordOutput("Drivetrain/PositionDeltas", -1337)
+    //  }
 
     // Updating SwerveModulePosition every loop cycle
     modulePosition.distanceMeters = inputs.drivePosition.inMeters
@@ -260,13 +259,18 @@ class SwerveModule(val io: SwerveModuleIO) {
   fun setPositionOpenLoop(desiredState: SwerveModuleState, optimize: Boolean = true) {
     if (optimize) {
       Logger.recordOutput("${io.label}/desiredAngleRadians", desiredState.angle.radians)
-//      val adjustedState: SwerveModuleState
-//      if ((inputs.steeringPosition + 360.degrees).minus(desiredState.angle.degrees.degrees).absoluteValue <= (inputs.steeringPosition).minus(desiredState.angle.degrees.degrees).absoluteValue){
-//        adjustedState = SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle)
-//      } else {
-//        adjustedState = desiredState
-//      }
-      Logger.recordOutput("${io.label}/minimizedDeltaRadians", (inputs.steeringPosition + 360.degrees).inRadians)
+      //      val adjustedState: SwerveModuleState
+      //      if ((inputs.steeringPosition +
+      // 360.degrees).minus(desiredState.angle.degrees.degrees).absoluteValue <=
+      // (inputs.steeringPosition).minus(desiredState.angle.degrees.degrees).absoluteValue){
+      //        adjustedState = SwerveModuleState(desiredState.speedMetersPerSecond,
+      // desiredState.angle)
+      //      } else {
+      //        adjustedState = desiredState
+      //      }
+      Logger.recordOutput(
+        "${io.label}/minimizedDeltaRadians", (inputs.steeringPosition + 360.degrees).inRadians
+      )
 
       val optimizedState =
         SwerveModuleState.optimize(desiredState, inputs.steeringPosition.inRotation2ds)

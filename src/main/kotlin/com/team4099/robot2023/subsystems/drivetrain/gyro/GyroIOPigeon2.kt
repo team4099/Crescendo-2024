@@ -23,7 +23,6 @@ import kotlin.streams.toList
 object GyroIOPigeon2 : GyroIO {
   private var pigeon2 = Pigeon2(Constants.Gyro.PIGEON_2_ID, Constants.Universal.CANIVORE_NAME)
 
-
   private val yawSignal = pigeon2.yaw
   private val upTimeSignal = pigeon2.upTime
   private val pitchSignal = pigeon2.pitch
@@ -31,7 +30,6 @@ object GyroIOPigeon2 : GyroIO {
   private val rollVelSignal = pigeon2.angularVelocityXWorld
   private val pitchVelSignal = pigeon2.angularVelocityYWorld
   private val yawVelSignal = pigeon2.angularVelocityZWorld
-
 
   private val isConnected: Boolean
     get() {
@@ -125,7 +123,15 @@ object GyroIOPigeon2 : GyroIO {
   }
 
   override fun updateInputs(inputs: GyroIO.GyroIOInputs) {
-    BaseStatusSignal.refreshAll(yawSignal, upTimeSignal, pitchSignal, rollSignal, yawVelSignal, pitchVelSignal, rollVelSignal)
+    BaseStatusSignal.refreshAll(
+      yawSignal,
+      upTimeSignal,
+      pitchSignal,
+      rollSignal,
+      yawVelSignal,
+      pitchVelSignal,
+      rollVelSignal
+    )
     inputs.rawGyroYaw = yawSignal.value.degrees
 
     inputs.gyroConnected = isConnected

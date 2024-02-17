@@ -29,15 +29,14 @@ import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.subsystems.wrist.Wrist
+import com.team4099.robot2023.subsystems.wrist.WristIO
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
-import com.team4099.robot2023.subsystems.wrist.WristIOTalon
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
-import com.team4099.robot2023.subsystems.wrist.WristIO
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -71,7 +70,7 @@ object RobotContainer {
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(object : ElevatorIO {})
       flywheel = Flywheel(FlywheelIOTalon)
-      wrist = Wrist(object : WristIO {} )
+      wrist = Wrist(object : WristIO {})
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
@@ -145,7 +144,7 @@ object RobotContainer {
     drivetrain.swerveModules.forEach { it.setDriveBrakeMode(true) }
   }
 
-  fun requestIdle(){
+  fun requestIdle() {
     superstructure.currentRequest = Request.SuperstructureRequest.Idle()
   }
 

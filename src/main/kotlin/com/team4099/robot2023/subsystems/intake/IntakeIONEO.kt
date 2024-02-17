@@ -27,12 +27,13 @@ object IntakeIONEO : IntakeIO {
     )
 
   private val centerWheelSparkMax =
-   CANSparkMax(Constants.Intake.CENTER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
-
+    CANSparkMax(Constants.Intake.CENTER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
 
   private val centerWheelSensor =
     sparkMaxAngularMechanismSensor(
-      rollerSparkMax, IntakeConstants.CENTER_WHEEL_GEAR_RATIO, IntakeConstants.VOLTAGE_COMPENSATION
+      rollerSparkMax,
+      IntakeConstants.CENTER_WHEEL_GEAR_RATIO,
+      IntakeConstants.VOLTAGE_COMPENSATION
     )
 
   init {
@@ -59,7 +60,6 @@ object IntakeIONEO : IntakeIO {
       ),
     )
 
-
     centerWheelSparkMax.restoreFactoryDefaults()
     centerWheelSparkMax.clearFaults()
 
@@ -70,7 +70,6 @@ object IntakeIONEO : IntakeIO {
     centerWheelSparkMax.idleMode = CANSparkMax.IdleMode.kCoast
 
     centerWheelSparkMax.burnFlash()
-
 
     MotorChecker.add(
       "Intake",
@@ -100,7 +99,6 @@ object IntakeIONEO : IntakeIO {
 
     inputs.centerWheelVelocity = centerWheelSensor.velocity
 
-
     inputs.centerWheelAppliedVotlage =
       centerWheelSparkMax.busVoltage.volts * centerWheelSparkMax.appliedOutput
     inputs.centerWheelStatorCurrent = centerWheelSparkMax.outputCurrent.amps
@@ -108,7 +106,6 @@ object IntakeIONEO : IntakeIO {
     inputs.centerWheelSupplyCurrent =
       inputs.centerWheelStatorCurrent * centerWheelSparkMax.appliedOutput.absoluteValue
     inputs.centerWheelTemp = centerWheelSparkMax.motorTemperature.celsius
-
   }
 
   /**
@@ -151,12 +148,10 @@ object IntakeIONEO : IntakeIO {
       rollerSparkMax.idleMode = CANSparkMax.IdleMode.kCoast
     }
 
-
     if (centerWheelBrake) {
       centerWheelSparkMax.idleMode = CANSparkMax.IdleMode.kBrake
     } else {
       centerWheelSparkMax.idleMode = CANSparkMax.IdleMode.kCoast
     }
-
   }
 }

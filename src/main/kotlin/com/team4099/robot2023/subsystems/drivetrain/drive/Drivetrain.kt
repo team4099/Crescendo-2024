@@ -186,8 +186,13 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
   var rawGyroAngle = odometryPose.rotation
 
-  val lastModulePositions = mutableListOf(SwerveModulePosition(), SwerveModulePosition(), SwerveModulePosition(), SwerveModulePosition())
-
+  val lastModulePositions =
+    mutableListOf(
+      SwerveModulePosition(),
+      SwerveModulePosition(),
+      SwerveModulePosition(),
+      SwerveModulePosition()
+    )
 
   init {
     // Wheel speeds
@@ -199,10 +204,10 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     gyroIO.updateInputs(gyroInputs)
 
     // Read new gyro and wheel data from sensors
-//    odometryLock.lock() // Prevents odometry updates while reading data
+    //    odometryLock.lock() // Prevents odometry updates while reading data
 
     swerveModules.forEach { it.updateInputs() }
-//    odometryLock.unlock()
+    //    odometryLock.unlock()
 
     Logger.processInputs("Gyro", gyroInputs)
 
@@ -240,8 +245,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     // updating odometry every loop cycle
     updateOdometry()
 
-    Logger.recordOutput("Drivetrain/OdometryGyroRotationValue", odometryPose.rotation.inDegrees
-    )
+    Logger.recordOutput("Drivetrain/OdometryGyroRotationValue", odometryPose.rotation.inDegrees)
 
     Logger.recordOutput(
       "Drivetrain/xRobotVelocityMetersPerSecond", robotVelocity.x.inMetersPerSecond
@@ -344,52 +348,54 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
   private fun updateOdometry() {
 
-//    // find device with min data updates and update odometry with that many deltas
-//    var deltaCount =
-//      if (gyroInputs.gyroConnected) gyroInputs.odometryYawPositions.size else Integer.MAX_VALUE
-//    for (i in 0..3) {
-//      deltaCount = Math.min(deltaCount, swerveModules[i].positionDeltas.size)
-//    }
-//
-//    // update odometry pose for each delta
-//    for (deltaIndex in 0..deltaCount - 1) {
-//      // Read wheel deltas from each module
-//      val wheelDeltas = arrayOfNulls<SwerveModulePosition>(4)
-//      for (moduleIndex in 0..3) {
-//        wheelDeltas[moduleIndex] = swerveModules[moduleIndex].positionDeltas.removeFirst()
-//      }
-//
-//      // generate twist from wheel and gyro deltas
-//      var driveTwist = swerveDriveKinematics.toTwist2d(*wheelDeltas)
-//      if (gyroInputs.gyroConnected) {
-//        val currentGyroYaw = gyroInputs.rawGyroYaw
-//        Logger.recordOutput("Drivetrain/yeeYaw", gyroInputs.rawGyroYaw.inDegrees)
-//        Logger.recordOutput("Drivetrain/lastYeeYaw", lastGyroYaw.inDegrees)
-//        driveTwist =
-//          edu.wpi.first.math.geometry.Twist2d(
-//            driveTwist.dx, driveTwist.dy, -(currentGyroYaw - lastGyroYaw).inRadians
-//          )
-//        lastGyroYaw = gyroInputs.rawGyroYaw
-//        Logger.recordOutput("Drivetrain/dxMeters", driveTwist.dx)
-//        Logger.recordOutput("Drivetrain/dYMeters", driveTwist.dy)
-//        Logger.recordOutput("Drivetrain/dThetaDegrees", -(currentGyroYaw - lastGyroYaw).inRadians)
-//      }
-//
-//      swerveDrivePoseEstimator.addDriveData(Clock.fpgaTime.inSeconds, Twist2d(driveTwist))
-//    }
+    //    // find device with min data updates and update odometry with that many deltas
+    //    var deltaCount =
+    //      if (gyroInputs.gyroConnected) gyroInputs.odometryYawPositions.size else
+    // Integer.MAX_VALUE
+    //    for (i in 0..3) {
+    //      deltaCount = Math.min(deltaCount, swerveModules[i].positionDeltas.size)
+    //    }
+    //
+    //    // update odometry pose for each delta
+    //    for (deltaIndex in 0..deltaCount - 1) {
+    //      // Read wheel deltas from each module
+    //      val wheelDeltas = arrayOfNulls<SwerveModulePosition>(4)
+    //      for (moduleIndex in 0..3) {
+    //        wheelDeltas[moduleIndex] = swerveModules[moduleIndex].positionDeltas.removeFirst()
+    //      }
+    //
+    //      // generate twist from wheel and gyro deltas
+    //      var driveTwist = swerveDriveKinematics.toTwist2d(*wheelDeltas)
+    //      if (gyroInputs.gyroConnected) {
+    //        val currentGyroYaw = gyroInputs.rawGyroYaw
+    //        Logger.recordOutput("Drivetrain/yeeYaw", gyroInputs.rawGyroYaw.inDegrees)
+    //        Logger.recordOutput("Drivetrain/lastYeeYaw", lastGyroYaw.inDegrees)
+    //        driveTwist =
+    //          edu.wpi.first.math.geometry.Twist2d(
+    //            driveTwist.dx, driveTwist.dy, -(currentGyroYaw - lastGyroYaw).inRadians
+    //          )
+    //        lastGyroYaw = gyroInputs.rawGyroYaw
+    //        Logger.recordOutput("Drivetrain/dxMeters", driveTwist.dx)
+    //        Logger.recordOutput("Drivetrain/dYMeters", driveTwist.dy)
+    //        Logger.recordOutput("Drivetrain/dThetaDegrees", -(currentGyroYaw -
+    // lastGyroYaw).inRadians)
+    //      }
+    //
+    //      swerveDrivePoseEstimator.addDriveData(Clock.fpgaTime.inSeconds, Twist2d(driveTwist))
+    //    }
 
     val wheelDeltas =
-    mutableListOf(
-      SwerveModulePosition(),
-      SwerveModulePosition(),
-      SwerveModulePosition(),
-      SwerveModulePosition()
-    )
+      mutableListOf(
+        SwerveModulePosition(),
+        SwerveModulePosition(),
+        SwerveModulePosition(),
+        SwerveModulePosition()
+      )
     for (i in 0 until 4) {
       wheelDeltas[i] =
         SwerveModulePosition(
           swerveModules[i].inputs.drivePosition.inMeters -
-                  lastModulePositions[i].distanceMeters,
+            lastModulePositions[i].distanceMeters,
           swerveModules[i].inputs.steeringPosition.inRotation2ds
         )
       lastModulePositions[i] =
