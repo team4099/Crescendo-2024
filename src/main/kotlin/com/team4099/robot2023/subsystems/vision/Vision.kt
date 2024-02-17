@@ -2,9 +2,9 @@ package com.team4099.robot2023.subsystems.vision
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.TunableNumber
+import com.team4099.lib.vision.TimestampedVisionUpdate
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.vision.camera.CameraIO
-import com.team4099.robot2023.util.PoseEstimator
 import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
@@ -43,8 +43,8 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
   private val thetaStdDev = TunableNumber("Vision/thetaStdDev", thetaStdDevCoefficient)
 
-  private var poseSupplier = Supplier<Pose2d> { Pose2d() }
-  private var visionConsumer: Consumer<List<PoseEstimator.TimestampedVisionUpdate>> = Consumer {}
+  private var fieldFramePoseSupplier = Supplier<Pose2d> { Pose2d() }
+  private var visionConsumer: Consumer<List<TimestampedVisionUpdate>> = Consumer {}
   private val lastFrameTimes = mutableMapOf<Int, Time>()
   private val lastTagDetectionTimes = mutableMapOf<Int, Time>()
 
@@ -55,10 +55,10 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
   }
 
   fun setDataInterfaces(
-    poseSupplier: Supplier<Pose2d>,
-    visionConsumer: Consumer<List<PoseEstimator.TimestampedVisionUpdate>>
+    fieldFramePoseSupplier: Supplier<Pose2d>,
+    visionConsumer: Consumer<List<TimestampedVisionUpdate>>
   ) {
-    this.poseSupplier = poseSupplier
+    this.fieldFramePoseSupplier = fieldFramePoseSupplier
     this.visionConsumer = visionConsumer
   }
 
@@ -80,9 +80,9 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       Logger.processInputs("Vision/${VisionConstants.CAMERA_NAMES[instance]}", inputs[instance])
     }
 
-    var currentPose: Pose2d = poseSupplier.get()
+    var fieldTCurrentRobotEstimate: Pose2d = fieldFramePoseSupplier.get()
     val robotPoses = mutableListOf<Pose2d>()
-    val visionUpdates = mutableListOf<PoseEstimator.TimestampedVisionUpdate>()
+    val visionUpdates = mutableListOf<TimestampedVisionUpdate>()
 
     for (instance in io.indices) {
 
@@ -172,8 +172,8 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
               val robotPose1 = cameraPose1.transformBy(cameraPoses[instance].inverse()).toPose2d()
 
-              if (robotPose0.rotation.minus(currentPose.rotation).absoluteValue <
-                robotPose1.rotation.minus(currentPose.rotation).absoluteValue
+              if (robotPose0.rotation.minus(fieldTCurrentRobotEstimate.rotation).absoluteValue <
+                robotPose1.rotation.minus(fieldTCurrentRobotEstimate.rotation).absoluteValue
               ) {
                 cameraPose = cameraPose0
                 robotPose = robotPose0
@@ -193,7 +193,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
           continue
         }
 
-        if ((robotPose.rotation - currentPose.rotation).absoluteValue > 7.degrees &&
+        if ((robotPose.rotation - fieldTCurrentRobotEstimate.rotation).absoluteValue > 7.degrees &&
           DriverStation.isEnabled()
         ) {
           continue
@@ -219,7 +219,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
         val thetaStdDev = thetaStdDev.get() * averageDistance.inMeters.pow(2) / tagPoses.size
 
         visionUpdates.add(
-          PoseEstimator.TimestampedVisionUpdate(
+          TimestampedVisionUpdate(
             timestamp, robotPose, VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev)
           )
         )

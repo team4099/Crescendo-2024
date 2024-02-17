@@ -1,5 +1,6 @@
 package com.team4099.robot2023.util
 
+import com.team4099.lib.vision.TimestampedVisionUpdate
 import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.Nat
 import edu.wpi.first.math.VecBuilder
@@ -10,7 +11,6 @@ import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Twist2d
-import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.meters
@@ -49,7 +49,7 @@ class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
       val timestamp: Double = timestampedVisionUpdate.timestamp.inSeconds
       val visionUpdate =
         VisionUpdate(
-          timestampedVisionUpdate.pose,
+          timestampedVisionUpdate.fieldTRobot,
           timestampedVisionUpdate.stdDevs,
           timestampedVisionUpdate.fromVision
         )
@@ -189,13 +189,6 @@ class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
     }
   }
 
-  /** Represents a single vision pose with a timestamp and associated standard deviations. */
-  class TimestampedVisionUpdate(
-    val timestamp: Time,
-    val pose: Pose2d,
-    val stdDevs: Matrix<N3, N1>,
-    val fromVision: Boolean = false
-  )
   companion object {
     private const val historyLengthSecs = 0.3
   }
