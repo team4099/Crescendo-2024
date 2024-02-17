@@ -27,7 +27,8 @@ object FeederIONeo : FeederIO {
       feederSparkMax, FeederConstants.FEEDER_GEAR_RATIO, FeederConstants.VOLTAGE_COMPENSATION
     )
 
-  private val beamBreakPort = feederSparkMax.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed)
+  private val beamBreakPort =
+    feederSparkMax.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed)
 
   init {
     feederSparkMax.restoreFactoryDefaults()
