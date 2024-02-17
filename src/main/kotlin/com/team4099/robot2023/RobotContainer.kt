@@ -89,8 +89,8 @@ object RobotContainer {
     }
 
     superstructure = Superstructure(intake, feeder, elevator, wrist, flywheel)
-    vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
-    limelight.poseSupplier = { drivetrain.odometryPose }
+    vision.setDataInterfaces({ drivetrain.fieldTRobot }, { drivetrain.addVisionData(it) })
+    limelight.poseSupplier = { drivetrain.odomTRobot }
   }
 
   fun mapDefaultCommands() {
