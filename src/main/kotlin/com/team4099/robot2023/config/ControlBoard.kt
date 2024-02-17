@@ -34,67 +34,34 @@ object ControlBoard {
 
   val resetGyro = Trigger { driver.startButton && driver.selectButton }
 
-  val extendArm = Trigger { operator.aButton }
+  val shooterUp = Trigger { driver.bButton }
+  val shooterDown = Trigger { driver.xButton }
+  val wristTestUp = Trigger { driver.yButton }
+  val wristTestDown = Trigger { driver.aButton }
+  val feederTest = Trigger { driver.rightShoulderButton }
 
-  val retractArm = Trigger { operator.bButton }
+  val elevatorUp = Trigger { driver.rightTriggerAxis > 0.5 }
+  val elevatorDown = Trigger { driver.leftTriggerAxis > 0.5 }
 
-  // val setArmPositionToShelfIntake = Trigger { operator.xButton }
+  val runGroundIntake = Trigger { driver.aButton }
+  val ejectGamePiece = Trigger { driver.bButton }
+  val prepAmpScore = Trigger { driver.xButton }
+  val ampScore = Trigger { driver.yButton }
 
-  // val toConeLevelOnePrep = Trigger {operator.leftShoulderButton && operator.aButton}
+  val scoreSpeakerLow = Trigger { operator.aButton }
+  val scoreSpeakerMid = Trigger { operator.bButton }
+  val scoreSpeakerHigh = Trigger { operator.xButton }
+  val requestIdle = Trigger { operator.yButton }
 
-  val prepScore = Trigger { operator.leftTriggerAxis > 0.5 }
+  val climbExtend = Trigger { technician.aButton }
+  val climbRetract = Trigger { technician.bButton }
 
-  val setArmCubeHybridPrep = Trigger { operator.leftShoulderButton && operator.aButton }
-  val setArmCubeMidPrep = Trigger { operator.leftShoulderButton && operator.bButton }
-  val setArmCubeHighPrep = Trigger { operator.leftShoulderButton && operator.yButton }
-
-  val setArmConeHybridPrep = Trigger { operator.rightShoulderButton && operator.aButton }
-  val setArmConeMidPrep = Trigger { operator.rightShoulderButton && operator.bButton }
-  val setArmConeHighPrep = Trigger { operator.rightShoulderButton && operator.yButton }
-
-  val goBackToIdle = Trigger { operator.selectButton && operator.startButton }
-
-  val setArmDoubleSubCube = Trigger { operator.dPadLeft }
-  val setArmDoubleSubCone = Trigger { operator.dPadRight }
-
-  val doubleSubstationIntake = Trigger { driver.aButton }
-  val singleSubstationIntake = Trigger { driver.bButton }
-  val scoreOuttake = Trigger { operator.dPadUp }
-  val groundIntakeCube = Trigger { operator.dPadRight }
-
-  val increaseRollerVoltage = Trigger { operator.dPadUp }
-  val decreaseRollerVoltage = Trigger { operator.dPadDown }
-
-  val groundIntakeCone = Trigger { driver.yButton }
-  val autoScore = Trigger { driver.rightTriggerAxis > 0.5 }
-  val dpadDown = Trigger { driver.dPadDown }
-
-  val ejectGamePiece = Trigger { operator.dPadRight }
-
-  // val armCharacterization = Trigger { operator.yButton }
-
-  /*
-  val intakeCone = Trigger { operator.aButton }
-
-  val intakeCube = Trigger { operator.bButton }
-
-  val outtakeCone = Trigger { operator.yButton }
-
-  val outtakeCube = Trigger { operator.xButton }
-
-   */
-  val runElevatorToHighNode = Trigger { operator.aButton }
-
-  val openLoopExtend = Trigger { operator.bButton }
-
-  val openLoopRetract = Trigger { operator.xButton }
-
-  val characterizeElevator = Trigger { operator.yButton }
-
-  val extendIntake = Trigger { technician.aButton }
-  val retractIntake = Trigger { technician.bButton }
-  val characterizeIntake = Trigger { technician.xButton }
-
-  // for testing
-  val setArmCommand = Trigger { technician.yButton }
+  // testing Trigger
+  val testIntake = Trigger { driver.aButton }
+  val testFeederIntake = Trigger { driver.bButton }
+  val testFeederShoot = Trigger { driver.xButton }
+  val testFlywheel = Trigger { driver.yButton }
+  val testWrist = Trigger { operator.aButton }
+  val testElevator = Trigger { operator.bButton }
+  val setTuningMode = Trigger { driver.rightShoulderButton }
 }

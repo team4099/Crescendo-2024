@@ -23,11 +23,11 @@
 */
 package com.team4099.lib.sim.utils.sim
 
+import com.team4099.lib.sim.utils.estimation.CameraProperties
 import com.team4099.lib.sim.utils.util.VideoSimUtil.updateVideoProp
 import com.team4099.lib.sim.utils.util.VideoSimUtil.warp16h5TagImage
 import com.team4099.lib.sim.utils.util.VideoSimUtil.drawTagDetection
 import kotlin.jvm.JvmOverloads
-import com.team4099.lib.sim.utils.estimation.CameraProperties
 import edu.wpi.first.networktables.NetworkTableEntry
 import org.photonvision.PhotonTargetSortMode
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer
@@ -50,11 +50,11 @@ import org.opencv.imgproc.Imgproc
 import edu.wpi.first.math.geometry.Rotation2d
 import java.util.stream.Collectors
 import edu.wpi.first.cameraserver.CameraServer
-import edu.wpi.first.cscore.VideoMode.PixelFormat
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.Pair
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Pose3d
+import edu.wpi.first.util.PixelFormat
 import edu.wpi.first.wpilibj.Timer
 import org.opencv.core.Size
 import org.photonvision.PhotonVersion

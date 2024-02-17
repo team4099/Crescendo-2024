@@ -1,4 +1,4 @@
-// Copyright 2021-2023 FRC 6328
+package com.team4099.utils.threads;// Copyright 2021-2023 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -11,16 +11,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package com.team4099.robot2023.subsystems.drivetrain.swervemodule.threads;
-
-import com.team4099.robot2023.config.constants.DrivetrainConstants;
-import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain;
-import edu.wpi.first.wpilibj.Notifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.function.DoubleSupplier;
 
 /**
  * Provides an interface for asynchronously reading high-frequency measurements to a set of queues.
@@ -29,45 +19,45 @@ import java.util.function.DoubleSupplier;
  * blocking thread. A Notifier thread is used to gather samples with consistent timing.
  */
 public class SparkMaxOdometryThread {
-    private List<DoubleSupplier> signals = new ArrayList<>();
-    private List<Queue<Double>> queues = new ArrayList<>();
+    private java.util.List<java.util.function.DoubleSupplier> signals = new java.util.ArrayList<>();
+    private java.util.List<java.util.Queue<Double>> queues = new java.util.ArrayList<>();
 
-    private final Notifier notifier;
-    private static SparkMaxOdometryThread instance = null;
+    private final edu.wpi.first.wpilibj.Notifier notifier;
+    private static com.team4099.utils.threads.SparkMaxOdometryThread instance = null;
 
-    public static SparkMaxOdometryThread getInstance() {
+    public static com.team4099.utils.threads.SparkMaxOdometryThread getInstance() {
         if (instance == null) {
-            instance = new SparkMaxOdometryThread();
+            instance = new com.team4099.utils.threads.SparkMaxOdometryThread();
         }
         return instance;
     }
 
     private SparkMaxOdometryThread() {
-        notifier = new Notifier(this::periodic);
+        notifier = new edu.wpi.first.wpilibj.Notifier(this::periodic);
         notifier.setName("SparkMaxOdometryThread");
-        notifier.startPeriodic(1.0 / DrivetrainConstants.OMOMETRY_UPDATE_FREQUENCY );
+        notifier.startPeriodic(1.0 / com.team4099.robot2023.config.constants.DrivetrainConstants.OMOMETRY_UPDATE_FREQUENCY );
     }
 
-    public Queue<Double> registerSignal(DoubleSupplier signal) {
-        Queue<Double> queue = new ArrayBlockingQueue<>(100);
-        Drivetrain.Companion.setOdometryLock(true);
+    public java.util.Queue<Double> registerSignal(java.util.function.DoubleSupplier signal) {
+        java.util.Queue<Double> queue = new java.util.concurrent.ArrayBlockingQueue<>(100);
+        com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(true);
         try {
             signals.add(signal);
             queues.add(queue);
         } finally {
-            Drivetrain.Companion.setOdometryLock(false);
+            com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(false);
         }
         return queue;
     }
 
     private void periodic() {
-        Drivetrain.Companion.setOdometryLock(true);
+        com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(true);
         try {
             for (int i = 0; i < signals.size(); i++) {
                 queues.get(i).offer(signals.get(i).getAsDouble());
             }
         } finally {
-            Drivetrain.Companion.setOdometryLock(false);
+            com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(false);
         }
     }
 }

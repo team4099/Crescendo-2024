@@ -3,14 +3,15 @@ package com.team4099.robot2023.subsystems.vision
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.TunableNumber
 import com.team4099.robot2023.config.constants.FieldConstants
+import com.team4099.lib.vision.TimestampedVisionUpdate
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.vision.camera.CameraIO
-import com.team4099.robot2023.util.PoseEstimator
 import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
+import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Pose3dWPILIB
 import org.team4099.lib.geometry.Quaternion
@@ -43,8 +44,8 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
   private val thetaStdDev = TunableNumber("Vision/thetaStdDev", thetaStdDevCoefficient)
 
-  private var poseSupplier = Supplier<Pose2d> { Pose2d() }
-  private var visionConsumer: Consumer<List<PoseEstimator.TimestampedVisionUpdate>> = Consumer {}
+  private var fieldFramePoseSupplier = Supplier<Pose2d> { Pose2d() }
+  private var visionConsumer: Consumer<List<TimestampedVisionUpdate>> = Consumer {}
   private val lastFrameTimes = mutableMapOf<Int, Time>()
   private val lastTagDetectionTimes = mutableMapOf<Int, Time>()
 
@@ -55,10 +56,10 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
   }
 
   fun setDataInterfaces(
-    poseSupplier: Supplier<Pose2d>,
-    visionConsumer: Consumer<List<PoseEstimator.TimestampedVisionUpdate>>
+    fieldFramePoseSupplier: Supplier<Pose2d>,
+    visionConsumer: Consumer<List<TimestampedVisionUpdate>>
   ) {
-    this.poseSupplier = poseSupplier
+    this.fieldFramePoseSupplier = fieldFramePoseSupplier
     this.visionConsumer = visionConsumer
   }
 
@@ -80,9 +81,9 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       Logger.processInputs("Vision/${VisionConstants.CAMERA_NAMES[instance]}", inputs[instance])
     }
 
-    var currentPose: Pose2d = poseSupplier.get()
+    var fieldTCurrentRobotEstimate: Pose2d = fieldFramePoseSupplier.get()
     val robotPoses = mutableListOf<Pose2d>()
-    val visionUpdates = mutableListOf<PoseEstimator.TimestampedVisionUpdate>()
+    val visionUpdates = mutableListOf<TimestampedVisionUpdate>()
 
     for (instance in io.indices) {
 
@@ -92,7 +93,6 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
       var cameraPose: Pose3d? = inputs[instance].frame
       var robotPose: Pose2d? = cameraPose?.transformBy(cameraPoses[instance])?.toPose2d()
-
 
       if (cameraPose == null || robotPose == null) {
         continue
@@ -142,13 +142,17 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
       if (inputs[instance].timestamp == 0.0.seconds) { // prolly wrong lol
         Logger.recordOutput(
-          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/estimatedRobotPose", Pose2d().pose2d
+          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/estimatedRobotPose",
+          Pose2dWPILIB.struct,
+          Pose2d().pose2d
         )
       }
 
       if (Clock.fpgaTime - lastFrameTimes[instance]!! > targetLogTime) {
         Logger.recordOutput(
-          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/tagPoses", *arrayOf<Pose3dWPILIB>()
+          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/tagPoses",
+          Pose3dWPILIB.struct,
+          *arrayOf<Pose3dWPILIB>()
         )
       }
     }
@@ -160,7 +164,9 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
     //      }
     //    }
 
-    Logger.recordOutput("Vision/allTagPoses", *allTagPoses.map { it.pose3d }.toTypedArray())
+    Logger.recordOutput(
+      "Vision/allTagPoses", Pose3dWPILIB.struct, *allTagPoses.map { it.pose3d }.toTypedArray()
+    )
 
     visionConsumer.accept(visionUpdates)
 

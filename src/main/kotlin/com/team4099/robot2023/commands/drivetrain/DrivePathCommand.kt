@@ -6,7 +6,6 @@ import com.team4099.lib.trajectory.CustomTrajectoryGenerator
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.AllianceFlipUtil
 import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -15,7 +14,7 @@ import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGeneratio
 import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint
 import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.geometry.Pose2d
@@ -55,6 +54,7 @@ import org.team4099.lib.units.inRadiansPerSecondPerSecond
 import org.team4099.lib.units.perSecond
 import java.util.function.Supplier
 import kotlin.math.PI
+import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 class DrivePathCommand(
   val drivetrain: Drivetrain,
@@ -65,7 +65,7 @@ class DrivePathCommand(
   val endPathOnceAtReference: Boolean = true,
   val leaveOutYAdjustment: Boolean = false,
   val endVelocity: Velocity2d = Velocity2d(),
-) : CommandBase() {
+) : Command() {
   private val xPID: PIDController<Meter, Velocity<Meter>>
   private val yPID: PIDController<Meter, Velocity<Meter>>
 
@@ -226,9 +226,7 @@ class DrivePathCommand(
         desiredState.curvatureRadPerMeter.radians.sin
 
     var nextDriveState =
-      swerveDriveController.calculate(
-        drivetrain.odometryPose.pose2d, desiredState, desiredRotation
-      )
+      swerveDriveController.calculate(drivetrain.odomTRobot.pose2d, desiredState, desiredRotation)
 
     if (leaveOutYAdjustment) {
       nextDriveState =
@@ -241,11 +239,12 @@ class DrivePathCommand(
 
     Logger.recordOutput(
       "Pathfollow/target",
+      Pose2dWPILIB.struct,
       Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position)
     )
 
     drivetrain.currentRequest =
-      Request.DrivetrainRequest.ClosedLoop(
+      DrivetrainRequest.ClosedLoop(
         nextDriveState,
         ChassisAccels(xAccel, yAccel, 0.0.radians.perSecond.perSecond).chassisAccelsWPILIB
       )
@@ -275,7 +274,9 @@ class DrivePathCommand(
       desiredRotation.velocityRadiansPerSec.radians.perSecond.inDegreesPerSecond
     )
 
-    Logger.recordOutput("Pathfollow/trajectory", trajectory)
+    Logger.recordOutput(
+      "Pathfollow/trajectory", edu.wpi.first.math.trajectory.Trajectory.proto, trajectory
+    )
     Logger.recordOutput("Pathfollow/isAtReference", swerveDriveController.atReference())
     Logger.recordOutput("Pathfollow/trajectoryTimeSeconds", trajectory.totalTimeSeconds)
 
@@ -311,16 +312,16 @@ class DrivePathCommand(
     if (interrupted) {
       // Stop where we are if interrupted
       drivetrain.currentRequest =
-        Request.DrivetrainRequest.OpenLoop(
-          0.degrees.perSecond, Pair(0.meters.perSecond, 0.meters.perSecond)
+        DrivetrainRequest.OpenLoop(
+          0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
         )
     } else {
       // Execute one last time to end up in the final state of the trajectory
       // Since we weren't interrupted, we know curTime > endTime
       execute()
       drivetrain.currentRequest =
-        Request.DrivetrainRequest.OpenLoop(
-          0.degrees.perSecond, Pair(0.meters.perSecond, 0.meters.perSecond)
+        DrivetrainRequest.OpenLoop(
+          0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
         )
     }
   }

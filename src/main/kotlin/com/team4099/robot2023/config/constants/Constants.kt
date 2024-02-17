@@ -18,7 +18,7 @@ object Constants {
     const val EPSILON = 1E-9
 
     val SLOW_STATUS_FRAME_TIME = 255.milli.seconds
-    val CANIVORE_NAME = "FalconVore"
+    const val CANIVORE_NAME = "FalconVore"
     val LOG_FOLDER = "/media/sda1/"
 
     val LOOP_PERIOD_TIME = 20.milli.seconds
@@ -82,25 +82,25 @@ object Constants {
 
     const val FRONT_LEFT_DRIVE_ID = 11
     const val FRONT_LEFT_STEERING_ID = 21
-    const val FRONT_LEFT_ANALOG_POTENTIOMETER = 1
+    const val FRONT_LEFT_ANALOG_POTENTIOMETER = 0
 
     val FRONT_LEFT_MODULE_NAME = "Front Left Wheel"
 
     const val FRONT_RIGHT_DRIVE_ID = 12
     const val FRONT_RIGHT_STEERING_ID = 22
-    const val FRONT_RIGHT_ANALOG_POTENTIOMETER = 2
+    const val FRONT_RIGHT_ANALOG_POTENTIOMETER = 3
 
     val FRONT_RIGHT_MODULE_NAME = "Front Right Wheel"
 
     const val BACK_LEFT_DRIVE_ID = 13
     const val BACK_LEFT_STEERING_ID = 23
-    const val BACK_LEFT_ANALOG_POTENTIOMETER = 0
+    const val BACK_LEFT_ANALOG_POTENTIOMETER = 2
 
     val BACK_LEFT_MODULE_NAME = "Back Left Wheel"
 
     const val BACK_RIGHT_DRIVE_ID = 14
     const val BACK_RIGHT_STEERING_ID = 24
-    const val BACK_RIGHT_ANALOG_POTENTIOMETER = 3
+    const val BACK_RIGHT_ANALOG_POTENTIOMETER = 1
 
     val BACK_RIGHT_MODULE_NAME = "Back Right Wheel"
   }
@@ -115,9 +115,14 @@ object Constants {
     const val PIGEON_2_ID = 1
   }
 
-  object Manipulator {
-    const val INTAKE_MOTOR_ID = 51
-    const val ARM_MOTOR_ID = 52
+  object Shooter {
+    const val FLYWHEEL_LEFT_MOTOR_ID = 51
+    const val FLYWHEEL_RIGHT_MOTOR_ID = 52
+  }
+
+  object WRIST {
+    const val WRIST_MOTOR_ID = 41
+    const val CANCODER_ID = 42
   }
 
   object Alert {
@@ -125,9 +130,13 @@ object Constants {
   }
 
   object Intake {
-    const val ROLLER_MOTOR_ID = 32
-    const val ARM_MOTOR_ID = 31
+    const val ROLLER_MOTOR_ID = 31
+    const val CENTER_MOTOR_ID = 32
     const val REV_ENCODER_PORT = 7
+  }
+
+  object Feeder {
+    const val FEEDER_MOTOR_ID = 61
   }
 
   object Led {

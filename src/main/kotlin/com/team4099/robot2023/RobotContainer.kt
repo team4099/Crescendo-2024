@@ -10,26 +10,50 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOReal
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
+import com.team4099.robot2023.subsystems.elevator.Elevator
+import com.team4099.robot2023.subsystems.elevator.ElevatorIO
+import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
+import com.team4099.robot2023.subsystems.feeder.Feeder
+import com.team4099.robot2023.subsystems.feeder.FeederIONeo
+import com.team4099.robot2023.subsystems.feeder.FeederIOSim
+import com.team4099.robot2023.subsystems.flywheel.Flywheel
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
+import com.team4099.robot2023.subsystems.intake.Intake
+import com.team4099.robot2023.subsystems.intake.IntakeIONEO
+import com.team4099.robot2023.subsystems.intake.IntakeIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
 import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIOPhotonvision
+import com.team4099.robot2023.subsystems.wrist.Wrist
+import com.team4099.robot2023.subsystems.wrist.WristIO
+import com.team4099.robot2023.subsystems.wrist.WristIOSim
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
+import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 object RobotContainer {
   private val drivetrain: Drivetrain
   private val vision: Vision
   private val limelight: LimelightVision
+  private val intake: Intake
+  private val feeder: Feeder
+  private val elevator: Elevator
+  private val flywheel: Flywheel
+  private val wrist: Wrist
+  val superstructure: Superstructure
 
   init {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
+
       drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
       vision =
         Vision(
@@ -42,6 +66,11 @@ object RobotContainer {
           //        CameraIONorthstar("backward")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
+      intake = Intake(IntakeIONEO)
+      feeder = Feeder(FeederIONeo)
+      elevator = Elevator(object : ElevatorIO {})
+      flywheel = Flywheel(FlywheelIOTalon)
+      wrist = Wrist(object : WristIO {})
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
@@ -52,13 +81,20 @@ object RobotContainer {
           CameraIOPhotonvision("parakeet_3")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
+      intake = Intake(IntakeIOSim)
+      feeder = Feeder(FeederIOSim)
+      elevator = Elevator(ElevatorIOSim)
+      flywheel = Flywheel(FlywheelIOSim)
+      wrist = Wrist(WristIOSim)
     }
 
-    vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
-    limelight.poseSupplier = { drivetrain.odometryPose }
+    superstructure = Superstructure(intake, feeder, elevator, wrist, flywheel)
+    vision.setDataInterfaces({ drivetrain.fieldTRobot }, { drivetrain.addVisionData(it) })
+    limelight.poseSupplier = { drivetrain.odomTRobot }
   }
 
   fun mapDefaultCommands() {
+
     drivetrain.defaultCommand =
       TeleopDriveCommand(
         driver = Ryan(),
@@ -86,7 +122,7 @@ object RobotContainer {
   }
 
   fun zeroSensors() {
-    drivetrain.currentRequest = Request.DrivetrainRequest.ZeroSensors()
+    drivetrain.currentRequest = DrivetrainRequest.ZeroSensors()
   }
 
   fun zeroAngle(toAngle: Angle) {
@@ -108,26 +144,47 @@ object RobotContainer {
     drivetrain.swerveModules.forEach { it.setDriveBrakeMode(true) }
   }
 
+  fun requestIdle() {
+    superstructure.currentRequest = Request.SuperstructureRequest.Idle()
+  }
+
   fun mapTeleopControls() {
+
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
-    //    ControlBoard.autoLevel.whileActiveContinuous(
-    //      GoToAngle(drivetrain).andThen(AutoLevel(drivetrain))
-    //    )
 
-    // ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
-    //    ControlBoard.dpadDown.whileTrue(PickupFromSubstationCommand(drivetrain, superstructure))
+    ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
+    ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
+    ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())
+    ControlBoard.ampScore.whileTrue(superstructure.scoreAmpCommand())
+    ControlBoard.scoreSpeakerLow.whileTrue(superstructure.scoreSpeakerLowCommand())
+    ControlBoard.scoreSpeakerMid.whileTrue(superstructure.scoreSpeakerMidCommand())
+    ControlBoard.scoreSpeakerHigh.whileTrue(superstructure.scoreSpeakerHighCommand())
+    ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
+    ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
+    ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
 
-    //    ControlBoard.doubleSubstationIntake.whileTrue(AutoScoreCommand(drivetrain,
-    // superstructure))
+    /*
+    TUNING COMMANDS
+    ControlBoard.testIntake.whileTrue(superstructure.testIntakeCommand())
+    ControlBoard.testFeederIntake.whileTrue(superstructure.testFeederIntakeCommand())
+    ControlBoard.testFeederShoot.whileTrue(superstructure.testFeederShootCommand())
+    ControlBoard.testFlywheel.whileTrue(superstructure.testFlywheelCommand())
+    ControlBoard.testWrist.whileTrue(superstructure.testWristCommand())
+    ControlBoard.testElevator.whileTrue(superstructure.testElevatorCommand())
+    */
 
-    //    ControlBoard.doubleSubstationIntake.whileTrue(
-    //      PickupFromSubstationCommand(
-    //        drivetrain,
-    //        superstructure,
-    //        Constants.Universal.GamePiece.CONE,
-    //        Constants.Universal.Substation.SINGLE_SUBSTATION
-    //      )
-    //    )
+    /*
+
+    <<<<<<< HEAD
+        ControlBoard.shooterDown.whileTrue(flywheel.flywheelSpinUpCommand())
+        ControlBoard.shooterUp.whileTrue(flywheel.flywheelStopCommand())
+        ControlBoard.wristTestUp.whileTrue(wrist.wristPositionUpCommand())
+        ControlBoard.wristTestDown.whileTrue(wrist.wristPositionDownCommand())
+        ControlBoard.feederTest.whileTrue(feeder.feederOpenLoopShootTestCommand())
+        ControlBoard.elevatorDown.whileTrue(elevator.elevatorClosedLoopRetractCommand())
+        ControlBoard.elevatorUp.whileTrue(elevator.testElevatorClosedLoopExtendCommand())
+        ControlBoard.setTuningMode.whileTrue(superstructure.tuningCommand())
+         */
   }
 
   fun mapTestControls() {}

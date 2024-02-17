@@ -138,6 +138,7 @@ $RECYCLE.BIN/
 ### Gradle ###
 .gradle
 /build/
+BuildConstants.kt
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -168,5 +169,10 @@ out/
 # Fleet
 .fleet
 
+
 # Simulation GUI and other tools window save file
 *-window.json
+
+
+**/BuildConstants.kt
+

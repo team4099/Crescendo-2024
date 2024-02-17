@@ -121,21 +121,33 @@ class SwerveModule(val io: SwerveModuleIO) {
   }
 
   fun periodic() {
-    io.updateInputs(inputs)
-
-    val deltaCount =
-      Math.min(inputs.odometryDrivePositions.size, inputs.odometrySteeringPositions.size)
-
-    for (i in 0..deltaCount) {
-      val newDrivePosition = inputs.odometryDrivePositions[i]
-      val newSteeringAngle = inputs.odometrySteeringPositions[i]
-      positionDeltas.add(
-        SwerveModulePosition(
-          (newDrivePosition - lastDrivePosition).inMeters, newSteeringAngle.inRotation2ds
-        )
+    positionDeltas.add(
+      SwerveModulePosition(
+        (inputs.drivePosition - lastDrivePosition).inMeters,
+        inputs.steeringPosition.inRotation2ds
       )
-      lastDrivePosition = newDrivePosition
-    }
+    )
+    lastDrivePosition = inputs.drivePosition
+
+    //    val deltaCount =
+    //      Math.min(inputs.odometryDrivePositions.size, inputs.odometrySteeringPositions.size)
+    //
+    //    for (i in 0 until deltaCount) {
+    //      val newDrivePosition = inputs.odometryDrivePositions[i]
+    //      val newSteeringAngle = inputs.odometrySteeringPositions[i]
+    //      positionDeltas.add(
+    //        SwerveModulePosition(
+    //          (newDrivePosition - lastDrivePosition).inMeters, newSteeringAngle.inRotation2ds
+    //        )
+    //      )
+    //      lastDrivePosition = newDrivePosition
+    //    }
+    //
+    //    if (positionDeltas.size > 0) {
+    //      Logger.recordOutput("Drivetrain/PositionDeltas", positionDeltas[0].distanceMeters)
+    //    } else {
+    //      Logger.recordOutput("Drivetrain/PositionDeltas", -1337)
+    //  }
 
     // Updating SwerveModulePosition every loop cycle
     modulePosition.distanceMeters = inputs.drivePosition.inMeters
@@ -197,7 +209,8 @@ class SwerveModule(val io: SwerveModuleIO) {
     var steeringDifference =
       (steering - inputs.steeringPosition).inRadians.IEEErem(2 * Math.PI).radians
 
-    shouldInvert = steeringDifference.absoluteValue > (Math.PI / 2).radians && optimize
+    shouldInvert = (steeringDifference.absoluteValue > (Math.PI / 2).radians) && optimize
+
     if (shouldInvert) {
       steeringDifference -= Math.PI.withSign(steeringDifference.inRadians).radians
     }
@@ -223,12 +236,10 @@ class SwerveModule(val io: SwerveModuleIO) {
   fun setOpenLoop(steering: Angle, speed: LinearVelocity, optimize: Boolean = true) {
     var steeringDifference =
       (steering - inputs.steeringPosition).inRadians.IEEErem(2 * Math.PI).radians
-
     shouldInvert = steeringDifference.absoluteValue > (Math.PI / 2).radians && optimize
     if (shouldInvert) {
       steeringDifference -= Math.PI.withSign(steeringDifference.inRadians).radians
     }
-
     val outputSpeed =
       if (shouldInvert) {
         speed * -1
@@ -247,6 +258,20 @@ class SwerveModule(val io: SwerveModuleIO) {
    */
   fun setPositionOpenLoop(desiredState: SwerveModuleState, optimize: Boolean = true) {
     if (optimize) {
+      Logger.recordOutput("${io.label}/desiredAngleRadians", desiredState.angle.radians)
+      //      val adjustedState: SwerveModuleState
+      //      if ((inputs.steeringPosition +
+      // 360.degrees).minus(desiredState.angle.degrees.degrees).absoluteValue <=
+      // (inputs.steeringPosition).minus(desiredState.angle.degrees.degrees).absoluteValue){
+      //        adjustedState = SwerveModuleState(desiredState.speedMetersPerSecond,
+      // desiredState.angle)
+      //      } else {
+      //        adjustedState = desiredState
+      //      }
+      Logger.recordOutput(
+        "${io.label}/minimizedDeltaRadians", (inputs.steeringPosition + 360.degrees).inRadians
+      )
+
       val optimizedState =
         SwerveModuleState.optimize(desiredState, inputs.steeringPosition.inRotation2ds)
       io.setOpenLoop(

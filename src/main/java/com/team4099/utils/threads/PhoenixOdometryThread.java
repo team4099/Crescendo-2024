@@ -1,4 +1,4 @@
-// Copyright 2021-2023 FRC 6328
+package com.team4099.utils.threads;// Copyright 2021-2023 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -11,21 +11,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package com.team4099.robot2023.subsystems.drivetrain.swervemodule.threads;
-
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.hardware.ParentDevice;
-import com.ctre.phoenix6.unmanaged.Unmanaged;
-import com.team4099.robot2023.config.constants.DrivetrainConstants;
-import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Provides an interface for asynchronously reading high-frequency measurements to a set of queues.
@@ -36,17 +21,17 @@ import java.util.concurrent.locks.ReentrantLock;
  * time synchronization.
  */
 public class PhoenixOdometryThread extends Thread {
-    private final Lock signalsLock =
-            new ReentrantLock(); // Prevents conflicts when registering signals
-    private BaseStatusSignal[] signals = new BaseStatusSignal[0];
-    private final List<Queue<Double>> queues = new ArrayList<>();
+    private final java.util.concurrent.locks.Lock signalsLock =
+            new java.util.concurrent.locks.ReentrantLock(); // Prevents conflicts when registering signals
+    private com.ctre.phoenix6.BaseStatusSignal[] signals = new com.ctre.phoenix6.BaseStatusSignal[0];
+    private final java.util.List<java.util.Queue<Double>> queues = new java.util.ArrayList<>();
     private boolean isCANFD = false;
 
-    private static PhoenixOdometryThread instance = null;
+    private static com.team4099.utils.threads.PhoenixOdometryThread instance = null;
 
-    public static PhoenixOdometryThread getInstance() {
+    public static com.team4099.utils.threads.PhoenixOdometryThread getInstance() {
         if (instance == null) {
-            instance = new PhoenixOdometryThread();
+            instance = new com.team4099.utils.threads.PhoenixOdometryThread();
         }
         return instance;
     }
@@ -57,12 +42,12 @@ public class PhoenixOdometryThread extends Thread {
         start();
     }
 
-    public Queue<Double> registerSignal(ParentDevice device, StatusSignal<Double> signal) {
-        isCANFD = Unmanaged.isNetworkFD(device.getNetwork());
-        Queue<Double> queue = new ArrayBlockingQueue<>(100);
+    public java.util.Queue<Double> registerSignal(com.ctre.phoenix6.hardware.ParentDevice device, com.ctre.phoenix6.StatusSignal<Double> signal) {
+        isCANFD = device.getNetwork().equals(com.team4099.robot2023.config.constants.Constants.Universal.CANIVORE_NAME);
+        java.util.Queue<Double> queue = new java.util.concurrent.ArrayBlockingQueue<>(100);
         signalsLock.lock();
         try {
-            BaseStatusSignal[] newSignals = new BaseStatusSignal[signals.length + 1];
+            com.ctre.phoenix6.BaseStatusSignal[] newSignals = new com.ctre.phoenix6.BaseStatusSignal[signals.length + 1];
             System.arraycopy(signals, 0, newSignals, 0, signals.length);
             newSignals[signals.length] = signal;
             signals = newSignals;
@@ -81,14 +66,14 @@ public class PhoenixOdometryThread extends Thread {
             signalsLock.lock();
             try {
                 if (isCANFD && signals.length > 0) {
-                    BaseStatusSignal.waitForAll(2.0 / DrivetrainConstants.OMOMETRY_UPDATE_FREQUENCY, signals);
+                    com.ctre.phoenix6.BaseStatusSignal.waitForAll(2.0 / com.team4099.robot2023.config.constants.DrivetrainConstants.OMOMETRY_UPDATE_FREQUENCY, signals);
                 } else {
                     // "waitForAll" does not support blocking on multiple
                     // signals with a bus that is not CAN FD, regardless
                     // of Pro licensing. No reasoning for this behavior
                     // is provided by the documentation.
-                    Thread.sleep((long) (1000.0 / DrivetrainConstants.OMOMETRY_UPDATE_FREQUENCY));
-                    BaseStatusSignal.refreshAll(signals);
+                    Thread.sleep((long) (1000.0 / com.team4099.robot2023.config.constants.DrivetrainConstants.OMOMETRY_UPDATE_FREQUENCY));
+                    com.ctre.phoenix6.BaseStatusSignal.refreshAll(signals);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -97,13 +82,13 @@ public class PhoenixOdometryThread extends Thread {
             }
 
             // Save new data to queues
-            Drivetrain.Companion.setOdometryLock(true);
+            com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(true);
             try {
                 for (int i = 0; i < signals.length; i++) {
                     queues.get(i).offer(signals[i].getValueAsDouble());
                 }
             } finally {
-                Drivetrain.Companion.setOdometryLock(false);
+                com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(false);
             }
         }
     }
