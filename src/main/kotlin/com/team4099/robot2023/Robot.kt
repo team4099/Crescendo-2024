@@ -10,6 +10,7 @@ import com.team4099.robot2023.util.Alert.AlertType
 import com.team4099.robot2023.util.FMSData
 import com.team4099.robot2023.util.NTSafePublisher
 import edu.wpi.first.hal.AllianceStationID
+import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.RobotBase
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.simulation.DriverStationSim
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import edu.wpi.first.hal.HAL
 import org.ejml.EjmlVersion.BUILD_DATE
 import org.ejml.EjmlVersion.DIRTY
 import org.ejml.EjmlVersion.GIT_BRANCH
@@ -54,6 +56,9 @@ object Robot : LoggedRobot() {
   override fun robotInit() {
     // running replays as fast as possible when replaying. (play in real time when robot is real or
     // sim)
+
+    HAL.report(FRCNetComm.tResourceType.kResourceType_Language, FRCNetComm.tInstances.kLanguage_Kotlin);
+
     setUseTiming(
       RobotBase.isReal() || Constants.Universal.SIM_MODE != Constants.Tuning.SimType.REPLAY
     )
