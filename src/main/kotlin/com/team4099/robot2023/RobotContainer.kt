@@ -27,7 +27,7 @@ import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.subsystems.vision.Vision
-import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
+import com.team4099.robot2023.subsystems.vision.camera.CameraIOPhotonvision
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.WristIO
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
@@ -59,9 +59,9 @@ object RobotContainer {
         Vision(
           //          object: CameraIO {}
           //          CameraIONorthstar("northstar"),
-          CameraIONorthstar("northstar_1"),
-          CameraIONorthstar("northstar_2"),
-          CameraIONorthstar("northstar_3"),
+          CameraIOPhotonvision("parakeet_1"),
+          CameraIOPhotonvision("parakeet_2"),
+          CameraIOPhotonvision("parakeet_3"),
           //        CameraIONorthstar("right"),
           //        CameraIONorthstar("backward")
         )
@@ -76,9 +76,9 @@ object RobotContainer {
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
       vision =
         Vision(
-          CameraIONorthstar("northstar_1"),
-          CameraIONorthstar("northstar_2"),
-          CameraIONorthstar("northstar_3"),
+          CameraIOPhotonvision("parakeet_1"),
+          CameraIOPhotonvision("parakeet_2"),
+          CameraIOPhotonvision("parakeet_3")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIOSim)
