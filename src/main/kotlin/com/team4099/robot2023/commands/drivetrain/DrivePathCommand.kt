@@ -1,7 +1,6 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.lib.logging.LoggedTunableValue
-import com.team4099.lib.pathfollow.Trajectory
 import com.team4099.lib.trajectory.CustomHolonomicDriveController
 import com.team4099.lib.trajectory.CustomTrajectoryGenerator
 import com.team4099.lib.trajectory.Waypoint
@@ -227,9 +226,7 @@ class DrivePathCommand(
         desiredState.curvatureRadPerMeter.radians.sin
 
     var nextDriveState =
-      swerveDriveController.calculate(
-        drivetrain.odometryPose.pose2d, desiredState, desiredRotation
-      )
+      swerveDriveController.calculate(drivetrain.odomTRobot.pose2d, desiredState, desiredRotation)
 
     if (leaveOutYAdjustment) {
       nextDriveState =
