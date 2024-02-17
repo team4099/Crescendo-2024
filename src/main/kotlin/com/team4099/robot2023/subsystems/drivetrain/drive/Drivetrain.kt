@@ -2,6 +2,7 @@ package com.team4099.robot2023.subsystems.drivetrain.drive
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.lib.vision.TimestampedVisionUpdate
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.config.constants.VisionConstants
@@ -635,7 +636,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     }
   }
 
-  fun addVisionData(visionData: List<PoseEstimator.TimestampedVisionUpdate>) {
+  fun addVisionData(visionData: List<TimestampedVisionUpdate>) {
     swerveDrivePoseEstimator.addVisionData(visionData)
   }
 

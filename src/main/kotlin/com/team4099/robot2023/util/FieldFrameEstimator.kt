@@ -2,6 +2,7 @@ package com.team4099.robot2023.util
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.math.asTransform2d
+import com.team4099.lib.vision.TimestampedVisionUpdate
 import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.Nat
 import edu.wpi.first.math.VecBuilder
@@ -204,13 +205,6 @@ class FieldFrameEstimator(stateStdDevs: Matrix<N3?, N1?>) {
     }
   }
 
-  /** Represents a single vision pose with a timestamp and associated standard deviations. */
-  class TimestampedVisionUpdate(
-    val timestamp: Time,
-    val fieldTRobot: Pose2d,
-    val stdDevs: Matrix<N3, N1>,
-    val fromVision: Boolean = false
-  )
   companion object {
     private val HISTORY_LENGTH = 0.3.seconds
   }
