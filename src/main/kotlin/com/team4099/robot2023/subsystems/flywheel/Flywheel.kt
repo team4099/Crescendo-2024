@@ -130,8 +130,6 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     get() =
       (
         currentState == FlywheelStates.TARGETING_VELOCITY &&
-          (inputs.rightFlywheelVelocity - flywheelRightTargetVelocity).absoluteValue <=
-          FlywheelConstants.FLYWHEEL_TOLERANCE &&
           (inputs.leftFlywheelVelocity - flywheelLeftTargetVelocity).absoluteValue <=
           FlywheelConstants.FLYWHEEL_TOLERANCE
         )

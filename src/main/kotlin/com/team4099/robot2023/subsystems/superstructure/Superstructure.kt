@@ -189,7 +189,7 @@ class Superstructure(
             nextState = SuperstructureStates.GROUND_INTAKE_PREP
           }
           is Request.SuperstructureRequest.EjectGamePiece -> {
-            nextState = SuperstructureStates.EJECT_GAMER_PIECE_PREP
+            nextState = SuperstructureStates.EJECT_GAME_PIECE_PREP
           }
           is Request.SuperstructureRequest.PrepScoreAmp -> {
             nextState = SuperstructureStates.SCORE_AMP_PREP
@@ -238,7 +238,6 @@ class Superstructure(
           )
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.intakeVoltage.get())
-        flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(2.volts)
         if (feeder.hasNote) {
           currentRequest = Request.SuperstructureRequest.Idle()
           nextState = SuperstructureStates.IDLE
@@ -432,9 +431,7 @@ class Superstructure(
       }
       SuperstructureStates.CLIMB_RETRACT -> {
         elevator.currentRequest =
-          Request.ElevatorRequest.TargetingPosition(
-            Elevator.TunableElevatorHeights.minPosition.get()
-          )
+          Request.ElevatorRequest.OpenLoop(-4.volts)
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
@@ -450,16 +447,18 @@ class Superstructure(
         if (!feeder.hasNote &&
           Clock.fpgaTime - shootStartTime > Flywheel.TunableFlywheelStates.ampScoreTime.get()
         ) {
+          currentRequest = Request.SuperstructureRequest.Idle()
           nextState = SuperstructureStates.IDLE
         }
 
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
+            currentRequest = Request.SuperstructureRequest.Idle()
             nextState = SuperstructureStates.IDLE
           }
         }
       }
-      SuperstructureStates.EJECT_GAMER_PIECE_PREP -> {
+      SuperstructureStates.EJECT_GAME_PIECE_PREP -> {
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.idleAngle.get())
         flywheel.currentRequest =
@@ -694,7 +693,7 @@ class Superstructure(
       CLIMB_EXTEND,
       CLIMB_RETRACT,
       EJECT_GAME_PIECE,
-      EJECT_GAMER_PIECE_PREP
+      EJECT_GAME_PIECE_PREP
     }
   }
 }

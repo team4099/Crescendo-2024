@@ -38,7 +38,7 @@ object FeederIONeo : FeederIO {
     feederSparkMax.setSmartCurrentLimit(FeederConstants.FEEDER_CURRENT_LIMIT.inAmperes.toInt())
     feederSparkMax.inverted = FeederConstants.FEEDER_MOTOR_INVERTED
 
-    feederSparkMax.idleMode = CANSparkMax.IdleMode.kCoast
+    feederSparkMax.idleMode = CANSparkMax.IdleMode.kBrake
 
     beamBreakPort.enableLimitSwitch(false)
 
@@ -61,6 +61,7 @@ object FeederIONeo : FeederIO {
     inputs.feederVelocity = feederSensor.velocity
     inputs.feederAppliedVoltage = feederSparkMax.busVoltage.volts * feederSparkMax.appliedOutput
     inputs.feederStatorCurrent = feederSparkMax.outputCurrent.amps
+    inputs.beamBroken = beamBreakPort.isPressed
 
     // BusVoltage * SupplyCurrent = AppliedVoltage * StatorCurrent
     // AppliedVoltage = percentOutput * BusVoltage

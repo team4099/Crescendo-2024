@@ -5,6 +5,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FeederConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
+import edu.wpi.first.math.filter.Debouncer
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
@@ -95,19 +96,19 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
   var firstTripBeamBreakTime = Clock.fpgaTime
 
   var lastBeamState = false
-  val hasNote: Boolean
-    get() {
-      return false
-      /*
-      return (inputs.beamBroken &&
-        Clock.fpgaTime - firstTripBeamBreakTime > FeederConstants.BEAM_BREAK_WAIT_TIME) || inputs.isSimulated
-       */
-    }
+
+  var debounceFilter = Debouncer(FeederConstants.beamBreakFilterTime.inSeconds)
+
+  var hasNote: Boolean = false
 
   private var timeProfileGeneratedAt = Clock.fpgaTime
 
   override fun periodic() {
     io.updateInputs(inputs)
+
+    hasNote = debounceFilter.calculate(inputs.beamBroken)
+
+    Logger.recordOutput("Feeder/hasNote", hasNote)
 
     Logger.processInputs("Feeder", inputs)
     Logger.recordOutput("Feeder/currentState", currentState)
@@ -133,15 +134,11 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
         nextState = FeederStates.OPEN_LOOP_INTAKE
       }
       FeederStates.OPEN_LOOP_INTAKE -> {
-        if (!hasNote) {
           setFeederVoltage(feederTargetVoltage)
-        }
         nextState = fromRequestToState(currentRequest)
       }
       FeederStates.OPEN_LOOP_SHOOT -> {
-        if (hasNote) {
           setFeederVoltage(feederTargetVoltage)
-        }
         nextState = fromRequestToState(currentRequest)
       }
     }
