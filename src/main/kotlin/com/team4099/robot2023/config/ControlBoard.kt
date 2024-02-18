@@ -64,5 +64,4 @@ object ControlBoard {
   val testWrist = Trigger { operator.aButton }
   val testElevator = Trigger { operator.bButton }
   val setTuningMode = Trigger { driver.rightShoulderButton }
-
 }
