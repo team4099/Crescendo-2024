@@ -1,6 +1,7 @@
 package com.team4099.robot2023
 
 import com.team4099.robot2023.auto.AutonomousSelector
+import com.team4099.robot2023.auto.mode.ExamplePathAuto
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
@@ -11,6 +12,7 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
 import com.team4099.robot2023.subsystems.elevator.Elevator
+import com.team4099.robot2023.subsystems.elevator.ElevatorIO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.feeder.Feeder
@@ -68,7 +70,7 @@ object RobotContainer {
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
-      elevator = Elevator(ElevatorIONEO)
+      elevator = Elevator(object: ElevatorIO {})
       flywheel = Flywheel(FlywheelIOTalon)
       wrist = Wrist(object : WristIO {})
     } else {
@@ -98,9 +100,9 @@ object RobotContainer {
     drivetrain.defaultCommand =
       TeleopDriveCommand(
         driver = Ryan(),
-        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { -1 * ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { -ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { -ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain
       )
@@ -150,17 +152,18 @@ object RobotContainer {
 
   fun mapTeleopControls() {
 
-    ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
-    ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
-    ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
-    ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())
-    ControlBoard.ampScore.whileTrue(superstructure.scoreAmpCommand())
-    ControlBoard.scoreSpeakerLow.whileTrue(superstructure.scoreSpeakerLowCommand())
-    ControlBoard.scoreSpeakerMid.whileTrue(superstructure.scoreSpeakerMidCommand())
-    ControlBoard.scoreSpeakerHigh.whileTrue(superstructure.scoreSpeakerHighCommand())
-    ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
-    ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
-    ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
+    ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 0.degrees))
+    //ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
+//    ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
+//    ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())
+//    ControlBoard.ampScore.whileTrue(superstructure.scoreAmpCommand())
+//    ControlBoard.scoreSpeakerLow.whileTrue(superstructure.scoreSpeakerLowCommand())
+//    ControlBoard.scoreSpeakerMid.whileTrue(superstructure.scoreSpeakerMidCommand())
+//    ControlBoard.scoreSpeakerHigh.whileTrue(superstructure.scoreSpeakerHighCommand())
+//    ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
+//    ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
+//    ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
+    ControlBoard.runGroundIntake.whileTrue(ExamplePathAuto(drivetrain))
 
     /*
     TUNING COMMANDS

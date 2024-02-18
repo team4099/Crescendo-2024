@@ -10,7 +10,6 @@ import org.team4099.lib.geometry.Pose2d
 class ExamplePathAuto(val drivetrain: Drivetrain) : SequentialCommandGroup() {
   init {
     addRequirements(drivetrain)
-
     addCommands(
       ResetPoseCommand(drivetrain, Pose2d(PathStore.examplePath.previewStartingHolonomicPose)),
       FollowPathPlannerPathCommand(drivetrain, PathStore.examplePath)
