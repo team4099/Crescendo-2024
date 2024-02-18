@@ -2,8 +2,8 @@ package com.team4099.robot2023.subsystems.vision
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.TunableNumber
-import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.lib.vision.TimestampedVisionUpdate
+import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.vision.camera.CameraIO
 import edu.wpi.first.math.VecBuilder
@@ -14,15 +14,12 @@ import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Pose3dWPILIB
-import org.team4099.lib.geometry.Quaternion
-import org.team4099.lib.geometry.Rotation3d
 import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
-import org.team4099.lib.units.derived.radians
 import java.util.function.Consumer
 import java.util.function.Supplier
 import kotlin.math.pow
@@ -86,6 +83,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
     val visionUpdates = mutableListOf<TimestampedVisionUpdate>()
 
     for (instance in io.indices) {
+      val currentPose = fieldFramePoseSupplier.get()
 
       lastFrameTimes[instance] = Clock.fpgaTime
       val timestamp = inputs[instance].timestamp
@@ -119,7 +117,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       val thetaStdDev = thetaStdDev.get() * averageDistance.inMeters.pow(2) / tagPoses.size
 
       visionUpdates.add(
-        PoseEstimator.TimestampedVisionUpdate(
+        TimestampedVisionUpdate(
           timestamp, robotPose, VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev)
         )
       )
@@ -138,7 +136,6 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
         "Vision/${VisionConstants.CAMERA_NAMES[instance]}/tagPoses",
         *tagPoses.map { it.pose3d }.toTypedArray()
       )
-
 
       if (inputs[instance].timestamp == 0.0.seconds) { // prolly wrong lol
         Logger.recordOutput(
