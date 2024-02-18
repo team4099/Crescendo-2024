@@ -39,7 +39,7 @@ sealed interface Request {
     ) : DrivetrainRequest
 
     class ClosedLoop(
-      val chassisSpeeds: ChassisSpeeds,
+      var chassisSpeeds: ChassisSpeeds,
       val chassisAccels: ChassisSpeeds =
         edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
     ) : DrivetrainRequest

@@ -151,7 +151,6 @@ object RobotContainer {
   fun mapTeleopControls() {
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
-
     ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
     ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
     ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())
