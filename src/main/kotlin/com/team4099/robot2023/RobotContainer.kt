@@ -28,13 +28,16 @@ import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.subsystems.vision.Vision
-import com.team4099.robot2023.subsystems.vision.camera.CameraIOPhotonvision
+import com.team4099.robot2023.subsystems.vision.camera.CameraIO
 import com.team4099.robot2023.subsystems.vision.camera.CameraIOSim
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.WristIO
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
+import org.team4099.lib.geometry.Rotation3d
+import org.team4099.lib.geometry.Transform3d
+import org.team4099.lib.geometry.Translation3d
 import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
@@ -59,11 +62,16 @@ object RobotContainer {
       drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
       vision =
         Vision(
-          //          object: CameraIO {}
+          object : CameraIO {
+            override val id: String
+              get() = "skrt"
+            override val robotTCamera: Transform3d
+              get() = Transform3d(Translation3d(), Rotation3d())
+          }
           //          CameraIONorthstar("northstar"),
-          CameraIOPhotonvision("parakeet_1", VisionConstants.CAMERA_TRANSFORMS[0]),
-          CameraIOPhotonvision("parakeet_2", VisionConstants.CAMERA_TRANSFORMS[1]),
-          CameraIOPhotonvision("parakeet_3", VisionConstants.CAMERA_TRANSFORMS[2]),
+          //          CameraIOPhotonvision("parakeet_1", VisionConstants.CAMERA_TRANSFORMS[0]),
+          //          CameraIOPhotonvision("parakeet_2", VisionConstants.CAMERA_TRANSFORMS[1]),
+          //          CameraIOPhotonvision("parakeet_3", VisionConstants.CAMERA_TRANSFORMS[2]),
           //        CameraIONorthstar("right"),
           //        CameraIONorthstar("backward")
         )
@@ -147,7 +155,7 @@ object RobotContainer {
 
   fun mapTeleopControls() {
 
-    ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
+    ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 0.0.degrees))
     ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
     ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
     ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())

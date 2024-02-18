@@ -182,6 +182,8 @@ class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPla
     // Sampling the trajectory for a state that we're trying to target
     val stateFromTrajectory = generatedTrajectory.sample(trajCurTime.inSeconds)
 
+    lastSampledPose = Pose2d(stateFromTrajectory.targetHolonomicPose)
+
     // Retrieves the last sampled pose, so we can keep our `atReference` variable updated
     Logger.recordOutput(
       "Odometry/targetPose",
@@ -195,8 +197,6 @@ class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPla
       "Pathfollow/thetaSetpoint", stateFromTrajectory.targetHolonomicPose.rotation.degrees
     )
     Logger.recordOutput("Pathfollow/currentTheta", drivetrain.odomTRobot.rotation.inDegrees)
-
-    lastSampledPose = Pose2d(stateFromTrajectory.targetHolonomicPose)
 
     val targetedChassisSpeeds =
       swerveDriveController.calculateRobotRelativeSpeeds(

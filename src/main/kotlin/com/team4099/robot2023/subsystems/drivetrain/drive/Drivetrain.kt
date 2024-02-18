@@ -568,12 +568,13 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
    * @param toAngle Zeros the gyro to the value
    */
   fun zeroGyroYaw(toAngle: Angle = 0.degrees) {
+    gyroIO.zeroGyroYaw(toAngle)
     // TODO(parth): This feels incorrect -- I think the first arg should be the gyro angle and the
     // undrifted pose should be updated to toAngle
     if (RobotBase.isSimulation()) {
       // NOTE(parth): The gyro itself should never need to be reset in-match on a real robot, the
       // odometry can be updated directly
-      gyroIO.zeroGyroYaw(toAngle)
+
       undriftedSwerveDriveOdometry.resetPosition(
         toAngle.inRotation2ds,
         swerveModules.map { it.modulePosition }.toTypedArray(),

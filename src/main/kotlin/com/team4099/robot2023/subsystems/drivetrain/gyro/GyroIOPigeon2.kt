@@ -153,14 +153,17 @@ object GyroIOPigeon2 : GyroIO {
   }
 
   override fun zeroGyroYaw(toAngle: Angle) {
-    gyroYawOffset = toAngle - pigeon2.yaw.value.IEEErem(360.0).degrees
+    Logger.recordOutput("Gyro/gyroYaw", gyroYaw.inDegrees)
+    Logger.recordOutput("Gyro/toAngle", toAngle.inDegrees)
+    gyroYawOffset = toAngle - yawSignal.value.IEEErem(360.0).degrees
+    Logger.recordOutput("Gyro/gyroYawOffsetDegrees", gyroYawOffset.inDegrees)
   }
 
   override fun zeroGyroPitch(toAngle: Angle) {
-    gyroPitchOffset = toAngle - pigeon2.pitch.value.IEEErem(360.0).degrees
+    gyroPitchOffset = toAngle - pitchSignal.value.IEEErem(360.0).degrees
   }
 
   override fun zeroGyroRoll(toAngle: Angle) {
-    gyroRollOffset = toAngle - pigeon2.roll.value.IEEErem(360.0).degrees
+    gyroRollOffset = toAngle - rollSignal.value.IEEErem(360.0).degrees
   }
 }
