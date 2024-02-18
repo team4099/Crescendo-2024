@@ -45,7 +45,7 @@ class FollowPathPlannerPathCommand(
   val drivetrain: Drivetrain,
   val path: PathPlannerPath,
   useOdoFrame: Boolean = true,
-  followingFieldCoordinates: Boolean = true,
+  val followingFieldCoordinates: Boolean = true,
 ) : Command() {
   private val translationToleranceAtEnd = 1.inches
   private val thetaToleranceAtEnd = 2.5.degrees
@@ -59,7 +59,7 @@ class FollowPathPlannerPathCommand(
   private var lastSampledPose = Pose2d()
 
   private var odoTRobotSupplier: () -> Pose2d
-  private var odoTFieldSupplier: () -> Transform2d
+  private var odoTField: Transform2d = Transform2d(Translation2d(), 0.0.degrees)
 
   private val atReference: Boolean
     get() =
@@ -138,12 +138,6 @@ class FollowPathPlannerPathCommand(
       odoTRobotSupplier = { drivetrain.fieldTRobot }
     }
 
-    if (followingFieldCoordinates) {
-      odoTFieldSupplier = { drivetrain.odomTField }
-    } else {
-      odoTFieldSupplier = { Transform2d(Translation2d(), 0.0.degrees) }
-    }
-
     translationPID = PathPlannerTranslationPID(poskP.get(), poskI.get(), poskD.get())
     rotationPID = PathPlannerRotationPID(thetakP.get(), thetakI.get(), thetakD.get())
 
@@ -163,6 +157,9 @@ class FollowPathPlannerPathCommand(
 
   override fun initialize() {
     trajStartTime = Clock.fpgaTime
+    if (followingFieldCoordinates) {
+      odoTField = drivetrain.odomTField
+    }
   }
 
   override fun execute() {
@@ -215,7 +212,7 @@ class FollowPathPlannerPathCommand(
       )
     )
     lastSampledPose =
-      odoTFieldSupplier()
+      odoTField
         .asPose2d()
         .transformBy(Pose2d(stateFromTrajectory.targetHolonomicPose).asTransform2d().inverse())
 
@@ -223,7 +220,7 @@ class FollowPathPlannerPathCommand(
     Logger.recordOutput("Pathfollow/currentThetaDegrees", odoTRobotSupplier().rotation.inDegrees)
 
     val fieldFrameRobotPose =
-      odoTFieldSupplier().inverse().asPose2d().transformBy(odoTRobotSupplier().asTransform2d())
+      odoTField.inverse().asPose2d().transformBy(odoTRobotSupplier().asTransform2d())
     val targetedChassisSpeeds =
       swerveDriveController.calculateRobotRelativeSpeeds(fieldFrameRobotPose, stateFromTrajectory)
 
