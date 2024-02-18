@@ -1,6 +1,7 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.lib.pathfollow.Trajectory
 import com.team4099.lib.trajectory.CustomHolonomicDriveController
 import com.team4099.lib.trajectory.CustomTrajectoryGenerator
 import com.team4099.lib.trajectory.Waypoint
@@ -239,6 +240,12 @@ class DrivePathCommand(
     drivetrain.targetPose =
       Pose2d(Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position))
 
+    Logger.recordOutput(
+      "Pathfollow/target",
+      Pose2dWPILIB.struct,
+      Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position)
+    )
+
     drivetrain.currentRequest =
       DrivetrainRequest.ClosedLoop(
         nextDriveState,
@@ -270,6 +277,9 @@ class DrivePathCommand(
       desiredRotation.velocityRadiansPerSec.radians.perSecond.inDegreesPerSecond
     )
 
+    Logger.recordOutput(
+      "Pathfollow/trajectory", edu.wpi.first.math.trajectory.Trajectory.proto, trajectory
+    )
     Logger.recordOutput("Pathfollow/isAtReference", swerveDriveController.atReference())
     Logger.recordOutput("Pathfollow/trajectoryTimeSeconds", trajectory.totalTimeSeconds)
 

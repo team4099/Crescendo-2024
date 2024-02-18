@@ -18,8 +18,6 @@ import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.ElectricalPotential
-import org.team4099.lib.units.derived.degrees
-import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.inVoltsPerInch
 import org.team4099.lib.units.derived.inVoltsPerInchPerSecond
@@ -85,6 +83,18 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
         ElevatorConstants.ELEVATOR_SOFT_LIMIT_EXTENSION,
         Pair({ it.inInches }, { it.inches })
       )
+    val testPosition =
+      LoggedTunableValue(
+        "Elevator/testPosition",
+        ElevatorConstants.SHOOT_SPEAKER_MID_POSITION,
+        Pair({ it.inInches }, { it.inches })
+      )
+    val climbExtend =
+      LoggedTunableValue(
+        "Elevator/climbExtend",
+        ElevatorConstants.ELEVATOR_CLIMB_EXTENSION,
+        Pair({ it.inInches }, { it.inches })
+      )
 
     // TODO: change voltages
     val openLoopExtendVoltage =
@@ -100,27 +110,35 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
         Pair({ it.inVolts }, { it.volts })
       )
 
-    val shootSpeakerPosition =
+    val shootSpeakerLow =
       LoggedTunableValue(
-        "Elevator/shootSpeakerPosition", ElevatorConstants.SHOOT_SPEAKER_POSITION
+        "Elevator/shootSpeakerLow",
+        ElevatorConstants.SHOOT_SPEAKER_LOW_POSITION,
+        Pair({ it.inInches }, { it.inches })
+      )
+    val shootSpeakerMid =
+      LoggedTunableValue(
+        "Elevator/shootSpeakerMid",
+        ElevatorConstants.SHOOT_SPEAKER_MID_POSITION,
+        Pair({ it.inInches }, { it.inches })
+      )
+    val shootSpeakerHigh =
+      LoggedTunableValue(
+        "Elevator/shootSpeakerHigh",
+        ElevatorConstants.SHOOT_SPEAKER_HIGH_POSITION,
+        Pair({ it.inInches }, { it.inches })
       )
     val shootAmpPosition =
-      LoggedTunableValue("Elevator/shootAmpPosition", ElevatorConstants.SHOOT_AMP_POSITION)
-    val sourceNoteOffset =
-      LoggedTunableValue("Elevator/sourceNoteOffset", ElevatorConstants.SOURCE_NOTE_OFFSET)
-
-    val xPos = LoggedTunableValue("Elevator/xPos", 0.0.inches)
-    val yPos = LoggedTunableValue("Elevator/yPos", 0.0.inches)
-    val zPos = LoggedTunableValue("Elevator/zPos", 0.0.inches)
-    val thetaPos = LoggedTunableValue("Elevator/thetaPos", 0.0.degrees)
-    val xPos1 = LoggedTunableValue("Elevator/xPos1", 0.0.inches)
-    val yPos1 = LoggedTunableValue("Elevator/yPos1", 0.0.inches)
-    val zPos1 = LoggedTunableValue("Elevator/zPos1", 0.0.inches)
-    val thetaPos1 =
       LoggedTunableValue(
-        "Elevator/thetaPos1",
-        ElevatorConstants.ELEVATOR_THETA_POS,
-        Pair({ it.inDegrees }, { it.degrees })
+        "Elevator/shootAmpPosition",
+        ElevatorConstants.SHOOT_AMP_POSITION,
+        Pair({ it.inInches }, { it.inches })
+      )
+    val sourceNoteOffset =
+      LoggedTunableValue(
+        "Elevator/sourceNoteOffset",
+        ElevatorConstants.SOURCE_NOTE_OFFSET,
+        Pair({ it.inInches }, { it.inches })
       )
   }
 
@@ -239,8 +257,10 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
     Logger.recordOutput("Elevator/currentRequest", currentRequest.javaClass.simpleName)
     Logger.recordOutput(
       "Elevator/elevatorHeight",
-      inputs.elevatorPosition - ElevatorConstants.ELEVATOR_GROUND_OFFSET
+      (inputs.elevatorPosition - ElevatorConstants.ELEVATOR_GROUND_OFFSET).inInches
     )
+    Logger.recordOutput("Elevator/requestedPosition", elevatorPositionTarget.inInches)
+
     if (Constants.Tuning.DEBUGING_MODE) {
       Logger.recordOutput("Elevator/isHomed", isHomed)
       Logger.recordOutput("Elevator/canContinueSafely", canContinueSafely)
@@ -267,6 +287,7 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
     when (currentState) {
       ElevatorState.UNINITIALIZED -> {
         nextState = fromElevatorRequestToState(currentRequest)
+        zeroEncoder()
       }
       ElevatorState.OPEN_LOOP -> {
         setOutputVoltage(elevatorVoltageTarget)
@@ -306,6 +327,7 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
           "Elevator/profileTargetVelocity", profilePosition.velocity.inInchesPerSecond
         )
         Logger.recordOutput("Elevator/profileTargetPosition", profilePosition.position.inInches)
+        Logger.recordOutput("Elevator/timeElapsed", timeElapsed.inSeconds)
         nextState = fromElevatorRequestToState(currentRequest)
         if (!(currentState.equivalentToRequest(currentRequest))) {
           lastRequestedVelocity = -999.inches.perSecond
@@ -313,13 +335,21 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
         }
       }
       ElevatorState.HOME -> {
-        if (inputs.leaderStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT) {
+        zeroEncoder()
+        isHomed = true
+
+        if (isHomed) {
+          nextState = fromElevatorRequestToState(currentRequest)
+        }
+        /*
+
+        if (inputs.leaderStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT || inputs.followerStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT ) {
           lastHomingStatorCurrentTripTime = Clock.fpgaTime
         }
         if (!inputs.isSimulating &&
           (
             !isHomed &&
-              inputs.leaderStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT &&
+                    (inputs.leaderStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT || inputs.followerStatorCurrent < ElevatorConstants.HOMING_STATOR_CURRENT ) &&
               Clock.fpgaTime - lastHomingStatorCurrentTripTime <
               ElevatorConstants.HOMING_STALL_TIME_THRESHOLD
             )
@@ -329,9 +359,8 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
           zeroEncoder()
           isHomed = true
         }
-        if (isHomed) {
-          nextState = fromElevatorRequestToState(currentRequest)
-        }
+
+         */
       }
     }
     currentState = nextState
@@ -400,10 +429,10 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
   }
 
   fun elevatorClosedLoopRetractCommand(): Command {
-    return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(4.inches) })
+    return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(2.inches) })
   }
 
   fun testElevatorClosedLoopExtendCommand(): Command {
-    return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(16.inches) })
+    return runOnce({ currentRequest = ElevatorRequest.TargetingPosition(10.inches) })
   }
 }

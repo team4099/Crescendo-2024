@@ -13,13 +13,13 @@ interface GyroIO {
   class GyroIOInputs : LoggableInputs {
     var rawGyroYaw = 0.0.radians
     var gyroYaw = 0.0.radians
-    var gyroPitch = -3.degrees
+    var gyroPitch = 0.0.radians
     var gyroRoll = 0.0.radians
     var gyroYawRate = 0.0.radians.perSecond
     var gyroPitchRate = 0.0.radians.perSecond
     var gyroRollRate = 0.0.radians.perSecond
 
-    var odometryYawPositions = arrayOf<Angle>()
+    var odometryYawPositions = mutableListOf<Angle>()
 
     var gyroConnected = false
 

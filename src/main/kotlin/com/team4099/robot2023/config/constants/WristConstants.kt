@@ -29,29 +29,47 @@ object WristConstants {
 
   val WRIST_ENCODER_GEAR_RATIO = 0.0
 
-  val WRIST_GEAR_RATIO = 90.0 / 12 * 90 / 24 * 90 / 30
+  val WRIST_GEAR_RATIO = 12.0 / 90.0 * 24.0 / 90.0 * 32.0 / 90.0
   val WRIST_VOLTAGE_COMPENSATION = 12.0.volts
   val WRIST_STATOR_CURRENT_LIMIT = 40.0.amps
 
-  val WRIST_MAX_ROTATION = 45.degrees
-  val WRIST_MIN_ROTATION = (-47.0).degrees
+  val WRIST_MAX_ROTATION = 90.degrees
+  val WRIST_MIN_ROTATION = (-37.0).degrees
 
-  val MAX_WRIST_VELOCITY = 1.radians.perSecond
-  val MAX_WRIST_ACCELERATION = 2.radians.perSecond.perSecond
+  val WRIST_ZERO_SIM_OFFSET = 27.5.degrees
+
+  val MAX_WRIST_VELOCITY = 300.degrees.perSecond
+  val MAX_WRIST_ACCELERATION = 600.degrees.perSecond.perSecond
+
+  val HARDSTOP_OFFSET = 47.degrees
   object PID {
-    val REAL_KP: ProportionalGain<Radian, Volt> = 0.001.volts / 1.0.degrees
+    val REAL_KP: ProportionalGain<Radian, Volt> = 0.07.volts / 1.0.degrees
     val REAL_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
-    val REAL_KD: DerivativeGain<Radian, Volt> = 0.0.volts / (1.0.rotations / 1.0.seconds)
+    val REAL_KD: DerivativeGain<Radian, Volt> = 0.0175.volts / (1.0.rotations / 1.0.seconds)
 
     val SIM_KP: ProportionalGain<Radian, Volt> = 1.volts / 1.0.degrees
     val SIM_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
-    val SIM_KD: DerivativeGain<Radian, Volt> = 0.00.volts / (1.0.degrees / 1.0.seconds)
+    val SIM_KD: DerivativeGain<Radian, Volt> = 0.0175.volts / (1.0.degrees / 1.0.seconds)
 
-    val WRIST_KG = 1.25.volts
-    val WRIST_KV = 1.61.volts / 1.0.radians.perSecond
-    val WRIST_KA = 0.03.volts / 1.0.radians.perSecond.perSecond
-    val WRIST_KS = 0.0.volts
+    val REAL_WRIST_KG = 0.3.volts
+    val REAL_WRIST_KV = 1.6.volts / 1.0.radians.perSecond
+    val REAL_WRIST_KA = 0.175.volts / 1.0.radians.perSecond.perSecond
+    val REAL_WRIST_KS = 0.15.volts
+
+    val SIM_WRIST_KG = 1.3.volts
+    val SIM_WRIST_KV = 1.6.volts / 1.0.radians.perSecond
+    val SIM_WRIST_KA = 0.175.volts / 1.0.radians.perSecond.perSecond
+    val SIM_WRIST_KS = 0.15.volts
   }
 
-  val WRIST_TOLERANCE = 0.01.degrees
+  val WRIST_TOLERANCE = 0.1.degrees
+
+  val IDLE_ANGLE = (-35.0).degrees
+  val AMP_SCORE_ANGLE = 0.0.degrees
+  val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = 0.0.degrees
+  val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = 30.0.degrees
+  val SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH = 50.0.degrees
+  val CLIMB_ANGLE = 20.0.degrees
+  val INTAKE_ANGLE = (-35.0).degrees
+  val IDLE_ANGLE_HAS_GAMEPEICE = -35.0.degrees
 }

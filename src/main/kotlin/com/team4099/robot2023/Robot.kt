@@ -33,7 +33,6 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 object Robot : LoggedRobot() {
-
   val logFolderAlert =
     Alert("Log folder path does not exist. Data will NOT be logged.", AlertType.ERROR)
   val logReceiverQueueAlert =
@@ -134,7 +133,7 @@ object Robot : LoggedRobot() {
 
   override fun autonomousInit() {
     RobotContainer.zeroSensors()
-    FMSData.allianceColor = DriverStation.getAlliance().get()
+    FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
     RobotContainer.setDriveBrakeMode()
     RobotContainer.setSteeringBrakeMode()
     RobotContainer.getAutonomousCommand().schedule()
@@ -144,6 +143,7 @@ object Robot : LoggedRobot() {
     RobotContainer.getAutonomousCommand().cancel()
     RobotContainer.setSteeringCoastMode()
     RobotContainer.setDriveBrakeMode()
+    RobotContainer.requestIdle()
     // autonomousCommand.cancel()
   }
 
@@ -167,6 +167,8 @@ object Robot : LoggedRobot() {
       (Clock.realTimestamp - motorCheckerStartTime).inMilliseconds
     )
 
+    RobotContainer.superstructure.periodic()
+
     Logger.recordOutput(
       "LoggedRobot/RemainingRamMB", Runtime.getRuntime().freeMemory() / 1024 / 1024
     )
@@ -183,7 +185,7 @@ object Robot : LoggedRobot() {
   }
 
   override fun teleopInit() {
-    FMSData.allianceColor = DriverStation.getAlliance().get()
+    FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
     RobotContainer.mapTeleopControls()
     RobotContainer.getAutonomousCommand().cancel()
     RobotContainer.setDriveBrakeMode()

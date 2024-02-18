@@ -1,55 +1,69 @@
 package com.team4099.robot2023.util
 
+import com.team4099.lib.hal.Clock
+import com.team4099.lib.math.asTransform2d
 import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.Nat
 import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N3
-import edu.wpi.first.wpilibj.Timer
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose2dWPILIB
+import org.team4099.lib.geometry.Transform2d
+import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.geometry.Twist2d
 import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.meters
+import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.radians
 import java.util.NavigableMap
 import java.util.TreeMap
+import kotlin.Comparator
+import kotlin.collections.ArrayList
 
-class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
-  private var basePose: Pose2d = Pose2d()
-  private var latestPose: Pose2d = Pose2d()
-  private val updates: NavigableMap<Double, PoseUpdate> = TreeMap()
+class FieldFrameEstimator(stateStdDevs: Matrix<N3?, N1?>) {
+  // Maintains the state of the field frame transform for the period of time before the currently
+  // tracked history
+  private var baseOdometryTField: Transform2d =
+    Transform2d(Translation2d(0.meters, 0.meters), 0.radians)
+
+  // Maintains the latest state of the field frame transform, including the currently tracked
+  // history
+  private var odometryTField: Transform2d =
+    Transform2d(Translation2d(0.meters, 0.meters), 0.radians)
+
+  private val updates: NavigableMap<Time, PoseUpdate> = TreeMap()
   private val q: Matrix<N3?, N1?> = Matrix(Nat.N3(), Nat.N1())
 
   /** Returns the latest robot pose based on drive and vision data. */
-  fun getLatestPose(): Pose2d {
-    return latestPose
+  fun getLatestOdometryTField(): Transform2d {
+    return odometryTField
   }
 
-  /** Resets the odometry to a known pose. */
-  fun resetPose(pose: Pose2d) {
-    basePose = pose
+  /** Resets the field frame transform to a known pose. */
+  fun resetFieldFrameFilter(transform: Transform2d) {
+    baseOdometryTField = transform
     updates.clear()
     update()
   }
 
   /** Records a new drive movement. */
-  fun addDriveData(timestamp: Double, twist: Twist2d) {
-    updates[timestamp] = PoseUpdate(twist, ArrayList<VisionUpdate>())
+  fun addDriveData(timestamp: Time, odomTRobot: Pose2d) {
+    updates[timestamp] = PoseUpdate(odomTRobot, ArrayList<VisionUpdate>())
     update()
   }
 
   /** Records a new set of vision updates. */
   fun addVisionData(visionData: List<TimestampedVisionUpdate>) {
     for (timestampedVisionUpdate in visionData) {
-      val timestamp: Double = timestampedVisionUpdate.timestamp.inSeconds
+      val timestamp: Time = timestampedVisionUpdate.timestamp
       val visionUpdate =
         VisionUpdate(
-          timestampedVisionUpdate.pose,
+          timestampedVisionUpdate.fieldTRobot,
           timestampedVisionUpdate.stdDevs,
           timestampedVisionUpdate.fromVision
         )
@@ -68,23 +82,18 @@ class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
         }
 
         // Create partial twists (prev -> vision, vision -> next)
-        val twist0 =
+        val prevToVisionTwist =
           multiplyTwist(
-            nextUpdate.value.twist2d,
+            prevUpdate.value.odomTRobot.log(nextUpdate.value.odomTRobot),
             (timestamp - prevUpdate.key) / (nextUpdate.key - prevUpdate.key)
-          )
-        val twist1 =
-          multiplyTwist(
-            nextUpdate.value.twist2d,
-            (nextUpdate.key - timestamp) / (nextUpdate.key - prevUpdate.key)
           )
 
         // Add new pose updates
         val newVisionUpdates = ArrayList<VisionUpdate>()
         newVisionUpdates.add(visionUpdate)
         newVisionUpdates.sortWith(VisionUpdate.compareDescStdDev)
-        updates[timestamp] = PoseUpdate(twist0, newVisionUpdates)
-        updates[nextUpdate.key] = PoseUpdate(twist1, nextUpdate.value.visionUpdates)
+        updates[timestamp] =
+          PoseUpdate(prevUpdate.value.odomTRobot.exp(prevToVisionTwist), newVisionUpdates)
       }
     }
 
@@ -95,28 +104,30 @@ class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
   /** Clears old data and calculates the latest pose. */
   private fun update() {
     // Clear old data and update base pose
-    while (updates.size > 1 && updates.firstKey() < Timer.getFPGATimestamp() - historyLengthSecs) {
+    // NOTE(parth): We need to maintain the history so that when vision updates come in, they have
+    // some buffer to interpolate within.
+    while (updates.size > 1 && updates.firstKey() < Clock.fpgaTime - HISTORY_LENGTH) {
       val (_, value) = updates.pollFirstEntry()
-      basePose = value.apply(basePose, q)
+      baseOdometryTField = value.apply(baseOdometryTField, q)
     }
 
     // Update latest pose
-    latestPose = basePose
+    odometryTField = baseOdometryTField
     for (updateEntry in updates.entries) {
-      latestPose = updateEntry.value.apply(latestPose, q)
+      odometryTField = updateEntry.value.apply(odometryTField, q)
     }
 
     for (update in updates) {
       if (update.value.visionUpdates.size > 0 && update.value.visionUpdates[0].fromVision) {
-        Logger.recordOutput("Vision/Buffer/Vision", update.key)
+        Logger.recordOutput("Vision/Buffer/Vision", update.key.inSeconds)
 
         Logger.recordOutput(
           "Vision/Buffer/VisionPose",
           Pose2dWPILIB.struct,
-          update.value.visionUpdates[0].pose.pose2d
+          update.value.visionUpdates[0].fieldTRobot.pose2d
         )
       } else {
-        Logger.recordOutput("Vision/Buffer/Drivetrain", update.key)
+        Logger.recordOutput("Vision/Buffer/Drivetrain", update.key.inSeconds)
       }
     }
   }
@@ -125,10 +136,9 @@ class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
    * Represents a sequential update to a pose estimate, with a twist (drive movement) and list of
    * vision updates.
    */
-  private class PoseUpdate(val twist2d: Twist2d, val visionUpdates: ArrayList<VisionUpdate>) {
-    fun apply(lastPose: Pose2d, q: Matrix<N3?, N1?>): Pose2d {
-      // Apply drive twist
-      var pose = lastPose.exp(twist2d)
+  private class PoseUpdate(val odomTRobot: Pose2d, val visionUpdates: ArrayList<VisionUpdate>) {
+    fun apply(previousOdomTField: Transform2d, q: Matrix<N3?, N1?>): Transform2d {
+      var currentOdomTField = previousOdomTField
 
       // Apply vision updates
       for (visionUpdate in visionUpdates) {
@@ -149,8 +159,13 @@ class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
           }
         }
 
-        // Calculate twist between current and vision pose
-        val visionTwist = pose.log(visionUpdate.pose)
+        // Calculate odom_T_field from this update's vision pose
+        val odomTVisionField =
+          odomTRobot.asTransform2d() + visionUpdate.fieldTRobot.asTransform2d().inverse()
+
+        // Calculate twist between current field frame transform and latest vision update
+        val fieldTVisionField = currentOdomTField.inverse() + odomTVisionField
+        val visionTwist = fieldTVisionField.log()
 
         // Multiply by Kalman gain matrix
         val twistMatrix =
@@ -161,8 +176,8 @@ class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
           )
 
         // Apply twist
-        pose =
-          pose.exp(
+        currentOdomTField +=
+          Transform2d.exp(
             Twist2d(
               twistMatrix.get(0, 0).meters,
               twistMatrix.get(1, 0).meters,
@@ -170,13 +185,13 @@ class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
             )
           )
       }
-      return pose
+      return currentOdomTField
     }
   }
 
   /** Represents a single vision pose with associated standard deviations. */
   class VisionUpdate(
-    val pose: Pose2d,
+    val fieldTRobot: Pose2d,
     val stdDevs: Matrix<N3, N1>,
     val fromVision: Boolean = false
   ) {
@@ -192,12 +207,12 @@ class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
   /** Represents a single vision pose with a timestamp and associated standard deviations. */
   class TimestampedVisionUpdate(
     val timestamp: Time,
-    val pose: Pose2d,
+    val fieldTRobot: Pose2d,
     val stdDevs: Matrix<N3, N1>,
     val fromVision: Boolean = false
   )
   companion object {
-    private const val historyLengthSecs = 0.3
+    private val HISTORY_LENGTH = 0.3.seconds
   }
 
   init {

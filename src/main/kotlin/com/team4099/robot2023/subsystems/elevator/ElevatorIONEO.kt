@@ -15,7 +15,6 @@ import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
-import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.IntegralGain
@@ -65,7 +64,7 @@ object ElevatorIONEO : ElevatorIO {
     leaderSparkMax.enableVoltageCompensation(ElevatorConstants.VOLTAGE_COMPENSATION.inVolts)
     followerSparkMax.enableVoltageCompensation(ElevatorConstants.VOLTAGE_COMPENSATION.inVolts)
 
-    leaderSparkMax.inverted = true
+    leaderSparkMax.inverted = ElevatorConstants.LEADER_INVERTED
 
     leaderSparkMax.setSmartCurrentLimit(
       ElevatorConstants.LEADER_STATOR_CURRENT_LIMIT.inAmperes.toInt()
@@ -142,16 +141,8 @@ object ElevatorIONEO : ElevatorIO {
    */
   override fun setOutputVoltage(voltage: ElectricalPotential) {
     // divide by 2 cause full power elevator is scary
-    if (((leaderSensor.position < 0.5.inches) && (voltage < 0.volts)) ||
-      (
-        leaderSensor.position > ElevatorConstants.ELEVATOR_MAX_EXTENSION - 0.5.inches &&
-          (voltage > 0.volts)
-        )
-    ) {
-      leaderSparkMax.setVoltage(0.0)
-    } else {
-      leaderSparkMax.setVoltage(voltage.inVolts)
-    }
+
+    leaderSparkMax.setVoltage(voltage.inVolts)
   }
 
   /**

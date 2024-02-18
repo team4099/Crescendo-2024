@@ -2,6 +2,7 @@ package com.team4099.robot2023.subsystems.feeder
 
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
+import com.revrobotics.SparkMaxLimitSwitch
 import com.team4099.lib.math.clamp
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FeederConstants
@@ -19,12 +20,15 @@ import kotlin.math.absoluteValue
 
 object FeederIONeo : FeederIO {
   private val feederSparkMax =
-    CANSparkMax(Constants.Intake.ROLLER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
+    CANSparkMax(Constants.Feeder.FEEDER_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
 
   private val feederSensor =
     sparkMaxAngularMechanismSensor(
       feederSparkMax, FeederConstants.FEEDER_GEAR_RATIO, FeederConstants.VOLTAGE_COMPENSATION
     )
+
+  private val beamBreakPort =
+    feederSparkMax.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed)
 
   init {
     feederSparkMax.restoreFactoryDefaults()
@@ -36,6 +40,8 @@ object FeederIONeo : FeederIO {
 
     feederSparkMax.idleMode = CANSparkMax.IdleMode.kCoast
 
+    beamBreakPort.enableLimitSwitch(false)
+
     feederSparkMax.burnFlash()
 
     MotorChecker.add(
@@ -45,7 +51,7 @@ object FeederIONeo : FeederIO {
         mutableListOf(Neo(feederSparkMax, "Roller Motor")),
         FeederConstants.FEEDER_CURRENT_LIMIT,
         70.celsius,
-        30.amps,
+        FeederConstants.FEEDER_CURRENT_LIMIT - 10.amps,
         90.celsius
       ),
     )

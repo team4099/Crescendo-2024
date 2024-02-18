@@ -38,21 +38,11 @@ object FlywheelIOSim : FlywheelIO {
       FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
 
-  private var appliedRightVoltage = 0.0.volts
-  private var appliedLeftVoltage = 0.0.volts
+  private var appliedVoltage = 0.0.volts
 
-  private val rightFlywheelController =
+  private val flywheelController =
     PIDController(
-      FlywheelConstants.PID.RIGHT_SIM_KP,
-      FlywheelConstants.PID.RIGHT_SIM_KI,
-      FlywheelConstants.PID.RIGHT_SIM_KD
-    )
-
-  private val leftFlywheelController =
-    PIDController(
-      FlywheelConstants.PID.LEFT_SIM_KP,
-      FlywheelConstants.PID.LEFT_SIM_KI,
-      FlywheelConstants.PID.LEFT_SIM_KD
+      FlywheelConstants.PID.SIM_KP, FlywheelConstants.PID.SIM_KI, FlywheelConstants.PID.SIM_KD
     )
 
   override fun updateInputs(inputs: FlywheelIO.FlywheelIOInputs) {
@@ -60,13 +50,13 @@ object FlywheelIOSim : FlywheelIO {
     flywheelRightSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
 
     inputs.leftFlywheelVelocity = flywheelLeftSim.getAngularVelocityRPM().rotations.perMinute
-    inputs.leftFlywheelAppliedVoltage = appliedLeftVoltage
+    inputs.leftFlywheelAppliedVoltage = appliedVoltage
     inputs.leftFlywheelSupplyCurrent = 0.amps
     inputs.leftFlywheelStatorCurrent = flywheelLeftSim.currentDrawAmps.amps
     inputs.leftFlywheelTemperature = 0.0.celsius
 
     inputs.rightFlywheelVelocity = flywheelRightSim.getAngularVelocityRPM().rotations.perMinute
-    inputs.rightFlywheelAppliedVoltage = appliedRightVoltage
+    inputs.rightFlywheelAppliedVoltage = appliedVoltage
     inputs.rightFlywheelSupplyCurrent = 0.amps
     inputs.rightFlywheelStatorCurrent = flywheelRightSim.currentDrawAmps.amps
     inputs.rightFlywheelTemperature = 0.0.celsius
@@ -75,23 +65,20 @@ object FlywheelIOSim : FlywheelIO {
   }
 
   override fun setFlywheelVoltage(
-    voltageRight: ElectricalPotential,
-    voltageLeft: ElectricalPotential
+    voltage: ElectricalPotential,
   ) {
-    appliedRightVoltage = voltageRight
+    appliedVoltage = voltage
     flywheelRightSim.setInputVoltage(
       clamp(
-        voltageRight,
+        voltage,
         -FlywheelConstants.VOLTAGE_COMPENSATION,
         FlywheelConstants.VOLTAGE_COMPENSATION
       )
         .inVolts
     )
-
-    appliedLeftVoltage = voltageLeft
     flywheelLeftSim.setInputVoltage(
       clamp(
-        voltageLeft,
+        voltage,
         -FlywheelConstants.VOLTAGE_COMPENSATION,
         FlywheelConstants.VOLTAGE_COMPENSATION
       )
@@ -99,39 +86,24 @@ object FlywheelIOSim : FlywheelIO {
     )
   }
 
-  override fun setFlywheelVelocity(
-    rightVelocity: AngularVelocity,
-    leftVelocity: AngularVelocity,
-    feedforwardLeft: ElectricalPotential,
-    feedforwardRight: ElectricalPotential
-  ) {
-    val rightFeedback =
-      rightFlywheelController.calculate(
-        flywheelRightSim.getAngularVelocityRPM().rotations.perMinute, rightVelocity
-      )
-    val leftFeedback =
-      leftFlywheelController.calculate(
-        flywheelLeftSim.getAngularVelocityRPM().rotations.perMinute, leftVelocity
+  override fun setFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {
+    val feedback =
+      flywheelController.calculate(
+        flywheelRightSim.getAngularVelocityRPM().rotations.perMinute, velocity
       )
 
-    setFlywheelVoltage(rightFeedback + feedforwardRight, leftFeedback + feedforwardLeft)
+    setFlywheelVoltage(feedback + feedforward)
 
-    appliedRightVoltage = rightFeedback + feedforwardRight
-    appliedLeftVoltage = leftFeedback + feedforwardLeft
+    appliedVoltage = feedback + feedforward
   }
 
   override fun setFlywheelBrakeMode(brake: Boolean) {}
 
   override fun configPID(
-    rightkP: ProportionalGain<Velocity<Radian>, Volt>,
-    rightkI: IntegralGain<Velocity<Radian>, Volt>,
-    rightkD: DerivativeGain<Velocity<Radian>, Volt>,
-    leftkP: ProportionalGain<Velocity<Radian>, Volt>,
-    leftkI: IntegralGain<Velocity<Radian>, Volt>,
-    leftkD: DerivativeGain<Velocity<Radian>, Volt>
+    kP: ProportionalGain<Velocity<Radian>, Volt>,
+    kI: IntegralGain<Velocity<Radian>, Volt>,
+    kD: DerivativeGain<Velocity<Radian>, Volt>,
   ) {
-    rightFlywheelController.setPID(rightkP, rightkI, rightkD)
-
-    leftFlywheelController.setPID(leftkP, leftkI, leftkD)
+    flywheelController.setPID(kP, kI, kD)
   }
 }

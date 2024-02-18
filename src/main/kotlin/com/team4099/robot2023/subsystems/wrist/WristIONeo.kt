@@ -107,7 +107,7 @@ object WristIONeo : WristIO {
             inputs.rollerSupplyCurrent = inputs.rollerStatorCurrent * rollerSparkMax.appliedOutput.absoluteValue
             inputs.rollerTempreature = rollerSparkMax.motorTemperature.celsius
     */
-    inputs.wristPostion = wristSensor.position
+    inputs.wristPosition = wristSensor.position
     inputs.wristAppliedVoltage = wristSparkMax.busVoltage.volts * wristSparkMax.appliedOutput
     inputs.wristStatorCurrent = wristSparkMax.outputCurrent.amps
     // BatteryVoltage * SupplyCurrent = AppliedVoltage * StatorCurrent
@@ -168,7 +168,7 @@ object WristIONeo : WristIO {
     }
   }
 
-  override fun zeroEncoder() {
+  override fun zeroEncoder(encoderOffset: Angle) {
     wristSparkMax.encoder.position = wristSensor.positionToRawUnits(armAbsolutePosition)
   }
 }

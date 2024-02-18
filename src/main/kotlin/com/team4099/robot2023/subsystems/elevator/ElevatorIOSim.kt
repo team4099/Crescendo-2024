@@ -10,7 +10,6 @@ import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.wpilibj.simulation.BatterySim
 import edu.wpi.first.wpilibj.simulation.ElevatorSim
 import edu.wpi.first.wpilibj.simulation.RoboRioSim
-import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Meter
@@ -34,7 +33,7 @@ object ElevatorIOSim : ElevatorIO {
   val elevatorSim: ElevatorSim =
     ElevatorSim(
       DCMotor.getNEO(2),
-      ElevatorConstants.ELEVATOR_PULLEY_TO_MOTOR,
+      1 / ElevatorConstants.ELEVATOR_PULLEY_TO_MOTOR,
       ElevatorConstants.CARRIAGE_MASS.inKilograms,
       ElevatorConstants.SPOOL_DIAMETER.inMeters / 2,
       ElevatorConstants.ELEVATOR_MAX_RETRACTION.inMeters,
@@ -97,7 +96,6 @@ object ElevatorIOSim : ElevatorIO {
    * @param voltage the voltage to set the motor to
    */
   override fun setOutputVoltage(voltage: ElectricalPotential) {
-    Logger.recordOutput("Elevator/OutputTest", voltage)
     val clampedVoltage =
       clamp(
         voltage,
@@ -117,16 +115,8 @@ object ElevatorIOSim : ElevatorIO {
    * @param feedforward change in voltage to account for external forces on the system
    */
   override fun setPosition(position: Length, feedforward: ElectricalPotential) {
-    val ff =
-      clamp(
-        feedforward,
-        -ElevatorConstants.VOLTAGE_COMPENSATION,
-        ElevatorConstants.VOLTAGE_COMPENSATION
-      )
     val feedback = elevatorController.calculate(elevatorSim.positionMeters.meters, position)
-
-    setOutputVoltage(ff + feedback)
-    elevatorSim.setInputVoltage((ff + feedback).inVolts)
+    setOutputVoltage(feedforward + feedback)
   }
 
   /** set the current encoder position to be the encoders zero value */

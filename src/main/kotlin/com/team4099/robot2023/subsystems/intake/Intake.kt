@@ -1,6 +1,7 @@
 package com.team4099.robot2023.subsystems.intake
 
 import com.team4099.lib.hal.Clock
+import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.IntakeConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
@@ -14,19 +15,81 @@ import org.team4099.lib.units.derived.volts
 
 class Intake(val io: IntakeIO) : SubsystemBase() {
   val inputs = IntakeIO.IntakeIOInputs()
+
+  object TunableIntakeStates {
+    val idleRollerVoltage =
+      LoggedTunableValue(
+        "Intake/idleRollerVoltage",
+        IntakeConstants.IDLE_ROLLER_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+    val idleCenterWheelVoltage =
+      LoggedTunableValue(
+        "Intake/idleCenterWheelVoltage",
+        IntakeConstants.IDLE_CENTER_WHEEL_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+
+    val intakeRollerVoltage =
+      LoggedTunableValue(
+        "Intake/intakeRollerVoltage",
+        IntakeConstants.INTAKE_ROLLER_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+
+    val intakeCenterWheelVoltage =
+      LoggedTunableValue(
+        "Intake/intakeCenterWheelVoltage",
+        IntakeConstants.INTAKE_CENTER_WHEEL_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+
+    val outtakeRolllerVoltage =
+      LoggedTunableValue(
+        "Intake/outtakeRollerVoltage",
+        IntakeConstants.OUTTAKE_ROLLER_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+
+    val outtakeCenterWheelVoltage =
+      LoggedTunableValue(
+        "Intake/outtakeCenterWheelVoltage",
+        IntakeConstants.OUTTAKE_CENTER_WHEEL_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+
+    val testRollerVoltage =
+      LoggedTunableValue(
+        "Intake/testVoltage",
+        IntakeConstants.INTAKE_ROLLER_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+
+    val testCenterWheelVoltage =
+      LoggedTunableValue(
+        "Intake/testVoltage",
+        IntakeConstants.INTAKE_CENTER_WHEEL_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+  }
+
   var rollerVoltageTarget: ElectricalPotential = 0.0.volts
+  var centerWheelVoltageTarget: ElectricalPotential = 0.0.volts
+
   var isZeroed = false
   var currentState: IntakeState = IntakeState.UNINITIALIZED
 
   var currentRequest: Request.IntakeRequest =
-    Request.IntakeRequest.OpenLoop(IntakeConstants.IDLE_ROLLER_VOLTAGE)
+    Request.IntakeRequest.OpenLoop(
+      IntakeConstants.IDLE_ROLLER_VOLTAGE, IntakeConstants.IDLE_CENTER_WHEEL_VOLTAGE
+    )
     set(value) {
-        rollerVoltageTarget =
-          when (value) {
-            is Request.IntakeRequest.OpenLoop -> {
-              value.rollerVoltage
-            }
+        when (value) {
+          is Request.IntakeRequest.OpenLoop -> {
+            rollerVoltageTarget = value.rollerVoltage
+            centerWheelVoltageTarget = value.centerWheelVoltage
           }
+        }
 
         field = value
       }
@@ -36,17 +99,18 @@ class Intake(val io: IntakeIO) : SubsystemBase() {
   override fun periodic() {
     io.updateInputs(inputs)
 
-    Logger.processInputs("GroundIntake", inputs)
-    Logger.recordOutput("GroundIntake/currentState", currentState.name)
-    Logger.recordOutput("GroundIntake/requestedState", currentRequest.javaClass.simpleName)
-    Logger.recordOutput("GroundIntake/isZeroed", isZeroed)
+    Logger.processInputs("Intake", inputs)
+    Logger.recordOutput("Intake/currentState", currentState.name)
+    Logger.recordOutput("Intake/requestedState", currentRequest.javaClass.simpleName)
+    Logger.recordOutput("Intake/isZeroed", isZeroed)
 
     if (Constants.Tuning.DEBUGING_MODE) {
       Logger.recordOutput(
-        "GroundIntake/isAtCommandedState", currentState.equivalentToRequest(currentRequest)
+        "Intake/isAtCommandedState", currentState.equivalentToRequest(currentRequest)
       )
-      Logger.recordOutput("GroundIntake/timeProfileGeneratedAt", timeProfileGeneratedAt.inSeconds)
-      Logger.recordOutput("GroundIntake/rollerVoltageTarget", rollerVoltageTarget.inVolts)
+      Logger.recordOutput("Intake/timeProfileGeneratedAt", timeProfileGeneratedAt.inSeconds)
+      Logger.recordOutput("Intake/rollerVoltageTarget", rollerVoltageTarget.inVolts)
+      Logger.recordOutput("Intake/centerWheelVoltageTarget", centerWheelVoltageTarget.inVolts)
     }
 
     var nextState = currentState
@@ -60,7 +124,7 @@ class Intake(val io: IntakeIO) : SubsystemBase() {
         nextState = IntakeState.OPEN_LOOP
       }
       IntakeState.OPEN_LOOP -> {
-        setRollerVoltage(rollerVoltageTarget)
+        setVoltage(rollerVoltageTarget, centerWheelVoltageTarget)
 
         // Transitions
         nextState = fromRequestToState(currentRequest)
@@ -74,12 +138,18 @@ class Intake(val io: IntakeIO) : SubsystemBase() {
   }
 
   /** @param appliedVoltage Represents the applied voltage of the roller motor */
-  fun setRollerVoltage(appliedVoltage: ElectricalPotential) {
-    io.setRollerVoltage(appliedVoltage)
+  fun setVoltage(rollerVoltage: ElectricalPotential, centerWheelVoltage: ElectricalPotential) {
+    io.setVoltage(rollerVoltage, centerWheelVoltage)
   }
 
   fun generateIntakeTestCommand(): Command {
-    val returnCommand = runOnce { currentRequest = Request.IntakeRequest.OpenLoop(12.volts) }
+    val returnCommand = runOnce {
+      currentRequest =
+        Request.IntakeRequest.OpenLoop(
+          TunableIntakeStates.testRollerVoltage.get(),
+          TunableIntakeStates.testCenterWheelVoltage.get()
+        )
+    }
     return returnCommand
   }
 
