@@ -28,7 +28,7 @@ class CameraIOSim(override val id: String, override val robotTCamera: Transform3
       .getSubTable("RealOutputs")
       .getDoubleArrayTopic(VisionConstants.POSE_TOPIC_NAME)
       .subscribe(DoubleArray(3))
-  private val errorScaleConstant = 0.05
+  private val errorScaleConstant = 0.01
   private val odoHistory = mutableListOf<Pair<Time, Pose2d>>()
 
   override fun updateInputs(inputs: CameraIO.CameraInputs) {
