@@ -15,6 +15,8 @@ import org.team4099.lib.geometry.Rotation3d
 import org.team4099.lib.geometry.Transform3d
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.geometry.Translation3d
+import org.team4099.lib.units.base.Time
+import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.radians
@@ -27,13 +29,31 @@ class CameraIOSim(override val id: String, override val robotTCamera: Transform3
       .getDoubleArrayTopic(VisionConstants.POSE_TOPIC_NAME)
       .subscribe(DoubleArray(3))
   private val errorScaleConstant = 0.05
+  private val odoHistory = mutableListOf<Pair<Time, Pose2d>>()
 
   override fun updateInputs(inputs: CameraIO.CameraInputs) {
     val drivePose = poseSubscriber.get(DoubleArray(3)).toPose2d().toPose3d()
+    odoHistory.add(Pair(Clock.fpgaTime, drivePose.toPose2d()))
 
-    inputs.timestamp = Clock.fpgaTime - (Math.random() * 0.2).seconds
-    val robotTtag = drivePose.relativeTo(FieldConstants.aprilTags[0].pose)
-    inputs.frame = drivePose.gaussianShenanigans()
+    // clear out old poses history
+    if (odoHistory.size > 1 && odoHistory[0].first < Clock.fpgaTime - 0.3.seconds){
+      odoHistory.removeAt(0)
+    }
+
+    inputs.timestamp = Clock.fpgaTime - (Math.random() * 0.3).seconds
+
+    var interpolatedDrivePose = Pose2d()
+    for (poseInd in 1 until odoHistory.size){
+        // pose within these two timestamps
+        if (odoHistory[poseInd].first > inputs.timestamp && odoHistory[poseInd-1].first < inputs.timestamp){
+          val interpolatingFrac = odoHistory[poseInd - 1].first.lerp(odoHistory[poseInd].first, inputs.timestamp)
+          interpolatedDrivePose = odoHistory[poseInd - 1].second.lerp(odoHistory[poseInd].second, interpolatingFrac)
+        }
+    }
+
+
+    val robotTtag = interpolatedDrivePose.toPose3d().relativeTo(FieldConstants.aprilTags[0].pose)
+    inputs.frame = interpolatedDrivePose.toPose3d().gaussianShenanigans()
     val estimatedRobotPose =
       FieldConstants.aprilTags[0].pose.transformBy(inputs.frame.toTransform3d())
 
@@ -65,5 +85,13 @@ class CameraIOSim(override val id: String, override val robotTCamera: Transform3
         this.rotation.z * (1 - Math.random() * errorScaleConstant)
       )
     )
+  }
+
+  private fun Pose2d.lerp(endValue: Pose2d, t: Double): Pose2d {
+    return this.plus(endValue.minus(this).times(t))
+  }
+
+  private fun Time.lerp(endTime: Time, desiredTime: Time): Double {
+    return (desiredTime - this).inSeconds / (endTime - this).inSeconds
   }
 }
