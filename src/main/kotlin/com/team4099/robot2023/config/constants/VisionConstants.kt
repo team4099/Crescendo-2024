@@ -56,6 +56,11 @@ object VisionConstants {
       ) // camera facing leftward
     )
 
+  val SIM_CAMERA_TRANSFORM = Transform3d(
+    Translation3d(0.inches, 0.inches, 0.inches),
+    Rotation3d(0.degrees, 0.degrees, 0.degrees)
+  )
+
   val CAMERA_NAMES = listOf("northstar_1", "northstar_2", "northstar_3")
 
   object Limelight {

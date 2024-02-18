@@ -5,6 +5,7 @@ import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
+import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOReal
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
@@ -32,7 +33,6 @@ import com.team4099.robot2023.subsystems.vision.camera.CameraIOSim
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.WristIO
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
-import com.team4099.robot2023.subsystems.vision.camera.CameraIOPhotonvision
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.smoothDeadband
@@ -61,9 +61,9 @@ object RobotContainer {
         Vision(
           //          object: CameraIO {}
           //          CameraIONorthstar("northstar"),
-          CameraIOPhotonvision("parakeet_1"),
-          CameraIOPhotonvision("parakeet_2"),
-          CameraIOPhotonvision("parakeet_3"),
+          CameraIOPhotonvision("parakeet_1", VisionConstants.CAMERA_TRANSFORMS[0]),
+          CameraIOPhotonvision("parakeet_2", VisionConstants.CAMERA_TRANSFORMS[1]),
+          CameraIOPhotonvision("parakeet_3", VisionConstants.CAMERA_TRANSFORMS[2]),
           //        CameraIONorthstar("right"),
           //        CameraIONorthstar("backward")
         )
@@ -76,7 +76,7 @@ object RobotContainer {
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
-      vision = Vision(CameraIOSim("skrt"))
+      vision = Vision(CameraIOSim("skrt", VisionConstants.SIM_CAMERA_TRANSFORM))
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIOSim)
       feeder = Feeder(FeederIOSim)

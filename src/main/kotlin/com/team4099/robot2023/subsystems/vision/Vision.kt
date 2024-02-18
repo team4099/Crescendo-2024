@@ -2,6 +2,7 @@ package com.team4099.robot2023.subsystems.vision
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.TunableNumber
+import com.team4099.lib.math.asDoubleArray
 import com.team4099.lib.vision.TimestampedVisionUpdate
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.VisionConstants
@@ -14,12 +15,14 @@ import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Pose3dWPILIB
+import org.team4099.lib.geometry.Transform3d
 import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inRadians
 import java.util.function.Consumer
 import java.util.function.Supplier
 import kotlin.math.pow
@@ -27,11 +30,12 @@ import kotlin.math.pow
 class Vision(vararg cameras: CameraIO) : SubsystemBase() {
   val io: List<CameraIO> = cameras.toList()
   val inputs = List(io.size) { CameraIO.CameraInputs() }
+  val names = mutableListOf<String>()
+  val robotTCameras = mutableListOf<Transform3d>()
 
   companion object {
     val ambiguityThreshold = 0.7
     val targetLogTime = 0.05.seconds
-    val cameraPoses = VisionConstants.CAMERA_TRANSFORMS
 
     val xyStdDevCoeffecient = 0.05
     val thetaStdDevCoefficient = 1.5
@@ -49,6 +53,9 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
   init {
     for (i in io.indices) {
       lastFrameTimes[i] = 0.0.seconds
+      names.add(io[i].id)
+      robotTCameras.add(io[i].robotTCamera)
+
     }
   }
 
@@ -75,7 +82,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
     for (instance in io.indices) {
       io[instance].updateInputs(inputs[instance])
-      Logger.processInputs("Vision/${VisionConstants.CAMERA_NAMES[instance]}", inputs[instance])
+      Logger.processInputs("Vision/${names[instance]}", inputs[instance])
     }
 
     var fieldTCurrentRobotEstimate: Pose2d = fieldFramePoseSupplier.get()
@@ -90,7 +97,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       val values = inputs[instance].frame
 
       var cameraPose: Pose3d? = inputs[instance].frame
-      var robotPose: Pose2d? = cameraPose?.transformBy(cameraPoses[instance])?.toPose2d()
+      var robotPose: Pose2d? = cameraPose?.transformBy(robotTCameras[instance])?.toPose2d()
 
 
       if (cameraPose == null || robotPose == null) {
@@ -125,30 +132,30 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       robotPoses.add(robotPose)
 
       Logger.recordOutput(
-        "Vision/${VisionConstants.CAMERA_NAMES[instance]}/latencyMS",
+        "Vision/${names[instance]}/latencyMS",
         (Clock.fpgaTime - timestamp).inMilliseconds
       )
 
       Logger.recordOutput(
-        "Vision/${VisionConstants.CAMERA_NAMES[instance]}/estimatedRobotPose", robotPose.pose2d
+        "Vision/${names[instance]}/estimatedRobotPose", robotPose.asDoubleArray()
       )
 
       Logger.recordOutput(
-        "Vision/${VisionConstants.CAMERA_NAMES[instance]}/tagPoses",
+        "Vision/${names[instance]}/tagPoses",
         *tagPoses.map { it.pose3d }.toTypedArray()
       )
 
-      if (inputs[instance].timestamp == 0.0.seconds) { // prolly wrong lol
-        Logger.recordOutput(
-          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/estimatedRobotPose",
-          Pose2dWPILIB.struct,
-          Pose2d().pose2d
-        )
-      }
+//      if (inputs[instance].timestamp == 0.0.seconds) { // prolly wrong lol
+//        Logger.recordOutput(
+//          "Vision/${names[instance]}/estimatedRobotPose",
+//          Pose2dWPILIB.struct,
+//          Pose2d().pose2d
+//        )
+//      }
 
       if (Clock.fpgaTime - lastFrameTimes[instance]!! > targetLogTime) {
         Logger.recordOutput(
-          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/tagPoses",
+          "Vision/${names[instance]}/tagPoses",
           Pose3dWPILIB.struct,
           *arrayOf<Pose3dWPILIB>()
         )

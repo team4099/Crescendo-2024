@@ -5,10 +5,14 @@ import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Pose3dWPILIB
+import org.team4099.lib.geometry.Transform3d
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.seconds
 
 interface CameraIO {
+
+  val id: String
+  val robotTCamera: Transform3d
   class CameraInputs : LoggableInputs {
     var timestamp = 0.0.seconds
     var frame: Pose3d = Pose3d()

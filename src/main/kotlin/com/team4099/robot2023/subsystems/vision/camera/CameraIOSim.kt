@@ -12,13 +12,14 @@ import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Rotation3d
+import org.team4099.lib.geometry.Transform3d
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.geometry.Translation3d
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.radians
 
-class CameraIOSim(val id: String) : CameraIO {
+class CameraIOSim(override val id: String, override val robotTCamera: Transform3d) : CameraIO {
   private val poseSubscriber: DoubleArraySubscriber =
     NetworkTableInstance.getDefault()
       .getTable("AdvantageKit")
@@ -32,7 +33,7 @@ class CameraIOSim(val id: String) : CameraIO {
 
     inputs.timestamp = Clock.fpgaTime - (Math.random() * 0.2).seconds
     val robotTtag = drivePose.relativeTo(FieldConstants.aprilTags[0].pose)
-    inputs.frame = robotTtag.gaussianShenanigans()
+    inputs.frame = drivePose.gaussianShenanigans()
     val estimatedRobotPose =
       FieldConstants.aprilTags[0].pose.transformBy(inputs.frame.toTransform3d())
 
