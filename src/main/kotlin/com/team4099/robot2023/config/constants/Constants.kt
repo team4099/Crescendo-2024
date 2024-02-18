@@ -67,8 +67,8 @@ object Constants {
     const val SHOTGUN_PORT = 1
     const val TECHNICIAN_PORT = 2
 
-    const val THROTTLE_DEADBAND = 0.05
-    const val TURN_DEADBAND = 0.05
+    const val THROTTLE_DEADBAND = 0.1
+    const val TURN_DEADBAND = 0.1
   }
 
   object Drivetrain {
