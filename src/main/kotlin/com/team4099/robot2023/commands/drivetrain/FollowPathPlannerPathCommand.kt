@@ -45,7 +45,7 @@ class FollowPathPlannerPathCommand(
   val drivetrain: Drivetrain,
   val path: PathPlannerPath,
   useOdoFrame: Boolean = true,
-  val followingFieldCoordinates: Boolean = true,
+  var shiftByOdoTField: Boolean = true,
 ) : Command() {
   private val translationToleranceAtEnd = 1.inches
   private val thetaToleranceAtEnd = 2.5.degrees
@@ -136,6 +136,8 @@ class FollowPathPlannerPathCommand(
       odoTRobotSupplier = { drivetrain.odomTRobot }
     } else {
       odoTRobotSupplier = { drivetrain.fieldTRobot }
+      // if we're already in field frame we do not want to shift by `odoTField` again
+      shiftByOdoTField = false
     }
 
     translationPID = PathPlannerTranslationPID(poskP.get(), poskI.get(), poskD.get())
@@ -157,7 +159,7 @@ class FollowPathPlannerPathCommand(
 
   override fun initialize() {
     trajStartTime = Clock.fpgaTime
-    if (followingFieldCoordinates) {
+    if (shiftByOdoTField) {
       odoTField = drivetrain.odomTField
     }
   }
