@@ -11,7 +11,7 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
 import com.team4099.robot2023.subsystems.elevator.Elevator
-import com.team4099.robot2023.subsystems.elevator.ElevatorIO
+import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
@@ -68,7 +68,7 @@ object RobotContainer {
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
-      elevator = Elevator(object : ElevatorIO {})
+      elevator = Elevator(ElevatorIONEO)
       flywheel = Flywheel(FlywheelIOTalon)
       wrist = Wrist(object : WristIO {})
     } else {
@@ -100,7 +100,7 @@ object RobotContainer {
         driver = Ryan(),
         { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
         { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { -1 * ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain
       )
