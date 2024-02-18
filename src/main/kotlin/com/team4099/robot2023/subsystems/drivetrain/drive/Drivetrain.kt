@@ -299,7 +299,14 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
         .pose3d
     )
 
-    Logger.recordOutput("FieldFrameEstimator/odomTField", doubleArrayOf(odomTField.translation.x.inMeters, odomTField.translation.y.inMeters, odomTField.rotation.inRadians))
+    Logger.recordOutput(
+      "FieldFrameEstimator/odomTField",
+      doubleArrayOf(
+        odomTField.translation.x.inMeters,
+        odomTField.translation.y.inMeters,
+        odomTField.rotation.inRadians
+      )
+    )
 
     Logger.recordOutput(
       "Odometry/targetPose",
@@ -391,7 +398,12 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
       undriftedSwerveDriveOdometry.update((gyroInputs.gyroYaw).inRotation2ds, undriftedModules)
 
       drift = undriftedPose.minus(odomTRobot)
-      Logger.recordOutput(VisionConstants.SIM_POSE_TOPIC_NAME, doubleArrayOf(undriftedPose.x.inMeters, undriftedPose.y.inMeters, undriftedPose.rotation.inRadians))
+      Logger.recordOutput(
+        VisionConstants.SIM_POSE_TOPIC_NAME,
+        doubleArrayOf(
+          undriftedPose.x.inMeters, undriftedPose.y.inMeters, undriftedPose.rotation.inRadians
+        )
+      )
     }
   }
 

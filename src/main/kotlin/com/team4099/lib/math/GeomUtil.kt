@@ -51,7 +51,9 @@ fun Transform2d.asPose2d(): Pose2d {
 }
 
 fun Transform2d.asDoubleArray(): DoubleArray {
-  return doubleArrayOf(this.translation.x.inMeters, this.translation.y.inMeters, this.rotation.inRadians)
+  return doubleArrayOf(
+    this.translation.x.inMeters, this.translation.y.inMeters, this.rotation.inRadians
+  )
 }
 
 fun Pose2d.asDoubleArray(): DoubleArray {

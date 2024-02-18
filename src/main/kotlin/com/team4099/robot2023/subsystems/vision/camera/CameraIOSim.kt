@@ -36,21 +36,24 @@ class CameraIOSim(override val id: String, override val robotTCamera: Transform3
     odoHistory.add(Pair(Clock.fpgaTime, drivePose.toPose2d()))
 
     // clear out old poses history
-    if (odoHistory.size > 1 && odoHistory[0].first < Clock.fpgaTime - 0.3.seconds){
+    if (odoHistory.size > 1 && odoHistory[0].first < Clock.fpgaTime - 0.3.seconds) {
       odoHistory.removeAt(0)
     }
 
     inputs.timestamp = Clock.fpgaTime - (Math.random() * 0.3).seconds
 
     var interpolatedDrivePose = Pose2d()
-    for (poseInd in 1 until odoHistory.size){
-        // pose within these two timestamps
-        if (odoHistory[poseInd].first > inputs.timestamp && odoHistory[poseInd-1].first < inputs.timestamp){
-          val interpolatingFrac = odoHistory[poseInd - 1].first.lerp(odoHistory[poseInd].first, inputs.timestamp)
-          interpolatedDrivePose = odoHistory[poseInd - 1].second.lerp(odoHistory[poseInd].second, interpolatingFrac)
-        }
+    for (poseInd in 1 until odoHistory.size) {
+      // pose within these two timestamps
+      if (odoHistory[poseInd].first > inputs.timestamp &&
+        odoHistory[poseInd - 1].first < inputs.timestamp
+      ) {
+        val interpolatingFrac =
+          odoHistory[poseInd - 1].first.lerp(odoHistory[poseInd].first, inputs.timestamp)
+        interpolatedDrivePose =
+          odoHistory[poseInd - 1].second.lerp(odoHistory[poseInd].second, interpolatingFrac)
+      }
     }
-
 
     val robotTtag = interpolatedDrivePose.toPose3d().relativeTo(FieldConstants.aprilTags[0].pose)
     inputs.frame = interpolatedDrivePose.toPose3d().gaussianShenanigans()

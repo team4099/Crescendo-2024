@@ -5,14 +5,12 @@ import com.team4099.lib.logging.TunableNumber
 import com.team4099.lib.math.asDoubleArray
 import com.team4099.lib.vision.TimestampedVisionUpdate
 import com.team4099.robot2023.config.constants.FieldConstants
-import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.vision.camera.CameraIO
 import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
-import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Pose3dWPILIB
 import org.team4099.lib.geometry.Transform3d
@@ -22,7 +20,6 @@ import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
-import org.team4099.lib.units.derived.inRadians
 import java.util.function.Consumer
 import java.util.function.Supplier
 import kotlin.math.pow
@@ -55,7 +52,6 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       lastFrameTimes[i] = 0.0.seconds
       names.add(io[i].id)
       robotTCameras.add(io[i].robotTCamera)
-
     }
   }
 
@@ -99,7 +95,6 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       var cameraPose: Pose3d? = inputs[instance].frame
       var robotPose: Pose2d? = cameraPose?.transformBy(robotTCameras[instance])?.toPose2d()
 
-
       if (cameraPose == null || robotPose == null) {
         continue
       }
@@ -132,32 +127,26 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       robotPoses.add(robotPose)
 
       Logger.recordOutput(
-        "Vision/${names[instance]}/latencyMS",
-        (Clock.fpgaTime - timestamp).inMilliseconds
+        "Vision/${names[instance]}/latencyMS", (Clock.fpgaTime - timestamp).inMilliseconds
       )
+
+      Logger.recordOutput("Vision/${names[instance]}/estimatedRobotPose", robotPose.asDoubleArray())
 
       Logger.recordOutput(
-        "Vision/${names[instance]}/estimatedRobotPose", robotPose.asDoubleArray()
+        "Vision/${names[instance]}/tagPoses", *tagPoses.map { it.pose3d }.toTypedArray()
       )
 
-      Logger.recordOutput(
-        "Vision/${names[instance]}/tagPoses",
-        *tagPoses.map { it.pose3d }.toTypedArray()
-      )
-
-//      if (inputs[instance].timestamp == 0.0.seconds) { // prolly wrong lol
-//        Logger.recordOutput(
-//          "Vision/${names[instance]}/estimatedRobotPose",
-//          Pose2dWPILIB.struct,
-//          Pose2d().pose2d
-//        )
-//      }
+      //      if (inputs[instance].timestamp == 0.0.seconds) { // prolly wrong lol
+      //        Logger.recordOutput(
+      //          "Vision/${names[instance]}/estimatedRobotPose",
+      //          Pose2dWPILIB.struct,
+      //          Pose2d().pose2d
+      //        )
+      //      }
 
       if (Clock.fpgaTime - lastFrameTimes[instance]!! > targetLogTime) {
         Logger.recordOutput(
-          "Vision/${names[instance]}/tagPoses",
-          Pose3dWPILIB.struct,
-          *arrayOf<Pose3dWPILIB>()
+          "Vision/${names[instance]}/tagPoses", Pose3dWPILIB.struct, *arrayOf<Pose3dWPILIB>()
         )
       }
     }

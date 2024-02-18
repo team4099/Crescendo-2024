@@ -14,7 +14,8 @@ import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.micro
 import java.util.Optional
 
-class CameraIOPhotonvision(override val id: String, override val robotTCamera: Transform3d) : CameraIO {
+class CameraIOPhotonvision(override val id: String, override val robotTCamera: Transform3d) :
+  CameraIO {
 
   private val photonEstimator: PhotonPoseEstimator
   private val camera: PhotonCamera
