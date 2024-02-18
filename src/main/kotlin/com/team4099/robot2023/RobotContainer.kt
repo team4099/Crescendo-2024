@@ -13,7 +13,6 @@ import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
 import com.team4099.robot2023.subsystems.elevator.Elevator
 import com.team4099.robot2023.subsystems.elevator.ElevatorIO
-import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
@@ -70,7 +69,7 @@ object RobotContainer {
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
-      elevator = Elevator(object: ElevatorIO {})
+      elevator = Elevator(object : ElevatorIO {})
       flywheel = Flywheel(FlywheelIOTalon)
       wrist = Wrist(object : WristIO {})
     } else {
@@ -153,16 +152,16 @@ object RobotContainer {
   fun mapTeleopControls() {
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 0.degrees))
-    //ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
-//    ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
-//    ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())
-//    ControlBoard.ampScore.whileTrue(superstructure.scoreAmpCommand())
-//    ControlBoard.scoreSpeakerLow.whileTrue(superstructure.scoreSpeakerLowCommand())
-//    ControlBoard.scoreSpeakerMid.whileTrue(superstructure.scoreSpeakerMidCommand())
-//    ControlBoard.scoreSpeakerHigh.whileTrue(superstructure.scoreSpeakerHighCommand())
-//    ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
-//    ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
-//    ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
+    // ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
+    //    ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
+    //    ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())
+    //    ControlBoard.ampScore.whileTrue(superstructure.scoreAmpCommand())
+    //    ControlBoard.scoreSpeakerLow.whileTrue(superstructure.scoreSpeakerLowCommand())
+    //    ControlBoard.scoreSpeakerMid.whileTrue(superstructure.scoreSpeakerMidCommand())
+    //    ControlBoard.scoreSpeakerHigh.whileTrue(superstructure.scoreSpeakerHighCommand())
+    //    ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
+    //    ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
+    //    ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
     ControlBoard.runGroundIntake.whileTrue(ExamplePathAuto(drivetrain))
 
     /*

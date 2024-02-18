@@ -1,5 +1,6 @@
 package com.team4099.robot2023.util
 
+import com.team4099.lib.hal.Clock
 import com.team4099.lib.vision.TimestampedVisionUpdate
 import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.Nat
@@ -32,6 +33,7 @@ class PoseEstimator(stateStdDevs: Matrix<N3?, N1?>) {
 
   /** Resets the odometry to a known pose. */
   fun resetPose(pose: Pose2d) {
+    Logger.recordOutput("Odometry/resetPoseTime", Clock.fpgaTime.inSeconds)
     basePose = pose
     updates.clear()
     update()

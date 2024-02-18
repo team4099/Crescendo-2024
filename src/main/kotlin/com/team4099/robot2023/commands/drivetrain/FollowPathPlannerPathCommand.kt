@@ -1,10 +1,12 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.pathplanner.lib.path.PathPlannerPath
+import com.pathplanner.lib.path.PathPlannerTrajectory
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
@@ -38,8 +40,11 @@ import org.team4099.lib.units.derived.perMeterSeconds
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.perSecond
 
-class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPlannerPath) :
-  Command() {
+class FollowPathPlannerPathCommand(
+  val drivetrain: Drivetrain,
+  val path: PathPlannerPath,
+  val resetPose: Boolean = true
+) : Command() {
   private val translationToleranceAtEnd = 1.inches
   private val thetaToleranceAtEnd = 2.5.degrees
 
@@ -50,6 +55,11 @@ class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPla
 
   private var pathFollowRequest = Request.DrivetrainRequest.ClosedLoop(ChassisSpeeds(0.0, 0.0, 0.0))
   private var lastSampledPose = Pose2d()
+
+  private lateinit var currentSpeeds: ChassisSpeeds
+  private lateinit var poseRotation: Rotation2d
+  private lateinit var generatedTrajectory: PathPlannerTrajectory
+
   private val atReference: Boolean
     get() =
       (
@@ -140,6 +150,12 @@ class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPla
 
   override fun initialize() {
     trajStartTime = Clock.fpgaTime
+
+    drivetrain.odometryPose = Pose2d(path.previewStartingHolonomicPose)
+
+    currentSpeeds = drivetrain.targetedChassisSpeeds
+    poseRotation = drivetrain.odometryPose.rotation.inRotation2ds
+    generatedTrajectory = path.getTrajectory(currentSpeeds, poseRotation)
   }
 
   override fun execute() {
@@ -175,10 +191,6 @@ class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPla
         )
     }
 
-    val currentSpeeds = drivetrain.targetedChassisSpeeds
-    val poseRotation = drivetrain.odometryPose.rotation.inRotation2ds
-    val generatedTrajectory = path.getTrajectory(currentSpeeds, poseRotation)
-
     // Sampling the trajectory for a state that we're trying to target
     val stateFromTrajectory = generatedTrajectory.sample(trajCurTime.inSeconds)
 
@@ -197,7 +209,6 @@ class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPla
       "Pathfollow/thetaSetpoint", stateFromTrajectory.targetHolonomicPose.rotation.degrees
     )
     Logger.recordOutput("Pathfollow/currentTheta", drivetrain.odometryPose.rotation.inDegrees)
-
 
     val targetedChassisSpeeds =
       swerveDriveController.calculateRobotRelativeSpeeds(
@@ -219,7 +230,7 @@ class FollowPathPlannerPathCommand(val drivetrain: Drivetrain, val path: PathPla
   //                trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
   //    }
   override fun isFinished(): Boolean {
-    return atReference
+    return atReference && trajCurTime.inSeconds >= generatedTrajectory.totalTimeSeconds
   }
 
   override fun end(interrupted: Boolean) {

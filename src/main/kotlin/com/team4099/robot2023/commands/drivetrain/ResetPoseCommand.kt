@@ -21,6 +21,7 @@ class ResetPoseCommand(val drivetrain: Drivetrain, val pose: Pose2d) : Command()
   }
 
   override fun isFinished(): Boolean {
+    Logger.recordOutput("ActiveCommands/ResetPoseCommand", false)
     return true
   }
 }
