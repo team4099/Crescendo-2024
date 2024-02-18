@@ -1,6 +1,7 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.pathplanner.lib.path.PathPlannerPath
+import com.pathplanner.lib.path.PathPlannerTrajectory
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.lib.math.asPose2d
 import com.team4099.lib.math.asTransform2d
@@ -8,6 +9,7 @@ import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.FrameType
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
@@ -45,8 +47,8 @@ import org.team4099.lib.units.perSecond
 class FollowPathPlannerPathCommand(
   val drivetrain: Drivetrain,
   val path: PathPlannerPath,
-  pathFrame: FrameType = FrameType.ODOMETRY,
-  var stateFrame: FrameType = FrameType.FIELD,
+  var stateFrame: FrameType = FrameType.ODOMETRY,
+  var pathFrame: FrameType = FrameType.FIELD,
 ) : Command() {
   private val translationToleranceAtEnd = 1.inches
   private val thetaToleranceAtEnd = 2.5.degrees
@@ -133,12 +135,12 @@ class FollowPathPlannerPathCommand(
   init {
     addRequirements(drivetrain)
 
-    when (pathFrame) {
+    when (stateFrame) {
       FrameType.ODOMETRY -> drivePoseSupplier = { drivetrain.odomTRobot }
       FrameType.FIELD -> {
         drivePoseSupplier = { drivetrain.fieldTRobot }
         // if we're already in field frame we do not want to shift by `odoTField` again
-        stateFrame = FrameType.FIELD
+        pathFrame = FrameType.FIELD
       }
     }
 
@@ -159,9 +161,17 @@ class FollowPathPlannerPathCommand(
       )
   }
 
+  private lateinit var currentSpeeds: ChassisSpeeds
+  private lateinit var poseRotation: Rotation2d
+  private lateinit var generatedTrajectory: PathPlannerTrajectory
+
   override fun initialize() {
     trajStartTime = Clock.fpgaTime
     odoTField = drivetrain.odomTField
+
+    currentSpeeds = drivetrain.targetedChassisSpeeds
+    poseRotation = drivePoseSupplier().rotation.inRotation2ds
+    generatedTrajectory = path.getTrajectory(currentSpeeds, poseRotation)
   }
 
   override fun execute() {
@@ -197,10 +207,6 @@ class FollowPathPlannerPathCommand(
         )
     }
 
-    val currentSpeeds = drivetrain.targetedChassisSpeeds
-    val poseRotation = drivePoseSupplier().rotation.inRotation2ds
-    val generatedTrajectory = path.getTrajectory(currentSpeeds, poseRotation)
-
     // Sampling the trajectory for a state that we're trying to target
     val stateFromTrajectory = generatedTrajectory.sample(trajCurTime.inSeconds)
 
@@ -213,21 +219,22 @@ class FollowPathPlannerPathCommand(
         lastSampledPose.rotation.inRadians
       )
     )
-    val stateFrameRobotPose: Pose2d
-    when (stateFrame) {
-      FrameType.FIELD -> {
-        lastSampledPose =
-          odoTField
-            .asPose2d()
-            .transformBy(
-              Pose2d(stateFromTrajectory.targetHolonomicPose).asTransform2d().inverse()
-            )
-        stateFrameRobotPose =
-          odoTField.inverse().asPose2d().transformBy(drivePoseSupplier().asTransform2d())
-      }
-      FrameType.ODOMETRY -> {
-        lastSampledPose = Pose2d(stateFromTrajectory.targetHolonomicPose)
-        stateFrameRobotPose = drivePoseSupplier()
+    val robotPoseInSelectedFrame: Pose2d = drivePoseSupplier()
+    if (pathFrame == stateFrame) {
+      lastSampledPose = Pose2d(stateFromTrajectory.targetHolonomicPose)
+    } else {
+      when (pathFrame) {
+        FrameType.ODOMETRY ->
+          lastSampledPose =
+            odoTField
+              .asPose2d()
+              .transformBy(Pose2d(stateFromTrajectory.targetHolonomicPose).asTransform2d())
+        FrameType.FIELD ->
+          lastSampledPose =
+            odoTField
+              .inverse()
+              .asPose2d()
+              .transformBy(Pose2d(stateFromTrajectory.targetHolonomicPose).asTransform2d())
       }
     }
 
@@ -235,7 +242,9 @@ class FollowPathPlannerPathCommand(
     Logger.recordOutput("Pathfollow/currentThetaDegrees", drivePoseSupplier().rotation.inDegrees)
 
     val targetedChassisSpeeds =
-      swerveDriveController.calculateRobotRelativeSpeeds(stateFrameRobotPose, stateFromTrajectory)
+      swerveDriveController.calculateRobotRelativeSpeeds(
+        robotPoseInSelectedFrame, stateFromTrajectory
+      )
 
     // Set closed loop request
     pathFollowRequest.chassisSpeeds = targetedChassisSpeeds.chassisSpeedsWPILIB
@@ -252,7 +261,7 @@ class FollowPathPlannerPathCommand(
   //                trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
   //    }
   override fun isFinished(): Boolean {
-    return atReference
+    return atReference && trajCurTime.inSeconds > generatedTrajectory.totalTimeSeconds
   }
 
   override fun end(interrupted: Boolean) {
