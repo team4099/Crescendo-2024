@@ -2,6 +2,8 @@ package com.team4099.robot2023.commands.drivetrain
 
 import com.pathplanner.lib.path.PathPlannerPath
 import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.lib.math.asPose2d
+import com.team4099.lib.math.asTransform2d
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
@@ -9,6 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
+import org.team4099.lib.geometry.Transform2d
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.hal.Clock
 import org.team4099.lib.pplib.PathPlannerHolonomicDriveController
@@ -41,7 +44,8 @@ import org.team4099.lib.units.perSecond
 class FollowPathPlannerPathCommand(
   val drivetrain: Drivetrain,
   val path: PathPlannerPath,
-  useOdoFrame: Boolean = true
+  useOdoFrame: Boolean = true,
+  followingFieldCoordinates: Boolean = true,
 ) : Command() {
   private val translationToleranceAtEnd = 1.inches
   private val thetaToleranceAtEnd = 2.5.degrees
@@ -54,13 +58,15 @@ class FollowPathPlannerPathCommand(
   private var pathFollowRequest = Request.DrivetrainRequest.ClosedLoop(ChassisSpeeds(0.0, 0.0, 0.0))
   private var lastSampledPose = Pose2d()
 
-  private var drivetrainPoseSupplier: () -> Pose2d
+  private var odoTRobotSupplier: () -> Pose2d
+  private var odoTFieldSupplier: () -> Transform2d
+
   private val atReference: Boolean
     get() =
       (
-        (lastSampledPose.translation - drivetrainPoseSupplier().translation).magnitude.meters <=
+        (lastSampledPose.translation - odoTRobotSupplier().translation).magnitude.meters <=
           translationToleranceAtEnd &&
-          (lastSampledPose.rotation - drivetrainPoseSupplier().rotation).absoluteValue <=
+          (lastSampledPose.rotation - odoTRobotSupplier().rotation).absoluteValue <=
           thetaToleranceAtEnd
         )
 
@@ -127,9 +133,15 @@ class FollowPathPlannerPathCommand(
     addRequirements(drivetrain)
 
     if (useOdoFrame) {
-      drivetrainPoseSupplier = { drivetrain.odomTRobot }
+      odoTRobotSupplier = { drivetrain.odomTRobot }
     } else {
-      drivetrainPoseSupplier = { drivetrain.fieldTRobot }
+      odoTRobotSupplier = { drivetrain.fieldTRobot }
+    }
+
+    if (followingFieldCoordinates) {
+      odoTFieldSupplier = { drivetrain.odomTField }
+    } else {
+      odoTFieldSupplier = { Transform2d(Translation2d(), 0.0.degrees) }
     }
 
     translationPID = PathPlannerTranslationPID(poskP.get(), poskI.get(), poskD.get())
@@ -187,7 +199,7 @@ class FollowPathPlannerPathCommand(
     }
 
     val currentSpeeds = drivetrain.targetedChassisSpeeds
-    val poseRotation = drivetrainPoseSupplier().rotation.inRotation2ds
+    val poseRotation = odoTRobotSupplier().rotation.inRotation2ds
     val generatedTrajectory = path.getTrajectory(currentSpeeds, poseRotation)
 
     // Sampling the trajectory for a state that we're trying to target
@@ -202,17 +214,18 @@ class FollowPathPlannerPathCommand(
         lastSampledPose.rotation.inRadians
       )
     )
-    Logger.recordOutput(
-      "Pathfollow/thetaSetpoint", stateFromTrajectory.targetHolonomicPose.rotation.degrees
-    )
-    Logger.recordOutput("Pathfollow/currentTheta", drivetrainPoseSupplier().rotation.inDegrees)
+    lastSampledPose =
+      odoTFieldSupplier()
+        .asPose2d()
+        .transformBy(Pose2d(stateFromTrajectory.targetHolonomicPose).asTransform2d().inverse())
 
-    lastSampledPose = Pose2d(stateFromTrajectory.targetHolonomicPose)
+    Logger.recordOutput("Pathfollow/thetaSetpointDegrees", lastSampledPose.rotation.inDegrees)
+    Logger.recordOutput("Pathfollow/currentThetaDegrees", odoTRobotSupplier().rotation.inDegrees)
 
+    val fieldFrameRobotPose =
+      odoTFieldSupplier().inverse().asPose2d().transformBy(odoTRobotSupplier().asTransform2d())
     val targetedChassisSpeeds =
-      swerveDriveController.calculateRobotRelativeSpeeds(
-        drivetrainPoseSupplier(), stateFromTrajectory
-      )
+      swerveDriveController.calculateRobotRelativeSpeeds(fieldFrameRobotPose, stateFromTrajectory)
 
     // Set closed loop request
     pathFollowRequest.chassisSpeeds = targetedChassisSpeeds.chassisSpeedsWPILIB

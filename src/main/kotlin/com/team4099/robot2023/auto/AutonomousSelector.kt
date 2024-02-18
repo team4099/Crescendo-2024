@@ -56,7 +56,8 @@ object AutonomousSelector {
     get() = secondaryWaitInAuto.getDouble(0.0).seconds
 
   fun getCommand(drivetrain: Drivetrain): Command {
-    val mode = autonomousModeChooser.get()
+    val mode = AutonomousMode.TEST_AUTO_PATH
+    // val mode = autonomousModeChooser.get()
     //    println("${waitTime().inSeconds} wait command")
     when (mode) {
       AutonomousMode.TEST_AUTO_PATH ->
