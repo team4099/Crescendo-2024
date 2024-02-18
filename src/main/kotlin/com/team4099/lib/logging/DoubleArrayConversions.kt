@@ -24,9 +24,10 @@ fun Pose3d.toDoubleArray(): Array<Double> {
     this.x.inMeters,
     this.y.inMeters,
     this.z.inMeters,
-    this.rotation.x.inRadians,
-    this.rotation.y.inRadians,
-    this.rotation.z.inRadians
+    this.rotation.quaternion.w.inRadians,
+    this.rotation.quaternion.x.inMeters,
+    this.rotation.quaternion.y.inMeters,
+    this.rotation.quaternion.z.inMeters
   )
 }
 

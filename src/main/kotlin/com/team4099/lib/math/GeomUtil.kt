@@ -4,8 +4,10 @@ import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Transform2d
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.geometry.Twist2d
+import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.radians
 
 /**
@@ -46,4 +48,14 @@ fun Pose2d.asTransform2d(): Transform2d {
  */
 fun Transform2d.asPose2d(): Pose2d {
   return Pose2d(this.translation, this.rotation)
+}
+
+fun Transform2d.asDoubleArray(): DoubleArray {
+  return doubleArrayOf(
+    this.translation.x.inMeters, this.translation.y.inMeters, this.rotation.inRadians
+  )
+}
+
+fun Pose2d.asDoubleArray(): DoubleArray {
+  return doubleArrayOf(this.x.inMeters, this.y.inMeters, this.rotation.inRadians)
 }
