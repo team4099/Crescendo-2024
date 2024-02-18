@@ -134,11 +134,11 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
         nextState = FeederStates.OPEN_LOOP_INTAKE
       }
       FeederStates.OPEN_LOOP_INTAKE -> {
-          setFeederVoltage(feederTargetVoltage)
+        setFeederVoltage(feederTargetVoltage)
         nextState = fromRequestToState(currentRequest)
       }
       FeederStates.OPEN_LOOP_SHOOT -> {
-          setFeederVoltage(feederTargetVoltage)
+        setFeederVoltage(feederTargetVoltage)
         nextState = fromRequestToState(currentRequest)
       }
     }

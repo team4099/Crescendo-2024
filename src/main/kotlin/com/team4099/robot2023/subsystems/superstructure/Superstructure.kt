@@ -430,8 +430,7 @@ class Superstructure(
         }
       }
       SuperstructureStates.CLIMB_RETRACT -> {
-        elevator.currentRequest =
-          Request.ElevatorRequest.OpenLoop(-4.volts)
+        elevator.currentRequest = Request.ElevatorRequest.OpenLoop(-4.volts)
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
