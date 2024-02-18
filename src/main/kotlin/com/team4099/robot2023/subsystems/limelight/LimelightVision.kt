@@ -2,9 +2,9 @@ package com.team4099.robot2023.subsystems.limelight
 
 import com.team4099.lib.logging.TunableNumber
 import com.team4099.lib.vision.TargetCorner
+import com.team4099.lib.vision.TimestampedVisionUpdate
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.util.LimelightReading
-import com.team4099.robot2023.util.PoseEstimator
 import com.team4099.robot2023.util.rotateBy
 import com.team4099.robot2023.util.toPose3d
 import edu.wpi.first.wpilibj2.command.SubsystemBase
@@ -33,7 +33,7 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
   val inputs = LimelightVisionIO.LimelightVisionIOInputs()
 
   var poseSupplier: () -> Pose2d = { Pose2d() }
-  var visionConsumer: Consumer<List<PoseEstimator.TimestampedVisionUpdate>> = Consumer {}
+  var visionConsumer: Consumer<List<TimestampedVisionUpdate>> = Consumer {}
 
   // i think we need this for camera project to irl coordinates
   val vpw = (2.0 * (VisionConstants.Limelight.HORIZONTAL_FOV / 2).tan)
@@ -217,7 +217,7 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
 
   fun setDataInterfaces(
     poseSupplier: () -> Pose2d,
-    visionConsumer: Consumer<List<PoseEstimator.TimestampedVisionUpdate>>
+    visionConsumer: Consumer<List<TimestampedVisionUpdate>>
   ) {
     this.poseSupplier = poseSupplier
     this.visionConsumer = visionConsumer
