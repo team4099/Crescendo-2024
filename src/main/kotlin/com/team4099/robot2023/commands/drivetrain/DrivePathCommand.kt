@@ -74,7 +74,7 @@ class DrivePathCommand(
   val endPathOnceAtReference: Boolean = true,
   val leaveOutYAdjustment: Boolean = false,
   val endVelocity: Velocity2d = Velocity2d(),
-  var stateFrame: FrameType = FrameType.FIELD,
+  var stateFrame: FrameType = FrameType.ODOMETRY,
   var pathFrame: FrameType = FrameType.FIELD,
 ) : Command() {
   private val xPID: PIDController<Meter, Velocity<Meter>>
@@ -256,13 +256,17 @@ class DrivePathCommand(
 
     val robotPoseInSelectedFrame: Pose2d = drivePoseSupplier()
     if (pathFrame == stateFrame) {
-      // odoTField x fieldTRobot
-      lastSampledPose = targetHolonomicPose.purelyTranslateBy(-pathTransform.translation)
+      lastSampledPose =
+        pathTransform.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
     } else {
       when (pathFrame) {
         FrameType.ODOMETRY ->
           lastSampledPose =
-            odoTField.asPose2d().inverse().transformBy(targetHolonomicPose.asTransform2d())
+            pathTransform
+              .inverse()
+              .asPose2d()
+              .transformBy(odoTField.inverse())
+              .transformBy(targetHolonomicPose.asTransform2d())
         FrameType.FIELD ->
           lastSampledPose = odoTField.asPose2d().transformBy(targetHolonomicPose.asTransform2d())
       }
