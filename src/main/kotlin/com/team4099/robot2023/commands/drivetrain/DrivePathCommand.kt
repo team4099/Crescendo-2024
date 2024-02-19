@@ -7,7 +7,7 @@ import com.team4099.lib.math.asTransform2d
 import com.team4099.lib.trajectory.CustomHolonomicDriveController
 import com.team4099.lib.trajectory.CustomTrajectoryGenerator
 import com.team4099.lib.trajectory.FieldWaypoint
-import com.team4099.lib.trajectory.RelativeWaypoint
+import com.team4099.lib.trajectory.OdometryWaypoint
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
@@ -15,7 +15,6 @@ import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.AllianceFlipUtil
 import com.team4099.robot2023.util.FrameType
 import com.team4099.robot2023.util.Velocity2d
-import com.team4099.robot2023.util.inverse
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGenerationException
@@ -212,12 +211,12 @@ class DrivePathCommand(
   }
 
   override fun initialize() {
-    val containsAllRelativeWaypoints = waypoints.get().all { it is RelativeWaypoint }
+    val containsAllOdometryWaypoints = waypoints.get().all { it is OdometryWaypoint }
     val containsAllFieldWaypoints = waypoints.get().all { it is FieldWaypoint }
-    Logger.recordOutput("Pathfollow/allRelative", containsAllRelativeWaypoints)
+    Logger.recordOutput("Pathfollow/allRelative", containsAllOdometryWaypoints)
     Logger.recordOutput("Pathfollow/allField", containsAllFieldWaypoints)
 
-    if ((containsAllRelativeWaypoints && (pathFrame == FrameType.FIELD))) {
+    if ((containsAllOdometryWaypoints && (pathFrame == FrameType.FIELD))) {
       errorString = "Cannot pass in Relative Waypoints when pathFrame is FrameType.FIELD"
       end(true)
     }
@@ -227,7 +226,7 @@ class DrivePathCommand(
       end(true)
     }
 
-    if (!(containsAllFieldWaypoints || containsAllRelativeWaypoints)) {
+    if (!(containsAllFieldWaypoints || containsAllOdometryWaypoints)) {
       errorString = "Cannot pass in both Field Waypoints and Relative Waypoints"
       end(true)
     }
