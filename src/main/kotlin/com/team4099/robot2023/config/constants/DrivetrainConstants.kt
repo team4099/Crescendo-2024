@@ -30,7 +30,7 @@ import kotlin.math.sqrt
 
 object DrivetrainConstants {
   const val FOC_ENABLED = false
-  const val MINIMIZE_SKEW = true
+  const val MINIMIZE_SKEW = false
 
   const val OMOMETRY_UPDATE_FREQUENCY = 250.0
 
