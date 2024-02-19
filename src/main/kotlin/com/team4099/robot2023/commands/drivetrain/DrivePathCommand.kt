@@ -4,7 +4,6 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.lib.logging.toDoubleArray
 import com.team4099.lib.math.asPose2d
 import com.team4099.lib.math.asTransform2d
-import com.team4099.lib.math.purelyTranslateBy
 import com.team4099.lib.trajectory.CustomHolonomicDriveController
 import com.team4099.lib.trajectory.CustomTrajectoryGenerator
 import com.team4099.lib.trajectory.Waypoint
@@ -75,7 +74,7 @@ class DrivePathCommand(
   val leaveOutYAdjustment: Boolean = false,
   val endVelocity: Velocity2d = Velocity2d(),
   var stateFrame: FrameType = FrameType.ODOMETRY,
-  var pathFrame: FrameType = FrameType.FIELD,
+  var pathFrame: FrameType = FrameType.ODOMETRY,
 ) : Command() {
   private val xPID: PIDController<Meter, Velocity<Meter>>
   private val yPID: PIDController<Meter, Velocity<Meter>>
@@ -256,26 +255,24 @@ class DrivePathCommand(
 
     val robotPoseInSelectedFrame: Pose2d = drivePoseSupplier()
     if (pathFrame == stateFrame) {
-      lastSampledPose =
-        pathTransform.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
+      lastSampledPose = targetHolonomicPose
+      //        pathTransform.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
     } else {
       when (pathFrame) {
         FrameType.ODOMETRY ->
           lastSampledPose =
-            pathTransform
-              .inverse()
-              .asPose2d()
-              .transformBy(odoTField.inverse())
-              .transformBy(targetHolonomicPose.asTransform2d())
+            odoTField.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
         FrameType.FIELD ->
           lastSampledPose = odoTField.asPose2d().transformBy(targetHolonomicPose.asTransform2d())
       }
     }
+    // flip
+    lastSampledPose = AllianceFlipUtil.apply(lastSampledPose)
+
     Logger.recordOutput(
       "Pathfollow/frameSpecificTargetPose", lastSampledPose.toDoubleArray().toDoubleArray()
     )
-    val pathFrameTRobotPose =
-      (robotPoseInSelectedFrame.purelyTranslateBy(pathTransform.translation))
+    val pathFrameTRobotPose = robotPoseInSelectedFrame
     Logger.recordOutput(
       "Pathfollow/fieldTRobotVisualized", pathFrameTRobotPose.toDoubleArray().toDoubleArray()
     )
@@ -374,7 +371,7 @@ class DrivePathCommand(
   override fun isFinished(): Boolean {
     trajCurTime = Clock.fpgaTime - trajStartTime
     return endPathOnceAtReference &&
-      (!keepTrapping || swerveDriveController.atReference()) &&
+      (swerveDriveController.atReference()) &&
       trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
   }
 
