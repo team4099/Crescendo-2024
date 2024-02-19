@@ -62,7 +62,6 @@ import org.team4099.lib.units.inMetersPerSecondPerSecond
 import org.team4099.lib.units.inRadiansPerSecond
 import org.team4099.lib.units.inRadiansPerSecondPerSecond
 import org.team4099.lib.units.perSecond
-import java.lang.IllegalArgumentException
 import java.util.function.Supplier
 import kotlin.math.PI
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
@@ -148,6 +147,8 @@ class DrivePathCommand(
   private var drivePoseSupplier: () -> Pose2d
   private var odoTField: Transform2d = Transform2d(Translation2d(), 0.0.degrees)
 
+  private var errorString = ""
+
   private fun generate(
     waypoints: List<Waypoint>,
     constraints: List<TrajectoryConstraint> = listOf()
@@ -217,19 +218,18 @@ class DrivePathCommand(
     Logger.recordOutput("Pathfollow/allField", containsAllFieldWaypoints)
 
     if ((containsAllRelativeWaypoints && (pathFrame == FrameType.FIELD))) {
-      throw IllegalArgumentException(
-        "Cannot pass in Relative Waypoints when pathFrame is FrameType.FIELD"
-      )
+      errorString = "Cannot pass in Relative Waypoints when pathFrame is FrameType.FIELD"
+      end(true)
     }
 
     if ((containsAllFieldWaypoints && (pathFrame == FrameType.ODOMETRY))) {
-      throw IllegalArgumentException(
-        "Cannot pass in Field Waypoints when pathFrame is FrameType.ODOMETRY"
-      )
+      errorString = "Cannot pass in Field Waypoints when pathFrame is FrameType.ODOMETRY"
+      end(true)
     }
 
     if (!(containsAllFieldWaypoints || containsAllRelativeWaypoints)) {
-      throw IllegalArgumentException("Cannot pass in both Field Waypoints and Relative Waypoints")
+      errorString = "Cannot pass in both Field Waypoints and Relative Waypoints"
+      end(true)
     }
 
     odoTField = drivetrain.odomTField
@@ -402,6 +402,7 @@ class DrivePathCommand(
   override fun end(interrupted: Boolean) {
     Logger.recordOutput("ActiveCommands/DrivePathCommand", false)
     if (interrupted) {
+      DriverStation.reportError(errorString, true)
       // Stop where we are if interrupted
       drivetrain.currentRequest =
         DrivetrainRequest.OpenLoop(
