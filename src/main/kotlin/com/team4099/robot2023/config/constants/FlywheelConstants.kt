@@ -3,6 +3,7 @@ package com.team4099.robot2023.config.constants
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.grams
+import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.DerivativeGain
@@ -23,6 +24,9 @@ object FlywheelConstants {
   val RIGHT_MOTOR_REVOLUTIONS_PER_FLYWHEEL_REVOLUTIONS = 24.0 / 48.0
 
   val VOLTAGE_COMPENSATION = 12.volts
+
+  val FLYWHEEL_SPEED_TRANSFER_PERCENTAGE = 0.475
+  val FLYWHEEL_RADIUS = 2.inches
 
   val INERTIA = 0.0014550597.kilo.grams * 1.0.meters.squared
 
@@ -62,7 +66,7 @@ object FlywheelConstants {
   val IDLE_VELOCITY = 0.0.rotations.perMinute
   val SPEAKER_VELOCITY = 10_000.rotations.perMinute
   val AMP_VELOCITY = 5_000.rotations.perMinute
-  val AMP_SCORE_TIME = 1.seconds
-  val SPEAKER_SCORE_TIME = 1.seconds
+  val AMP_SCORE_TIME = 0.5.seconds
+  val SPEAKER_SCORE_TIME = 0.5.seconds
   val EJECT_VELOCITY = 5_000.rotations.perMinute
 }

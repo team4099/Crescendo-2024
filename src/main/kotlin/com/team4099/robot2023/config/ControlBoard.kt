@@ -27,7 +27,7 @@ object ControlBoard {
     get() = -driver.leftYAxis
 
   val turn: Double
-    get() = driver.rightXAxis
+    get() = operator.leftXAxis
 
   val slowMode: Boolean
     get() = driver.leftShoulderButton

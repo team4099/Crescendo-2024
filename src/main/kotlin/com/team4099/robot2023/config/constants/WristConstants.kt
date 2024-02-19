@@ -37,6 +37,9 @@ object WristConstants {
   val WRIST_MIN_ROTATION = (-37.0).degrees
 
   val WRIST_ZERO_SIM_OFFSET = 27.5.degrees
+  val NOTE_ANGLE_SIM_OFFSET = -24.degrees
+  val WRIST_AXIS_TO_NOTE_HOLD_POSITION = 14.5.inches
+  val WRIST_AXIS_TO_NOTE_LAUNCH_POSITION = 10.inches
 
   val MAX_WRIST_VELOCITY = 300.degrees.perSecond
   val MAX_WRIST_ACCELERATION = 600.degrees.perSecond.perSecond

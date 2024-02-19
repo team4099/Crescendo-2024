@@ -5,9 +5,9 @@
         "visible": false
       }
     },
-    "Timing": {
+    "RoboRIO": {
       "window": {
-        "visible": false
+        "visible": true
       }
     }
   },

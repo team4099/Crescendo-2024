@@ -88,7 +88,7 @@ object RobotContainer {
       wrist = Wrist(WristIOSim)
     }
 
-    superstructure = Superstructure(intake, feeder, elevator, wrist, flywheel)
+    superstructure = Superstructure(drivetrain, intake, feeder, elevator, wrist, flywheel)
     vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
     limelight.poseSupplier = { drivetrain.odometryPose }
   }
