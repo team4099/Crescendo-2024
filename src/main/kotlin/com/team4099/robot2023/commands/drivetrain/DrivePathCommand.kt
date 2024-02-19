@@ -213,7 +213,7 @@ class DrivePathCommand(
     pathTransform =
       Transform2d(
         Translation2d(waypoints.get()[0].translation),
-        waypoints.get()[0].driveRotation?.radians?.radians ?: 0.0.degrees
+        waypoints.get()[0].driveRotation?.radians?.radians ?: drivePoseSupplier().rotation
       )
 
     // trajectory generation!
