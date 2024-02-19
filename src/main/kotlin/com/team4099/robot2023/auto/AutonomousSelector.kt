@@ -1,6 +1,6 @@
 package com.team4099.robot2023.auto
 
-import com.team4099.robot2023.auto.mode.ExamplePathAuto
+import com.team4099.robot2023.auto.mode.TestAutoPath
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import edu.wpi.first.networktables.GenericEntry
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
@@ -61,7 +61,7 @@ object AutonomousSelector {
     //    println("${waitTime().inSeconds} wait command")
     when (mode) {
       AutonomousMode.TEST_AUTO_PATH ->
-        return WaitCommand(waitTime.inSeconds).andThen(ExamplePathAuto(drivetrain))
+        return WaitCommand(waitTime.inSeconds).andThen(TestAutoPath(drivetrain))
       else -> println("ERROR: unexpected auto mode: $mode")
     }
     return InstantCommand()
