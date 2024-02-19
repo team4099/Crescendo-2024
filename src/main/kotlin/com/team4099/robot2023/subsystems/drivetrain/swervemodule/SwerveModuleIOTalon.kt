@@ -58,7 +58,7 @@ class SwerveModuleIOTalon(
   private val steeringSensor =
     ctreAngularMechanismSensor(
       steeringFalcon,
-      DrivetrainConstants.STEERING_SENSOR_GEAR_RATIO,
+      1.0,
       DrivetrainConstants.STEERING_COMPENSATION_VOLTAGE
     )
 
@@ -115,10 +115,9 @@ class SwerveModuleIOTalon(
     steeringConfiguration.CurrentLimits.SupplyCurrentLimit =
       DrivetrainConstants.STEERING_SUPPLY_CURRENT_LIMIT.inAmperes
 
-    // steeringConfiguration.ClosedLoopGeneral.ContinuousWrap = true
+    steeringConfiguration.ClosedLoopGeneral.ContinuousWrap = true
     steeringConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
-    // steeringConfiguration.Feedback.SensorToMechanismRatio = 1 /
-    // DrivetrainConstants.STEERING_SENSOR_GEAR_RATIO
+    steeringConfiguration.Feedback.SensorToMechanismRatio = 1 / DrivetrainConstants.STEERING_SENSOR_GEAR_RATIO
 
     steeringConfiguration.MotorOutput.NeutralMode =
       NeutralModeValue.Brake // change back to coast maybe?
@@ -132,7 +131,7 @@ class SwerveModuleIOTalon(
       driveSensor.integralVelocityGainToRawUnits(DrivetrainConstants.PID.DRIVE_KI)
     driveConfiguration.Slot0.kD =
       driveSensor.derivativeVelocityGainToRawUnits(DrivetrainConstants.PID.DRIVE_KD)
-    driveConfiguration.Slot0.kV = 0.1267939375649165 / 15 // kv too high rn
+    driveConfiguration.Slot0.kV = DrivetrainConstants.PID.DRIVE_KFF // kv too high rn
     //      driveSensor.velocityFeedforwardToRawUnits(DrivetrainConstants.PID.DRIVE_KFF)
     driveConfiguration.CurrentLimits.SupplyCurrentLimit =
       DrivetrainConstants.DRIVE_SUPPLY_CURRENT_LIMIT.inAmperes
@@ -361,7 +360,7 @@ class SwerveModuleIOTalon(
     PIDConfig.kP = driveSensor.proportionalVelocityGainToRawUnits(kP)
     PIDConfig.kI = driveSensor.integralVelocityGainToRawUnits(kI)
     PIDConfig.kD = driveSensor.derivativeVelocityGainToRawUnits(kD)
-    PIDConfig.kV = 0.05425
+    PIDConfig.kV = DrivetrainConstants.PID.DRIVE_KFF
 
     driveFalcon.configurator.apply(PIDConfig)
   }

@@ -138,7 +138,7 @@ class FollowPathPlannerPathCommand(
       PathPlannerHolonomicDriveController(
         translationPID,
         rotationPID,
-        DrivetrainConstants.MAX_AUTO_VEL,
+        DrivetrainConstants.MAX_MODULE_VEL,
         Translation2d(
           DrivetrainConstants.DRIVETRAIN_LENGTH / 2,
           DrivetrainConstants.DRIVETRAIN_WIDTH / 2
@@ -151,21 +151,23 @@ class FollowPathPlannerPathCommand(
   override fun initialize() {
     trajStartTime = Clock.fpgaTime
 
-    drivetrain.odometryPose = Pose2d(path.previewStartingHolonomicPose)
-
     currentSpeeds = drivetrain.targetedChassisSpeeds
     poseRotation = drivetrain.odometryPose.rotation.inRotation2ds
     generatedTrajectory = path.getTrajectory(currentSpeeds, poseRotation)
+
+    Logger.recordOutput("ActiveCommands/FollowPathPlannerPathCommand", true)
+    println("Pose init ${drivetrain.odometryPose.x}")
   }
 
   override fun execute() {
     if (thetakP.hasChanged() || thetakI.hasChanged() || thetakD.hasChanged()) {
       rotationPID = PathPlannerRotationPID(thetakP.get(), thetakI.get(), thetakD.get())
+      rotationPID.pplibRotationConstants
       swerveDriveController =
         PathPlannerHolonomicDriveController(
           translationPID,
           rotationPID,
-          DrivetrainConstants.MAX_AUTO_VEL,
+          DrivetrainConstants.MAX_MODULE_VEL,
           Translation2d(
             DrivetrainConstants.DRIVETRAIN_LENGTH / 2,
             DrivetrainConstants.DRIVETRAIN_WIDTH / 2
@@ -181,7 +183,7 @@ class FollowPathPlannerPathCommand(
         PathPlannerHolonomicDriveController(
           translationPID,
           rotationPID,
-          DrivetrainConstants.MAX_AUTO_VEL,
+          DrivetrainConstants.MAX_MODULE_VEL,
           Translation2d(
             DrivetrainConstants.DRIVETRAIN_LENGTH / 2,
             DrivetrainConstants.DRIVETRAIN_WIDTH / 2
@@ -219,6 +221,8 @@ class FollowPathPlannerPathCommand(
     pathFollowRequest.chassisSpeeds = targetedChassisSpeeds.chassisSpeedsWPILIB
     drivetrain.currentRequest = pathFollowRequest
 
+    println("Drivetrain request ${drivetrain.odometryPose.x}")
+
     // Update trajectory time
     trajCurTime = Clock.fpgaTime - trajStartTime
   }
@@ -248,6 +252,8 @@ class FollowPathPlannerPathCommand(
         Request.DrivetrainRequest.OpenLoop(
           0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
         )
-    }
+    }4
+
+    Logger.recordOutput("ActiveCommands/FollowPathPlannerPathCommand", false)
   }
 }
