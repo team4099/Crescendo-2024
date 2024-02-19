@@ -4,6 +4,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.lib.logging.toDoubleArray
 import com.team4099.lib.math.asPose2d
 import com.team4099.lib.math.asTransform2d
+import com.team4099.lib.math.purelyTranslateBy
 import com.team4099.lib.trajectory.CustomHolonomicDriveController
 import com.team4099.lib.trajectory.CustomTrajectoryGenerator
 import com.team4099.lib.trajectory.Waypoint
@@ -13,6 +14,7 @@ import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.AllianceFlipUtil
 import com.team4099.robot2023.util.FrameType
 import com.team4099.robot2023.util.Velocity2d
+import com.team4099.robot2023.util.inverse
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGenerationException
@@ -72,8 +74,8 @@ class DrivePathCommand(
   val endPathOnceAtReference: Boolean = true,
   val leaveOutYAdjustment: Boolean = false,
   val endVelocity: Velocity2d = Velocity2d(),
-  var stateFrame: FrameType = FrameType.ODOMETRY,
-  var pathFrame: FrameType = FrameType.ODOMETRY,
+  var stateFrame: FrameType = FrameType.FIELD,
+  var pathFrame: FrameType = FrameType.FIELD,
 ) : Command() {
   private val xPID: PIDController<Meter, Velocity<Meter>>
   private val yPID: PIDController<Meter, Velocity<Meter>>
@@ -198,8 +200,6 @@ class DrivePathCommand(
       }
     }
 
-    drivePoseSupplier = { drivetrain.odomTRobot }
-
     swerveDriveController =
       CustomHolonomicDriveController(
         xPID.wpiPidController, yPID.wpiPidController, thetaPID.wpiPidController
@@ -257,18 +257,21 @@ class DrivePathCommand(
     val robotPoseInSelectedFrame: Pose2d = drivePoseSupplier()
     if (pathFrame == stateFrame) {
       // odoTField x fieldTRobot
-      lastSampledPose = (targetHolonomicPose - pathTransform.asPose2d()).asPose2d()
+      lastSampledPose = targetHolonomicPose.purelyTranslateBy(-pathTransform.translation)
     } else {
       when (pathFrame) {
         FrameType.ODOMETRY ->
-          lastSampledPose = odoTField.asPose2d().transformBy(targetHolonomicPose.asTransform2d())
-        FrameType.FIELD ->
           lastSampledPose =
-            odoTField.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
+            odoTField.asPose2d().inverse().transformBy(targetHolonomicPose.asTransform2d())
+        FrameType.FIELD ->
+          lastSampledPose = odoTField.asPose2d().transformBy(targetHolonomicPose.asTransform2d())
       }
     }
-
-    val pathFrameTRobotPose = (robotPoseInSelectedFrame + pathTransform)
+    Logger.recordOutput(
+      "Pathfollow/frameSpecificTargetPose", lastSampledPose.toDoubleArray().toDoubleArray()
+    )
+    val pathFrameTRobotPose =
+      (robotPoseInSelectedFrame.purelyTranslateBy(pathTransform.translation))
     Logger.recordOutput(
       "Pathfollow/fieldTRobotVisualized", pathFrameTRobotPose.toDoubleArray().toDoubleArray()
     )
