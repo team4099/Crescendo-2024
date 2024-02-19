@@ -1,6 +1,8 @@
 package com.team4099.robot2023.util
 
 import com.team4099.lib.math.Zone2d
+import com.team4099.lib.trajectory.FieldWaypoint
+import com.team4099.lib.trajectory.RelativeWaypoint
 import com.team4099.lib.trajectory.RotationSequence
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.FieldConstants
@@ -70,9 +72,19 @@ object AllianceFlipUtil {
     }
   }
 
-  fun apply(waypoint: Waypoint): Waypoint {
+  fun apply(waypoint: RelativeWaypoint): Waypoint {
     return if (shouldFlip()) {
-      Waypoint(apply(waypoint.translation), waypoint.driveRotation, waypoint.holonomicRotation)
+      RelativeWaypoint(
+        apply(waypoint.translation), waypoint.driveRotation, waypoint.holonomicRotation
+      )
+    } else {
+      waypoint
+    }
+  }
+
+  fun apply(waypoint: FieldWaypoint): Waypoint {
+    return if (shouldFlip()) {
+      FieldWaypoint(apply(waypoint.translation), waypoint.driveRotation, waypoint.holonomicRotation)
     } else {
       waypoint
     }

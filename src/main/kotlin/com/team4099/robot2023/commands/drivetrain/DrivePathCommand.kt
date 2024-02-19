@@ -6,6 +6,8 @@ import com.team4099.lib.math.asPose2d
 import com.team4099.lib.math.asTransform2d
 import com.team4099.lib.trajectory.CustomHolonomicDriveController
 import com.team4099.lib.trajectory.CustomTrajectoryGenerator
+import com.team4099.lib.trajectory.FieldWaypoint
+import com.team4099.lib.trajectory.RelativeWaypoint
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
@@ -60,6 +62,7 @@ import org.team4099.lib.units.inMetersPerSecondPerSecond
 import org.team4099.lib.units.inRadiansPerSecond
 import org.team4099.lib.units.inRadiansPerSecondPerSecond
 import org.team4099.lib.units.perSecond
+import java.lang.IllegalArgumentException
 import java.util.function.Supplier
 import kotlin.math.PI
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
@@ -74,7 +77,7 @@ class DrivePathCommand(
   val leaveOutYAdjustment: Boolean = false,
   val endVelocity: Velocity2d = Velocity2d(),
   var stateFrame: FrameType = FrameType.ODOMETRY,
-  var pathFrame: FrameType = FrameType.ODOMETRY,
+  var pathFrame: FrameType = FrameType.FIELD,
 ) : Command() {
   private val xPID: PIDController<Meter, Velocity<Meter>>
   private val yPID: PIDController<Meter, Velocity<Meter>>
@@ -208,6 +211,27 @@ class DrivePathCommand(
   }
 
   override fun initialize() {
+    val containsAllRelativeWaypoints = waypoints.get().all { it is RelativeWaypoint }
+    val containsAllFieldWaypoints = waypoints.get().all { it is FieldWaypoint }
+    Logger.recordOutput("Pathfollow/allRelative", containsAllRelativeWaypoints)
+    Logger.recordOutput("Pathfollow/allField", containsAllFieldWaypoints)
+
+    if ((containsAllRelativeWaypoints && (pathFrame == FrameType.FIELD))) {
+      throw IllegalArgumentException(
+        "Cannot pass in Relative Waypoints when pathFrame is FrameType.FIELD"
+      )
+    }
+
+    if ((containsAllFieldWaypoints && (pathFrame == FrameType.ODOMETRY))) {
+      throw IllegalArgumentException(
+        "Cannot pass in Field Waypoints when pathFrame is FrameType.ODOMETRY"
+      )
+    }
+
+    if (!(containsAllFieldWaypoints || containsAllRelativeWaypoints)) {
+      throw IllegalArgumentException("Cannot pass in both Field Waypoints and Relative Waypoints")
+    }
+
     odoTField = drivetrain.odomTField
     pathTransform =
       Transform2d(
