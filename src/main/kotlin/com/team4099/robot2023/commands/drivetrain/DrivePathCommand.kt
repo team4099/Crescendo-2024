@@ -439,7 +439,6 @@ private constructor(
       leaveOutYAdjustment: Boolean = false,
       endVelocity: Velocity2d = Velocity2d(),
       stateFrame: FrameType = FrameType.ODOMETRY,
-      pathFrame: FrameType = FrameType.FIELD,
     ): DrivePathCommand<FieldWaypoint> =
       DrivePathCommand(
         drivetrain,
