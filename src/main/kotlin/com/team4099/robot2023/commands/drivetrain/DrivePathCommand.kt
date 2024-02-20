@@ -405,7 +405,7 @@ private constructor(
     operator fun invoke() {
       return
     }
-    fun createOdometryPath(
+    fun createPathInOdometryFrame(
       drivetrain: Drivetrain,
       waypoints: Supplier<List<OdometryWaypoint>>,
       resetPose: Boolean = false,
@@ -429,7 +429,7 @@ private constructor(
         FrameType.ODOMETRY
       )
 
-    fun createFieldPath(
+    fun createPathInFieldFrame(
       drivetrain: Drivetrain,
       waypoints: Supplier<List<FieldWaypoint>>,
       resetPose: Boolean = false,

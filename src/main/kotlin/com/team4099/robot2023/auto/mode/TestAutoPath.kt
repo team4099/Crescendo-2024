@@ -14,7 +14,7 @@ class TestAutoPath(val drivetrain: Drivetrain) : SequentialCommandGroup() {
     addRequirements(drivetrain)
 
     addCommands(
-      DrivePathCommand.createOdometryPath(
+      DrivePathCommand.createPathInOdometryFrame(
         drivetrain,
         {
           listOf(
