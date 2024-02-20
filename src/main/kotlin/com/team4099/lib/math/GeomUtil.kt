@@ -39,3 +39,11 @@ fun Pose2d.purelyTranslateBy(translation2d: Translation2d): Pose2d {
 fun Pose2d.asTransform2d(): Transform2d {
   return Transform2d(Pose2d(0.meters, 0.meters, 0.radians), this)
 }
+
+/**
+ * Returns pose of whatever the transform represents, in the original frame of the transform. For
+ * example, odomTRobot.asPose2d() would give the pose of the robot in the odometry frame.
+ */
+fun Transform2d.asPose2d(): Pose2d {
+  return Pose2d(this.translation, this.rotation)
+}
