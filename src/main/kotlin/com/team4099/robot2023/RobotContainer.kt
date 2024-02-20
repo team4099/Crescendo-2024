@@ -33,6 +33,7 @@ import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.WristIO
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
+import com.team4099.robot2023.util.FrameCoordinate
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.geometry.Pose2d
@@ -94,6 +95,7 @@ object RobotContainer {
     superstructure = Superstructure(intake, feeder, elevator, wrist, flywheel)
     vision.setDataInterfaces({ drivetrain.fieldTRobot }, { drivetrain.addVisionData(it) })
     limelight.poseSupplier = { drivetrain.odomTRobot }
+    FrameCoordinate.robotInOdometryFrameSupplier = { drivetrain.odomTRobot }
   }
 
   fun mapDefaultCommands() {
@@ -164,7 +166,7 @@ object RobotContainer {
     ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
     ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
     ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
-    ControlBoard.wristTestDown.whileTrue(TargetPoseCommand(drivetrain, FieldConstants.centerSpeakerOpening))
+    ControlBoard.wristTestDown.whileTrue(TargetPoseCommand(drivetrain, FrameCoordinate.FieldCoordinate(FieldConstants.centerSpeakerOpening)))
 
     /*
     TUNING COMMANDS
