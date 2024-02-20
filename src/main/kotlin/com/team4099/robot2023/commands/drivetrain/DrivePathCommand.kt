@@ -213,7 +213,6 @@ private constructor(
   }
 
   override fun initialize() {
-
     odoTField = drivetrain.odomTField
     pathTransform =
       Transform2d(
