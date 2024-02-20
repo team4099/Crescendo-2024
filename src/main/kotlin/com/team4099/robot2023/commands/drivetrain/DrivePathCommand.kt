@@ -65,9 +65,10 @@ import java.util.function.Supplier
 import kotlin.math.PI
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
-class DrivePathCommand(
+class DrivePathCommand<T : Waypoint>
+private constructor(
   val drivetrain: Drivetrain,
-  private val waypoints: Supplier<List<Waypoint>>,
+  private val waypoints: Supplier<List<T>>,
   val resetPose: Boolean = false,
   val keepTrapping: Boolean = false,
   val flipForAlliances: Boolean = true,
@@ -77,6 +78,7 @@ class DrivePathCommand(
   var stateFrame: FrameType = FrameType.ODOMETRY,
   var pathFrame: FrameType = FrameType.FIELD,
 ) : Command() {
+
   private val xPID: PIDController<Meter, Velocity<Meter>>
   private val yPID: PIDController<Meter, Velocity<Meter>>
 
@@ -211,25 +213,6 @@ class DrivePathCommand(
   }
 
   override fun initialize() {
-    val containsAllOdometryWaypoints = waypoints.get().all { it is OdometryWaypoint }
-    val containsAllFieldWaypoints = waypoints.get().all { it is FieldWaypoint }
-    Logger.recordOutput("Pathfollow/allRelative", containsAllOdometryWaypoints)
-    Logger.recordOutput("Pathfollow/allField", containsAllFieldWaypoints)
-
-    if ((containsAllOdometryWaypoints && (pathFrame == FrameType.FIELD))) {
-      errorString = "Cannot pass in Relative Waypoints when pathFrame is FrameType.FIELD"
-      end(true)
-    }
-
-    if ((containsAllFieldWaypoints && (pathFrame == FrameType.ODOMETRY))) {
-      errorString = "Cannot pass in Field Waypoints when pathFrame is FrameType.ODOMETRY"
-      end(true)
-    }
-
-    if (!(containsAllFieldWaypoints || containsAllOdometryWaypoints)) {
-      errorString = "Cannot pass in both Field Waypoints and Relative Waypoints"
-      end(true)
-    }
 
     odoTField = drivetrain.odomTField
     pathTransform =
@@ -416,5 +399,59 @@ class DrivePathCommand(
           0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
         )
     }
+  }
+
+  companion object {
+    operator fun invoke() {
+      return
+    }
+    fun createOdometryPath(
+      drivetrain: Drivetrain,
+      waypoints: Supplier<List<OdometryWaypoint>>,
+      resetPose: Boolean = false,
+      keepTrapping: Boolean = false,
+      flipForAlliances: Boolean = true,
+      endPathOnceAtReference: Boolean = true,
+      leaveOutYAdjustment: Boolean = false,
+      endVelocity: Velocity2d = Velocity2d(),
+      stateFrame: FrameType = FrameType.ODOMETRY,
+    ): DrivePathCommand<OdometryWaypoint> =
+      DrivePathCommand(
+        drivetrain,
+        waypoints,
+        resetPose,
+        keepTrapping,
+        flipForAlliances,
+        endPathOnceAtReference,
+        leaveOutYAdjustment,
+        endVelocity,
+        stateFrame,
+        FrameType.ODOMETRY
+      )
+
+    fun createFieldPath(
+      drivetrain: Drivetrain,
+      waypoints: Supplier<List<FieldWaypoint>>,
+      resetPose: Boolean = false,
+      keepTrapping: Boolean = false,
+      flipForAlliances: Boolean = true,
+      endPathOnceAtReference: Boolean = true,
+      leaveOutYAdjustment: Boolean = false,
+      endVelocity: Velocity2d = Velocity2d(),
+      stateFrame: FrameType = FrameType.ODOMETRY,
+      pathFrame: FrameType = FrameType.FIELD,
+    ): DrivePathCommand<FieldWaypoint> =
+      DrivePathCommand(
+        drivetrain,
+        waypoints,
+        resetPose,
+        keepTrapping,
+        flipForAlliances,
+        endPathOnceAtReference,
+        leaveOutYAdjustment,
+        endVelocity,
+        stateFrame,
+        FrameType.FIELD
+      )
   }
 }
