@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut
 import com.ctre.phoenix6.controls.PositionDutyCycle
 import com.ctre.phoenix6.controls.VelocityDutyCycle
 import com.ctre.phoenix6.hardware.TalonFX
+import com.ctre.phoenix6.signals.InvertedValue
 import com.ctre.phoenix6.signals.NeutralModeValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
@@ -123,7 +124,7 @@ class SwerveModuleIOTalon(
       driveSensor.integralVelocityGainToRawUnits(DrivetrainConstants.PID.DRIVE_KI)
     driveConfiguration.Slot0.kD =
       driveSensor.derivativeVelocityGainToRawUnits(DrivetrainConstants.PID.DRIVE_KD)
-    driveConfiguration.Slot0.kV = 0.05425
+    driveConfiguration.Slot0.kV = 0.12679 / 15
     //      driveSensor.velocityFeedforwardToRawUnits(DrivetrainConstants.PID.DRIVE_KFF)
     driveConfiguration.CurrentLimits.SupplyCurrentLimit =
       DrivetrainConstants.DRIVE_SUPPLY_CURRENT_LIMIT.inAmperes
@@ -137,6 +138,7 @@ class SwerveModuleIOTalon(
     driveConfiguration.CurrentLimits.StatorCurrentLimitEnable = false // TODO tune
 
     driveConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
+    driveConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive
     driveFalcon.configurator.apply(driveConfiguration)
 
     MotorChecker.add(
@@ -482,6 +484,7 @@ class SwerveModuleIOTalon(
     } else {
       motorOutputConfig.NeutralMode = NeutralModeValue.Coast
     }
+    motorOutputConfig.Inverted = InvertedValue.Clockwise_Positive
     driveFalcon.configurator.apply(motorOutputConfig)
   }
 

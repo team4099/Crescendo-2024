@@ -30,7 +30,7 @@ import kotlin.math.sqrt
 
 object DrivetrainConstants {
   const val FOC_ENABLED = false
-  const val MINIMIZE_SKEW = true
+  const val MINIMIZE_SKEW = false
 
   const val OMOMETRY_UPDATE_FREQUENCY = 250.0
 
@@ -50,8 +50,8 @@ object DrivetrainConstants {
       .perSecond // 648
 
   // cruise velocity and accel for steering motor
-  val STEERING_VEL_MAX = 1393.2.degrees.perSecond
-  val STEERING_ACCEL_MAX = 13932.degrees.perSecond.perSecond
+  val STEERING_VEL_MAX = 270.degrees.perSecond
+  val STEERING_ACCEL_MAX = 600.degrees.perSecond.perSecond
 
   const val GYRO_RATE_COEFFICIENT = 0.0 // TODO: Change this value
 
@@ -126,7 +126,7 @@ object DrivetrainConstants {
 
     val AUTO_THETA_ALLOWED_ERROR = 3.degrees
 
-    val AUTO_THETA_PID_KP = 1.degrees.perSecond / 1.degrees
+    val AUTO_THETA_PID_KP = 15.degrees.perSecond / 1.degrees
     val AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val AUTO_THETA_PID_KD =
       (0.1.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
@@ -151,7 +151,7 @@ object DrivetrainConstants {
 
     val STEERING_KFF = 0.0.volts / 1.0.radians.perSecond // 0.0375
 
-    val DRIVE_KP = 2.6829.volts / 1.meters.perSecond
+    val DRIVE_KP = 0.0.volts / 1.meters.perSecond
     val DRIVE_KI = 0.0.volts / (1.meters.perSecond * 1.seconds)
     val DRIVE_KD = 0.0.volts / 1.meters.perSecond.perSecond
 

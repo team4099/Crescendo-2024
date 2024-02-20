@@ -1,12 +1,19 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.lib.logging.toDoubleArray
+import com.team4099.lib.math.asPose2d
+import com.team4099.lib.math.asTransform2d
 import com.team4099.lib.trajectory.CustomHolonomicDriveController
 import com.team4099.lib.trajectory.CustomTrajectoryGenerator
+import com.team4099.lib.trajectory.FieldWaypoint
+import com.team4099.lib.trajectory.OdometryWaypoint
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.AllianceFlipUtil
+import com.team4099.robot2023.util.FrameType
 import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
@@ -19,6 +26,8 @@ import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose2dWPILIB
+import org.team4099.lib.geometry.Transform2d
+import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.hal.Clock
 import org.team4099.lib.kinematics.ChassisAccels
 import org.team4099.lib.units.Velocity
@@ -56,16 +65,20 @@ import java.util.function.Supplier
 import kotlin.math.PI
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
-class DrivePathCommand(
+class DrivePathCommand<T : Waypoint>
+private constructor(
   val drivetrain: Drivetrain,
-  private val waypoints: Supplier<List<Waypoint>>,
+  private val waypoints: Supplier<List<T>>,
   val resetPose: Boolean = false,
   val keepTrapping: Boolean = false,
   val flipForAlliances: Boolean = true,
   val endPathOnceAtReference: Boolean = true,
   val leaveOutYAdjustment: Boolean = false,
   val endVelocity: Velocity2d = Velocity2d(),
+  var stateFrame: FrameType = FrameType.ODOMETRY,
+  var pathFrame: FrameType = FrameType.FIELD,
 ) : Command() {
+
   private val xPID: PIDController<Meter, Velocity<Meter>>
   private val yPID: PIDController<Meter, Velocity<Meter>>
 
@@ -128,6 +141,15 @@ class DrivePathCommand(
       )
     )
 
+  private var pathFollowRequest = Request.DrivetrainRequest.ClosedLoop(ChassisSpeeds(0.0, 0.0, 0.0))
+  private var lastSampledPose = Pose2d()
+  private lateinit var pathTransform: Transform2d
+
+  private var drivePoseSupplier: () -> Pose2d
+  private var odoTField: Transform2d = Transform2d(Translation2d(), 0.0.degrees)
+
+  private var errorString = ""
+
   private fun generate(
     waypoints: List<Waypoint>,
     constraints: List<TrajectoryConstraint> = listOf()
@@ -173,6 +195,15 @@ class DrivePathCommand(
 
     thetaPID.enableContinuousInput(-PI.radians, PI.radians)
 
+    when (stateFrame) {
+      FrameType.ODOMETRY -> drivePoseSupplier = { drivetrain.odomTRobot }
+      FrameType.FIELD -> {
+        drivePoseSupplier = { drivetrain.fieldTRobot }
+        // if we're already in field frame we do not want to shift by `odoTField` again
+        pathFrame = FrameType.FIELD
+      }
+    }
+
     swerveDriveController =
       CustomHolonomicDriveController(
         xPID.wpiPidController, yPID.wpiPidController, thetaPID.wpiPidController
@@ -182,6 +213,13 @@ class DrivePathCommand(
   }
 
   override fun initialize() {
+    odoTField = drivetrain.odomTField
+    pathTransform =
+      Transform2d(
+        Translation2d(waypoints.get()[0].translation),
+        waypoints.get()[0].driveRotation?.radians?.radians ?: drivePoseSupplier().rotation
+      )
+
     // trajectory generation!
     generate(waypoints.get())
 
@@ -213,6 +251,41 @@ class DrivePathCommand(
     var desiredRotation =
       trajectoryGenerator.holonomicRotationSequence.sample(trajCurTime.inSeconds)
 
+    val targetHolonomicPose =
+      Pose2d(
+        desiredState.poseMeters.x.meters,
+        desiredState.poseMeters.y.meters,
+        desiredRotation.position.radians.radians
+      )
+
+    val robotPoseInSelectedFrame: Pose2d = drivePoseSupplier()
+    if (pathFrame == stateFrame) {
+      lastSampledPose = targetHolonomicPose
+      //        pathTransform.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
+    } else {
+      when (pathFrame) {
+        FrameType.ODOMETRY ->
+          lastSampledPose =
+            odoTField.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
+        FrameType.FIELD ->
+          lastSampledPose = odoTField.asPose2d().transformBy(targetHolonomicPose.asTransform2d())
+      }
+    }
+    // flip
+    lastSampledPose = AllianceFlipUtil.apply(lastSampledPose)
+
+    Logger.recordOutput(
+      "Pathfollow/frameSpecificTargetPose", lastSampledPose.toDoubleArray().toDoubleArray()
+    )
+    val pathFrameTRobotPose = robotPoseInSelectedFrame
+    Logger.recordOutput(
+      "Pathfollow/fieldTRobotVisualized", pathFrameTRobotPose.toDoubleArray().toDoubleArray()
+    )
+    Logger.recordOutput(
+      "Pathfollow/fieldTRobotTargetVisualized",
+      targetHolonomicPose.toDoubleArray().toDoubleArray()
+    )
+
     if (flipForAlliances) {
       desiredState = AllianceFlipUtil.apply(desiredState)
       desiredRotation = AllianceFlipUtil.apply(desiredRotation)
@@ -226,7 +299,7 @@ class DrivePathCommand(
         desiredState.curvatureRadPerMeter.radians.sin
 
     var nextDriveState =
-      swerveDriveController.calculate(drivetrain.odomTRobot.pose2d, desiredState, desiredRotation)
+      swerveDriveController.calculate(pathFrameTRobotPose.pose2d, desiredState, desiredRotation)
 
     if (leaveOutYAdjustment) {
       nextDriveState =
@@ -303,13 +376,14 @@ class DrivePathCommand(
   override fun isFinished(): Boolean {
     trajCurTime = Clock.fpgaTime - trajStartTime
     return endPathOnceAtReference &&
-      (!keepTrapping || swerveDriveController.atReference()) &&
+      (swerveDriveController.atReference()) &&
       trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
   }
 
   override fun end(interrupted: Boolean) {
     Logger.recordOutput("ActiveCommands/DrivePathCommand", false)
     if (interrupted) {
+      DriverStation.reportError(errorString, true)
       // Stop where we are if interrupted
       drivetrain.currentRequest =
         DrivetrainRequest.OpenLoop(
@@ -324,5 +398,58 @@ class DrivePathCommand(
           0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
         )
     }
+  }
+
+  companion object {
+    operator fun invoke() {
+      return
+    }
+    fun createPathInOdometryFrame(
+      drivetrain: Drivetrain,
+      waypoints: Supplier<List<OdometryWaypoint>>,
+      resetPose: Boolean = false,
+      keepTrapping: Boolean = false,
+      flipForAlliances: Boolean = true,
+      endPathOnceAtReference: Boolean = true,
+      leaveOutYAdjustment: Boolean = false,
+      endVelocity: Velocity2d = Velocity2d(),
+      stateFrame: FrameType = FrameType.ODOMETRY,
+    ): DrivePathCommand<OdometryWaypoint> =
+      DrivePathCommand(
+        drivetrain,
+        waypoints,
+        resetPose,
+        keepTrapping,
+        flipForAlliances,
+        endPathOnceAtReference,
+        leaveOutYAdjustment,
+        endVelocity,
+        stateFrame,
+        FrameType.ODOMETRY
+      )
+
+    fun createPathInFieldFrame(
+      drivetrain: Drivetrain,
+      waypoints: Supplier<List<FieldWaypoint>>,
+      resetPose: Boolean = false,
+      keepTrapping: Boolean = false,
+      flipForAlliances: Boolean = true,
+      endPathOnceAtReference: Boolean = true,
+      leaveOutYAdjustment: Boolean = false,
+      endVelocity: Velocity2d = Velocity2d(),
+      stateFrame: FrameType = FrameType.ODOMETRY,
+    ): DrivePathCommand<FieldWaypoint> =
+      DrivePathCommand(
+        drivetrain,
+        waypoints,
+        resetPose,
+        keepTrapping,
+        flipForAlliances,
+        endPathOnceAtReference,
+        leaveOutYAdjustment,
+        endVelocity,
+        stateFrame,
+        FrameType.FIELD
+      )
   }
 }
