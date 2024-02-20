@@ -23,8 +23,8 @@ object ElevatorConstants {
   val CARRIAGE_MASS = 30.892.pounds
 
   val ELEVATOR_MAX_RETRACTION = 0.0.inches
-  val ELEVATOR_MAX_EXTENSION = 15.0.inches
-  val ELEVATOR_CLIMB_EXTENSION = 12.0.inches
+  val ELEVATOR_MAX_EXTENSION = 17.0.inches
+  val ELEVATOR_CLIMB_EXTENSION = 16.0.inches
 
   val LEADER_INVERTED = false
   val FOLLOWER_INVERTED = true
@@ -51,7 +51,7 @@ object ElevatorConstants {
   val ENABLE_ELEVATOR = true
   val ELEVATOR_IDLE_HEIGHT = 0.25.inches
   val ELEVATOR_SOFT_LIMIT_EXTENSION = 17.5.inches
-  val ELEVATOR_SOFT_LIMIT_RETRACTION = -0.75.inches
+  val ELEVATOR_SOFT_LIMIT_RETRACTION = 0.75.inches
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_EXTENSION = 0.0.inches
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_RETRACTION = 0.0.inches
   val ELEVATOR_SAFE_THRESHOLD = 5.0.inches

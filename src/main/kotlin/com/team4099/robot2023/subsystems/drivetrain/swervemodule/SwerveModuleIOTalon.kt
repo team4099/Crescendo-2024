@@ -106,6 +106,13 @@ class SwerveModuleIOTalon(
       DrivetrainConstants.STEERING_SUPPLY_CURRENT_LIMIT.inAmperes
     steeringConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
 
+    /*
+    steeringConfiguration.ClosedLoopGeneral.ContinuousWrap = true
+    steeringConfiguration.Feedback.SensorToMechanismRatio =
+      1 / DrivetrainConstants.STEERING_SENSOR_GEAR_RATIO
+    steeringConfiguration.Feedback.SensorToMechanismRatio = 1 / DrivetrainConstants.STEERING_SENSOR_GEAR_RATIO
+     */
+
     steeringConfiguration.MotorOutput.NeutralMode =
       NeutralModeValue.Brake // change back to coast maybe?
     steeringFalcon.inverted = true
