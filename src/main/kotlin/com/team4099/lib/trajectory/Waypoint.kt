@@ -1,17 +1,16 @@
 package com.team4099.lib.trajectory
 
-import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.util.ErrorMessages
 import java.util.Optional
 
 /** A trajectory waypoint, including a translation and optional drive/holonomic rotations. */
-class Waypoint {
+abstract class Waypoint {
   /** Returns the translation component of the waypoint. */
-  val translation: Translation2d
-  val driveRotation: Rotation2d?
-  val holonomicRotation: Rotation2d?
+  open val translation: Translation2d
+  open val driveRotation: Rotation2d?
+  open val holonomicRotation: Rotation2d?
 
   /**
    * Constructs a Waypoint with a translation, drive rotation, and holonomic rotation.
@@ -57,47 +56,47 @@ class Waypoint {
     return Optional.ofNullable(holonomicRotation)
   }
 
-  companion object {
-    /**
-     * Constucts a Waypoint based on a pose.
-     *
-     * @param pose Source pose (where the rotation describes the drive rotation)
-     */
-    fun fromDifferentialPose(pose: Pose2d): Waypoint {
-      ErrorMessages.requireNonNullParam(pose, "pose", "Waypoint")
-      return Waypoint(pose.translation, pose.rotation, null)
-    }
-
-    /**
-     * Constucts a Waypoint based on a pose.
-     *
-     * @param pose Source pose (where the rotation describes the drive rotation)
-     * @param holonomicRotation Holonomic rotation
-     */
-    fun fromDifferentialPose(pose: Pose2d, holonomicRotation: Rotation2d?): Waypoint {
-      ErrorMessages.requireNonNullParam(pose, "pose", "Waypoint")
-      return Waypoint(pose.translation, pose.rotation, holonomicRotation)
-    }
-
-    /**
-     * Constucts a Waypoint based on a pose.
-     *
-     * @param pose Source pose (where the rotation describes the holonomic rotation)
-     */
-    fun fromHolonomicPose(pose: Pose2d): Waypoint {
-      ErrorMessages.requireNonNullParam(pose, "pose", "Waypoint")
-      return Waypoint(pose.translation, null, pose.rotation)
-    }
-
-    /**
-     * Constucts a Waypoint based on a pose.
-     *
-     * @param pose Source pose (where the rotation describes the holonomic rotation)
-     * @param driveRotation Drive rotation
-     */
-    fun fromHolonomicPose(pose: Pose2d, driveRotation: Rotation2d?): Waypoint {
-      ErrorMessages.requireNonNullParam(pose, "pose", "Waypoint")
-      return Waypoint(pose.translation, driveRotation, pose.rotation)
-    }
-  }
+  //  companion object {
+  //    /**
+  //     * Constucts a Waypoint based on a pose.
+  //     *
+  //     * @param pose Source pose (where the rotation describes the drive rotation)
+  //     */
+  //    fun fromDifferentialPose(pose: Pose2d): Waypoint {
+  //      ErrorMessages.requireNonNullParam(pose, "pose", "Waypoint")
+  //      return Waypoint(pose.translation, pose.rotation, null)
+  //    }
+  //
+  //    /**
+  //     * Constucts a Waypoint based on a pose.
+  //     *
+  //     * @param pose Source pose (where the rotation describes the drive rotation)
+  //     * @param holonomicRotation Holonomic rotation
+  //     */
+  //    fun fromDifferentialPose(pose: Pose2d, holonomicRotation: Rotation2d?): Waypoint {
+  //      ErrorMessages.requireNonNullParam(pose, "pose", "Waypoint")
+  //      return Waypoint(pose.translation, pose.rotation, holonomicRotation)
+  //    }
+  //
+  //    /**
+  //     * Constucts a Waypoint based on a pose.
+  //     *
+  //     * @param pose Source pose (where the rotation describes the holonomic rotation)
+  //     */
+  //    fun fromHolonomicPose(pose: Pose2d): Waypoint {
+  //      ErrorMessages.requireNonNullParam(pose, "pose", "Waypoint")
+  //      return Waypoint(pose.translation, null, pose.rotation)
+  //    }
+  //
+  //    /**
+  //     * Constucts a Waypoint based on a pose.
+  //     *
+  //     * @param pose Source pose (where the rotation describes the holonomic rotation)
+  //     * @param driveRotation Drive rotation
+  //     */
+  //    fun fromHolonomicPose(pose: Pose2d, driveRotation: Rotation2d?): Waypoint {
+  //      ErrorMessages.requireNonNullParam(pose, "pose", "Waypoint")
+  //      return Waypoint(pose.translation, driveRotation, pose.rotation)
+  //    }
+  //  }
 }
