@@ -2,8 +2,11 @@ package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
+import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.util.FMSData
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
@@ -29,8 +32,12 @@ import org.team4099.lib.units.perSecond
 import kotlin.math.PI
 import kotlin.math.atan2
 
-class TargetPoseCommand(val drivetrain: Drivetrain, val targetPose: Pose2d) : Command() {
+class TargetPoseCommand(val drivetrain: Drivetrain, targetPose: Pose2d) : Command() {
     private val thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
+    private val fieldVelocitySupplier = { drivetrain.fieldVelocity.x to drivetrain.fieldVelocity.y }
+    val targetPose = if (FMSData.allianceColor == DriverStation.Alliance.Red) {
+        Pose2d(FieldConstants.fieldLength - targetPose.x, targetPose.y, targetPose.rotation)
+    } else targetPose
 
     val thetakP =
         LoggedTunableValue(
@@ -92,6 +99,7 @@ class TargetPoseCommand(val drivetrain: Drivetrain, val targetPose: Pose2d) : Co
         Logger.recordOutput("ActiveCommands/TargetPoseCommand", true)
 
         val currentPose = drivetrain.odometryPose
+        val currentFieldVelocity = fieldVelocitySupplier()
         val relativeToRobotPose = targetPose.relativeTo(currentPose)
         desiredAngle = currentPose.rotation + atan2(relativeToRobotPose.y.inMeters, relativeToRobotPose.x.inMeters).radians
 
@@ -100,7 +108,7 @@ class TargetPoseCommand(val drivetrain: Drivetrain, val targetPose: Pose2d) : Co
         drivetrain.currentRequest =
             Request.DrivetrainRequest.OpenLoop(
                 thetaFeedback,
-                Pair(drivetrain.fieldVelocity.x, drivetrain.fieldVelocity.y),
+                currentFieldVelocity,
                 fieldOriented = true
             )
 

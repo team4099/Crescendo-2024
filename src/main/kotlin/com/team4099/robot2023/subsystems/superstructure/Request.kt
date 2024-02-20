@@ -33,7 +33,7 @@ sealed interface Request {
 
   sealed interface DrivetrainRequest : Request {
     class OpenLoop(
-      val angularVelocity: AngularVelocity,
+      var angularVelocity: AngularVelocity,
       val driveVector: Pair<LinearVelocity, LinearVelocity>,
       val fieldOriented: Boolean = true
     ) : DrivetrainRequest

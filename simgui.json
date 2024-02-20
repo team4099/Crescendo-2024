@@ -1,16 +1,4 @@
 {
-  "HALProvider": {
-    "Other Devices": {
-      "window": {
-        "visible": false
-      }
-    },
-    "Timing": {
-      "window": {
-        "visible": false
-      }
-    }
-  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -19,24 +7,9 @@
     }
   },
   "NetworkTables": {
-    "Persistent Values": {
-      "open": false
-    },
     "transitory": {
-<<<<<<< HEAD
-      "AdvantageKit": {
-        "open": true
-      },
       "SmartDashboard": {
         "TunableNumbers": {
-          "Flywheel": {
-=======
-      "SmartDashboard": {
-        "TunableNumbers": {
-          "Drivetrain": {
->>>>>>> 58acdb9 (fixed targeting command)
-            "open": true
-          },
           "Pathfollow": {
             "open": true
           },
@@ -45,11 +18,8 @@
         "open": true
       }
     }
-<<<<<<< HEAD
   },
   "NetworkTables Info": {
     "visible": true
-=======
->>>>>>> 58acdb9 (fixed targeting command)
   }
 }
