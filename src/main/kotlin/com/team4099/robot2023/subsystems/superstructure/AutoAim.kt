@@ -1,5 +1,6 @@
 package com.team4099.robot2023.subsystems.superstructure
 
+import FieldConstants
 import com.ctre.phoenix6.controls.VelocityDutyCycle
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.SuperstructureConstants
@@ -7,7 +8,6 @@ import com.team4099.robot2023.util.PoseEstimator
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap
 import edu.wpi.first.math.interpolation.Interpolator
-import edu.wpi.first.units.Angle
 import java.util.function.Consumer
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
@@ -17,6 +17,7 @@ import org.team4099.lib.units.base.inInches
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
+import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -61,7 +62,7 @@ class AutoAim {
 
         for (point in tunableWristInterpolationTable) {
             if (point.first.hasChanged() || point.second.hasChanged()) {
-                updateFlywheelInterpolationTable()
+                updateWristInterpolationTable()
                 break
             }
         }
@@ -69,6 +70,20 @@ class AutoAim {
         Logger.recordOutput("AutoAim/InterpolatedFlywheelSpeed", flywheelSpeedRPMInterpolationTable.get(interpolationTestDistance.get().inMeters))
 
         Logger.recordOutput("AutoAim/InterpolatedWristAngle", wristAngleDegreesInterpolationTable.get(interpolationTestDistance.get().inMeters))
+    }
+
+
+    fun calculateDistanceFromSpeaker(): Length {
+        val distance = (poseSupplier() - FieldConstants.Speaker.speakerTargetPose).translation.magnitude.meters
+        Logger.recordOutput("AutoAim/currentDistanceInhces", distance.inInches)
+        return distance
+    }
+    fun calculateFlywheelSpeed(): AngularVelocity {
+        return flywheelSpeedRPMInterpolationTable.get(calculateDistanceFromSpeaker().inMeters).rotations.perMinute
+    }
+
+    fun calculateWristAngle(): Angle {
+        return wristAngleDegreesInterpolationTable.get(calculateDistanceFromSpeaker().inMeters).degrees
     }
 
     fun updateFlywheelInterpolationTable() {

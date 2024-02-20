@@ -34,6 +34,7 @@ object ControlBoard {
 
   val resetGyro = Trigger { driver.startButton && driver.selectButton }
 
+  /*
   val shooterUp = Trigger { driver.bButton }
   val shooterDown = Trigger { driver.xButton }
   val wristTestUp = Trigger { driver.yButton }
@@ -64,4 +65,13 @@ object ControlBoard {
   val testWrist = Trigger { operator.aButton }
   val testElevator = Trigger { operator.bButton }
   val setTuningMode = Trigger { driver.rightShoulderButton }
+
+   */
+
+  val intake = Trigger {driver.aButton}
+  val scoreAmp = Trigger {driver.bButton}
+  val scoreSpeaker = Trigger {driver.xButton}
+
+  val autoAim = Trigger {operator.aButton}
+  val ampPrep = Trigger {operator.bButton}
 }

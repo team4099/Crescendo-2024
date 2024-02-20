@@ -15,6 +15,8 @@ sealed interface Request {
 
     class GroundIntake() : SuperstructureRequest
 
+    class AutoAim() : SuperstructureRequest
+
     class EjectGamePiece() : SuperstructureRequest
 
     class PrepScoreAmp() : SuperstructureRequest

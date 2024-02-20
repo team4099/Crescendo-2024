@@ -1,7 +1,10 @@
 import org.team4099.lib.apriltag.AprilTagFieldLayout
+import org.team4099.lib.geometry.Pose2d
+import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.geometry.Translation3d
 import org.team4099.lib.units.base.inches
+import org.team4099.lib.units.derived.degrees
 
 // Copyright (c) 2024 FRC 6328
 // http://github.com/Mechanical-Advantage
@@ -88,5 +91,6 @@ object FieldConstants {
 
     /** Center of the speaker opening (blue alliance)  */
     var centerSpeakerOpening: Translation3d = (bottomLeftSpeaker + topRightSpeaker) / 2.0
+    var speakerTargetPose = Pose2d(centerSpeakerOpening.x, centerSpeakerOpening.y, 0.0.degrees)
   }
 }

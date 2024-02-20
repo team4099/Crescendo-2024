@@ -26,7 +26,9 @@ import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.volts
+import org.team4099.lib.units.inRotationsPerMinute
 
 class Superstructure(
   private val drivetrain: Drivetrain,
@@ -68,7 +70,8 @@ class Superstructure(
     notes.forEach {it.poseSupplier = {drivetrain.odometryPose}}
     notes.forEach {it.wristAngleSupplier = {wrist.inputs.wristPosition}}
     notes.forEach {it.elevatorHeightSupplier = {elevator.inputs.elevatorPosition}}
-    notes.forEach {it.flywheelAngularVelocitySupplier = {flywheel.inputs.leftFlywheelVelocity}}
+    notes.forEach {it.flywheelAngularVelocitySupplier = {flywheel.inputs.rightFlywheelVelocity}}
+    notes[0].currentState = NoteSimulation.NoteStates.IN_ROBOT
 
     aimer.poseSupplier = { drivetrain.odometryPose }
 
@@ -177,6 +180,7 @@ class Superstructure(
         }
       }
       SuperstructureStates.IDLE -> {
+        noteHoldingID = 0
         intake.currentRequest =
           Request.IntakeRequest.OpenLoop(
             Intake.TunableIntakeStates.idleRollerVoltage.get(),
@@ -234,6 +238,10 @@ class Superstructure(
           }
           is Request.SuperstructureRequest.Tuning -> {
             nextState = SuperstructureStates.TUNING
+          }
+
+          is Request.SuperstructureRequest.AutoAim -> {
+            nextState = SuperstructureStates.AUTO_AIM
           }
         }
       }
@@ -329,18 +337,54 @@ class Superstructure(
           }
         }
       }
+      SuperstructureStates.AUTO_AIM -> {
+        val targetFlywheelSpeed = aimer.calculateFlywheelSpeed()
+        val targetWristAngle = aimer.calculateWristAngle()
+
+        Logger.recordOutput("AutoAim/FlywheelSpeed", targetFlywheelSpeed.inRotationsPerMinute)
+        Logger.recordOutput("AutoAim/WristAngle", targetWristAngle.inDegrees)
+
+        flywheel.currentRequest =
+          Request.FlywheelRequest.TargetingVelocity(
+            targetFlywheelSpeed
+          )
+        wrist.currentRequest =
+          Request.WristRequest.TargetingPosition(
+            targetWristAngle
+          )
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+          is Request.SuperstructureRequest.ScoreSpeakerLow -> {
+            if (wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity) {
+              nextState = SuperstructureStates.SCORE_SPEAKER_LOW
+              shootStartTime = Clock.fpgaTime
+            }
+          }
+        }
+      }
+
       SuperstructureStates.SCORE_SPEAKER_LOW_PREP -> {
         elevator.currentRequest =
           Request.ElevatorRequest.TargetingPosition(
             Elevator.TunableElevatorHeights.shootSpeakerLow.get()
           )
+
+        val targetFlywheelSpeed = aimer.calculateFlywheelSpeed()
+        val targetWristAngle = aimer.calculateWristAngle()
+
+        Logger.recordOutput("AutoAim/FlywheelSpeed", targetFlywheelSpeed.inRotationsPerMinute)
+        Logger.recordOutput("AutoAim/WristAngle", targetWristAngle.inDegrees)
+
         flywheel.currentRequest =
           Request.FlywheelRequest.TargetingVelocity(
-            Flywheel.TunableFlywheelStates.speakerVelocity.get()
+            targetFlywheelSpeed
           )
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(
-            Wrist.TunableWristStates.subwooferSpeakerShotAngleLow.get()
+            targetWristAngle
           )
         if (wrist.isAtTargetedPosition &&
           flywheel.isAtTargetedVelocity &&
@@ -367,7 +411,7 @@ class Superstructure(
           Clock.fpgaTime - shootStartTime >
           Flywheel.TunableFlywheelStates.speakerScoreTime.get()
         ) {
-          nextState = SuperstructureStates.IDLE
+          currentRequest = Request.SuperstructureRequest.Idle()
         }
 
         when (currentRequest) {
@@ -730,6 +774,14 @@ class Superstructure(
     return returnCommand
   }
 
+  fun autoAimCommand(): Command  {
+    val returnCommand = runOnce {
+      currentRequest = Request.SuperstructureRequest.AutoAim()
+    }
+    returnCommand.name = "Auto"
+    return returnCommand
+  }
+
   companion object {
     enum class SuperstructureStates {
       UNINITIALIZED,
@@ -739,6 +791,7 @@ class Superstructure(
       HOME,
       GROUND_INTAKE_PREP,
       GROUND_INTAKE,
+      AUTO_AIM,
       SCORE_AMP_PREP,
       SCORE_AMP,
       SCORE_SPEAKER_LOW_PREP,

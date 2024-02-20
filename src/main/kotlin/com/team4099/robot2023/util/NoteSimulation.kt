@@ -116,6 +116,10 @@ class NoteSimulation(val id: Int = 0, val offFieldPose: Pose3d = Pose3d(), val s
                 xAccel = if (lastZPos > FieldConstants.noteThickness/2) 0.0.meters.perSecond.perSecond else -6.meters.perSecond.perSecond * azimuthalAnglePhi.cos.absoluteValue * lastXVel.sign
                 yAccel = if (lastZPos > FieldConstants.noteThickness/2) 0.0.meters.perSecond.perSecond else -6.meters.perSecond.perSecond * azimuthalAnglePhi.sin.absoluteValue * lastYVel.sign
                 zAccel = (Constants.Universal.gravity)
+
+                if (lastZPos <= FieldConstants.noteThickness/2) {
+                    currentState = NoteStates.IN_ROBOT
+                }
                 update()
 
                 if (xVel.absoluteValue < 0.1.meters.perSecond && yVel.absoluteValue < 0.1.meters.perSecond) {

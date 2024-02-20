@@ -36,7 +36,14 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
+import FieldConstants
+import com.team4099.robot2023.commands.drivetrain.TargetPoseCommand
 import com.team4099.robot2023.subsystems.wrist.WristIO
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
+import org.team4099.lib.geometry.Pose2d
+import org.team4099.lib.geometry.Pose3d
+import org.team4099.lib.geometry.Rotation3d
+import javax.swing.GroupLayout
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -148,6 +155,24 @@ object RobotContainer {
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
 
+    ControlBoard.intake.whileTrue(superstructure.groundIntakeCommand())
+    ControlBoard.ampPrep.whileTrue(superstructure.prepAmpCommand())
+    ControlBoard.scoreAmp.whileTrue(superstructure.scoreAmpCommand())
+    ControlBoard.autoAim.whileTrue(
+      ParallelCommandGroup(
+        TargetPoseCommand(
+          drivetrain,
+          Pose2d(
+            FieldConstants.Speaker.centerSpeakerOpening.x,
+            FieldConstants.Speaker.centerSpeakerOpening.y,
+            0.0.degrees
+          )
+        )
+      , superstructure.autoAimCommand())
+    )
+    ControlBoard.scoreSpeaker.whileTrue(superstructure.scoreSpeakerLowCommand())
+
+    /*
     ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
     ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
     ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())
@@ -158,6 +183,7 @@ object RobotContainer {
     ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
     ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
     ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
+     */
 
     /*
     TUNING COMMANDS
