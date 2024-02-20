@@ -206,7 +206,6 @@ class FollowPathPlannerPathCommand(
         )
     }
 
-
     val currentSpeeds = drivetrain.targetedChassisSpeeds
     val poseRotation = drivetrain.odomTRobot.rotation.inRotation2ds
     val generatedTrajectory = path.getTrajectory(currentSpeeds, poseRotation)
