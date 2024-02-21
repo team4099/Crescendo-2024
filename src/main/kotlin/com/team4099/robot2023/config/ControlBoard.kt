@@ -113,4 +113,5 @@ object ControlBoard {
   val wristPID = Trigger { operator.aButton }
 
   val wristReset = Trigger { operator.bButton }
+
 }
