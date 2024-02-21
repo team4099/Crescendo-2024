@@ -5,6 +5,10 @@ import com.team4099.robot2023.util.driver.DriverProfile
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
+import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.LinearVelocity
+import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.perSecond
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 class TeleopDriveCommand(

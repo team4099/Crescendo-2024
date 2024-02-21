@@ -1,25 +1,32 @@
 package com.team4099.robot2023
 
 import com.team4099.robot2023.auto.AutonomousSelector
+import com.team4099.robot2023.auto.mode.TestAutoPath
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
+import com.team4099.robot2023.commands.drivetrain.TargetPoseCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
+import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOReal
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
 import com.team4099.robot2023.subsystems.elevator.Elevator
+import com.team4099.robot2023.subsystems.elevator.ElevatorIO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.feeder.Feeder
+import com.team4099.robot2023.subsystems.feeder.FeederIO
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
 import com.team4099.robot2023.subsystems.feeder.FeederIOSim
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIO
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
 import com.team4099.robot2023.subsystems.intake.Intake
+import com.team4099.robot2023.subsystems.intake.IntakeIO
 import com.team4099.robot2023.subsystems.intake.IntakeIONEO
 import com.team4099.robot2023.subsystems.intake.IntakeIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
@@ -31,9 +38,14 @@ import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.WristIO
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
+import com.team4099.robot2023.util.FrameCoordinate
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
+import edu.wpi.first.wpilibj2.command.WaitCommand
+import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.smoothDeadband
+import org.team4099.lib.units.base.feet
+import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.derived.Angle
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
@@ -65,10 +77,10 @@ object RobotContainer {
           //        CameraIONorthstar("backward")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
-      intake = Intake(IntakeIONEO)
-      feeder = Feeder(FeederIONeo)
-      elevator = Elevator(ElevatorIONEO)
-      flywheel = Flywheel(FlywheelIOTalon)
+      intake = Intake(object: IntakeIO {})
+      feeder = Feeder(object : FeederIO {})
+      elevator = Elevator(object : ElevatorIO {})
+      flywheel = Flywheel(object : FlywheelIO {})
       wrist = Wrist(object : WristIO {})
     } else {
       // Simulation implementations
@@ -90,6 +102,7 @@ object RobotContainer {
     superstructure = Superstructure(intake, feeder, elevator, wrist, flywheel)
     vision.setDataInterfaces({ drivetrain.fieldTRobot }, { drivetrain.addVisionData(it) })
     limelight.poseSupplier = { drivetrain.odomTRobot }
+    FrameCoordinate.odomTField = { drivetrain.odomTField }
   }
 
   fun mapDefaultCommands() {
@@ -160,6 +173,17 @@ object RobotContainer {
     ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
     ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
     ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
+    ControlBoard.wristTestDown.whileTrue(
+      TargetPoseCommand(
+        Ryan(),
+        { -ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { -ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { ControlBoard.slowMode },
+        drivetrain,
+        FrameCoordinate.FieldCoordinate(FieldConstants.centerSpeakerOpening)
+      )
+    )
 
     /*
     TUNING COMMANDS
@@ -187,7 +211,7 @@ object RobotContainer {
 
   fun mapTestControls() {}
 
-  fun getAutonomousCommand() = AutonomousSelector.getCommand(drivetrain)
+  fun getAutonomousCommand() = WaitCommand(AutonomousSelector.waitTime.inSeconds).andThen(TestAutoPath(drivetrain))
 
   fun mapTunableCommands() {}
 }
