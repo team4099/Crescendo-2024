@@ -121,7 +121,7 @@ class TargetPoseCommand(val drivetrain: Drivetrain, targetCoordinate: FrameCoord
         drivetrain.currentRequest =
             Request.DrivetrainRequest.OpenLoop(
                 thetaFeedback,
-                currentFieldVelocity,
+                drivetrain.speedSupplier(),
                 fieldOriented = true
             )
 
@@ -138,7 +138,8 @@ class TargetPoseCommand(val drivetrain: Drivetrain, targetCoordinate: FrameCoord
     override fun end(interrupted: Boolean) {
         drivetrain.currentRequest =
             Request.DrivetrainRequest.OpenLoop(
-                0.0.radians.perSecond, fieldVelocitySupplier()
+                drivetrain.rotationSupplier(), drivetrain.speedSupplier(), fieldOriented = true
             )
+        Logger.recordOutput("ActiveCommands/TargetPoseCommand", false)
     }
 }

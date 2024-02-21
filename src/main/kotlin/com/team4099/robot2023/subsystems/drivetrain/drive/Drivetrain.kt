@@ -89,6 +89,9 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
   private var omegaVelocity = 0.0.radians.perSecond
 
+  lateinit var speedSupplier: () -> Pair<LinearVelocity, LinearVelocity>
+  lateinit var rotationSupplier: () -> AngularVelocity
+
   var lastGyroYaw = 0.0.radians
 
   var currentState: DrivetrainState = DrivetrainState.UNINITIALIZED
