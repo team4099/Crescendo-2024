@@ -166,7 +166,17 @@ object RobotContainer {
     ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
     ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
     ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
-    ControlBoard.wristTestDown.whileTrue(TargetPoseCommand(drivetrain, FrameCoordinate.FieldCoordinate(FieldConstants.centerSpeakerOpening)))
+    ControlBoard.wristTestDown.whileTrue(
+      TargetPoseCommand(
+        Ryan(),
+        { -ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { -ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { ControlBoard.slowMode },
+        drivetrain,
+        FrameCoordinate.FieldCoordinate(FieldConstants.centerSpeakerOpening)
+      )
+    )
 
     /*
     TUNING COMMANDS

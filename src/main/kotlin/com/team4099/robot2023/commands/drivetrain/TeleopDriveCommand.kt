@@ -19,22 +19,17 @@ class TeleopDriveCommand(
   val slowMode: () -> Boolean,
   val drivetrain: Drivetrain
 ) : Command() {
-  private lateinit var speed: Pair<LinearVelocity, LinearVelocity>
-  private var rotation: AngularVelocity = 0.degrees.perSecond
 
   init {
     addRequirements(drivetrain)
-
-    drivetrain.speedSupplier = { speed }
-    drivetrain.rotationSupplier = { rotation }
   }
 
   override fun initialize() {}
 
   override fun execute() {
     if (DriverStation.isTeleop()) {
-      speed = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)
-      rotation = driver.rotationSpeedClampedSupplier(turn, slowMode)
+      val speed = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)
+      val rotation = driver.rotationSpeedClampedSupplier(turn, slowMode)
       drivetrain.currentRequest = DrivetrainRequest.OpenLoop(rotation, speed)
       Logger.recordOutput("ActiveCommands/TeleopDriveCommand", true)
     }

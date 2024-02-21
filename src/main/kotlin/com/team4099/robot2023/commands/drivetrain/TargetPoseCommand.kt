@@ -9,6 +9,7 @@ import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.FMSData
 import com.team4099.robot2023.util.FrameCoordinate
 import com.team4099.robot2023.util.FrameType
+import com.team4099.robot2023.util.driver.DriverProfile
 import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.kinematics.Odometry
 import edu.wpi.first.wpilibj.DriverStation
@@ -37,7 +38,15 @@ import org.team4099.lib.units.perSecond
 import kotlin.math.PI
 import kotlin.math.atan2
 
-class TargetPoseCommand(val drivetrain: Drivetrain, targetCoordinate: FrameCoordinate) : Command() {
+class TargetPoseCommand(
+    val driver: DriverProfile,
+    val driveX: () -> Double,
+    val driveY: () -> Double,
+    val turn: () -> Double,
+    val slowMode: () -> Boolean,
+    val drivetrain: Drivetrain,
+    targetCoordinate: FrameCoordinate
+) : Command() {
     private val thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
     private val fieldVelocitySupplier = { drivetrain.fieldVelocity.x to drivetrain.fieldVelocity.y }
     val targetCoordinate = if (FMSData.allianceColor == DriverStation.Alliance.Red && targetCoordinate is FrameCoordinate.FieldCoordinate) {
@@ -121,7 +130,7 @@ class TargetPoseCommand(val drivetrain: Drivetrain, targetCoordinate: FrameCoord
         drivetrain.currentRequest =
             Request.DrivetrainRequest.OpenLoop(
                 thetaFeedback,
-                drivetrain.speedSupplier(),
+                driver.driveSpeedClampedSupplier(driveX, driveY, slowMode),
                 fieldOriented = true
             )
 
@@ -138,7 +147,9 @@ class TargetPoseCommand(val drivetrain: Drivetrain, targetCoordinate: FrameCoord
     override fun end(interrupted: Boolean) {
         drivetrain.currentRequest =
             Request.DrivetrainRequest.OpenLoop(
-                drivetrain.rotationSupplier(), drivetrain.speedSupplier(), fieldOriented = true
+                driver.rotationSpeedClampedSupplier(turn, slowMode),
+                driver.driveSpeedClampedSupplier(driveX, driveY, slowMode),
+                fieldOriented = true
             )
         Logger.recordOutput("ActiveCommands/TargetPoseCommand", false)
     }
