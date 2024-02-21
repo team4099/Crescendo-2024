@@ -45,13 +45,9 @@ class TargetPoseCommand(
     val turn: () -> Double,
     val slowMode: () -> Boolean,
     val drivetrain: Drivetrain,
-    targetCoordinate: FrameCoordinate
+    val targetCoordinate: FrameCoordinate
 ) : Command() {
     private val thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
-    private val fieldVelocitySupplier = { drivetrain.fieldVelocity.x to drivetrain.fieldVelocity.y }
-    val targetCoordinate = if (FMSData.allianceColor == DriverStation.Alliance.Red && targetCoordinate is FrameCoordinate.FieldCoordinate) {
-        FrameCoordinate.FieldCoordinate(FieldConstants.fieldLength - targetCoordinate.x, targetCoordinate.y)
-    } else targetCoordinate
 
     val thetakP =
         LoggedTunableValue(
@@ -108,8 +104,13 @@ class TargetPoseCommand(
         thetaPID.reset(drivetrain.odomTRobot.rotation)
 
         odometryCoordinateToTarget = if (targetCoordinate is FrameCoordinate.FieldCoordinate) {
+            // Flip alliance first
+            val coordinateWithAllianceFlip = if (FMSData.allianceColor == DriverStation.Alliance.Red) {
+                FrameCoordinate.FieldCoordinate(FieldConstants.fieldLength - targetCoordinate.x, targetCoordinate.y)
+            } else targetCoordinate
+
             FrameCoordinate.OdometryCoordinate(
-                drivetrain.odomTField.asPose2d().transformBy(targetCoordinate.toTransform2d())
+                drivetrain.odomTField.asPose2d().transformBy(coordinateWithAllianceFlip.toTransform2d())
             )
         } else {
             targetCoordinate as FrameCoordinate.OdometryCoordinate // Always true, kotlin type casting sucks sometimes
@@ -120,8 +121,7 @@ class TargetPoseCommand(
         Logger.recordOutput("ActiveCommands/TargetPoseCommand", true)
 
         val currentPose = drivetrain.odomTRobot
-        val currentFieldVelocity = fieldVelocitySupplier()
-        val relativeToRobotPose = odometryCoordinateToTarget.toPose2d().relativeTo(currentPose)
+        val relativeToRobotPose = odometryCoordinateToTarget.toPose2d().relativeTo(drivetrain.odomTRobot)
 
         desiredAngle = currentPose.rotation + atan2(relativeToRobotPose.y.inMeters, relativeToRobotPose.x.inMeters).radians
 
@@ -134,14 +134,13 @@ class TargetPoseCommand(
                 fieldOriented = true
             )
 
-        Logger.recordOutput("AutoLevel/CurrentYawDegrees", drivetrain.odomTRobot.rotation.inDegrees)
+        Logger.recordOutput("AutoLevel/CurrentYawDegrees", currentPose.rotation.inDegrees)
         Logger.recordOutput("AutoLevel/DesiredYawDegrees", desiredAngle.inDegrees)
         Logger.recordOutput("AutoLevel/thetaFeedbackDPS", thetaFeedback.inDegreesPerSecond)
     }
 
     override fun isFinished(): Boolean {
-        return (drivetrain.odomTRobot.rotation - desiredAngle).absoluteValue <
-                DrivetrainConstants.PID.AUTO_THETA_ALLOWED_ERROR
+        return false
     }
 
     override fun end(interrupted: Boolean) {
