@@ -1,6 +1,7 @@
 package com.team4099.robot2023
 
 import com.team4099.robot2023.auto.AutonomousSelector
+import com.team4099.robot2023.commands.CharacterizeWristCommand
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
@@ -150,16 +151,17 @@ object RobotContainer {
   fun mapTeleopControls() {
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain))
-    ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
-    ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
-    ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())
-    ControlBoard.ampScore.whileTrue(superstructure.scoreAmpCommand())
-    ControlBoard.scoreSpeakerLow.whileTrue(superstructure.scoreSpeakerLowCommand())
-    ControlBoard.scoreSpeakerMid.whileTrue(superstructure.scoreSpeakerMidCommand())
-    ControlBoard.scoreSpeakerHigh.whileTrue(superstructure.scoreSpeakerHighCommand())
-    ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
-    ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
-    ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
+//    ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
+//    ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
+//    ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())
+//    ControlBoard.ampScore.whileTrue(superstructure.scoreAmpCommand())
+//    ControlBoard.scoreSpeakerLow.whileTrue(superstructure.scoreSpeakerLowCommand())
+//    ControlBoard.scoreSpeakerMid.whileTrue(superstructure.scoreSpeakerMidCommand())
+//    ControlBoard.scoreSpeakerHigh.whileTrue(superstructure.scoreSpeakerHighCommand())
+//    ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
+//    ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
+//    ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
+    ControlBoard.wristTestDown.whileTrue(CharacterizeWristCommand(wrist, positive = true))
 
     /*
     TUNING COMMANDS
