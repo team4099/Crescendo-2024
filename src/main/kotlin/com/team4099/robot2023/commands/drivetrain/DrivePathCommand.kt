@@ -130,7 +130,7 @@ private constructor(
     LoggedTunableValue(
       "Pathfollow/poskIX",
       DrivetrainConstants.PID.AUTO_POS_KIX,
-      Pair({ it.inMetersPerSecondPerMeterSecond }, { it.meters.perSecond.perMeterSeconds })
+      Pair({ it.inMetersPerSecondPerMeterSeconds }, { it.meters.perSecond.perMeterSeconds })
     )
   val poskDX =
     LoggedTunableValue(
