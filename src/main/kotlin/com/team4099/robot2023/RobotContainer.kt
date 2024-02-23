@@ -13,15 +13,19 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
 import com.team4099.robot2023.subsystems.elevator.Elevator
+import com.team4099.robot2023.subsystems.elevator.ElevatorIO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.feeder.Feeder
+import com.team4099.robot2023.subsystems.feeder.FeederIO
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
 import com.team4099.robot2023.subsystems.feeder.FeederIOSim
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIO
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
 import com.team4099.robot2023.subsystems.intake.Intake
+import com.team4099.robot2023.subsystems.intake.IntakeIO
 import com.team4099.robot2023.subsystems.intake.IntakeIONEO
 import com.team4099.robot2023.subsystems.intake.IntakeIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
@@ -67,10 +71,10 @@ object RobotContainer {
           //        CameraIONorthstar("backward")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
-      intake = Intake(IntakeIONEO)
-      feeder = Feeder(FeederIONeo)
-      elevator = Elevator(ElevatorIONEO)
-      flywheel = Flywheel(FlywheelIOTalon)
+      intake = Intake(object : IntakeIO {})
+      feeder = Feeder(object : FeederIO {})
+      elevator = Elevator(object : ElevatorIO {})
+      flywheel = Flywheel(object : FlywheelIO {})
       wrist = Wrist(object : WristIO {})
     } else {
       // Simulation implementations
