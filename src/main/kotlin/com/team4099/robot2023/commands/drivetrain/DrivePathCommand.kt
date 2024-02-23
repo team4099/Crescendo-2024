@@ -147,6 +147,7 @@ private constructor(
 
   private var drivePoseSupplier: () -> Pose2d
   private var odoTField: Transform2d = Transform2d(Translation2d(), 0.0.degrees)
+  private var lastStableOdoTField: Transform2d = Transform2d(Translation2d(), 0.0.degrees)
 
   private var errorString = ""
 
@@ -214,6 +215,8 @@ private constructor(
 
   override fun initialize() {
     odoTField = drivetrain.odomTField
+    lastStableOdoTField = drivetrain.lastStableOdomTField
+
     pathTransform =
       Transform2d(
         Translation2d(waypoints.get()[0].translation),

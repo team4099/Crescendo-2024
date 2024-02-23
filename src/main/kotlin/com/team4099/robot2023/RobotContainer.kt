@@ -189,5 +189,9 @@ object RobotContainer {
 
   fun getAutonomousCommand() = AutonomousSelector.getCommand(drivetrain)
 
+  fun drivetrainResetFieldFrameEstimator() {
+    drivetrain.resetFieldFrameEstimator(drivetrain.fieldTRobot)
+  }
+
   fun mapTunableCommands() {}
 }
