@@ -6,7 +6,6 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.units.base.feet
-import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
 

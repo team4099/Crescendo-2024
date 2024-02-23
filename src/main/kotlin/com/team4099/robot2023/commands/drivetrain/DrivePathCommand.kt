@@ -11,7 +11,6 @@ import com.team4099.lib.trajectory.OdometryWaypoint
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.AllianceFlipUtil
 import com.team4099.robot2023.util.FrameType
 import com.team4099.robot2023.util.Velocity2d
@@ -237,7 +236,7 @@ private constructor(
     pathTransform =
       Transform2d(
         Translation2d(waypoints.get()[0].translation),
-        waypoints.get()[0].driveRotation?.radians?.radians ?: drivePoseSupplier().rotation
+        waypoints.get()[0].holonomicRotation?.radians?.radians ?: drivePoseSupplier().rotation
       )
 
     // trajectory generation!
@@ -278,7 +277,7 @@ private constructor(
         desiredRotation.position.radians.radians
       )
 
-    val robotPoseInSelectedFrame: Pose2d = drivePoseSupplier()
+    var robotPoseInSelectedFrame: Pose2d = drivePoseSupplier()
     if (pathFrame == stateFrame) {
       lastSampledPose = targetHolonomicPose
       //        pathTransform.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
@@ -287,8 +286,13 @@ private constructor(
         FrameType.ODOMETRY ->
           lastSampledPose =
             odoTField.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
-        FrameType.FIELD ->
+        FrameType.FIELD -> {
+          // robotPose is currently odomTrobot we want fieldTRobot. we obtain that via fieldTodo x
+          // odoTRobot
+          robotPoseInSelectedFrame =
+            odoTField.inverse().asPose2d().transformBy(robotPoseInSelectedFrame.asTransform2d())
           lastSampledPose = odoTField.asPose2d().transformBy(targetHolonomicPose.asTransform2d())
+        }
       }
     }
     // flip
