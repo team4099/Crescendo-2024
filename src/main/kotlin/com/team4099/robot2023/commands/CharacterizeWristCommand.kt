@@ -19,7 +19,7 @@ class CharacterizeWristCommand(val wrist: Wrist, val positive: Boolean) : Comman
     }
 
     override fun execute() {
-        if ((Clock.fpgaTime - lastCallTime).inMilliseconds < 100) {
+        if ((Clock.fpgaTime - lastCallTime).inMilliseconds > 100) {
             currentVoltage += if (positive) 0.01.volts else (-0.01).volts
             wrist.setWristVoltage(currentVoltage)
             lastCallTime = Clock.fpgaTime
@@ -27,7 +27,7 @@ class CharacterizeWristCommand(val wrist: Wrist, val positive: Boolean) : Comman
     }
 
     override fun isFinished(): Boolean {
-        return wrist.inputs.wristVelocity > 0.01.radians.perSecond
+        return wrist.inputs.wristVelocity > 0.1.radians.perSecond
     }
 
     override fun end(interrupted: Boolean) {
