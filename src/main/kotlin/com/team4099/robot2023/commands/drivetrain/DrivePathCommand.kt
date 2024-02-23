@@ -283,15 +283,34 @@ private constructor(
       //        pathTransform.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
     } else {
       when (pathFrame) {
-        FrameType.ODOMETRY ->
+        FrameType.ODOMETRY -> {
           lastSampledPose =
             odoTField.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
+
+          Logger.recordOutput(
+            "Pathfollow/odomTRobotTargetVisualized",
+            targetHolonomicPose.toDoubleArray().toDoubleArray()
+          )
+
+          Logger.recordOutput(
+            "Pathfollow/odomTRobot", robotPoseInSelectedFrame.toDoubleArray().toDoubleArray()
+          )
+        }
         FrameType.FIELD -> {
           // robotPose is currently odomTrobot we want fieldTRobot. we obtain that via fieldTodo x
           // odoTRobot
           robotPoseInSelectedFrame =
             odoTField.inverse().asPose2d().transformBy(robotPoseInSelectedFrame.asTransform2d())
           lastSampledPose = odoTField.asPose2d().transformBy(targetHolonomicPose.asTransform2d())
+
+          Logger.recordOutput(
+            "Pathfollow/fieldTRobotTargetVisualized",
+            targetHolonomicPose.toDoubleArray().toDoubleArray()
+          )
+
+          Logger.recordOutput(
+            "Pathfollow/fieldTRobot", robotPoseInSelectedFrame.toDoubleArray().toDoubleArray()
+          )
         }
       }
     }
@@ -299,15 +318,7 @@ private constructor(
     lastSampledPose = AllianceFlipUtil.apply(lastSampledPose)
 
     Logger.recordOutput(
-      "Pathfollow/frameSpecificTargetPose", lastSampledPose.toDoubleArray().toDoubleArray()
-    )
-    val pathFrameTRobotPose = robotPoseInSelectedFrame
-    Logger.recordOutput(
-      "Pathfollow/fieldTRobotVisualized", pathFrameTRobotPose.toDoubleArray().toDoubleArray()
-    )
-    Logger.recordOutput(
-      "Pathfollow/fieldTRobotTargetVisualized",
-      targetHolonomicPose.toDoubleArray().toDoubleArray()
+      "Pathfollow/targetPoseInStateFrame", lastSampledPose.toDoubleArray().toDoubleArray()
     )
 
     if (flipForAlliances) {
@@ -323,7 +334,9 @@ private constructor(
         desiredState.curvatureRadPerMeter.radians.sin
 
     var nextDriveState =
-      swerveDriveController.calculate(pathFrameTRobotPose.pose2d, desiredState, desiredRotation)
+      swerveDriveController.calculate(
+        robotPoseInSelectedFrame.pose2d, desiredState, desiredRotation
+      )
 
     if (leaveOutYAdjustment) {
       nextDriveState =
