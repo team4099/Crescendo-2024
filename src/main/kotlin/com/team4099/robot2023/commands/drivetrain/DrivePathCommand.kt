@@ -280,13 +280,18 @@ private constructor(
     var robotPoseInSelectedFrame: Pose2d = drivePoseSupplier()
     if (pathFrame == stateFrame) {
       lastSampledPose = targetHolonomicPose
-      //        pathTransform.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
-    } else {
-      when (pathFrame) {
-        FrameType.ODOMETRY -> {
-          lastSampledPose =
-            odoTField.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
+      when (stateFrame) {
+        FrameType.FIELD -> {
+          Logger.recordOutput(
+            "Pathfollow/fieldTRobotTargetVisualized",
+            targetHolonomicPose.toDoubleArray().toDoubleArray()
+          )
 
+          Logger.recordOutput(
+            "Pathfollow/fieldTRobot", robotPoseInSelectedFrame.toDoubleArray().toDoubleArray()
+          )
+        }
+        FrameType.ODOMETRY -> {
           Logger.recordOutput(
             "Pathfollow/odomTRobotTargetVisualized",
             targetHolonomicPose.toDoubleArray().toDoubleArray()
@@ -295,6 +300,16 @@ private constructor(
           Logger.recordOutput(
             "Pathfollow/odomTRobot", robotPoseInSelectedFrame.toDoubleArray().toDoubleArray()
           )
+        }
+      }
+
+      //        pathTransform.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
+    } else {
+      when (pathFrame) {
+        FrameType.ODOMETRY -> {
+          // TODO (saraansh) we disallow this, not possible to get to. remove or find use case
+          lastSampledPose =
+            odoTField.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
         }
         FrameType.FIELD -> {
           // robotPose is currently odomTrobot we want fieldTRobot. we obtain that via fieldTodo x
