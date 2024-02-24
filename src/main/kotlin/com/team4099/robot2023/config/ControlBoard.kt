@@ -27,41 +27,27 @@ object ControlBoard {
     get() = -driver.leftYAxis
 
   val turn: Double
-    get() = driver.rightXAxis
+    get() = operator.leftXAxis
 
   val slowMode: Boolean
     get() = driver.leftShoulderButton
 
   val resetGyro = Trigger { driver.startButton && driver.selectButton }
 
-  val shooterUp = Trigger { driver.bButton }
-  val shooterDown = Trigger { driver.xButton }
-  val wristTestUp = Trigger { driver.yButton }
-  val wristTestDown = Trigger { driver.aButton }
-  val feederTest = Trigger { driver.rightShoulderButton }
+  // sim triggers
+  val intake = Trigger {driver.aButton}
+  val score = Trigger { driver.bButton}
+  val forceIdle = Trigger { driver.yButton }
 
-  val elevatorUp = Trigger { driver.rightTriggerAxis > 0.5 }
-  val elevatorDown = Trigger { driver.leftTriggerAxis > 0.5 }
+  val prepAmp = Trigger  { operator.aButton }
+  val prepMid = Trigger { operator.bButton }
+  val prepHigh = Trigger { operator.xButton}
 
-  val runGroundIntake = Trigger { driver.leftShoulderButton }
-  val ejectGamePiece = Trigger { driver.rightShoulderButton }
-  val prepAmpScore = Trigger { driver.xButton }
-  val ampScore = Trigger { driver.yButton }
+  val extendClimb = Trigger { technician.aButton }
+  val retractClimb = Trigger { technician.bButton }
 
-  val scoreSpeakerLow = Trigger { operator.aButton }
-  val scoreSpeakerMid = Trigger { operator.bButton }
-  val scoreSpeakerHigh = Trigger { operator.xButton }
-  val requestIdle = Trigger { operator.yButton }
+  val testWrist = Trigger {driver.xButton}
 
-  val climbExtend = Trigger { driver.dPadUp }
-  val climbRetract = Trigger { driver.dPadDown }
 
-  // testing Trigger
-  val testIntake = Trigger { driver.aButton }
-  val testFeederIntake = Trigger { driver.bButton }
-  val testFeederShoot = Trigger { driver.xButton }
-  val testFlywheel = Trigger { driver.yButton }
-  val testWrist = Trigger { operator.aButton }
-  val testElevator = Trigger { operator.bButton }
-  val setTuningMode = Trigger { driver.rightShoulderButton }
+  // week0 controls
 }

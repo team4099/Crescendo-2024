@@ -152,16 +152,16 @@ object RobotContainer {
   fun mapTeleopControls() {
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
-    ControlBoard.runGroundIntake.whileTrue(superstructure.groundIntakeCommand())
-    ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
-    ControlBoard.prepAmpScore.whileTrue(superstructure.prepAmpCommand())
-    ControlBoard.ampScore.whileTrue(superstructure.scoreAmpCommand())
-    ControlBoard.scoreSpeakerLow.whileTrue(superstructure.scoreSpeakerLowCommand())
-    ControlBoard.scoreSpeakerMid.whileTrue(superstructure.scoreSpeakerMidCommand())
-    ControlBoard.scoreSpeakerHigh.whileTrue(superstructure.scoreSpeakerHighCommand())
-    ControlBoard.climbExtend.whileTrue(superstructure.climbExtendCommand())
-    ControlBoard.climbRetract.whileTrue(superstructure.climbRetractCommand())
-    ControlBoard.requestIdle.whileTrue(superstructure.requestIdleCommand())
+    ControlBoard.intake.whileTrue(superstructure.groundIntakeCommand())
+    ControlBoard.prepAmp.whileTrue(superstructure.prepAmpCommand())
+    ControlBoard.prepMid.whileTrue(superstructure.prepSpeakerMidCommand())
+    ControlBoard.prepHigh.whileTrue(superstructure.prepSpeakerHighCommand())
+    ControlBoard.score.whileTrue(superstructure.scoreCommand())
+    ControlBoard.extendClimb.whileTrue(superstructure.climbExtendCommand())
+    ControlBoard.retractClimb.whileTrue(superstructure.climbRetractCommand())
+
+    ControlBoard.testWrist.whileTrue(superstructure.testWristCommand())
+    ControlBoard.forceIdle.whileTrue(superstructure.requestIdleCommand())
 
     /*
     TUNING COMMANDS

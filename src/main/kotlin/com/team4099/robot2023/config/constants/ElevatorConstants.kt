@@ -64,7 +64,7 @@ object ElevatorConstants {
   val SHOOT_SPEAKER_LOW_POSITION = 0.0.inches
   val SHOOT_SPEAKER_MID_POSITION = 9.0.inches
   val SHOOT_SPEAKER_HIGH_POSITION = 14.0.inches
-  val SHOOT_AMP_POSITION = 0.0.inches
+  val SHOOT_AMP_POSITION = 10.0.inches
   val SOURCE_NOTE_OFFSET = 0.0.inches
   val ELEVATOR_THETA_POS = 0.0.degrees
   val HOMING_STATOR_CURRENT = 3.0.amps
