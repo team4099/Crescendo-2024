@@ -50,16 +50,16 @@ object DrivetrainConstants {
       .perSecond // 648
 
   // cruise velocity and accel for steering motor
-  val STEERING_VEL_MAX = 270.degrees.perSecond
-  val STEERING_ACCEL_MAX = 600.degrees.perSecond.perSecond
+  val STEERING_VEL_MAX = 151.degrees.perSecond
+  val STEERING_ACCEL_MAX = 302.degrees.perSecond.perSecond
 
   const val GYRO_RATE_COEFFICIENT = 0.0 // TODO: Change this value
 
   val SLOW_AUTO_VEL = 2.meters.perSecond
   val SLOW_AUTO_ACCEL = 2.0.meters.perSecond.perSecond
 
-  val MAX_AUTO_VEL = 0.5.meters.perSecond // 4
-  val MAX_AUTO_ACCEL = 0.5.meters.perSecond.perSecond // 3
+  val MAX_AUTO_VEL = 4.meters.perSecond // 4
+  val MAX_AUTO_ACCEL = 3.meters.perSecond.perSecond // 3
 
   val MAX_AUTO_BRAKE_VEL = 0.5.meters.perSecond // 4
   val MAX_AUTO_BRAKE_ACCEL = 0.5.meters.perSecond.perSecond // 3
