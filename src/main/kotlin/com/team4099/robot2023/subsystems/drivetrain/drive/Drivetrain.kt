@@ -181,14 +181,14 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
   val odomTRobot: Pose2d
     get() = Pose2d(swerveDriveOdometry.poseMeters)
-
-  // NOTE(parth): This should be expected to be noisy. Avoid using this directly if possible.
+  // NOTE (parth): This should be expected to be noisy. Avoid using this directly if possible.
   val fieldTRobot: Pose2d
     get() =
       (fieldFrameEstimator.getLatestOdometryTField().inverse() + odomTRobot.asTransform2d())
         .asPose2d()
-
   val odomTField: Transform2d
+    get() = fieldFrameEstimator.getLatestOdometryTField()
+  val lastStableOdomTField: Transform2d
     get() = fieldFrameEstimator.getLatestOdometryTField()
 
   private var undriftedPose: Pose2d

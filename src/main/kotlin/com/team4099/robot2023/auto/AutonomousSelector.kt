@@ -1,5 +1,6 @@
 package com.team4099.robot2023.auto
 
+import com.team4099.robot2023.RobotContainer
 import com.team4099.robot2023.auto.mode.TestAutoPath
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import edu.wpi.first.networktables.GenericEntry
@@ -57,6 +58,7 @@ object AutonomousSelector {
 
   fun getCommand(drivetrain: Drivetrain): Command {
     val mode = AutonomousMode.TEST_AUTO_PATH
+    RobotContainer.drivetrainResetFieldFrameEstimator()
     // val mode = autonomousModeChooser.get()
     //    println("${waitTime().inSeconds} wait command")
     when (mode) {

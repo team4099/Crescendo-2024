@@ -65,6 +65,7 @@ class FollowPathPlannerPathCommand(
 
   private var drivePoseSupplier: () -> Pose2d
   private var odoTField: Transform2d = Transform2d(Translation2d(), 0.0.degrees)
+  private var lastStableOdoTField: Transform2d = Transform2d(Translation2d(), 0.0.degrees)
 
   private val atReference: Boolean
     get() =
@@ -174,6 +175,7 @@ class FollowPathPlannerPathCommand(
   override fun initialize() {
     trajStartTime = Clock.fpgaTime
     odoTField = drivetrain.odomTField
+    lastStableOdoTField = drivetrain.lastStableOdomTField
 
     currentSpeeds = drivetrain.targetedChassisSpeeds
     poseRotation = drivePoseSupplier().rotation.inRotation2ds
