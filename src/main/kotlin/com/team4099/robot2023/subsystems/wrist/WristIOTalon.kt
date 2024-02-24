@@ -174,6 +174,10 @@ object WristIOTalon : WristIO {
     inputs.wristStatorCurrent = statorCurrentSignal.value.amps
     inputs.wristSupplyCurrent = supplyCurrentSignal.value.amps
     inputs.wristTemperature = tempSignal.value.celsius
+
+    if (inputs.wristPosition < WristConstants.WRIST_MIN_ROTATION) {
+      wristTalon.setPosition(wristSensor.positionToRawUnits(WristConstants.WRIST_MIN_ROTATION))
+    }
   }
 
   override fun setWristBrakeMode(brake: Boolean) {
