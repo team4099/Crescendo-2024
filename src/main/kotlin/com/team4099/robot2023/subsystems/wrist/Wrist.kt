@@ -76,7 +76,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     val subwooferSpeakerShotAngleHigh =
       LoggedTunableValue(
         "Wrist/subwooferSpeakerShotAngleHigh",
-        WristConstants.SUBWOOFER_SPEAKER_SHOT_ANGLgiE_HIGH,
+        WristConstants.SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH,
         Pair({ it.inDegrees }, { it.degrees })
       )
     val climbAngle =

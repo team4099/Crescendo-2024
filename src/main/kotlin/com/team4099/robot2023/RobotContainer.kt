@@ -37,6 +37,7 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
+import com.team4099.robot2023.commands.CharacterizeWristCommand
 import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
 
 object RobotContainer {
@@ -162,7 +163,7 @@ object RobotContainer {
 
     ControlBoard.testWrist.whileTrue(superstructure.testWristCommand())
     ControlBoard.forceIdle.whileTrue(superstructure.requestIdleCommand())
-
+    ControlBoard.characterizeWrist.whileTrue(CharacterizeWristCommand())
     /*
     TUNING COMMANDS
     ControlBoard.testIntake.whileTrue(superstructure.testIntakeCommand())

@@ -48,6 +48,8 @@ object ControlBoard {
 
   val testWrist = Trigger {driver.xButton}
 
+  val characterizeWrist= Trigger { driver.rightShoulderButton}
+
 
   // week0 controls
 }
