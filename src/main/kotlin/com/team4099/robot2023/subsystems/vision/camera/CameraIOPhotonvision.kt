@@ -35,10 +35,11 @@ class CameraIOPhotonvision(private val identifier: String): CameraIO {
     }
 
     override fun updateInputs(inputs: CameraIO.CameraInputs) {
-        var cameraTargets = camera.latestResult.targets
+        print(camera.hasTargets())
+        //val latestResult = camera.latestResult
+        //inputs.cameraTargets = latestResult.targets
 
-        inputs.cameraTargets = camera.latestResult.targets
-
+        /*
         val visionEst: Optional<EstimatedRobotPose>? = photonEstimator.update()
         val poseEst = visionEst?.get()?.let { Pose3d(it.estimatedPose) }
         val latestTimestamp = visionEst?.get()?.timestampSeconds?.seconds
@@ -57,5 +58,7 @@ class CameraIOPhotonvision(private val identifier: String): CameraIO {
         if (poseEst != null) {
             inputs.frame = poseEst
         }
+
+         */
     }
 }

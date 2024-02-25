@@ -34,6 +34,8 @@ sealed interface Request {
 
     class PrepTrap() : SuperstructureRequest
 
+    class ScoreTrap() : SuperstructureRequest
+
     class ClimbExtend() : SuperstructureRequest
 
     class ClimbRetract() : SuperstructureRequest

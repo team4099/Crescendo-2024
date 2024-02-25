@@ -215,9 +215,6 @@ class Superstructure(
           is Request.SuperstructureRequest.PrepTrap -> {
             nextState = SuperstructureStates.SCORE_TRAP_PREP
           }
-          is Request.SuperstructureRequest.PrepTrap -> {
-            nextState = SuperstructureStates.SCORE_TRAP_PREP
-          }
           is Request.SuperstructureRequest.ClimbExtend -> {
             nextState = SuperstructureStates.CLIMB_EXTEND
           }
@@ -397,7 +394,7 @@ class Superstructure(
           Request.WristRequest.TargetingPosition(
             Wrist.TunableWristStates.trapAngle.get()
           )
-        if (wrist.isAtTargetedPosition) {
+        if (wrist.isAtTargetedPosition && currentRequest is Request.SuperstructureRequest.ScoreTrap ) {
           nextState = SuperstructureStates.SCORE_TRAP
         }
 
@@ -450,8 +447,9 @@ class Superstructure(
         }
       }
       SuperstructureStates.EJECT_GAME_PIECE -> {
+        intake.currentRequest = Request.IntakeRequest.OpenLoop(Intake.TunableIntakeStates.outtakeRolllerVoltage.get(), Intake.TunableIntakeStates.outtakeCenterWheelVoltage.get())
         feeder.currentRequest =
-          Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.shootVoltage.get())
+          Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.outtakeVoltage.get())
         if (!feeder.hasNote &&
           Clock.fpgaTime - shootStartTime > Flywheel.TunableFlywheelStates.ampScoreTime.get()
         ) {
@@ -469,11 +467,8 @@ class Superstructure(
       SuperstructureStates.EJECT_GAME_PIECE_PREP -> {
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.idleAngle.get())
-        flywheel.currentRequest =
-          Request.FlywheelRequest.TargetingVelocity(
-            Flywheel.TunableFlywheelStates.ejectVelocity.get()
-          )
-        if (wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity) {
+
+        if (wrist.isAtTargetedPosition) {
           nextState = SuperstructureStates.EJECT_GAME_PIECE
         }
 
@@ -566,7 +561,11 @@ class Superstructure(
     val returnCommand =
       runOnce { if (currentState == SuperstructureStates.SCORE_AMP_PREP) {
         currentRequest = Request.SuperstructureRequest.ScoreAmp()
-      } else {
+      } else if (currentState == SuperstructureStates.SCORE_TRAP_PREP){
+        currentRequest = Request.SuperstructureRequest.ScoreTrap()
+      }
+
+        else {
         currentRequest = Request.SuperstructureRequest.ScoreSpeaker()
       }
         }.until {
@@ -726,7 +725,7 @@ class Superstructure(
       CLIMB_EXTEND,
       CLIMB_RETRACT,
       EJECT_GAME_PIECE,
-      EJECT_GAME_PIECE_PREP
+      EJECT_GAME_PIECE_PREP,
     }
   }
 }

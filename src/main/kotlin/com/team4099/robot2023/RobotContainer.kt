@@ -70,10 +70,7 @@ object RobotContainer {
       drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
       vision =
         Vision(
-          object: CameraIO {}
-          //          CameraIONorthstar("northstar"),
-          //        CameraIONorthstar("right"),
-          //        CameraIONorthstar("backward")
+          object : CameraIO {}
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIONEO)
@@ -86,9 +83,7 @@ object RobotContainer {
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
       vision =
         Vision(
-          CameraIOPhotonvision("parakeet_1"),
-          CameraIOPhotonvision("parakeet_2"),
-          CameraIOPhotonvision("parakeet_3")
+          object : CameraIO {}
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIOSim)
@@ -171,6 +166,7 @@ object RobotContainer {
     ControlBoard.forceIdle.whileTrue(superstructure.requestIdleCommand())
     ControlBoard.prepLow.whileTrue(superstructure.prepSpeakerLowCommand())
     ControlBoard.prepTrap.whileTrue(superstructure.prepTrapCommand())
+    ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
 
 
 

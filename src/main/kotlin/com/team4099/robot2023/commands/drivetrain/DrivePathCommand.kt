@@ -1,7 +1,6 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.lib.logging.LoggedTunableValue
-
 import com.team4099.lib.logging.toDoubleArray
 import com.team4099.lib.math.asPose2d
 import com.team4099.lib.math.asTransform2d
@@ -344,10 +343,10 @@ private constructor(
 
     val xAccel =
       desiredState.accelerationMetersPerSecondSq.meters.perSecond.perSecond *
-        desiredState.curvatureRadPerMeter.radians.cos
+              desiredState.curvatureRadPerMeter.radians.cos
     var yAccel =
       desiredState.accelerationMetersPerSecondSq.meters.perSecond.perSecond *
-        desiredState.curvatureRadPerMeter.radians.sin
+              desiredState.curvatureRadPerMeter.radians.sin
 
     var nextDriveState =
       swerveDriveController.calculate(
@@ -429,8 +428,8 @@ private constructor(
   override fun isFinished(): Boolean {
     trajCurTime = Clock.fpgaTime - trajStartTime
     return endPathOnceAtReference &&
-      (swerveDriveController.atReference()) &&
-      trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
+            (swerveDriveController.atReference()) &&
+            trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
   }
 
   override fun end(interrupted: Boolean) {
