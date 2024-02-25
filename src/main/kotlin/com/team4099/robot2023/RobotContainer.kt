@@ -123,8 +123,8 @@ object RobotContainer {
     drivetrain.zeroSteering()
   }
 
-  fun zeroSensors() {
-    drivetrain.currentRequest = DrivetrainRequest.ZeroSensors()
+  fun zeroSensors(isInAutonomous: Boolean = false) {
+    drivetrain.currentRequest = DrivetrainRequest.ZeroSensors(isInAutonomous)
   }
 
   fun zeroAngle(toAngle: Angle) {

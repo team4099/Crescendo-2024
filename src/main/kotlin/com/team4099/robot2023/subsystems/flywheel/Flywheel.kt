@@ -51,6 +51,12 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         FlywheelConstants.AMP_VELOCITY,
         Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
       )
+    val trapVelocity =
+      LoggedTunableValue(
+        "Flywheel/trapVelocity",
+        FlywheelConstants.TRAP_VELOCITY,
+        Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+      )
     val ampScoreTime =
       LoggedTunableValue(
         "Flywheel/ampScoreTime",

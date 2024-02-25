@@ -206,6 +206,12 @@ class Superstructure(
           is Request.SuperstructureRequest.ScoreSpeakerHigh -> {
             nextState = SuperstructureStates.SCORE_SPEAKER_HIGH_PREP
           }
+          is Request.SuperstructureRequest.PrepTrap -> {
+            nextState = SuperstructureStates.SCORE_TRAP_PREP
+          }
+          is Request.SuperstructureRequest.ScoreTrap -> {
+            nextState = SuperstructureStates.SCORE_TRAP
+          }
           is Request.SuperstructureRequest.ClimbExtend -> {
             nextState = SuperstructureStates.CLIMB_EXTEND
           }
@@ -413,6 +419,35 @@ class Superstructure(
           }
         }
       }
+      SuperstructureStates.SCORE_TRAP_PREP -> {
+        wrist.currentRequest =
+          Request.WristRequest.TargetingPosition(
+            Wrist.TunableWristStates.trapAngle.get()
+          )
+        if (wrist.isAtTargetedPosition) {
+          nextState = SuperstructureStates.SCORE_TRAP
+        }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+        }
+      }
+      SuperstructureStates.SCORE_TRAP -> {
+        feeder.currentRequest =
+          Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.shootVoltage.get())
+
+        if (!feeder.hasNote) {
+          nextState = SuperstructureStates.IDLE
+        }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+        }
+      }
       SuperstructureStates.CLIMB_EXTEND -> {
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.climbAngle.get())
@@ -430,7 +465,7 @@ class Superstructure(
         }
       }
       SuperstructureStates.CLIMB_RETRACT -> {
-        elevator.currentRequest = Request.ElevatorRequest.OpenLoop(-4.volts)
+        elevator.currentRequest = Request.ElevatorRequest.OpenLoop(-5.volts)
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
@@ -578,6 +613,24 @@ class Superstructure(
     return returnCommand
   }
 
+  fun prepTrapCommand(): Command {
+    val returnCommand =
+      runOnce { currentRequest = Request.SuperstructureRequest.PrepTrap() }.until {
+        isAtRequestedState && currentState == SuperstructureStates.SCORE_TRAP_PREP
+      }
+    returnCommand.name = "PrepTrapCommand"
+    return returnCommand
+  }
+
+  fun scoreTrapCommand(): Command {
+    val returnCommand =
+      runOnce { currentRequest = Request.SuperstructureRequest.ScoreTrap() }.until {
+        isAtRequestedState && currentState == SuperstructureStates.SCORE_TRAP
+      }
+    returnCommand.name = "ScoreTrapCommand"
+    return returnCommand
+  }
+
   fun climbExtendCommand(): Command {
     val returnCommand =
       runOnce { currentRequest = Request.SuperstructureRequest.ClimbExtend() }.until {
@@ -689,6 +742,8 @@ class Superstructure(
       SCORE_SPEAKER_MID,
       SCORE_SPEAKER_HIGH_PREP,
       SCORE_SPEAKER_HIGH,
+      SCORE_TRAP_PREP,
+      SCORE_TRAP,
       CLIMB_EXTEND,
       CLIMB_RETRACT,
       EJECT_GAME_PIECE,

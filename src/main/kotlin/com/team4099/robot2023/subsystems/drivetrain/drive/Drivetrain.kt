@@ -78,6 +78,9 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   var targetedChassisAccels = edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
     private set
 
+  var isInAutonomous = false
+    private set
+
   var targetPose: Pose2d = Pose2d(0.0.meters, 0.0.meters, 0.0.radians)
 
   private var drift: Transform2d = Transform2d(Translation2d(), 0.0.radians)
@@ -121,6 +124,9 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
         is DrivetrainRequest.ClosedLoop -> {
           targetedChassisSpeeds = value.chassisSpeeds
           targetedChassisAccels = value.chassisAccels
+        }
+        is DrivetrainRequest.ZeroSensors -> {
+          isInAutonomous = value.isInAutonomous
         }
         else -> {}
       }
@@ -330,7 +336,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
         nextState = DrivetrainState.ZEROING_SENSORS
       }
       DrivetrainState.ZEROING_SENSORS -> {
-        zeroSensors()
+        zeroSensors(isInAutonomous)
         // Transitions
         currentRequest = DrivetrainRequest.Idle()
         nextState = fromRequestToState(currentRequest)
@@ -542,11 +548,14 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   }
 
   /** Zeros all the sensors on the drivetrain. */
-  fun zeroSensors() {
+  fun zeroSensors(isInAutonomous: Boolean) {
     zeroGyroPitch()
     zeroGyroRoll()
     zeroSteering()
-    zeroDrive()
+
+    if (!isInAutonomous) {
+      zeroDrive()
+    }
   }
 
   /** Resets the field frame estimator given some current pose of the robot. */

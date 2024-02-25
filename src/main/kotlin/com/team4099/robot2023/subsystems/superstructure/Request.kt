@@ -24,6 +24,10 @@ sealed interface Request {
     class ScoreSpeakerLow() : SuperstructureRequest
     class ScoreSpeakerMid() : SuperstructureRequest
     class ScoreSpeakerHigh() : SuperstructureRequest
+
+    class PrepTrap() : SuperstructureRequest
+    class ScoreTrap() : SuperstructureRequest
+
     class ClimbExtend() : SuperstructureRequest
 
     class ClimbRetract() : SuperstructureRequest
@@ -44,7 +48,7 @@ sealed interface Request {
         edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
     ) : DrivetrainRequest
 
-    class ZeroSensors : DrivetrainRequest
+    class ZeroSensors(val isInAutonomous: Boolean = false): DrivetrainRequest
     class Idle : DrivetrainRequest
 
     class LockWheels : DrivetrainRequest
