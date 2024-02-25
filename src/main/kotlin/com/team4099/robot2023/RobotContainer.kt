@@ -27,7 +27,7 @@ import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.subsystems.vision.Vision
-import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
+import com.team4099.robot2023.subsystems.vision.camera.CameraIOPhotonvision
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.WristIO
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
@@ -39,6 +39,7 @@ import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 import com.team4099.robot2023.commands.CharacterizeWristCommand
 import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
+import com.team4099.robot2023.subsystems.vision.camera.CameraIO
 import com.team4099.robot2023.subsystems.wrist.WristIOTalon
 
 object RobotContainer {
@@ -60,11 +61,8 @@ object RobotContainer {
       drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
       vision =
         Vision(
-          //          object: CameraIO {}
+          object: CameraIO {}
           //          CameraIONorthstar("northstar"),
-          CameraIONorthstar("northstar_1"),
-          CameraIONorthstar("northstar_2"),
-          CameraIONorthstar("northstar_3"),
           //        CameraIONorthstar("right"),
           //        CameraIONorthstar("backward")
         )
@@ -79,9 +77,9 @@ object RobotContainer {
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
       vision =
         Vision(
-          CameraIONorthstar("northstar_1"),
-          CameraIONorthstar("northstar_2"),
-          CameraIONorthstar("northstar_3"),
+          CameraIOPhotonvision("parakeet_1"),
+          CameraIOPhotonvision("parakeet_2"),
+          CameraIOPhotonvision("parakeet_3")
         )
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIOSim)
@@ -92,8 +90,8 @@ object RobotContainer {
     }
 
     superstructure = Superstructure(intake, feeder, elevator, wrist, flywheel)
-    vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
-    limelight.poseSupplier = { drivetrain.odometryPose }
+    vision.setDataInterfaces({ drivetrain.fieldTRobot }, { drivetrain.addVisionData(it) })
+    limelight.poseSupplier = { drivetrain.odomTRobot }
   }
 
   fun mapDefaultCommands() {
