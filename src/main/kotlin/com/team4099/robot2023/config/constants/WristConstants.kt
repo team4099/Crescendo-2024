@@ -73,6 +73,7 @@ object WristConstants {
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = -15.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH = -12.5.degrees
   val CLIMB_ANGLE = 10.0.degrees
+  val TRAP_ANGLE = 35.0.degrees
   val INTAKE_ANGLE = (-35.0).degrees
   val IDLE_ANGLE_HAS_GAMEPEICE = -35.0.degrees
 }

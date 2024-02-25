@@ -133,7 +133,7 @@ object Robot : LoggedRobot() {
   }
 
   override fun autonomousInit() {
-    RobotContainer.zeroSensors()
+    RobotContainer.zeroSensors(isInAutonomous = true)
     FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
     RobotContainer.setDriveBrakeMode()
     RobotContainer.setSteeringBrakeMode()

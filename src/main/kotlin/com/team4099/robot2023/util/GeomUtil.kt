@@ -1,5 +1,7 @@
 package com.team4099.robot2023.util
 
+import com.team4099.lib.math.asPose2d
+import com.team4099.lib.math.asTransform2d
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Rotation3d
@@ -19,6 +21,10 @@ import org.team4099.lib.units.derived.inRotation2ds
  */
 fun multiplyTwist(twist: Twist2d, factor: Double): Twist2d {
   return Twist2d(twist.dx * factor, twist.dy * factor, twist.dtheta * factor)
+}
+
+fun Pose2d.inverse(): Pose2d {
+  return this.asTransform2d().inverse().asPose2d()
 }
 
 fun Pose2d.toPose3d(): Pose3d {

@@ -1,6 +1,9 @@
 package com.team4099.robot2023
 
-import com.team4099.robot2023.auto.AutonomousSelector
+import com.team4099.robot2023.auto.mode.FiveNoteCenterlineAutoPath
+import com.team4099.robot2023.auto.mode.FourNoteAutoPath
+import com.team4099.robot2023.auto.mode.SixNoteCenterlineAutoPath
+import com.team4099.robot2023.auto.mode.SixNoteCenterlineWithPickupAutoPath
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
@@ -14,13 +17,13 @@ import com.team4099.robot2023.subsystems.elevator.Elevator
 import com.team4099.robot2023.subsystems.elevator.ElevatorIO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.feeder.Feeder
-import com.team4099.robot2023.subsystems.feeder.FeederIONeo
+import com.team4099.robot2023.subsystems.feeder.FeederIO
 import com.team4099.robot2023.subsystems.feeder.FeederIOSim
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIO
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
-import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
 import com.team4099.robot2023.subsystems.intake.Intake
-import com.team4099.robot2023.subsystems.intake.IntakeIONEO
+import com.team4099.robot2023.subsystems.intake.IntakeIO
 import com.team4099.robot2023.subsystems.intake.IntakeIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
@@ -35,12 +38,15 @@ import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
-import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 import com.team4099.robot2023.commands.CharacterizeWristCommand
 import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
+import com.team4099.robot2023.subsystems.feeder.FeederIONeo
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
+import com.team4099.robot2023.subsystems.intake.IntakeIONEO
 import com.team4099.robot2023.subsystems.vision.camera.CameraIO
 import com.team4099.robot2023.subsystems.wrist.WristIOTalon
+import org.team4099.lib.units.derived.degrees
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -125,8 +131,8 @@ object RobotContainer {
     drivetrain.zeroSteering()
   }
 
-  fun zeroSensors() {
-    drivetrain.currentRequest = DrivetrainRequest.ZeroSensors()
+  fun zeroSensors(isInAutonomous: Boolean = false) {
+    drivetrain.currentRequest = DrivetrainRequest.ZeroSensors(isInAutonomous)
   }
 
   fun zeroAngle(toAngle: Angle) {
@@ -164,6 +170,9 @@ object RobotContainer {
     ControlBoard.retractClimb.whileTrue(superstructure.climbRetractCommand())
     ControlBoard.forceIdle.whileTrue(superstructure.requestIdleCommand())
     ControlBoard.prepLow.whileTrue(superstructure.prepSpeakerLowCommand())
+    ControlBoard.prepTrap.whileTrue(superstructure.prepTrapCommand())
+
+
 
     /*
     TUNING COMMANDS
@@ -191,7 +200,7 @@ object RobotContainer {
 
   fun mapTestControls() {}
 
-  fun getAutonomousCommand() = AutonomousSelector.getCommand(drivetrain)
+  fun getAutonomousCommand() = FourNoteAutoPath(drivetrain)
 
   fun mapTunableCommands() {}
 }

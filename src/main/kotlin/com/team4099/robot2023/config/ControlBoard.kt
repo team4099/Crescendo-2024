@@ -21,10 +21,10 @@ object ControlBoard {
     }
 
   val strafe: Double
-    get() = -driver.leftXAxis
+    get() = driver.leftXAxis
 
   val forward: Double
-    get() = -driver.leftYAxis
+    get() = driver.leftYAxis
 
   val turn: Double
     get() = driver.rightXAxis
@@ -39,7 +39,6 @@ object ControlBoard {
   val intake = Trigger { driver.rightShoulderButton}
   val forceIdle = Trigger { driver.yButton || operator.startButton && operator.selectButton  }
 
-
   val prepAmp = Trigger  { operator.aButton }
   val prepLow = Trigger  { operator.xButton }
   val prepMid = Trigger { operator.bButton }
@@ -49,6 +48,7 @@ object ControlBoard {
   val retractClimb = Trigger { operator.dPadDown }
 
   val prepTrap = Trigger { operator.rightShoulderButton }
+
 
   /*
   val testWrist = Trigger {driver.xButton}

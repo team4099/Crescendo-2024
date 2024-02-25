@@ -1,6 +1,8 @@
 package com.team4099.robot2023.util
 
 import com.team4099.lib.math.Zone2d
+import com.team4099.lib.trajectory.FieldWaypoint
+import com.team4099.lib.trajectory.OdometryWaypoint
 import com.team4099.lib.trajectory.RotationSequence
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.FieldConstants
@@ -70,9 +72,16 @@ object AllianceFlipUtil {
     }
   }
 
-  fun apply(waypoint: Waypoint): Waypoint {
+  /*
+  Don't flip an OdometryWaypoint because it's done relative to robot origin
+   */
+  fun apply(waypoint: OdometryWaypoint): Waypoint {
+    return waypoint
+  }
+
+  fun apply(waypoint: FieldWaypoint): Waypoint {
     return if (shouldFlip()) {
-      Waypoint(apply(waypoint.translation), waypoint.driveRotation, waypoint.holonomicRotation)
+      FieldWaypoint(apply(waypoint.translation), waypoint.driveRotation, waypoint.holonomicRotation)
     } else {
       waypoint
     }
@@ -120,6 +129,10 @@ object AllianceFlipUtil {
   }
 
   private fun shouldFlip(): Boolean {
-    return DriverStation.getAlliance().get() == Alliance.Red
+    if (DriverStation.getAlliance().isPresent) {
+      return DriverStation.getAlliance().get() == Alliance.Red
+    } else {
+      return false
+    }
   }
 }

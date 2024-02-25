@@ -24,7 +24,7 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
   var rumbleTime = 0.5.seconds
 
   val rumbleStartTime = Clock.fpgaTime
-
+  
   var lastHeldGamePiece = false
 
   var lastDropTime = Clock.fpgaTime

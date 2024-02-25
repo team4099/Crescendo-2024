@@ -2,6 +2,10 @@ package com.team4099.robot2023.subsystems.drivetrain.drive
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
+<<<<<<< HEAD
+=======
+import com.team4099.lib.logging.toDoubleArray
+>>>>>>> field-frame-auto-tuning
 import com.team4099.lib.math.asPose2d
 import com.team4099.lib.math.asTransform2d
 import com.team4099.lib.vision.TimestampedVisionUpdate
@@ -14,6 +18,7 @@ import com.team4099.robot2023.util.Alert
 import com.team4099.robot2023.util.FMSData
 import com.team4099.robot2023.util.FieldFrameEstimator
 import com.team4099.robot2023.util.Velocity2d
+import com.team4099.robot2023.util.inverse
 import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry
@@ -70,9 +75,20 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
   private var isFieldOriented = true
 
+<<<<<<< HEAD
   private var targetedChassisSpeeds = edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
 
   private var targetedChassisAccels = edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
+=======
+  var targetedChassisSpeeds = edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
+    private set
+
+  var targetedChassisAccels = edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
+    private set
+
+  var isInAutonomous = false
+    private set
+>>>>>>> field-frame-auto-tuning
 
   var targetPose: Pose2d = Pose2d(0.0.meters, 0.0.meters, 0.0.radians)
 
@@ -117,6 +133,9 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
         is DrivetrainRequest.ClosedLoop -> {
           targetedChassisSpeeds = value.chassisSpeeds
           targetedChassisAccels = value.chassisAccels
+        }
+        is DrivetrainRequest.ZeroSensors -> {
+          isInAutonomous = value.isInAutonomous
         }
         else -> {}
       }
@@ -299,6 +318,13 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
     Logger.recordOutput("FieldFrameEstimator/odomTField", odomTField.transform2d)
 
+<<<<<<< HEAD
+=======
+    Logger.recordOutput(
+      "FieldFrameEstimator/odomTField", odomTField.toDoubleArray().toDoubleArray()
+    )
+
+>>>>>>> field-frame-auto-tuning
     Logger.recordOutput(
       "Odometry/targetPose",
       doubleArrayOf(targetPose.x.inMeters, targetPose.y.inMeters, targetPose.rotation.inRadians)
@@ -322,7 +348,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
         nextState = DrivetrainState.ZEROING_SENSORS
       }
       DrivetrainState.ZEROING_SENSORS -> {
-        zeroSensors()
+        zeroSensors(isInAutonomous)
         // Transitions
         currentRequest = DrivetrainRequest.Idle()
         nextState = fromRequestToState(currentRequest)
@@ -534,11 +560,21 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   }
 
   /** Zeros all the sensors on the drivetrain. */
-  fun zeroSensors() {
+  fun zeroSensors(isInAutonomous: Boolean) {
     zeroGyroPitch()
     zeroGyroRoll()
     zeroSteering()
-    zeroDrive()
+
+    if (!isInAutonomous) {
+      zeroDrive()
+    }
+  }
+
+  /** Resets the field frame estimator given some current pose of the robot. */
+  fun resetFieldFrameEstimator(fieldTRobot: Pose2d) {
+    fieldFrameEstimator.resetFieldFrameFilter(
+      odomTRobot.asTransform2d() + fieldTRobot.asTransform2d().inverse()
+    )
   }
 
   /** Resets the field frame estimator given some current pose of the robot. */
@@ -575,6 +611,13 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
       Pose2d(odomTRobot.x, odomTRobot.y, toAngle).pose2d
     )
 
+<<<<<<< HEAD
+=======
+    fieldFrameEstimator.resetFieldFrameFilter(
+      Transform2d(odomTField.translation, gyroInputs.gyroYaw)
+    )
+
+>>>>>>> field-frame-auto-tuning
     if (!(gyroInputs.gyroConnected)) {
       gyroYawOffset = toAngle - rawGyroAngle
     }
