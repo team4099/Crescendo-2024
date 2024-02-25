@@ -16,7 +16,7 @@ import org.team4099.lib.units.perSecond
 
 object ElevatorConstants {
   // TODO: Change values later based on CAD
-  val REAL_KP = 0.0.volts / 1.inches
+  val REAL_KP = 0.725.volts / 1.inches
   val REAL_KI = 0.0.volts / (1.inches * 1.seconds)
   val REAL_KD = 0.0.volts / (1.inches.perSecond)
 
@@ -43,7 +43,7 @@ object ElevatorConstants {
 
   val ELEVATOR_KS = 0.0.volts
   val ELEVATOR_KG = 0.28.volts
-  val ELEVATOR_KV = 0.47.volts / 1.inches.perSecond
+  val ELEVATOR_KV = 0.48.volts / 1.inches.perSecond
   val ELEVATOR_KA = 0.075.volts / 1.inches.perSecond.perSecond
   val ELEVATOR_OPEN_LOOP_EXTEND_VOLTAGE = 8.0.volts
   val ELEVATOR_OPEN_LOOP_RETRACT_VOLTAGE = -12.0.volts
@@ -62,7 +62,7 @@ object ElevatorConstants {
   val MAX_ACCELERATION = 2.0.meters.perSecond.perSecond
 
   val SHOOT_SPEAKER_LOW_POSITION = 0.25.inches
-  val SHOOT_SPEAKER_MID_POSITION = 9.0.inches
+  val SHOOT_SPEAKER_MID_POSITION = 0.25.inches
   val SHOOT_SPEAKER_HIGH_POSITION = 16.0.inches
   val SHOOT_AMP_POSITION = 10.0.inches
   val SOURCE_NOTE_OFFSET = 0.0.inches

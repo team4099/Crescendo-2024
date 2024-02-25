@@ -35,9 +35,9 @@ object ControlBoard {
   val resetGyro = Trigger { driver.startButton && driver.selectButton }
 
   // sim triggers
-  val intake = Trigger {driver.leftShoulderButton}
-  val score = Trigger { driver.rightShoulderButton}
-  val forceIdle = Trigger { driver.yButton }
+  val score = Trigger {driver.leftShoulderButton}
+  val intake = Trigger { driver.rightShoulderButton}
+  val forceIdle = Trigger { driver.yButton || operator.startButton && operator.selectButton  }
 
   val prepAmp = Trigger  { operator.aButton }
   val prepMid = Trigger { operator.bButton }
