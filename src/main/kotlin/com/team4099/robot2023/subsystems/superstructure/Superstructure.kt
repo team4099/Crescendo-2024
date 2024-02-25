@@ -306,7 +306,7 @@ class Superstructure(
           )
         if (wrist.isAtTargetedPosition &&
           flywheel.isAtTargetedVelocity &&
-          elevator.isAtTargetedPosition
+          elevator.isAtTargetedPosition && currentRequest is Request.SuperstructureRequest.ScoreSpeaker
         ) {
           nextState = SuperstructureStates.SCORE_SPEAKER
         }
@@ -511,6 +511,15 @@ class Superstructure(
     val returnCommand =
       runOnce { currentRequest = Request.SuperstructureRequest.PrepScoreAmp() }.until {
         isAtRequestedState && currentState == SuperstructureStates.SCORE_AMP_PREP
+      }
+    returnCommand.name = "PrepAmpCommand"
+    return returnCommand
+  }
+
+  fun prepSpeakerLowCommand(): Command {
+    val returnCommand =
+      runOnce { currentRequest = Request.SuperstructureRequest.PrepScoreSpeakerLow() }.until {
+        isAtRequestedState && currentState == SuperstructureStates.SCORE_SPEAKER_LOW_PREP
       }
     returnCommand.name = "PrepAmpCommand"
     return returnCommand

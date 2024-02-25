@@ -53,6 +53,9 @@ object RobotContainer {
   private val wrist: Wrist
   val superstructure: Superstructure
 
+  val rumbleState
+    get() = feeder.rumbleTrigger
+
   init {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
@@ -159,8 +162,9 @@ object RobotContainer {
     ControlBoard.score.whileTrue(superstructure.scoreCommand())
     ControlBoard.extendClimb.whileTrue(superstructure.climbExtendCommand())
     ControlBoard.retractClimb.whileTrue(superstructure.climbRetractCommand())
-
     ControlBoard.forceIdle.whileTrue(superstructure.requestIdleCommand())
+    ControlBoard.prepLow.whileTrue(superstructure.prepSpeakerLowCommand())
+
     /*
     TUNING COMMANDS
     ControlBoard.testIntake.whileTrue(superstructure.testIntakeCommand())

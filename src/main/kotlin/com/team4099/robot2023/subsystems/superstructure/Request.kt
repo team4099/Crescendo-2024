@@ -21,6 +21,8 @@ sealed interface Request {
 
     class ScoreAmp() : SuperstructureRequest
 
+    class PrepScoreSpeakerLow() : SuperstructureRequest
+
     class PrepScoreSpeakerMid() : SuperstructureRequest
 
     class PrepScoreSpeakerHigh() : SuperstructureRequest

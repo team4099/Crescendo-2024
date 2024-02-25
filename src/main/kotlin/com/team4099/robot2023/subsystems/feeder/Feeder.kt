@@ -19,6 +19,16 @@ import org.team4099.lib.units.derived.volts
 class Feeder(val io: FeederIO) : SubsystemBase() {
   val inputs = FeederIO.FeederIOInputs()
 
+  var rumbleTrigger = false
+
+  var rumbleTime = 0.5.seconds
+
+  val rumbleStartTime = Clock.fpgaTime
+
+  var lastHeldGamePiece = false
+
+  var lastDropTime = Clock.fpgaTime
+
   object TunableFeederStates {
     val idleVoltage =
       LoggedTunableValue(
@@ -105,6 +115,18 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
 
   override fun periodic() {
     io.updateInputs(inputs)
+
+
+    if (lastHeldGamePiece != hasNote && !rumbleTrigger) {
+      rumbleTrigger = true
+      lastDropTime = Clock.fpgaTime
+    }
+
+    if (Clock.fpgaTime - lastDropTime > rumbleTime) {
+      rumbleTrigger = false
+    }
+
+    lastHeldGamePiece = hasNote
 
     hasNote = debounceFilter.calculate(inputs.beamBroken)
 
