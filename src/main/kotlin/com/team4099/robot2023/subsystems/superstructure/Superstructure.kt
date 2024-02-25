@@ -147,8 +147,11 @@ class Superstructure(
         }
       }
       SuperstructureStates.HOME -> {
+        /*
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.idleAngle.get())
+
+         */
 
         elevator.currentRequest = Request.ElevatorRequest.Home()
 
@@ -168,6 +171,7 @@ class Superstructure(
           Request.FlywheelRequest.TargetingVelocity(
             Flywheel.TunableFlywheelStates.idleVelocity.get()
           )
+
         if (feeder.hasNote) {
           wrist.currentRequest =
             Request.WristRequest.TargetingPosition(
@@ -177,6 +181,7 @@ class Superstructure(
           wrist.currentRequest =
             Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.idleAngle.get())
         }
+
         elevator.currentRequest =
           Request.ElevatorRequest.TargetingPosition(
             Elevator.TunableElevatorHeights.minPosition.get()
@@ -256,13 +261,9 @@ class Superstructure(
           )
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.ampScoreAngle.get())
-        flywheel.currentRequest =
-          Request.FlywheelRequest.TargetingVelocity(
-            Flywheel.TunableFlywheelStates.ampVelocity.get()
-          )
+
         if (elevator.isAtTargetedPosition &&
           wrist.isAtTargetedPosition &&
-          flywheel.isAtTargetedVelocity &&
           currentRequest is Request.SuperstructureRequest.ScoreAmp
         ) {
           nextState = SuperstructureStates.SCORE_AMP
@@ -277,7 +278,7 @@ class Superstructure(
       }
       SuperstructureStates.SCORE_AMP -> {
         feeder.currentRequest =
-          Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.shootVoltage.get())
+          Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.outtakeVoltage.get())
         if (!feeder.hasNote &&
           Clock.fpgaTime - shootStartTime > Flywheel.TunableFlywheelStates.ampScoreTime.get()
         ) {

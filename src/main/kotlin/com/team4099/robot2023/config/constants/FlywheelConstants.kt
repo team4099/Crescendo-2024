@@ -20,7 +20,7 @@ import org.team4099.lib.units.perSecond
 object FlywheelConstants {
   val LEFT_GEAR_RATIO = 1.0
 
-  val RIGHT_MOTOR_REVOLUTIONS_PER_FLYWHEEL_REVOLUTIONS = 24.0 / 48.0
+  val RIGHT_MOTOR_REVOLUTIONS_PER_FLYWHEEL_REVOLUTIONS = 2.0
 
   val VOLTAGE_COMPENSATION = 12.volts
 
@@ -60,7 +60,7 @@ object FlywheelConstants {
   }
 
   val IDLE_VELOCITY = 0.0.rotations.perMinute
-  val SPEAKER_VELOCITY = 10_000.rotations.perMinute
+  val SPEAKER_VELOCITY = 3_000.rotations.perMinute
   val AMP_VELOCITY = 5_000.rotations.perMinute
   val AMP_SCORE_TIME = 1.seconds
   val SPEAKER_SCORE_TIME = 1.seconds

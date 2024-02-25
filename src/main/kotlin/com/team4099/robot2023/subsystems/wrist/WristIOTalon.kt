@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs
 import com.ctre.phoenix6.configs.MotorOutputConfigs
 import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
+import com.ctre.phoenix6.controls.PositionDutyCycle
 import com.ctre.phoenix6.controls.VoltageOut
 import com.ctre.phoenix6.hardware.CANcoder
 import com.ctre.phoenix6.hardware.TalonFX
@@ -15,6 +16,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue
 import com.ctre.phoenix6.signals.SensorDirectionValue
 import com.team4099.lib.phoenix6.PositionVoltage
 import com.team4099.robot2023.config.constants.Constants
+import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
@@ -35,6 +37,7 @@ import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inVolts
+import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
@@ -94,14 +97,14 @@ object WristIOTalon : WristIO {
       wristSensor.derivativePositionGainToRawUnits(WristConstants.PID.REAL_KD)
 
     wristConfiguration.CurrentLimits.SupplyCurrentLimit =
-      FlywheelConstants.LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT.inAmperes
+      WristConstants.WRIST_SUPPLY_CURRENT_LIMIT.inAmperes
     wristConfiguration.CurrentLimits.SupplyCurrentThreshold =
-      FlywheelConstants.LEFT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT.inAmperes
+      WristConstants.WRIST_THRESHOLD_CURRENT_LIMIT.inAmperes
     wristConfiguration.CurrentLimits.SupplyTimeThreshold =
-      FlywheelConstants.LEFT_flywheel_TRIGGER_THRESHOLD_TIME.inSeconds
+      WristConstants.WRIST_TRIGGER_THRESHOLD_TIME.inSeconds
     wristConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
     wristConfiguration.CurrentLimits.StatorCurrentLimit =
-      FlywheelConstants.LEFT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
+      WristConstants.WRIST_STATOR_CURRENT_LIMIT.inAmperes
     wristConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
 
     wristConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
@@ -150,7 +153,18 @@ object WristIOTalon : WristIO {
   override fun setWristPosition(position: Angle, feedforward: ElectricalPotential) {
     positionRequest.setFeedforward(feedforward)
     positionRequest.setPosition(position)
-    wristTalon.setControl(positionRequest.positionVoltagePhoenix6)
+    wristTalon.setControl(
+      PositionDutyCycle(
+        wristSensor.positionToRawUnits(position),
+        wristSensor.velocityToRawUnits(0.0.radians.perSecond),
+        true,
+        feedforward.inVolts,
+        0,
+        false,
+        false,
+        false
+      )
+    )
   }
 
   private fun updateSignals() {
@@ -174,6 +188,10 @@ object WristIOTalon : WristIO {
     inputs.wristStatorCurrent = statorCurrentSignal.value.amps
     inputs.wristSupplyCurrent = supplyCurrentSignal.value.amps
     inputs.wristTemperature = tempSignal.value.celsius
+
+    if (inputs.wristPosition < WristConstants.WRIST_MIN_ROTATION) {
+      wristTalon.setPosition(wristSensor.positionToRawUnits(WristConstants.WRIST_MIN_ROTATION))
+    }
   }
 
   override fun setWristBrakeMode(brake: Boolean) {

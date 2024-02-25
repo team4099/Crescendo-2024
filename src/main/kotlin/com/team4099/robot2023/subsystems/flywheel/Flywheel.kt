@@ -143,9 +143,9 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
           flywheelTargetVoltage = value.flywheelVoltage
         }
         is Request.FlywheelRequest.TargetingVelocity -> {
-          flywheelRightTargetVelocity = value.flywheelVelocity
+          flywheelRightTargetVelocity = value.flywheelVelocity * 2
           // left needs to be half of the right one
-          flywheelLeftTargetVelocity = value.flywheelVelocity / 2
+          flywheelLeftTargetVelocity = value.flywheelVelocity
         }
         else -> {}
       }
@@ -191,7 +191,9 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
   }
   override fun periodic() {
     io.updateInputs(inputs)
+
     Logger.processInputs("Flywheel", inputs)
+    Logger.recordOutput("Flywheel/targetDifference", (inputs.leftFlywheelVelocity - flywheelLeftTargetVelocity).absoluteValue.inRotationsPerMinute)
     Logger.recordOutput("Flywheel/currentState", currentState.name)
 
     Logger.recordOutput("Flywheel/requestedState", currentRequest.javaClass.simpleName)
@@ -199,9 +201,13 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     Logger.recordOutput("Flywheel/isAtTargetedVelocity", isAtTargetedVelocity)
 
     if (Constants.Tuning.DEBUGING_MODE) {
-      Logger.recordOutput("Flywheel/FlywheelTargetVoltage", flywheelTargetVoltage.inVolts)
+      Logger.recordOutput("Flywheel/FlywheelRightTargetVoltage", flywheelTargetVoltage.inVolts)
+      Logger.recordOutput("Flywheel/FlywheelLeftTargetVoltage", flywheelTargetVoltage.inVolts)
       Logger.recordOutput(
-        "Flywheel/FlywheelTargetVelocity", flywheelRightTargetVelocity.inRotationsPerMinute
+        "Flywheel/FlywheelRightTargetVelocity", flywheelRightTargetVelocity.inRotationsPerMinute
+      )
+      Logger.recordOutput(
+        "Flywheel/FlywheelLeftTargetVelocity", flywheelLeftTargetVelocity.inRotationsPerMinute
       )
       Logger.recordOutput("Flywheel/FlywheelLastVoltage", lastRightFlywheelVoltage.inVolts)
     }

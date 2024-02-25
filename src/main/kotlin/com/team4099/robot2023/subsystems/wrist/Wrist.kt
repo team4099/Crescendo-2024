@@ -86,7 +86,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
     val testAngle =
       LoggedTunableValue(
-        "Wrist/testAngle",
+        "Wrist/testingAngle",
         WristConstants.AMP_SCORE_ANGLE,
         Pair({ it.inDegrees }, { it.degrees })
       )
@@ -207,7 +207,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
           WristConstants.PID.SIM_WRIST_KA
         )
     }
-
+    TunableWristStates.testAngle.initDefault(0.degrees)
     testAngleDown.initDefault(-30.degrees)
     testAngleUp.initDefault(5.degrees)
   }

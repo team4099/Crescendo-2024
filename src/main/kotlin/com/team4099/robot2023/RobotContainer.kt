@@ -39,6 +39,7 @@ import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 import com.team4099.robot2023.commands.CharacterizeWristCommand
 import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
+import com.team4099.robot2023.subsystems.wrist.WristIOTalon
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -72,7 +73,7 @@ object RobotContainer {
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
       flywheel = Flywheel(FlywheelIOTalon)
-      wrist = Wrist(object : WristIO {})
+      wrist = Wrist(WristIOTalon)
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
@@ -161,9 +162,7 @@ object RobotContainer {
     ControlBoard.extendClimb.whileTrue(superstructure.climbExtendCommand())
     ControlBoard.retractClimb.whileTrue(superstructure.climbRetractCommand())
 
-    ControlBoard.testWrist.whileTrue(superstructure.testWristCommand())
     ControlBoard.forceIdle.whileTrue(superstructure.requestIdleCommand())
-    ControlBoard.characterizeWrist.whileTrue(CharacterizeWristCommand())
     /*
     TUNING COMMANDS
     ControlBoard.testIntake.whileTrue(superstructure.testIntakeCommand())
