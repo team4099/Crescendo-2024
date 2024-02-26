@@ -197,7 +197,7 @@ object RobotContainer {
 
   fun mapTestControls() {}
 
-  fun getAutonomousCommand() = TestAutoPath(drivetrain)
+  fun getAutonomousCommand() = FourNoteAutoPath(drivetrain, superstructure)
 
   fun mapTunableCommands() {}
 }
