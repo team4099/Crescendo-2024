@@ -58,8 +58,8 @@ object DrivetrainConstants {
   val SLOW_AUTO_VEL = 2.meters.perSecond
   val SLOW_AUTO_ACCEL = 2.0.meters.perSecond.perSecond
 
-  val MAX_AUTO_VEL = 0.5.meters.perSecond // 4
-  val MAX_AUTO_ACCEL = 0.5.meters.perSecond.perSecond // 3
+  val MAX_AUTO_VEL = 2.meters.perSecond // 4
+  val MAX_AUTO_ACCEL = 1.meters.perSecond.perSecond // 3
 
   val MAX_AUTO_BRAKE_VEL = 0.5.meters.perSecond // 4
   val MAX_AUTO_BRAKE_ACCEL = 0.5.meters.perSecond.perSecond // 3
@@ -98,15 +98,15 @@ object DrivetrainConstants {
   val BR_LOCKING_ANGLE: Angle = 225.degrees
 
   object PID {
-    val AUTO_POS_KPX: ProportionalGain<Meter, Velocity<Meter>>
+    val AUTO_POS_KP: ProportionalGain<Meter, Velocity<Meter>>
       get() {
         if (RobotBase.isReal()) {
-          return 0.0.meters.perSecond / 1.0.meters // todo:4
+          return 0.25.meters.perSecond / 1.0.meters // todo:4
         } else {
           return 7.0.meters.perSecond / 1.0.meters
         }
       }
-    val AUTO_POS_KIX: IntegralGain<Meter, Velocity<Meter>>
+    val AUTO_POS_KI: IntegralGain<Meter, Velocity<Meter>>
       get() {
         if (RobotBase.isReal()) {
           return 0.0.meters.perSecond / (1.0.meters * 1.0.seconds)
@@ -115,37 +115,10 @@ object DrivetrainConstants {
         }
       }
 
-    val AUTO_POS_KDX: DerivativeGain<Meter, Velocity<Meter>>
+    val AUTO_POS_KD: DerivativeGain<Meter, Velocity<Meter>>
       get() {
         if (RobotBase.isReal()) {
-          return (0.0.meters.perSecond / (1.0.meters.perSecond))
-            .metersPerSecondPerMetersPerSecond // todo: 0.25
-        } else {
-          return (0.0.meters.perSecond / (1.0.meters.perSecond)).metersPerSecondPerMetersPerSecond
-        }
-      }
-
-    val AUTO_POS_KPY: ProportionalGain<Meter, Velocity<Meter>>
-      get() {
-        if (RobotBase.isReal()) {
-          return 0.0.meters.perSecond / 1.0.meters // todo:4
-        } else {
-          return 7.0.meters.perSecond / 1.0.meters
-        }
-      }
-    val AUTO_POS_KIY: IntegralGain<Meter, Velocity<Meter>>
-      get() {
-        if (RobotBase.isReal()) {
-          return 0.0.meters.perSecond / (1.0.meters * 1.0.seconds)
-        } else {
-          return 0.0.meters.perSecond / (1.0.meters * 1.0.seconds)
-        }
-      }
-
-    val AUTO_POS_KDY: DerivativeGain<Meter, Velocity<Meter>>
-      get() {
-        if (RobotBase.isReal()) {
-          return (0.0.meters.perSecond / (1.0.meters.perSecond))
+          return (0.1.meters.perSecond / (1.0.meters.perSecond))
             .metersPerSecondPerMetersPerSecond // todo: 0.25
         } else {
           return (0.0.meters.perSecond / (1.0.meters.perSecond)).metersPerSecondPerMetersPerSecond
@@ -154,7 +127,7 @@ object DrivetrainConstants {
 
     val AUTO_THETA_ALLOWED_ERROR = 3.degrees
 
-    val AUTO_THETA_PID_KP = 0.8.degrees.perSecond / 1.degrees
+    val AUTO_THETA_PID_KP = 0.5.degrees.perSecond / 1.degrees
     val AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val AUTO_THETA_PID_KD =
       (0.025.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
@@ -186,7 +159,7 @@ object DrivetrainConstants {
     val DRIVE_KFF = 12.0.volts / 4.1675.meters.perSecond
 
     val DRIVE_KS = 0.5.volts
-    val DRIVE_KV = ((0.12679 / 15) / 5.346).volts / 1.0.meters.perSecond
+    val DRIVE_KV = (0.12679 / 15.5).volts / 1.0.meters.perSecond
     val DRIVE_KA = 0.0.volts / 1.0.meters.perSecond.perSecond
 
     //    val DRIVE_KS = 0.23677.volts

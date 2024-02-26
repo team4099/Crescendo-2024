@@ -119,43 +119,22 @@ private constructor(
   val thetaMaxAccel =
     LoggedTunableValue("Pathfollow/thetaMaxAccel", DrivetrainConstants.PID.MAX_AUTO_ANGULAR_ACCEL)
 
-  val poskPX =
+  val poskP =
     LoggedTunableValue(
       "Pathfollow/poskPX",
-      DrivetrainConstants.PID.AUTO_POS_KPX,
+      DrivetrainConstants.PID.AUTO_POS_KP,
       Pair({ it.inMetersPerSecondPerMeter }, { it.meters.perSecond.perMeter })
     )
-  val poskIX =
+  val poskI =
     LoggedTunableValue(
       "Pathfollow/poskIX",
-      DrivetrainConstants.PID.AUTO_POS_KIX,
+      DrivetrainConstants.PID.AUTO_POS_KI,
       Pair({ it.inMetersPerSecondPerMeterSeconds }, { it.meters.perSecond.perMeterSeconds })
     )
-  val poskDX =
+  val poskD =
     LoggedTunableValue(
       "Pathfollow/poskDX",
-      DrivetrainConstants.PID.AUTO_POS_KDX,
-      Pair(
-        { it.inMetersPerSecondPerMetersPerSecond }, { it.metersPerSecondPerMetersPerSecond }
-      )
-    )
-
-  val poskPY =
-    LoggedTunableValue(
-      "Pathfollow/poskPY",
-      DrivetrainConstants.PID.AUTO_POS_KPY,
-      Pair({ it.inMetersPerSecondPerMeter }, { it.meters.perSecond.perMeter })
-    )
-  val poskIY =
-    LoggedTunableValue(
-      "Pathfollow/poskIY",
-      DrivetrainConstants.PID.AUTO_POS_KIY,
-      Pair({ it.inMetersPerSecondPerMeterSeconds }, { it.meters.perSecond.perMeterSeconds })
-    )
-  val poskDY =
-    LoggedTunableValue(
-      "Pathfollow/poskDY",
-      DrivetrainConstants.PID.AUTO_POS_KDY,
+      DrivetrainConstants.PID.AUTO_POS_KD,
       Pair(
         { it.inMetersPerSecondPerMetersPerSecond }, { it.metersPerSecondPerMetersPerSecond }
       )
@@ -203,8 +182,8 @@ private constructor(
   init {
     addRequirements(drivetrain)
 
-    xPID = PIDController(poskPX.get(), poskIX.get(), poskDX.get())
-    yPID = PIDController(poskPY.get(), poskIY.get(), poskDY.get())
+    xPID = PIDController(poskP.get(), poskI.get(), poskD.get())
+    yPID = PIDController(poskP.get(), poskI.get(), poskD.get())
     thetaPID =
       PIDController(
         thetakP.get(),
@@ -411,17 +390,17 @@ private constructor(
     if (thetakI.hasChanged()) thetaPID.integralGain = thetakI.get()
     if (thetakD.hasChanged()) thetaPID.derivativeGain = thetakD.get()
 
-    if (poskPX.hasChanged() && poskPY.hasChanged()) {
-      xPID.proportionalGain = poskPX.get()
-      yPID.proportionalGain = poskPY.get()
+    if (poskP.hasChanged()) {
+      xPID.proportionalGain = poskP.get()
+      yPID.proportionalGain = poskP.get()
     }
-    if (poskIX.hasChanged() && poskIY.hasChanged()) {
-      xPID.integralGain = poskIX.get()
-      yPID.integralGain = poskIY.get()
+    if (poskI.hasChanged()) {
+      xPID.integralGain = poskI.get()
+      yPID.integralGain = poskI.get()
     }
-    if (poskDX.hasChanged() && poskDY.hasChanged()) {
-      xPID.derivativeGain = poskDX.get()
-      yPID.derivativeGain = poskDY.get()
+    if (poskD.hasChanged() && poskD.hasChanged()) {
+      xPID.derivativeGain = poskD.get()
+      yPID.derivativeGain = poskD.get()
     }
   }
 
