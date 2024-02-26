@@ -24,9 +24,19 @@ class TestAutoPath(val drivetrain: Drivetrain) : SequentialCommandGroup() {
               0.0.degrees.inRotation2ds
             ),
             OdometryWaypoint(
-              Translation2d(2.0.feet, 2.0.feet).translation2d,
+              Translation2d(6.0.feet, 0.0.feet).translation2d,
               null,
-              0.0.degrees.inRotation2ds
+              180.0.degrees.inRotation2ds
+            ),
+            OdometryWaypoint(
+              Translation2d(3.0.feet, 1.0.feet).translation2d,
+            null,
+              90.degrees.inRotation2ds
+            ),
+            OdometryWaypoint(
+              Translation2d(0.0.feet, 0.0.feet).translation2d,
+              null,
+              0.degrees.inRotation2ds
             )
           )
         },
