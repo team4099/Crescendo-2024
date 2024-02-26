@@ -3,6 +3,7 @@ package com.team4099.lib.trajectory
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.util.ErrorMessages
+import edu.wpi.first.wpilibj2.command.Command
 import java.util.Optional
 
 /** A trajectory waypoint, including a translation and optional drive/holonomic rotations. */
@@ -22,7 +23,7 @@ abstract class Waypoint {
   constructor(
     translation: Translation2d,
     heading: Rotation2d? = null,
-    holonomicRotation: Rotation2d? = null,
+    holonomicRotation: Rotation2d? = null
   ) {
     this.translation = ErrorMessages.requireNonNullParam(translation, "translation", "Waypoint")
     this.driveRotation = heading
