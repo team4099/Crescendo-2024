@@ -7,6 +7,7 @@ import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
 import com.team4099.robot2023.subsystems.intake.Intake
 import com.team4099.robot2023.subsystems.wrist.Wrist
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
@@ -167,12 +168,26 @@ class Superstructure(
           )
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.idleVoltage.get())
-        flywheel.currentRequest =
-          Request.FlywheelRequest.TargetingVelocity(
-            Flywheel.TunableFlywheelStates.idleVelocity.get()
-          )
 
-        if (feeder.hasNote) {
+        if (DriverStation.isAutonomous()) {
+          flywheel.currentRequest =
+            Request.FlywheelRequest.TargetingVelocity(
+              Flywheel.TunableFlywheelStates.speakerVelocity.get()
+            )
+        }
+        else {
+          flywheel.currentRequest =
+            Request.FlywheelRequest.TargetingVelocity(
+              Flywheel.TunableFlywheelStates.idleVelocity.get()
+            )
+        }
+
+        if (DriverStation.isAutonomous()) {
+          wrist.currentRequest =
+            Request.WristRequest.TargetingPosition(
+              Wrist.TunableWristStates.subwooferSpeakerShotAngleLow.get()
+            )
+        } else if (feeder.hasNote) {
           wrist.currentRequest =
             Request.WristRequest.TargetingPosition(
               Wrist.TunableWristStates.idleAngleHasGamepiece.get()
@@ -186,6 +201,7 @@ class Superstructure(
           Request.ElevatorRequest.TargetingPosition(
             Elevator.TunableElevatorHeights.minPosition.get()
           )
+
         when (currentRequest) {
           is Request.SuperstructureRequest.Home -> {
             nextState = SuperstructureStates.HOME_PREP
@@ -551,7 +567,7 @@ class Superstructure(
       runOnce { currentRequest = Request.SuperstructureRequest.PrepScoreSpeakerLow() }.until {
         isAtRequestedState && currentState == SuperstructureStates.SCORE_SPEAKER_LOW_PREP
       }
-    returnCommand.name = "PrepAmpCommand"
+    returnCommand.name = "PrepSpeakerLowCommand"
     return returnCommand
   }
 
