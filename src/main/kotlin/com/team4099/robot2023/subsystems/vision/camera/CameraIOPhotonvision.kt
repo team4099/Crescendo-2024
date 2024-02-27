@@ -1,7 +1,5 @@
 package com.team4099.robot2023.subsystems.vision.camera
 
-import com.team4099.robot2023.config.constants.FieldConstants
-import edu.wpi.first.apriltag.AprilTag
 import edu.wpi.first.apriltag.AprilTagFieldLayout
 import edu.wpi.first.apriltag.AprilTagFields
 import org.littletonrobotics.junction.Logger
@@ -15,7 +13,7 @@ import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.micro
-import java.util.*
+import java.util.Optional
 
 class CameraIOPhotonvision(private val identifier: String) : CameraIO {
 
@@ -43,27 +41,20 @@ class CameraIOPhotonvision(private val identifier: String) : CameraIO {
       Logger.recordOutput("$identifier/hasTarget", pipelineResult.hasTargets())
       inputs.cameraTargets = pipelineResult.targets
 
-        val visionEst: Optional<EstimatedRobotPose>? = photonEstimator.update()
-        if (visionEst != null && visionEst.isPresent) {
-            val poseEst = visionEst.get().let { Pose3d(it.estimatedPose) }
-            val latestTimestamp = visionEst.get().timestampSeconds.seconds
-            if ((latestTimestamp - lastEstTimestamp).absoluteValue > 10.micro.seconds) {
-                inputs.fps = 1/(latestTimestamp - lastEstTimestamp).inSeconds
-                lastEstTimestamp = latestTimestamp
-            }
-
-            inputs.usedTargets = visionEst.get().targetsUsed.map { it.fiducialId }
-
-            inputs.timestamp = lastEstTimestamp
-            inputs.frame = poseEst
+      val visionEst: Optional<EstimatedRobotPose>? = photonEstimator.update()
+      if (visionEst != null && visionEst.isPresent) {
+        val poseEst = visionEst.get().let { Pose3d(it.estimatedPose) }
+        val latestTimestamp = visionEst.get().timestampSeconds.seconds
+        if ((latestTimestamp - lastEstTimestamp).absoluteValue > 10.micro.seconds) {
+          inputs.fps = 1 / (latestTimestamp - lastEstTimestamp).inSeconds
+          lastEstTimestamp = latestTimestamp
         }
 
+        inputs.usedTargets = visionEst.get().targetsUsed.map { it.fiducialId }
 
-
+        inputs.timestamp = lastEstTimestamp
+        inputs.frame = poseEst
+      }
     }
-
-
-
-
   }
 }

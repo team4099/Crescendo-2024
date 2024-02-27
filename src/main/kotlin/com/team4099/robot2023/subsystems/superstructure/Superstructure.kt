@@ -166,13 +166,14 @@ class Superstructure(
             Intake.TunableIntakeStates.idleRollerVoltage.get(),
             Intake.TunableIntakeStates.idleCenterWheelVoltage.get()
           )
+
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.idleVoltage.get())
 
         if (DriverStation.isAutonomous()) {
           flywheel.currentRequest =
             Request.FlywheelRequest.TargetingVelocity(
-              Flywheel.TunableFlywheelStates.speakerVelocity.get() / 3
+              Flywheel.TunableFlywheelStates.speakerVelocity.get()
             )
         } else {
           flywheel.currentRequest =
@@ -260,7 +261,9 @@ class Superstructure(
             Intake.TunableIntakeStates.intakeCenterWheelVoltage.get()
           )
         feeder.currentRequest =
-          Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.intakeVoltage.get())
+          Request.FeederRequest.OpenLoopIntake(
+            if (DriverStation.isAutonomous()) Feeder.TunableFeederStates.autoIntakeVoltage.get() else Feeder.TunableFeederStates.intakeVoltage.get()
+          )
         if (feeder.hasNote) {
           currentRequest = Request.SuperstructureRequest.Idle()
           nextState = SuperstructureStates.IDLE
@@ -338,6 +341,7 @@ class Superstructure(
       SuperstructureStates.SCORE_SPEAKER -> {
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.shootVoltage.get())
+
         if (!feeder.hasNote &&
           Clock.fpgaTime - shootStartTime >
           Flywheel.TunableFlywheelStates.speakerScoreTime.get()

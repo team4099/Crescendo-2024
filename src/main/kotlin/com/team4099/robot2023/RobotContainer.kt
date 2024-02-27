@@ -1,7 +1,6 @@
 package com.team4099.robot2023
 
 import com.team4099.robot2023.auto.mode.FourNoteAutoPath
-import com.team4099.robot2023.auto.mode.TestAutoPath
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
@@ -36,9 +35,6 @@ import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
-import com.team4099.robot2023.commands.CharacterizeWristCommand
-import com.team4099.robot2023.commands.drivetrain.TargetAngleCommand
-import com.team4099.robot2023.subsystems.vision.camera.CameraIO
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
@@ -169,7 +165,6 @@ object RobotContainer {
       )
     )
      */
-
 
     /*
     TUNING COMMANDS

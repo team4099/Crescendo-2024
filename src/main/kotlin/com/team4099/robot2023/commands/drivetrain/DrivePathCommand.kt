@@ -407,7 +407,7 @@ private constructor(
   override fun isFinished(): Boolean {
     trajCurTime = Clock.fpgaTime - trajStartTime
     return endPathOnceAtReference &&
-            (swerveDriveController.atReference()) &&
+      (swerveDriveController.atReference()) &&
       trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
   }
 

@@ -60,7 +60,7 @@ object FlywheelConstants {
   }
 
   val IDLE_VELOCITY = 0.0.rotations.perMinute
-  val SPEAKER_VELOCITY = 3_000.rotations.perMinute
+  val SPEAKER_VELOCITY = 3000.rotations.perMinute
   val AMP_VELOCITY = 5_000.rotations.perMinute
   val TRAP_VELOCITY = 5_000.rotations.perMinute
   val AMP_SCORE_TIME = 1.seconds

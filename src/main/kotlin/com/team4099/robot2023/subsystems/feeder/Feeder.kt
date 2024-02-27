@@ -46,6 +46,12 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
         FeederConstants.OUTTAKE_NOTE_VOLTAGE,
         Pair({ it.inVolts }, { it.volts })
       )
+    val autoIntakeVoltage =
+      LoggedTunableValue(
+        "Feeder/autoIntakeVoltage",
+        FeederConstants.AUTO_INTAKE_NOTE_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
     val shootVoltage =
       LoggedTunableValue(
         "Feeder/shootVoltage",

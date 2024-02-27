@@ -1,7 +1,6 @@
 package com.team4099.robot2023.auto.mode
 
 import com.team4099.lib.trajectory.FieldWaypoint
-import com.team4099.lib.trajectory.OdometryWaypoint
 import com.team4099.robot2023.commands.drivetrain.DrivePathCommand
 import com.team4099.robot2023.commands.drivetrain.ResetPoseCommand
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
@@ -27,15 +26,14 @@ class TestAutoPath(val drivetrain: Drivetrain) : SequentialCommandGroup() {
               null,
               180.0.degrees.inRotation2ds
             ),
-              FieldWaypoint(
+            FieldWaypoint(
               Translation2d(16.0.feet, 10.0.feet).translation2d,
-
               null,
               210.0.degrees.inRotation2ds
             ),
             FieldWaypoint(
               Translation2d(13.0.feet, 11.0.feet).translation2d,
-            null,
+              null,
               180.degrees.inRotation2ds
             ),
             FieldWaypoint(

@@ -27,6 +27,7 @@ object FeederConstants {
 
   val IDLE_VOLTAGE = 0.volts
   val INTAKE_NOTE_VOLTAGE = 1.5.volts
+  val AUTO_INTAKE_NOTE_VOLTAGE = 1.volts
 
   val SHOOT_NOTE_VOLTAGE = 1.volts
 

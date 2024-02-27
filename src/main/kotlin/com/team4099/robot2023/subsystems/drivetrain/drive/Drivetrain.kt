@@ -44,10 +44,7 @@ import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inRotation2ds
-import org.team4099.lib.units.derived.inVoltsPerMetersPerSecond
-import org.team4099.lib.units.derived.perMeterPerSecond
 import org.team4099.lib.units.derived.radians
-import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.perSecond
 import java.util.concurrent.locks.Lock
