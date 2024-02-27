@@ -207,7 +207,7 @@ private constructor(
         xPID.wpiPidController, yPID.wpiPidController, thetaPID.wpiPidController
       )
 
-    swerveDriveController.setTolerance(Pose2d(0.5.inches, 0.5.inches, 2.5.degrees).pose2d)
+    swerveDriveController.setTolerance(Pose2d(3.inches, 3.inches, 2.5.degrees).pose2d)
   }
 
   override fun initialize() {
@@ -407,7 +407,7 @@ private constructor(
   override fun isFinished(): Boolean {
     trajCurTime = Clock.fpgaTime - trajStartTime
     return endPathOnceAtReference &&
-            (swerveDriveController.atReference()) &&
+            (swerveDriveController.atReference() || keepTrapping) &&
             trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
   }
 

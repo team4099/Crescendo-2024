@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.DutyCycleOut
 import com.ctre.phoenix6.controls.PositionDutyCycle
 import com.ctre.phoenix6.controls.VelocityDutyCycle
+import com.ctre.phoenix6.controls.VelocityVoltage
 import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.InvertedValue
 import com.ctre.phoenix6.signals.NeutralModeValue
@@ -146,6 +147,7 @@ class SwerveModuleIOTalon(
 
     driveConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
     driveConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive
+    driveConfiguration
     driveFalcon.configurator.apply(driveConfiguration)
 
     MotorChecker.add(
@@ -240,7 +242,7 @@ class SwerveModuleIOTalon(
     driveStatorCurrentSignal = driveFalcon.statorCurrent
     driveSupplyCurrentSignal = driveFalcon.supplyCurrent
     steeringStatorCurrentSignal = steeringFalcon.statorCurrent
-    steeringSupplyCurrentSignal = steeringFalcon.statorCurrent
+    steeringSupplyCurrentSignal = steeringFalcon.supplyCurrent
     driveTempSignal = driveFalcon.deviceTemp
     steeringTempSignal = steeringFalcon.deviceTemp
     steeringPosition = steeringFalcon.position
@@ -381,11 +383,11 @@ class SwerveModuleIOTalon(
   ) {
     val feedforward = DrivetrainConstants.PID.DRIVE_KS * speed.sign
     driveFalcon.setControl(
-      VelocityDutyCycle(
+      VelocityVoltage(
         driveSensor.velocityToRawUnits(speed),
         driveSensor.accelerationToRawUnits(acceleration),
-        DrivetrainConstants.FOC_ENABLED,
-        feedforward.inVolts / DrivetrainConstants.DRIVE_COMPENSATION_VOLTAGE.inVolts,
+         DrivetrainConstants.FOC_ENABLED,
+        feedforward.inVolts,
         0,
         false,
         false,
