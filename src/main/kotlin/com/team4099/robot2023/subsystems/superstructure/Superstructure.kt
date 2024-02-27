@@ -172,7 +172,7 @@ class Superstructure(
         if (DriverStation.isAutonomous()) {
           flywheel.currentRequest =
             Request.FlywheelRequest.TargetingVelocity(
-              Flywheel.TunableFlywheelStates.speakerVelocity.get()
+              Flywheel.TunableFlywheelStates.speakerVelocity.get() / 3
             )
         }
         else {
