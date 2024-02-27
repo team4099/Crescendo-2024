@@ -1,13 +1,19 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.hal.Clock
+import com.team4099.lib.math.asPose2d
+import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.WristConstants
+import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.elevator.Elevator
 import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
 import com.team4099.robot2023.subsystems.intake.Intake
 import com.team4099.robot2023.subsystems.wrist.Wrist
+import com.team4099.robot2023.util.NoteSimulation
+import com.team4099.robot2023.util.toPose3d
 import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
@@ -28,7 +34,8 @@ class Superstructure(
   private val feeder: Feeder,
   private val elevator: Elevator,
   private val wrist: Wrist,
-  private val flywheel: Flywheel
+  private val flywheel: Flywheel,
+  private val drivetrain: Drivetrain
 ) : SubsystemBase() {
 
   var currentRequest: Request.SuperstructureRequest = Request.SuperstructureRequest.Idle()
@@ -43,6 +50,10 @@ class Superstructure(
 
   var lastTransitionTime = Clock.fpgaTime
 
+  var noteHoldingID = -1
+
+  var notes = mutableListOf<NoteSimulation>()
+
   fun toDoubleArray(somePose: Pose3d): DoubleArray {
     return doubleArrayOf(
       somePose.x.inMeters,
@@ -55,7 +66,27 @@ class Superstructure(
     )
   }
 
+  init {
+    notes.add(NoteSimulation(0, Pose3d()))
+    notes[0].currentState = NoteSimulation.NoteStates.IN_ROBOT
+
+    FieldConstants.StagingLocations.spikeTranslations.forEach {
+      notes.add(NoteSimulation(notes.size, Pose3d(it?.x ?: 0.0.inches, it?.y ?: 0.0.inches, FieldConstants.noteThickness/2.0, Rotation3d())))
+    }
+
+    FieldConstants.StagingLocations.centerlineTranslations.forEach {
+      notes.add(NoteSimulation(notes.size, Pose3d(it?.x ?: 0.0.inches, it?.y ?: 0.0.inches, FieldConstants.noteThickness/2.0, Rotation3d())))
+    }
+
+    notes.forEach {it.poseSupplier = {drivetrain.fieldTRobot}}
+    notes.forEach {it.wristAngleSupplier = {wrist.inputs.wristPosition}}
+    notes.forEach {it.elevatorHeightSupplier = {elevator.inputs.elevatorPosition}}
+    notes.forEach {it.flywheelAngularVelocitySupplier = {flywheel.inputs.rightFlywheelVelocity}}
+  }
+
   override fun periodic() {
+    notes.forEach {it.periodic()}
+    notes.forEach { Logger.recordOutput("NoteSimulation/${it.id}", toDoubleArray(it.currentPose))}
 
     Logger.recordOutput(
       "SimulatedMechanisms/0",
@@ -159,6 +190,7 @@ class Superstructure(
         if (elevator.isHomed) {
           nextState = SuperstructureStates.IDLE
         }
+        noteHoldingID = 0
       }
       SuperstructureStates.IDLE -> {
         intake.currentRequest =
@@ -260,6 +292,21 @@ class Superstructure(
             Intake.TunableIntakeStates.intakeRollerVoltage.get(),
             Intake.TunableIntakeStates.intakeCenterWheelVoltage.get()
           )
+        if (noteHoldingID == -1) {
+          for (note in notes) {
+            if (note.canIntake()) {
+              noteHoldingID = note.id
+              note.currentState = NoteSimulation.NoteStates.IN_ROBOT
+              break;
+            }
+          }
+        }
+
+        if (feeder.hasNote || (!RobotBase.isReal() && noteHoldingID != -1)) {
+          currentRequest = Request.SuperstructureRequest.Idle()
+          nextState = SuperstructureStates.IDLE
+        }
+
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(
             if (DriverStation.isAutonomous()) Feeder.TunableFeederStates.autoIntakeVoltage.get() else Feeder.TunableFeederStates.intakeVoltage.get()
@@ -297,6 +344,11 @@ class Superstructure(
         }
       }
       SuperstructureStates.SCORE_AMP -> {
+
+        if (noteHoldingID != -1) {
+          notes[noteHoldingID].currentState = NoteSimulation.NoteStates.AMP_SCORE
+          noteHoldingID = -1
+        }
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.outtakeVoltage.get())
         if (!feeder.hasNote &&
@@ -339,6 +391,10 @@ class Superstructure(
         }
       }
       SuperstructureStates.SCORE_SPEAKER -> {
+        if (noteHoldingID != -1) {
+          notes[noteHoldingID].currentState = NoteSimulation.NoteStates.IN_FLIGHT
+          noteHoldingID = -1
+        }
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.shootVoltage.get())
 
@@ -346,6 +402,7 @@ class Superstructure(
           Clock.fpgaTime - shootStartTime >
           Flywheel.TunableFlywheelStates.speakerScoreTime.get()
         ) {
+
           currentRequest = Request.SuperstructureRequest.Idle()
         }
 

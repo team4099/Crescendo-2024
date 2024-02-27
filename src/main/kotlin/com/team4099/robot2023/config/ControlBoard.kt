@@ -39,23 +39,28 @@ object ControlBoard {
   val intake = Trigger { driver.rightShoulderButton }
   val forceIdle = Trigger { driver.yButton || operator.startButton && operator.selectButton }
 
-<<<<<<< HEAD
-  val prepAmp = Trigger { operator.aButton }
-  val prepLow = Trigger { operator.xButton }
-  val prepMid = Trigger { operator.bButton }
-  val prepHigh = Trigger { operator.yButton }
-=======
+  //sim trigger
+  //val score = Trigger {driver.bButton}
+  //val intake = Trigger { driver.xButton}
+
+  // real triggers
+  //val score = Trigger {driver.leftTriggerAxis > 0.5}
+  //val intake = Trigger { driver.rightShoulderButton}
+
+
+  val targetAmp = Trigger {driver.aButton}
   val prepAmp = Trigger  { operator.aButton }
   val prepLow = Trigger  { operator.xButton }
   val prepHighProtected = Trigger { operator.bButton }
   val prepHigh = Trigger { operator.yButton}
->>>>>>> 1bb5955 (add protected high)
 
   val extendClimb = Trigger { operator.dPadUp }
   val retractClimb = Trigger { operator.dPadDown }
 
   val prepTrap = Trigger { operator.rightShoulderButton }
-  val ejectGamePiece = Trigger { driver.xButton }
+  val ejectGamePiece = Trigger {driver.rightTriggerAxis > 0.5}
+
+  val testWrist = Trigger {driver.aButton}
 
   val characterizeWrist = Trigger { driver.rightShoulderButton }
 

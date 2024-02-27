@@ -131,10 +131,9 @@ object DrivetrainConstants {
     val AUTO_THETA_PID_KD =
       (0.0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
-    val SIM_AUTO_THETA_PID_KP = 15.degrees.perSecond / 1.degrees
+    val SIM_AUTO_THETA_PID_KP = 5.degrees.perSecond / 1.degrees
     val SIM_AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
-    val SIM_AUTO_THETA_PID_KD =
-      (0.025.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+    val SIM_AUTO_THETA_PID_KD = (1.0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val AUTO_LEVEL_KP = 1.meters.perSecond / 1.0.degrees // tune this
     val AUTO_LEVEL_KI = 0.0.meters.perSecond / (1.0.degrees * 1.seconds) // tune this

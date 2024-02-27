@@ -27,14 +27,14 @@ object FlywheelIOSim : FlywheelIO {
   private val flywheelRightSim: FlywheelSim =
     FlywheelSim(
       DCMotor.getKrakenX60Foc(2),
-      FlywheelConstants.RIGHT_MOTOR_REVOLUTIONS_PER_FLYWHEEL_REVOLUTIONS,
+      1 / FlywheelConstants.RIGHT_MOTOR_REVOLUTIONS_PER_FLYWHEEL_REVOLUTIONS,
       FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
 
   private val flywheelLeftSim: FlywheelSim =
     FlywheelSim(
       DCMotor.getKrakenX60Foc(2),
-      FlywheelConstants.LEFT_GEAR_RATIO,
+      1 / FlywheelConstants.LEFT_GEAR_RATIO,
       FlywheelConstants.INERTIA.inKilogramsMeterSquared
     )
 

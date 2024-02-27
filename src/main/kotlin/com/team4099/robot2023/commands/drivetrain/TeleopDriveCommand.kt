@@ -33,4 +33,8 @@ class TeleopDriveCommand(
   override fun isFinished(): Boolean {
     return false
   }
+
+  override fun end(interrupted: Boolean) {
+    Logger.recordOutput("ActiveCommands/TeleopDriveCommand", false)
+  }
 }

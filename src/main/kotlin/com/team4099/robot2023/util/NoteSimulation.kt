@@ -65,9 +65,11 @@ class NoteSimulation(val id: Int = 0, val offFieldPose: Pose3d = Pose3d(), val s
     var azimuthalAnglePhi = 0.0.degrees
     var launchVelocity = 0.meters.perSecond
 
+    val ampLaunchVelocity = -1.meters.perSecond
+
     var currentState = NoteStates.OFF_FIELD
         set(value) {
-            if (currentState == NoteStates.IN_ROBOT && value == NoteStates.IN_FLIGHT) {
+            if (currentState == NoteStates.IN_ROBOT && (value == NoteStates.IN_FLIGHT || value == NoteStates.AMP_SCORE)) {
                 launchStartPose = getNoteInRobotPose()
 
                 lastUpdateTime = Clock.fpgaTime
@@ -80,9 +82,16 @@ class NoteSimulation(val id: Int = 0, val offFieldPose: Pose3d = Pose3d(), val s
 
                 launchVelocity = (FlywheelConstants.FLYWHEEL_SPEED_TRANSFER_PERCENTAGE * flywheelAngularVelocitySupplier().inRadiansPerSecond * FlywheelConstants.FLYWHEEL_RADIUS.inMeters).meters.perSecond
 
-                lastXVel = launchVelocity * inclinationAngleTheta.sin * azimuthalAnglePhi.cos
-                lastYVel = launchVelocity * inclinationAngleTheta.sin * azimuthalAnglePhi.sin
-                lastZVel = launchVelocity * inclinationAngleTheta.cos
+                if (value == NoteStates.IN_FLIGHT) {
+                    lastXVel = launchVelocity * inclinationAngleTheta.sin * azimuthalAnglePhi.cos
+                    lastYVel = launchVelocity * inclinationAngleTheta.sin * azimuthalAnglePhi.sin
+                    lastZVel = launchVelocity * inclinationAngleTheta.cos
+
+                } else {
+                    lastXVel = ampLaunchVelocity * inclinationAngleTheta.sin * azimuthalAnglePhi.cos
+                    lastYVel = ampLaunchVelocity * inclinationAngleTheta.sin * azimuthalAnglePhi.sin
+                    lastZVel = ampLaunchVelocity * inclinationAngleTheta.cos
+                }
 
 
             }
@@ -116,9 +125,17 @@ class NoteSimulation(val id: Int = 0, val offFieldPose: Pose3d = Pose3d(), val s
                 yAccel = if (lastZPos > FieldConstants.noteThickness/2) 0.0.meters.perSecond.perSecond else -6.meters.perSecond.perSecond * azimuthalAnglePhi.sin.absoluteValue * lastYVel.sign
                 zAccel = (Constants.Universal.gravity)
 
-                if (lastZPos <= FieldConstants.noteThickness/2) {
-                    currentState = NoteStates.IN_ROBOT
+                update()
+
+                if (xVel.absoluteValue < 0.1.meters.perSecond && yVel.absoluteValue < 0.1.meters.perSecond) {
+                    currentState = NoteStates.ON_FIELD
                 }
+            }
+            NoteStates.AMP_SCORE -> {
+                xAccel = if (lastZPos > FieldConstants.noteThickness/2) 0.0.meters.perSecond.perSecond else -6.meters.perSecond.perSecond * azimuthalAnglePhi.cos.absoluteValue * lastXVel.sign
+                yAccel = if (lastZPos > FieldConstants.noteThickness/2) 0.0.meters.perSecond.perSecond else -6.meters.perSecond.perSecond * azimuthalAnglePhi.sin.absoluteValue * lastYVel.sign
+                zAccel = (Constants.Universal.gravity)
+
                 update()
 
                 if (xVel.absoluteValue < 0.1.meters.perSecond && yVel.absoluteValue < 0.1.meters.perSecond) {
@@ -190,6 +207,7 @@ class NoteSimulation(val id: Int = 0, val offFieldPose: Pose3d = Pose3d(), val s
         STAGED,
         ON_FIELD,
         IN_ROBOT,
-        IN_FLIGHT;
+        IN_FLIGHT,
+        AMP_SCORE;
     }
 }
