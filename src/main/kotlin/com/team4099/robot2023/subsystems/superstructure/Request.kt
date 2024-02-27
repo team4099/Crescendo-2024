@@ -56,7 +56,7 @@ sealed interface Request {
         edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
     ) : DrivetrainRequest
 
-    class ZeroSensors(val isInAutonomous: Boolean = false): DrivetrainRequest
+    class ZeroSensors(val isInAutonomous: Boolean = false) : DrivetrainRequest
     class Idle : DrivetrainRequest
 
     class LockWheels : DrivetrainRequest

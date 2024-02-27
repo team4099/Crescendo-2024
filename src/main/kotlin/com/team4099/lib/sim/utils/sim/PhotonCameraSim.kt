@@ -59,6 +59,7 @@ import edu.wpi.first.wpilibj.Timer
 import org.opencv.core.Size
 import org.photonvision.PhotonVersion
 import org.photonvision.common.dataflow.structures.Packet
+import org.photonvision.targeting.PhotonPipelineResult.APacketSerde
 import java.lang.Exception
 import java.util.ArrayList
 
@@ -377,7 +378,8 @@ class PhotonCameraSim @JvmOverloads constructor(
   fun submitProcessedFrame(result: PhotonPipelineResult) {
     latencyMillisEntry.setDouble(result.latencyMillis)
     val newPacket = Packet(result.packetSize)
-    result.populatePacket(newPacket)
+    val photonPipelineSerde = APacketSerde()
+    photonPipelineSerde.pack(newPacket, result)
     camera.rawBytesEntry.setRaw(newPacket.data)
     val hasTargets = result.hasTargets()
     hasTargetEntry.setBoolean(hasTargets)

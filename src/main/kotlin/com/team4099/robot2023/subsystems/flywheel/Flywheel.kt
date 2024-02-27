@@ -199,7 +199,12 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     io.updateInputs(inputs)
 
     Logger.processInputs("Flywheel", inputs)
-    Logger.recordOutput("Flywheel/targetDifference", (inputs.leftFlywheelVelocity - flywheelLeftTargetVelocity).absoluteValue.inRotationsPerMinute)
+    Logger.recordOutput(
+      "Flywheel/targetDifference",
+      (inputs.leftFlywheelVelocity - flywheelLeftTargetVelocity)
+        .absoluteValue
+        .inRotationsPerMinute
+    )
     Logger.recordOutput("Flywheel/currentState", currentState.name)
 
     Logger.recordOutput("Flywheel/requestedState", currentRequest.javaClass.simpleName)

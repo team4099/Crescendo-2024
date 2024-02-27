@@ -18,7 +18,8 @@ import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
 
-class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstructure) : SequentialCommandGroup() {
+class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstructure) :
+  SequentialCommandGroup() {
   init {
     addRequirements(drivetrain)
 

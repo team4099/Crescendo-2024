@@ -27,8 +27,9 @@ class TestAutoPath(val drivetrain: Drivetrain) : SequentialCommandGroup() {
               null,
               180.0.degrees.inRotation2ds
             ),
-            FieldWaypoint(
+              FieldWaypoint(
               Translation2d(16.0.feet, 10.0.feet).translation2d,
+
               null,
               210.0.degrees.inRotation2ds
             ),

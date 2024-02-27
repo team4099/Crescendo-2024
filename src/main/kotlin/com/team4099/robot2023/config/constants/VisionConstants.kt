@@ -56,7 +56,7 @@ object VisionConstants {
       ) // camera facing leftward
     )
 
-  val CAMERA_NAMES = listOf("northstar_1", "northstar_2", "northstar_3")
+  val CAMERA_NAMES = listOf("parakeet_1", "parakeet_2", "parakeet_3")
 
   object Limelight {
     val LIMELIGHT_NAME = "limelight-zapdos"

@@ -322,10 +322,10 @@ private constructor(
 
     val xAccel =
       desiredState.accelerationMetersPerSecondSq.meters.perSecond.perSecond *
-              desiredState.curvatureRadPerMeter.radians.cos
+        desiredState.curvatureRadPerMeter.radians.cos
     var yAccel =
       desiredState.accelerationMetersPerSecondSq.meters.perSecond.perSecond *
-              desiredState.curvatureRadPerMeter.radians.sin
+        desiredState.curvatureRadPerMeter.radians.sin
 
     var nextDriveState =
       swerveDriveController.calculate(
@@ -407,8 +407,8 @@ private constructor(
   override fun isFinished(): Boolean {
     trajCurTime = Clock.fpgaTime - trajStartTime
     return endPathOnceAtReference &&
-            (swerveDriveController.atReference() || keepTrapping) &&
-            trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
+            (swerveDriveController.atReference()) &&
+      trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
   }
 
   override fun end(interrupted: Boolean) {

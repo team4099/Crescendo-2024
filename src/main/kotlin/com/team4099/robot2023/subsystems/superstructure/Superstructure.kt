@@ -174,8 +174,7 @@ class Superstructure(
             Request.FlywheelRequest.TargetingVelocity(
               Flywheel.TunableFlywheelStates.speakerVelocity.get() / 3
             )
-        }
-        else {
+        } else {
           flywheel.currentRequest =
             Request.FlywheelRequest.TargetingVelocity(
               Flywheel.TunableFlywheelStates.idleVelocity.get()
@@ -221,7 +220,6 @@ class Superstructure(
           is Request.SuperstructureRequest.ScoreSpeaker -> {
             nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
           }
-
           is Request.SuperstructureRequest.PrepScoreSpeakerMid -> {
             nextState = SuperstructureStates.SCORE_SPEAKER_MID_PREP
           }
@@ -325,7 +323,8 @@ class Superstructure(
           )
         if (wrist.isAtTargetedPosition &&
           flywheel.isAtTargetedVelocity &&
-          elevator.isAtTargetedPosition && currentRequest is Request.SuperstructureRequest.ScoreSpeaker
+          elevator.isAtTargetedPosition &&
+          currentRequest is Request.SuperstructureRequest.ScoreSpeaker
         ) {
           nextState = SuperstructureStates.SCORE_SPEAKER
         }
@@ -367,7 +366,8 @@ class Superstructure(
           )
         if (wrist.isAtTargetedPosition &&
           flywheel.isAtTargetedVelocity &&
-          elevator.isAtTargetedPosition && currentRequest is Request.SuperstructureRequest.ScoreSpeaker
+          elevator.isAtTargetedPosition &&
+          currentRequest is Request.SuperstructureRequest.ScoreSpeaker
         ) {
           nextState = SuperstructureStates.SCORE_SPEAKER
         }
@@ -378,7 +378,6 @@ class Superstructure(
           }
         }
       }
-
       SuperstructureStates.SCORE_SPEAKER_HIGH_PREP -> {
         elevator.currentRequest =
           Request.ElevatorRequest.TargetingPosition(
@@ -394,7 +393,8 @@ class Superstructure(
           )
         if (wrist.isAtTargetedPosition &&
           flywheel.isAtTargetedVelocity &&
-          elevator.isAtTargetedPosition && currentRequest is Request.SuperstructureRequest.ScoreSpeaker
+          elevator.isAtTargetedPosition &&
+          currentRequest is Request.SuperstructureRequest.ScoreSpeaker
         ) {
           nextState = SuperstructureStates.SCORE_SPEAKER
         }
@@ -407,10 +407,10 @@ class Superstructure(
       }
       SuperstructureStates.SCORE_TRAP_PREP -> {
         wrist.currentRequest =
-          Request.WristRequest.TargetingPosition(
-            Wrist.TunableWristStates.trapAngle.get()
-          )
-        if (wrist.isAtTargetedPosition && currentRequest is Request.SuperstructureRequest.ScoreTrap ) {
+          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.trapAngle.get())
+        if (wrist.isAtTargetedPosition &&
+          currentRequest is Request.SuperstructureRequest.ScoreTrap
+        ) {
           nextState = SuperstructureStates.SCORE_TRAP
         }
 
@@ -451,8 +451,7 @@ class Superstructure(
         }
       }
       SuperstructureStates.CLIMB_RETRACT -> {
-        elevator.currentRequest =
-          Request.ElevatorRequest.OpenLoop(-6.volts)
+        elevator.currentRequest = Request.ElevatorRequest.OpenLoop(-6.volts)
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
@@ -463,7 +462,11 @@ class Superstructure(
         }
       }
       SuperstructureStates.EJECT_GAME_PIECE -> {
-        intake.currentRequest = Request.IntakeRequest.OpenLoop(Intake.TunableIntakeStates.outtakeRolllerVoltage.get(), Intake.TunableIntakeStates.outtakeCenterWheelVoltage.get())
+        intake.currentRequest =
+          Request.IntakeRequest.OpenLoop(
+            Intake.TunableIntakeStates.outtakeRolllerVoltage.get(),
+            Intake.TunableIntakeStates.outtakeCenterWheelVoltage.get()
+          )
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.outtakeVoltage.get())
         if (!feeder.hasNote &&
@@ -571,22 +574,18 @@ class Superstructure(
     return returnCommand
   }
 
-
-
   fun scoreCommand(): Command {
     val returnCommand =
-      runOnce { if (currentState == SuperstructureStates.SCORE_AMP_PREP) {
-        currentRequest = Request.SuperstructureRequest.ScoreAmp()
-      } else if (currentState == SuperstructureStates.SCORE_TRAP_PREP){
-        currentRequest = Request.SuperstructureRequest.ScoreTrap()
+      runOnce {
+        if (currentState == SuperstructureStates.SCORE_AMP_PREP) {
+          currentRequest = Request.SuperstructureRequest.ScoreAmp()
+        } else if (currentState == SuperstructureStates.SCORE_TRAP_PREP) {
+          currentRequest = Request.SuperstructureRequest.ScoreTrap()
+        } else {
+          currentRequest = Request.SuperstructureRequest.ScoreSpeaker()
+        }
       }
-
-        else {
-        currentRequest = Request.SuperstructureRequest.ScoreSpeaker()
-      }
-        }.until {
-        isAtRequestedState && currentState == SuperstructureStates.SCORE_SPEAKER
-      }
+        .until { isAtRequestedState && currentState == SuperstructureStates.SCORE_SPEAKER }
     returnCommand.name = "ScoreSpeakerCommand"
     return returnCommand
   }

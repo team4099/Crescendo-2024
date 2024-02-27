@@ -35,22 +35,20 @@ object ControlBoard {
   val resetGyro = Trigger { driver.startButton && driver.selectButton }
 
   // sim triggers
-  val score = Trigger {driver.leftTriggerAxis > 0.5}
-  val intake = Trigger { driver.rightShoulderButton}
-  val forceIdle = Trigger { driver.yButton || operator.startButton && operator.selectButton  }
+  val score = Trigger { driver.leftTriggerAxis > 0.5 }
+  val intake = Trigger { driver.rightShoulderButton }
+  val forceIdle = Trigger { driver.yButton || operator.startButton && operator.selectButton }
 
-  val prepAmp = Trigger  { operator.aButton }
-  val prepLow = Trigger  { operator.xButton }
+  val prepAmp = Trigger { operator.aButton }
+  val prepLow = Trigger { operator.xButton }
   val prepMid = Trigger { operator.bButton }
-  val prepHigh = Trigger { operator.yButton}
+  val prepHigh = Trigger { operator.yButton }
 
   val extendClimb = Trigger { operator.dPadUp }
   val retractClimb = Trigger { operator.dPadDown }
 
   val prepTrap = Trigger { operator.rightShoulderButton }
-  val ejectGamePiece = Trigger {driver.xButton }
-
-  val testWrist = Trigger {driver.aButton}
+  val ejectGamePiece = Trigger { driver.xButton }
 
   val characterizeWrist = Trigger { driver.rightShoulderButton }
 

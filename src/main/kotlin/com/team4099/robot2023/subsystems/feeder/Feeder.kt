@@ -24,7 +24,7 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
   var rumbleTime = 0.5.seconds
 
   val rumbleStartTime = Clock.fpgaTime
-  
+
   var lastHeldGamePiece = false
 
   var lastDropTime = Clock.fpgaTime
@@ -116,7 +116,6 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
   override fun periodic() {
     io.updateInputs(inputs)
 
-
     if (lastHeldGamePiece != hasNote && !rumbleTrigger) {
       rumbleTrigger = true
       lastDropTime = Clock.fpgaTime
@@ -156,11 +155,11 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
         nextState = FeederStates.OPEN_LOOP_INTAKE
       }
       FeederStates.OPEN_LOOP_INTAKE -> {
-          setFeederVoltage(feederTargetVoltage)
+        setFeederVoltage(feederTargetVoltage)
         nextState = fromRequestToState(currentRequest)
       }
       FeederStates.OPEN_LOOP_SHOOT -> {
-          setFeederVoltage(feederTargetVoltage)
+        setFeederVoltage(feederTargetVoltage)
         nextState = fromRequestToState(currentRequest)
       }
     }

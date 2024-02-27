@@ -32,6 +32,9 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import org.photonvision.PhotonVersion
 import org.photonvision.common.dataflow.structures.Packet
+import org.photonvision.common.dataflow.structures.PacketSerde
+import org.photonvision.targeting.PNPResult.APacketSerde
+import org.photonvision.targeting.PhotonTrackedTarget
 
 /** Represents a camera that is connected to PhotonVision.  */
 class PhotonCamera(instance: NetworkTableInstance, val name: String?) {
@@ -75,12 +78,14 @@ class PhotonCamera(instance: NetworkTableInstance, val name: String?) {
       packet.clear()
 
       // Create latest result.
-      val ret = PhotonPipelineResult()
+      var ret = PhotonPipelineResult()
+      val photonPacketSerde = PhotonPipelineResult.APacketSerde()
 
       // Populate packet and create result.
       packet.data = rawBytesEntry.getRaw(byteArrayOf())
       if (packet.size < 1) return ret
-      ret.createFromPacket(packet)
+
+      ret = photonPacketSerde.unpack(packet)
 
       // Set the timestamp of the result.
       // getLatestChange returns in microseconds so we divide by 1e6 to convert to seconds.

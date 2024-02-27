@@ -6,7 +6,6 @@ import com.team4099.lib.vision.TimestampedVisionUpdate
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.vision.camera.CameraIO
-import com.team4099.robot2023.util.FieldFrameEstimator
 import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
@@ -15,15 +14,12 @@ import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Pose3dWPILIB
-import org.team4099.lib.geometry.Quaternion
-import org.team4099.lib.geometry.Rotation3d
 import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
-import org.team4099.lib.units.derived.radians
 import java.util.function.Consumer
 import java.util.function.Supplier
 import kotlin.math.pow
@@ -106,7 +102,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       }
 
       // Find all detected tag poses
-      val tagPoses = inputs[instance].usedTargets.map { FieldConstants.aprilTags[it].pose }
+      val tagPoses = inputs[instance].usedTargets.map { FieldConstants.fieldAprilTags[it].pose }
 
       // Calculate average distance to tag
       var totalDistance = 0.0.meters
@@ -140,7 +136,6 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
         *tagPoses.map { it.pose3d }.toTypedArray()
       )
 
-
       if (inputs[instance].timestamp == 0.0.seconds) { // prolly wrong lol
         Logger.recordOutput(
           "Vision/${VisionConstants.CAMERA_NAMES[instance]}/estimatedRobotPose",
@@ -171,7 +166,8 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       visionConsumer.accept(visionUpdates)
 
       Logger.recordOutput(
-        "LoggedRobot/Subsystems/VisionLoopTimeMS", (Clock.realTimestamp - startTime).inMilliseconds
+        "LoggedRobot/Subsystems/VisionLoopTimeMS",
+        (Clock.realTimestamp - startTime).inMilliseconds
       )
     }
   }
