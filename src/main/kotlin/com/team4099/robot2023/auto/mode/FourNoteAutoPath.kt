@@ -14,6 +14,7 @@ import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
+import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
 
@@ -159,7 +160,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 180.degrees.inRotation2ds
               ), // Subwoofer
               FieldWaypoint(
-                Translation2d(2.41.meters + 0.225.meters, 4.13.meters).translation2d,
+                Translation2d(2.41.meters + 0.225.meters, (4.13 - 0.1).meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
               )
@@ -175,7 +176,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           {
             listOf(
               FieldWaypoint(
-                Translation2d(2.41.meters + 0.225.meters, 4.13.meters).translation2d,
+                Translation2d(2.41.meters + 0.225.meters, (4.13 - 0.1).meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
               ),

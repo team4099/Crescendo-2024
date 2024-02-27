@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.VelocityDutyCycle
 import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.InvertedValue
 import com.ctre.phoenix6.signals.NeutralModeValue
+import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
@@ -43,6 +44,7 @@ import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.inVoltsPerMetersPerSecond
+import org.team4099.lib.units.derived.perMeterPerSecond
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
@@ -83,6 +85,10 @@ class SwerveModuleIOTalon(
         2 * PI - potentiometer.voltage / RobotController.getVoltage5V() * 2.0 * Math.PI
       }
     }
+
+  private val driveKV =
+    LoggedTunableValue("Drivetrain/kV", DrivetrainConstants.PID.DRIVE_KV, Pair({ it.inVoltsPerMetersPerSecond }, { it.volts.perMeterPerSecond }))
+
 
   init {
     driveFalcon.configurator.apply(TalonFXConfiguration())
@@ -125,7 +131,7 @@ class SwerveModuleIOTalon(
       driveSensor.integralVelocityGainToRawUnits(DrivetrainConstants.PID.DRIVE_KI)
     driveConfiguration.Slot0.kD =
       driveSensor.derivativeVelocityGainToRawUnits(DrivetrainConstants.PID.DRIVE_KD)
-    driveConfiguration.Slot0.kV = DrivetrainConstants.PID.DRIVE_KV.inVoltsPerMetersPerSecond
+    driveConfiguration.Slot0.kV = driveKV.get().inVoltsPerMetersPerSecond
     //      driveSensor.velocityFeedforwardToRawUnits(DrivetrainConstants.PID.DRIVE_KFF)
     driveConfiguration.CurrentLimits.SupplyCurrentLimit =
       DrivetrainConstants.DRIVE_SUPPLY_CURRENT_LIMIT.inAmperes
@@ -215,7 +221,7 @@ class SwerveModuleIOTalon(
       driveSensor.integralVelocityGainToRawUnits(DrivetrainConstants.PID.DRIVE_KI)
     driveConfiguration.Slot0.kD =
       driveSensor.derivativeVelocityGainToRawUnits(DrivetrainConstants.PID.DRIVE_KD)
-    driveConfiguration.Slot0.kV = DrivetrainConstants.PID.DRIVE_KV.inVoltsPerMetersPerSecond
+    driveConfiguration.Slot0.kV = driveKV.get().inVoltsPerMetersPerSecond
     //      driveSensor.velocityFeedforwardToRawUnits(DrivetrainConstants.PID.DRIVE_KFF)
     driveConfiguration.CurrentLimits.SupplyCurrentLimit =
       DrivetrainConstants.DRIVE_SUPPLY_CURRENT_LIMIT.inAmperes
@@ -444,7 +450,7 @@ class SwerveModuleIOTalon(
     PIDConfig.kP = driveSensor.proportionalVelocityGainToRawUnits(kP)
     PIDConfig.kI = driveSensor.integralVelocityGainToRawUnits(kI)
     PIDConfig.kD = driveSensor.derivativeVelocityGainToRawUnits(kD)
-    PIDConfig.kV = DrivetrainConstants.PID.DRIVE_KV.inVoltsPerMetersPerSecond
+    PIDConfig.kV = driveKV.get().inVoltsPerMetersPerSecond
 
     driveFalcon.configurator.apply(PIDConfig)
   }
