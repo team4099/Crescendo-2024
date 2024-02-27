@@ -39,10 +39,17 @@ object ControlBoard {
   val intake = Trigger { driver.rightShoulderButton }
   val forceIdle = Trigger { driver.yButton || operator.startButton && operator.selectButton }
 
+<<<<<<< HEAD
   val prepAmp = Trigger { operator.aButton }
   val prepLow = Trigger { operator.xButton }
   val prepMid = Trigger { operator.bButton }
   val prepHigh = Trigger { operator.yButton }
+=======
+  val prepAmp = Trigger  { operator.aButton }
+  val prepLow = Trigger  { operator.xButton }
+  val prepHighProtected = Trigger { operator.bButton }
+  val prepHigh = Trigger { operator.yButton}
+>>>>>>> 1bb5955 (add protected high)
 
   val extendClimb = Trigger { operator.dPadUp }
   val retractClimb = Trigger { operator.dPadDown }

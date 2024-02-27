@@ -143,7 +143,7 @@ object RobotContainer {
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
     ControlBoard.intake.whileTrue(superstructure.groundIntakeCommand())
     ControlBoard.prepAmp.whileTrue(superstructure.prepAmpCommand())
-    ControlBoard.prepMid.whileTrue(superstructure.prepSpeakerMidCommand())
+    ControlBoard.prepHighProtected.whileTrue(superstructure.prepSpeakerMidCommand())
     ControlBoard.prepHigh.whileTrue(superstructure.prepSpeakerHighCommand())
     ControlBoard.score.whileTrue(superstructure.scoreCommand())
     ControlBoard.extendClimb.whileTrue(superstructure.climbExtendCommand())

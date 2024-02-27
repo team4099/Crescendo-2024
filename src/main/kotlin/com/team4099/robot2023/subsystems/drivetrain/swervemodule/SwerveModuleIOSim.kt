@@ -61,31 +61,7 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
       DrivetrainConstants.STEERING_WHEEL_INERTIA.inKilogramsMeterSquared
     )
 
-  init {
-    MotorChecker.add(
-      "Drivetrain",
-      "Drive",
-      MotorCollection(
-        mutableListOf(SimulatedMotor(driveMotorSim, "$label Drive Motor")),
-        65.amps,
-        90.celsius,
-        45.amps,
-        100.celsius
-      )
-    )
 
-    MotorChecker.add(
-      "Drivetrain",
-      "Steering",
-      MotorCollection(
-        mutableListOf(SimulatedMotor(steerMotorSim, "$label Steering Motor")),
-        65.amps,
-        90.celsius,
-        45.amps,
-        100.celsius
-      )
-    )
-  }
 
   var turnRelativePosition = 0.0.radians
   var turnAbsolutePosition =
@@ -116,6 +92,30 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
   init {
     steeringFeedback.enableContinuousInput(-Math.PI.radians, Math.PI.radians)
     steeringFeedback.errorTolerance = DrivetrainConstants.ALLOWED_STEERING_ANGLE_ERROR
+
+    MotorChecker.add(
+      "Drivetrain",
+      "Drive",
+      MotorCollection(
+        mutableListOf(SimulatedMotor(driveMotorSim, "$label Drive Motor")),
+        65.amps,
+        90.celsius,
+        45.amps,
+        100.celsius
+      )
+    )
+
+    MotorChecker.add(
+      "Drivetrain",
+      "Steering",
+      MotorCollection(
+        mutableListOf(SimulatedMotor(steerMotorSim, "$label Steering Motor")),
+        65.amps,
+        90.celsius,
+        45.amps,
+        100.celsius
+      )
+    )
   }
 
   var driveAppliedVolts = 0.0.volts

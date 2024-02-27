@@ -2,6 +2,7 @@
 package com.team4099.robot2023.config.constants
 
 import edu.wpi.first.apriltag.AprilTagFields
+import com.team4099.robot2023.config.constants.Constants
 import org.team4099.lib.apriltag.AprilTag
 import org.team4099.lib.apriltag.AprilTagFieldLayout
 import org.team4099.lib.geometry.Rotation3d
@@ -13,6 +14,7 @@ import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.geometry.Translation3d
+import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.derived.degrees
 
@@ -37,8 +39,22 @@ import org.team4099.lib.units.derived.degrees
  * Width refers to the *y* direction (as described by wpilib)
  */
 object FieldConstants {
+
   var fieldLength = 651.223.inches
   var fieldWidth =  323.277.inches
+
+  val aprilTags: List<AprilTag> = listOf()
+  val homeAprilTags: List<AprilTag> = listOf()
+
+  val wpilibAprilTags =
+    if (Constants.Universal.REAL_FIELD) aprilTags.map { it.apriltagWpilib }
+    else homeAprilTags.map { it.apriltagWpilib }
+
+  val wpilibFieldLayout =
+    edu.wpi.first.apriltag.AprilTagFieldLayout(
+      wpilibAprilTags, fieldLength.inMeters, fieldWidth.inMeters
+    )
+
   var wingX = 229.201.inches
   var podiumX = 126.75.inches
   var startingLineX = 74.111.inches
@@ -48,17 +64,9 @@ object FieldConstants {
       AprilTag(4, Pose3d()),
       AprilTag(3, Pose3d(Translation3d(0.meters, 0.5.meters, 0.meters), Rotation3d()))
     )
-  val homeAprilTags: List<AprilTag> = listOf()
-
-  val wpilibAprilTags =
-    if (Constants.Universal.REAL_FIELD) fieldAprilTags.map { it.apriltagWpilib }
-    else homeAprilTags.map { it.apriltagWpilib }
 
   val tags = AprilTagFields.k2024Crescendo
 
-  val wpilibFieldLayout =
-    edu.wpi.first.apriltag.AprilTagFieldLayout(
-      wpilibAprilTags, fieldLength.inMeters, fieldWidth.inMeters)
 
   var ampCenter = Translation2d(72.455.inches, 322.996.inches)
 
