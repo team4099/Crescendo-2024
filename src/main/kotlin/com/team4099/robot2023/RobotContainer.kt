@@ -169,6 +169,17 @@ object RobotContainer {
     ControlBoard.prepLow.whileTrue(superstructure.prepSpeakerLowCommand())
     ControlBoard.prepTrap.whileTrue(superstructure.prepTrapCommand())
     ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
+    ControlBoard.testWrist.whileTrue(
+      TargetAngleCommand(
+        driver = Ryan(),
+        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { -1 * ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { ControlBoard.slowMode },
+        drivetrain,
+        90.degrees,
+      )
+    )
 
 
 

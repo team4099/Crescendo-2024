@@ -5,11 +5,9 @@ import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.driver.DriverProfile
-import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
-import org.team4099.lib.controller.ProfiledPIDController
-import org.team4099.lib.controller.TrapezoidProfile
+import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.Radian
@@ -35,16 +33,18 @@ class TargetAngleCommand(
     val drivetrain: Drivetrain,
     val targetAngle: Angle
 ) : Command() {
-    private val thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
+    private val thetaPID: PIDController<Radian, Velocity<Radian>>
 
     val thetakP =
         LoggedTunableValue(
             "Pathfollow/thetakP",
+            DrivetrainConstants.PID.AUTO_THETA_PID_KP,
             Pair({ it.inDegreesPerSecondPerDegree }, { it.degrees.perSecond.perDegree })
         )
     val thetakI =
         LoggedTunableValue(
             "Pathfollow/thetakI",
+            DrivetrainConstants.PID.AUTO_THETA_PID_KI,
             Pair(
                 { it.inDegreesPerSecondPerDegreeSeconds }, { it.degrees.perSecond.perDegreeSeconds }
             )
@@ -52,49 +52,34 @@ class TargetAngleCommand(
     val thetakD =
         LoggedTunableValue(
             "Pathfollow/thetakD",
+            DrivetrainConstants.PID.AUTO_THETA_PID_KD,
             Pair(
                 { it.inDegreesPerSecondPerDegreePerSecond },
                 { it.degrees.perSecond.perDegreePerSecond }
             )
         )
 
-    val thetaMaxVel =
-        LoggedTunableValue("Pathfollow/thetaMaxVel", DrivetrainConstants.PID.MAX_AUTO_ANGULAR_VEL)
-    val thetaMaxAccel =
-        LoggedTunableValue("Pathfollow/thetaMaxAccel", DrivetrainConstants.PID.MAX_AUTO_ANGULAR_ACCEL)
-    var desiredAngle: Angle = 0.0.degrees
-
     init {
         addRequirements(drivetrain)
 
-        if (RobotBase.isReal()) {
-            thetakP.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KP)
-            thetakI.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KI)
-            thetakD.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KD)
-        } else {
-            thetakP.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP)
-            thetakI.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI)
-            thetakD.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD)
-        }
-
         thetaPID =
-            ProfiledPIDController(
+            PIDController(
                 thetakP.get(),
                 thetakI.get(),
                 thetakD.get(),
-                TrapezoidProfile.Constraints(thetaMaxVel.get(), thetaMaxAccel.get())
             )
+
         thetaPID.enableContinuousInput(-PI.radians, PI.radians)
     }
 
     override fun initialize() {
-        thetaPID.reset(drivetrain.odomTRobot.rotation)
+        thetaPID.reset() // maybe do first for x?
     }
 
     override fun execute() {
-        Logger.recordOutput("ActiveCommands/TargetPoseCommand", true)
+        Logger.recordOutput("ActiveCommands/TargetAngleCommand", true)
 
-        val thetaFeedback = thetaPID.calculate(drivetrain.odomTRobot.rotation, targetAngle)
+        val thetaFeedback = thetaPID.calculate(drivetrain.lastGyroYaw(), targetAngle)
 
         drivetrain.currentRequest =
             Request.DrivetrainRequest.OpenLoop(
@@ -102,10 +87,6 @@ class TargetAngleCommand(
                 driver.driveSpeedClampedSupplier(driveX, driveY, slowMode),
                 fieldOriented = true
             )
-
-        Logger.recordOutput("AutoLevel/CurrentYawDegrees", drivetrain.odomTRobot.rotation.inDegrees)
-        Logger.recordOutput("AutoLevel/DesiredYawDegrees", desiredAngle.inDegrees)
-        Logger.recordOutput("AutoLevel/thetaFeedbackDPS", thetaFeedback.inDegreesPerSecond)
     }
 
     override fun isFinished(): Boolean {
@@ -119,6 +100,5 @@ class TargetAngleCommand(
                 driver.driveSpeedClampedSupplier(driveX, driveY, slowMode),
                 fieldOriented = true
             )
-        Logger.recordOutput("ActiveCommands/TargetPoseCommand", false)
     }
 }
