@@ -41,6 +41,7 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 import com.team4099.robot2023.commands.CharacterizeWristCommand
+import com.team4099.robot2023.commands.drivetrain.TargetAngleCommand
 import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
@@ -168,6 +169,17 @@ object RobotContainer {
     ControlBoard.prepLow.whileTrue(superstructure.prepSpeakerLowCommand())
     ControlBoard.prepTrap.whileTrue(superstructure.prepTrapCommand())
     ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
+    ControlBoard.testWrist.whileTrue(
+      TargetAngleCommand(
+        driver = Ryan(),
+        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { -1 * ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { ControlBoard.slowMode },
+        drivetrain,
+        90.degrees,
+      )
+    )
 
 
 

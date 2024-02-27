@@ -50,14 +50,9 @@ object ControlBoard {
   val prepTrap = Trigger { operator.rightShoulderButton }
   val ejectGamePiece = Trigger {driver.xButton }
 
-
-  /*
-  val testWrist = Trigger {driver.xButton}
+  val testWrist = Trigger {driver.aButton}
 
   val characterizeWrist = Trigger { driver.rightShoulderButton }
-
-
-   */
 
   // week0 controls
 }
