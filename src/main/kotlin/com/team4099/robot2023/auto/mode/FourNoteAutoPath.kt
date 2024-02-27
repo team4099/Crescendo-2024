@@ -82,21 +82,6 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 Translation2d(2.4.meters + 0.25.meters, 6.98.meters).translation2d,
                 null,
                 180.degrees.inRotation2ds,
-              )
-            )
-          }
-        ),
-        WaitCommand(1.4).andThen(superstructure.groundIntakeCommand())
-      ),
-      ParallelCommandGroup(
-        DrivePathCommand.createPathInFieldFrame(
-          drivetrain,
-          {
-            listOf(
-              FieldWaypoint(
-                Translation2d(2.4.meters + 0.25.meters, 6.98.meters).translation2d,
-                null,
-                180.degrees.inRotation2ds
               ),
               FieldWaypoint(
                 Translation2d(1.48.meters + 3.inches, 5.5.meters).translation2d,
@@ -106,7 +91,10 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
             )
           }
         ),
-        WaitCommand(1.4).andThen(superstructure.scoreCommand())
+        WaitCommand(1.2)
+          .andThen(superstructure.groundIntakeCommand())
+          .andThen(WaitCommand(1.35))
+          .andThen(superstructure.scoreCommand())
       ),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -115,11 +103,21 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
             listOf(
               FieldWaypoint(
                 Translation2d(1.48.meters + 3.inches, 5.5.meters).translation2d,
+                null,
+                180.degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d(((1.48.meters + 3.inches) + (2.34.meters + 0.25.meters)) / 2, 5.55.meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
               ),
               FieldWaypoint(
                 Translation2d(2.34.meters + 0.25.meters, 5.5.meters).translation2d,
+                null,
+                180.degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d(((1.48.meters + 3.inches) + (2.34.meters + 0.25.meters)) / 2, 5.45.meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
               ),
@@ -147,26 +145,20 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 180.degrees.inRotation2ds
               ), // Subwoofer
               FieldWaypoint(
-                Translation2d(2.41.meters + 0.225.meters, 4.14.meters)
-                  .translation2d,
+                Translation2d((1.48.meters + 3.inches + 2.41.meters + 0.225.meters) / 2, 4.87.meters).translation2d,
                 null,
-                160.degrees.inRotation2ds
-              )
-            )
-          },
-        ),
-        WaitCommand(1.4).andThen(superstructure.groundIntakeCommand())
-      ),
-      ParallelCommandGroup(
-        DrivePathCommand.createPathInFieldFrame(
-          drivetrain,
-          {
-            listOf(
+                180.degrees.inRotation2ds
+              ),
               FieldWaypoint(
                 Translation2d(2.41.meters + 0.225.meters, 4.14.meters)
                   .translation2d,
                 null,
                 160.degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d((1.48.meters + 3.inches + 2.41.meters + 0.225.meters) / 2, 4.77.meters).translation2d,
+                null,
+                180.degrees.inRotation2ds
               ),
               FieldWaypoint(
                 Translation2d(1.48.meters + 3.inches, 5.5.meters).translation2d,
@@ -176,7 +168,10 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
             )
           },
         ),
-        WaitCommand(2.0).andThen(superstructure.scoreCommand())
+        WaitCommand(1.4)
+          .andThen(superstructure.groundIntakeCommand())
+          .andThen(WaitCommand(1.9))
+          .andThen(superstructure.scoreCommand())
       )
     )
   }
