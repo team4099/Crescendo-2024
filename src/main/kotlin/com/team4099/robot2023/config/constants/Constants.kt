@@ -1,7 +1,9 @@
 package com.team4099.robot2023.config.constants
 
+import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.milli
+import org.team4099.lib.units.perSecond
 
 typealias GamePiece = Constants.Universal.GamePiece
 
@@ -11,6 +13,7 @@ typealias NodeTier = Constants.Universal.NodeTier
 
 object Constants {
   object Universal {
+    val gravity = -9.8.meters.perSecond.perSecond
     val SIM_MODE = Tuning.SimType.SIM
     const val REAL_FIELD = false
 

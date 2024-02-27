@@ -22,6 +22,11 @@ object WristConstants {
   // val ROLLER_VOLTAGE_COMPENSATION = 0.0.volts
   // val ROLLER_STATOR_CURRENT_LIMIT = 0.0.amps
 
+  val WRIST_AXIS_TO_NOTE_HOLD_POSITION = 14.5.inches
+  val WRIST_AXIS_TO_NOTE_LAUNCH_POSITION = 10.inches
+
+  val NOTE_ANGLE_SIM_OFFSET = -24.degrees
+
   val VOLTAGE_COMPENSATION = 12.0.volts
   val ABSOLUTE_ENCODER_OFFSET = 0.degrees
   val WRIST_LENGTH = 18.6.inches

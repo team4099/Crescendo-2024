@@ -3,6 +3,7 @@ package com.team4099.robot2023.config.constants
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.grams
+import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.DerivativeGain
@@ -19,6 +20,10 @@ import org.team4099.lib.units.perSecond
 
 object FlywheelConstants {
   val LEFT_GEAR_RATIO = 1.0
+
+  val FLYWHEEL_RADIUS = 2.inches
+
+  val FLYWHEEL_SPEED_TRANSFER_PERCENTAGE =0.47
 
   val RIGHT_MOTOR_REVOLUTIONS_PER_FLYWHEEL_REVOLUTIONS = 2.0
 
