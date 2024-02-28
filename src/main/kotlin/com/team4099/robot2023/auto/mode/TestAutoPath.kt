@@ -16,7 +16,6 @@ class TestAutoPath(val drivetrain: Drivetrain) : SequentialCommandGroup() {
     addRequirements(drivetrain)
 
     addCommands(
-      ResetPoseCommand(drivetrain, startingPose),
       DrivePathCommand.createPathInFieldFrame(
         drivetrain,
         {

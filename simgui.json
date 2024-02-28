@@ -14,7 +14,9 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Pre-match/Alliance": "String Chooser",
       "/Shuffleboard/Pre-match/Mode": "String Chooser",
+      "/SmartDashboard/AllianceColor": "String Chooser",
       "/SmartDashboard/AutonomousMode": "String Chooser"
     }
   },

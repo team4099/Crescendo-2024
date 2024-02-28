@@ -62,8 +62,8 @@ object AllianceFlipUtil {
   }
 
   /** Flips a pose to the correct side of the field based on the current alliance color. */
-  fun apply(pose: Pose2d): Pose2d {
-    return if (shouldFlip()) {
+  fun apply(pose: Pose2d, flipToRed: Boolean = false): Pose2d { // flipToRed is a hacky way to get it to flip when the driver station is empty
+    return if (shouldFlip() || flipToRed) {
       Pose2d(
         FieldConstants.fieldLength - pose.x, pose.y, Angle(-pose.rotation.cos, pose.rotation.sin)
       )
@@ -129,7 +129,7 @@ object AllianceFlipUtil {
   }
 
   private fun shouldFlip(): Boolean {
-    if ((DriverStation.isAutonomous() && FMSData.allianceColor == Alliance.Red) || DriverStation.getAlliance().isPresent) {
+    if (DriverStation.getAlliance().isPresent) {
       return DriverStation.getAlliance().get() == Alliance.Red
     } else {
       return false

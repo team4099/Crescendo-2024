@@ -23,9 +23,8 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
     addRequirements(drivetrain)
 
     addCommands(
-      ResetPoseCommand(drivetrain, startingPose),
       superstructure.scoreCommand(),
-      WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds),
+      WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds / 2),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,

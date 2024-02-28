@@ -29,7 +29,6 @@ import org.team4099.lib.units.derived.degrees
  * Width refers to the *y* direction (as described by wpilib)
  */
 object FieldConstants {
-
   var fieldLength = 651.223.inches
   var fieldWidth = 323.277.inches
 
