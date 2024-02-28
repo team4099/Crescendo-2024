@@ -27,7 +27,6 @@ object AutonomousSelector {
   //  private var orientationChooser: SendableChooser<Angle> = SendableChooser()
   private var autonomousModeChooser: LoggedDashboardChooser<AutonomousMode> =
     LoggedDashboardChooser("AutonomousMode")
-  private var allianceChooser: LoggedDashboardChooser<Alliance> = LoggedDashboardChooser("AllianceColor")
   private var waitBeforeCommandSlider: GenericEntry
   private var secondaryWaitInAuto: GenericEntry
 
@@ -42,13 +41,9 @@ object AutonomousSelector {
     autonomousModeChooser.addOption("Test", AutonomousMode.TEST_AUTO_PATH)
     autonomousModeChooser.addOption("Four Note Wing Auto", AutonomousMode.FOUR_NOTE_AUTO_PATH)
 
-    allianceChooser.addOption("Red", Alliance.Red)
-    allianceChooser.addOption("Blue", Alliance.Blue)
-
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
     autoTab.add("Mode", autonomousModeChooser.sendableChooser).withSize(4, 2).withPosition(2, 0)
-    autoTab.add("Alliance", allianceChooser.sendableChooser).withSize(4, 2).withPosition(2, 1)
 
     waitBeforeCommandSlider =
       autoTab
@@ -74,21 +69,24 @@ object AutonomousSelector {
 
   fun getCommand(drivetrain: Drivetrain, superstructure: Superstructure): Command {
     val mode = autonomousModeChooser.get()
-    val alliance = allianceChooser.get()
 
     when (mode) {
-      AutonomousMode.TEST_AUTO_PATH -> {
-        drivetrain.resetFieldFrameEstimator(
-          AllianceFlipUtil.apply(TestAutoPath.startingPose, alliance == Alliance.Red)
-        )
-        return WaitCommand(waitTime.inSeconds).andThen(TestAutoPath(drivetrain))
-      }
-      AutonomousMode.FOUR_NOTE_AUTO_PATH -> {
-        drivetrain.resetFieldFrameEstimator(
-          AllianceFlipUtil.apply(FourNoteAutoPath.startingPose, alliance == Alliance.Red)
-        )
-        return WaitCommand(waitTime.inSeconds).andThen(FourNoteAutoPath(drivetrain, superstructure))
-      }
+      AutonomousMode.TEST_AUTO_PATH ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            drivetrain.resetFieldFrameEstimator(
+              AllianceFlipUtil.apply(TestAutoPath.startingPose)
+            )
+          })
+          .andThen(TestAutoPath(drivetrain))
+      AutonomousMode.FOUR_NOTE_AUTO_PATH ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            drivetrain.resetFieldFrameEstimator(
+              AllianceFlipUtil.apply(FourNoteAutoPath.startingPose)
+            )
+          })
+          .andThen(FourNoteAutoPath(drivetrain, superstructure))
       else -> println("ERROR: unexpected auto mode: $mode")
     }
     return InstantCommand()

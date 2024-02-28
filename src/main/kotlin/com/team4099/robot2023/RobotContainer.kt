@@ -177,7 +177,7 @@ object RobotContainer {
         { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain,
-        -90.degrees,
+        (-90).degrees,
       )
     )
 

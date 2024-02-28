@@ -62,8 +62,8 @@ object AllianceFlipUtil {
   }
 
   /** Flips a pose to the correct side of the field based on the current alliance color. */
-  fun apply(pose: Pose2d, flipToRed: Boolean = false): Pose2d { // flipToRed is a hacky way to get it to flip when the driver station is empty
-    return if (shouldFlip() || flipToRed) {
+  fun apply(pose: Pose2d): Pose2d { // flipToRed is a hacky way to get it to flip when the driver station is empty
+    return if (shouldFlip()) {
       Pose2d(
         FieldConstants.fieldLength - pose.x, pose.y, Angle(-pose.rotation.cos, pose.rotation.sin)
       )

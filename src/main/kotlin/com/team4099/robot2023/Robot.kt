@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.simulation.DriverStationSim
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
@@ -177,6 +179,13 @@ object Robot : LoggedRobot() {
     Logger.recordOutput("LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds)
 
     ControlBoard.rumbleConsumer.accept(RobotContainer.rumbleState)
+
+    val autoTab = Shuffleboard.getTab("Pre-match")
+    autoTab
+      .add("Alliance Color", DriverStation.getAlliance().get().toString())
+      .withPosition(0, 1)
+      .withWidget(BuiltInWidgets.kTextView)
+      .entry
 
     /*
     Logger.recordOutput("LoggedRobot/port0", port0.voltage)
