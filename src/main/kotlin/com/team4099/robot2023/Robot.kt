@@ -11,6 +11,8 @@ import com.team4099.robot2023.util.Alert.AlertType
 import com.team4099.robot2023.util.FMSData
 import com.team4099.robot2023.util.NTSafePublisher
 import edu.wpi.first.hal.AllianceStationID
+import edu.wpi.first.networktables.GenericEntry
+import edu.wpi.first.networktables.NetworkTableValue
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.RobotBase
@@ -46,6 +48,7 @@ object Robot : LoggedRobot() {
   val logSimulationAlert = Alert("Running in simulation", AlertType.INFO)
   val logTuningModeEnabled =
     Alert("Tuning Mode Enabled. Expect loop times to be greater", AlertType.WARNING)
+  lateinit var allianceSelected: GenericEntry
   /*
   val port0 = AnalogInput(0)
   val port1 = AnalogInput(1)
@@ -132,6 +135,13 @@ object Robot : LoggedRobot() {
     CommandScheduler.getInstance().onCommandInterrupt { command: Command ->
       Logger.recordOutput("/ActiveCommands/${command.name}", false)
     }
+
+    val autoTab = Shuffleboard.getTab("Pre-match")
+    allianceSelected = autoTab
+      .add("Alliance Selected", "No alliance")
+      .withPosition(0, 1)
+      .withWidget(BuiltInWidgets.kTextView)
+      .entry
   }
 
   override fun autonomousInit() {
@@ -180,12 +190,14 @@ object Robot : LoggedRobot() {
 
     ControlBoard.rumbleConsumer.accept(RobotContainer.rumbleState)
 
-    val autoTab = Shuffleboard.getTab("Pre-match")
-    autoTab
-      .add("Alliance Color", DriverStation.getAlliance().get().toString())
-      .withPosition(0, 1)
-      .withWidget(BuiltInWidgets.kTextView)
-      .entry
+    val currentAlliance = try {
+      DriverStation.getAlliance().get().toString()
+    }
+    catch (_: NoSuchElementException) {
+      "No alliance"
+    }
+
+    allianceSelected.set(NetworkTableValue.makeString(currentAlliance))
 
     /*
     Logger.recordOutput("LoggedRobot/port0", port0.voltage)

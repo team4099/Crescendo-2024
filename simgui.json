@@ -28,6 +28,18 @@
       "AdvantageKit": {
         "open": true
       },
+      "Shuffleboard": {
+        "Pre-match": {
+          "Mode": {
+            "open": true,
+            "string[]##v_/Shuffleboard/Pre-match/Mode/options": {
+              "open": true
+            }
+          },
+          "open": true
+        },
+        "open": true
+      },
       "SmartDashboard": {
         "TunableNumbers": {
           "Flywheel": {
@@ -44,5 +56,8 @@
   },
   "NetworkTables Info": {
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }
