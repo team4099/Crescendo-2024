@@ -3,6 +3,7 @@ package com.team4099.robot2023.subsystems.vision
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.TunableNumber
 import com.team4099.lib.vision.TimestampedVisionUpdate
+import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.vision.camera.CameraIO
 import edu.wpi.first.math.VecBuilder

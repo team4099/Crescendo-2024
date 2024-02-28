@@ -91,7 +91,6 @@ class SwerveModuleIOTalon(
       Pair({ it.inVoltsPerMetersPerSecond }, { it.volts.perMeterPerSecond })
     )
 
-
   val driveStatorCurrentSignal: StatusSignal<Double>
   val driveSupplyCurrentSignal: StatusSignal<Double>
   val steeringStatorCurrentSignal: StatusSignal<Double>

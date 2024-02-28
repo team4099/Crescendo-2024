@@ -61,8 +61,6 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
       DrivetrainConstants.STEERING_WHEEL_INERTIA.inKilogramsMeterSquared
     )
 
-
-
   var turnRelativePosition = 0.0.radians
   var turnAbsolutePosition =
     (Math.random() * 2.0 * Math.PI).radians // getting a random value that we zero to

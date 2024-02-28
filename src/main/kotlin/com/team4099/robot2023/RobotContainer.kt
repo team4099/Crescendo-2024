@@ -3,6 +3,7 @@ package com.team4099.robot2023
 import com.team4099.robot2023.auto.AutonomousSelector
 import com.team4099.robot2023.auto.mode.FourNoteAutoPath
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
+import com.team4099.robot2023.commands.drivetrain.TargetAngleCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
@@ -34,14 +35,11 @@ import com.team4099.robot2023.subsystems.wrist.WristIOSim
 import com.team4099.robot2023.subsystems.wrist.WristIOTalon
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.RobotBase
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
-
-import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
-import com.team4099.robot2023.commands.CharacterizeWristCommand
-import com.team4099.robot2023.commands.drivetrain.TargetAngleCommand
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import org.team4099.lib.units.derived.degrees
+import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -94,7 +92,7 @@ object RobotContainer {
         driver = Ryan(),
         { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
         { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { -1 * ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain
       )
@@ -148,18 +146,20 @@ object RobotContainer {
     ControlBoard.intake.whileTrue(superstructure.groundIntakeCommand())
     ControlBoard.prepAmp.whileTrue(superstructure.prepAmpCommand())
 
-    ControlBoard.prepHighProtected.whileTrue(ParallelCommandGroup(superstructure.prepSpeakerMidCommand(),
-      TargetAngleCommand(
-        driver = Ryan(),
-        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { -1 * ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
-        { ControlBoard.slowMode },
-        drivetrain,
-        145.degrees,
-      )))
-
-
+    ControlBoard.prepHighProtected.whileTrue(
+      ParallelCommandGroup(
+        superstructure.prepSpeakerMidCommand(),
+        TargetAngleCommand(
+          driver = Ryan(),
+          { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+          { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+          { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+          { ControlBoard.slowMode },
+          drivetrain,
+          30.degrees,
+        )
+      )
+    )
     ControlBoard.prepHigh.whileTrue(superstructure.prepSpeakerHighCommand())
     ControlBoard.score.whileTrue(superstructure.scoreCommand())
     ControlBoard.extendClimb.whileTrue(superstructure.climbExtendCommand())
@@ -169,17 +169,15 @@ object RobotContainer {
     ControlBoard.prepTrap.whileTrue(superstructure.prepTrapCommand())
     ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
 
-
-
     ControlBoard.targetAmp.whileTrue(
       TargetAngleCommand(
         driver = Ryan(),
         { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
         { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { -1 * ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain,
-        90.degrees,
+        -90.degrees,
       )
     )
 
