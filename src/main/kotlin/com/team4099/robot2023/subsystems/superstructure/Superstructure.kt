@@ -8,6 +8,7 @@ import com.team4099.robot2023.subsystems.elevator.Elevator
 import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
 import com.team4099.robot2023.subsystems.intake.Intake
+import com.team4099.robot2023.subsystems.led.Leds
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.util.NoteSimulation
 import edu.wpi.first.wpilibj.DriverStation
@@ -35,6 +36,8 @@ class Superstructure(
   private val flywheel: Flywheel,
   private val drivetrain: Drivetrain
 ) : SubsystemBase() {
+
+  var leds = Leds()
 
   var currentRequest: Request.SuperstructureRequest = Request.SuperstructureRequest.Idle()
 
@@ -103,6 +106,9 @@ class Superstructure(
   }
 
   override fun periodic() {
+    leds.hasNote = feeder.hasNote
+    leds.isIdle = currentState == SuperstructureStates.IDLE
+
     notes.forEach { it.periodic() }
     notes.forEach { Logger.recordOutput("NoteSimulation/${it.id}", toDoubleArray(it.currentPose)) }
 
