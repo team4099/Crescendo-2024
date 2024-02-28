@@ -16,15 +16,15 @@ class TestAutoPath(val drivetrain: Drivetrain) : SequentialCommandGroup() {
     addRequirements(drivetrain)
 
     addCommands(
-      ResetPoseCommand(drivetrain, Pose2d(10.feet, 10.feet, 180.0.degrees)),
+      ResetPoseCommand(drivetrain, startingPose),
       DrivePathCommand.createPathInFieldFrame(
         drivetrain,
         {
           listOf(
             FieldWaypoint(
-              Translation2d(10.0.feet, 10.0.feet).translation2d,
+              startingPose.translation.translation2d,
               null,
-              180.0.degrees.inRotation2ds
+              startingPose.rotation.inRotation2ds
             ),
             FieldWaypoint(
               Translation2d(16.0.feet, 10.0.feet).translation2d,
@@ -46,5 +46,9 @@ class TestAutoPath(val drivetrain: Drivetrain) : SequentialCommandGroup() {
         resetPose = true
       )
     )
+  }
+
+  companion object {
+    val startingPose = Pose2d(10.feet, 10.feet, 180.0.degrees)
   }
 }

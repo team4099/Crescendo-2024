@@ -1,7 +1,9 @@
 package com.team4099.robot2023.auto
 
+import com.team4099.robot2023.auto.mode.FourNoteAutoPath
 import com.team4099.robot2023.auto.mode.TestAutoPath
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import edu.wpi.first.networktables.GenericEntry
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
@@ -29,6 +31,7 @@ object AutonomousSelector {
     //    autoTab.add("Starting Orientation", orientationChooser)
 
     autonomousModeChooser.addOption("Test", AutonomousMode.TEST_AUTO_PATH)
+    autonomousModeChooser.addOption("Four Note Wing Auto", AutonomousMode.FOUR_NOTE_AUTO_PATH)
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
     autoTab.add("Mode", autonomousModeChooser.sendableChooser).withSize(4, 2).withPosition(2, 0)
@@ -55,19 +58,21 @@ object AutonomousSelector {
   val secondaryWaitTime: Time
     get() = secondaryWaitInAuto.getDouble(0.0).seconds
 
-  fun getCommand(drivetrain: Drivetrain): Command {
-    val mode = AutonomousMode.TEST_AUTO_PATH
-    // val mode = autonomousModeChooser.get()
-    //    println("${waitTime().inSeconds} wait command")
+  fun getCommand(drivetrain: Drivetrain, superstructure: Superstructure): Command {
+    val mode = autonomousModeChooser.get()
+
     when (mode) {
       AutonomousMode.TEST_AUTO_PATH ->
         return WaitCommand(waitTime.inSeconds).andThen(TestAutoPath(drivetrain))
+      AutonomousMode.FOUR_NOTE_AUTO_PATH ->
+        return WaitCommand(waitTime.inSeconds).andThen(FourNoteAutoPath(drivetrain, superstructure))
       else -> println("ERROR: unexpected auto mode: $mode")
     }
     return InstantCommand()
   }
 
   private enum class AutonomousMode {
-    TEST_AUTO_PATH
+    TEST_AUTO_PATH,
+    FOUR_NOTE_AUTO_PATH
   }
 }

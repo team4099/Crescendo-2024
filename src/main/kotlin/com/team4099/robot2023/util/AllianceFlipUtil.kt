@@ -129,7 +129,7 @@ object AllianceFlipUtil {
   }
 
   private fun shouldFlip(): Boolean {
-    if (DriverStation.getAlliance().isPresent) {
+    if ((DriverStation.isAutonomous() && FMSData.allianceColor == Alliance.Red) || DriverStation.getAlliance().isPresent) {
       return DriverStation.getAlliance().get() == Alliance.Red
     } else {
       return false

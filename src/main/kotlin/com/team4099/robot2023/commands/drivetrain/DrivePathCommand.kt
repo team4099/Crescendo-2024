@@ -250,10 +250,12 @@ private constructor(
       trajectoryGenerator.holonomicRotationSequence.sample(trajCurTime.inSeconds)
 
     val targetHolonomicPose =
-      Pose2d(
-        desiredState.poseMeters.x.meters,
-        desiredState.poseMeters.y.meters,
-        desiredRotation.position.radians.radians
+      AllianceFlipUtil.apply(
+        Pose2d(
+          desiredState.poseMeters.x.meters,
+          desiredState.poseMeters.y.meters,
+          desiredRotation.position.radians.radians
+        )
       )
 
     var robotPoseInSelectedFrame: Pose2d = drivePoseSupplier()

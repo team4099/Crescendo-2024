@@ -1,5 +1,6 @@
 package com.team4099.robot2023
 
+import com.team4099.robot2023.auto.AutonomousSelector
 import com.team4099.robot2023.auto.mode.FourNoteAutoPath
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
@@ -192,7 +193,7 @@ object RobotContainer {
 
   fun mapTestControls() {}
 
-  fun getAutonomousCommand() = FourNoteAutoPath(drivetrain, superstructure)
+  fun getAutonomousCommand() = AutonomousSelector.getCommand(drivetrain, superstructure)
 
   fun mapTunableCommands() {}
 }
