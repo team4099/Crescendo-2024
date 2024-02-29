@@ -1,6 +1,9 @@
 package com.team4099.robot2023.auto
 
 import com.team4099.robot2023.auto.mode.FourNoteAutoPath
+import com.team4099.robot2023.auto.mode.PreloadAndLeaveCenterSubwooferAutoPath
+import com.team4099.robot2023.auto.mode.PreloadAndLeaveLeftSubwooferAutoPath
+import com.team4099.robot2023.auto.mode.PreloadAndLeaveRightSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.TestAutoPath
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
@@ -38,8 +41,10 @@ object AutonomousSelector {
     //    orientationChooser.addOption("Right", 270.degrees)
     //    autoTab.add("Starting Orientation", orientationChooser)
 
-    autonomousModeChooser.addOption("Test", AutonomousMode.TEST_AUTO_PATH)
     autonomousModeChooser.addOption("Four Note Wing Auto", AutonomousMode.FOUR_NOTE_AUTO_PATH)
+    autonomousModeChooser.addOption("Preload + Leave from Left Side of Subwoofer", AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER)
+    autonomousModeChooser.addOption("Preload + Leave from Right Side of Subwoofer", AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER)
+    autonomousModeChooser.addOption("Preload + Leave from Center Side of Subwoofer", AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER)
 
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
@@ -87,6 +92,30 @@ object AutonomousSelector {
             )
           })
           .andThen(FourNoteAutoPath(drivetrain, superstructure))
+      AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            drivetrain.resetFieldFrameEstimator(
+              AllianceFlipUtil.apply(PreloadAndLeaveLeftSubwooferAutoPath.startingPose)
+            )
+          })
+          .andThen(PreloadAndLeaveLeftSubwooferAutoPath(drivetrain, superstructure))
+      AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            drivetrain.resetFieldFrameEstimator(
+              AllianceFlipUtil.apply(PreloadAndLeaveRightSubwooferAutoPath.startingPose)
+            )
+          })
+          .andThen(PreloadAndLeaveRightSubwooferAutoPath(drivetrain, superstructure))
+      AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            drivetrain.resetFieldFrameEstimator(
+              AllianceFlipUtil.apply(PreloadAndLeaveCenterSubwooferAutoPath.startingPose)
+            )
+          })
+          .andThen(PreloadAndLeaveCenterSubwooferAutoPath(drivetrain, superstructure))
       else -> println("ERROR: unexpected auto mode: $mode")
     }
     return InstantCommand()
@@ -94,6 +123,9 @@ object AutonomousSelector {
 
   private enum class AutonomousMode {
     TEST_AUTO_PATH,
-    FOUR_NOTE_AUTO_PATH
+    FOUR_NOTE_AUTO_PATH,
+    PRELOAD_AND_LEAVE_LEFT_SUBWOOFER,
+    PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER,
+    PRELOAD_AND_LEAVE_CENTER_SUBWOOFER
   }
 }

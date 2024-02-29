@@ -23,7 +23,7 @@ import org.team4099.lib.units.derived.inRotation2ds
 class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstructure) :
   SequentialCommandGroup() {
   init {
-    addRequirements(drivetrain)
+    addRequirements(drivetrain, superstructure)
 
     addCommands(
       superstructure.scoreCommand(),
@@ -35,7 +35,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
             listOf(
               FieldWaypoint(
                 startingPose.translation.translation2d,
-                180.degrees.inRotation2ds,
+                null,
                 startingPose.rotation.inRotation2ds
               ),
               FieldWaypoint(
