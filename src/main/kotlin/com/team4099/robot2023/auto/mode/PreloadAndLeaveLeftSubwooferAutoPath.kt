@@ -36,7 +36,11 @@ class PreloadAndLeaveLeftSubwooferAutoPath(
                             null,
                             startingPose.rotation.inRotation2ds
                         ),
-
+                        FieldWaypoint(
+                            Translation2d(1.90.meters, 6.76.meters).translation2d,
+                            null,
+                            -180.degrees.inRotation2ds
+                        ),
                         FieldWaypoint(
                             Translation2d(2.87.meters, 6.27.meters).translation2d,
                             null,
