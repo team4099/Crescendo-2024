@@ -52,14 +52,14 @@ object AutonomousSelector {
 
     waitBeforeCommandSlider =
       autoTab
-        .add("Wait Time before Running Auto", 0)
+        .add("Wait Time Before Shooting", 0)
         .withSize(3, 2)
         .withPosition(0, 2)
         .withWidget(BuiltInWidgets.kTextView)
         .entry
     secondaryWaitInAuto =
       autoTab
-        .add("Secondary Wait Time During Auto Path", 0)
+        .add("Secondary Wait Time Between Shooting and Driving", 0)
         .withSize(3, 2)
         .withPosition(3, 2)
         .withWidget(BuiltInWidgets.kTextView)
@@ -99,7 +99,7 @@ object AutonomousSelector {
               AllianceFlipUtil.apply(PreloadAndLeaveLeftSubwooferAutoPath.startingPose)
             )
           })
-          .andThen(PreloadAndLeaveLeftSubwooferAutoPath(drivetrain, superstructure))
+          .andThen(PreloadAndLeaveLeftSubwooferAutoPath(drivetrain, superstructure, secondaryWaitTime))
       AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
@@ -107,7 +107,7 @@ object AutonomousSelector {
               AllianceFlipUtil.apply(PreloadAndLeaveRightSubwooferAutoPath.startingPose)
             )
           })
-          .andThen(PreloadAndLeaveRightSubwooferAutoPath(drivetrain, superstructure))
+          .andThen(PreloadAndLeaveRightSubwooferAutoPath(drivetrain, superstructure, secondaryWaitTime))
       AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
@@ -115,7 +115,7 @@ object AutonomousSelector {
               AllianceFlipUtil.apply(PreloadAndLeaveCenterSubwooferAutoPath.startingPose)
             )
           })
-          .andThen(PreloadAndLeaveCenterSubwooferAutoPath(drivetrain, superstructure))
+          .andThen(PreloadAndLeaveCenterSubwooferAutoPath(drivetrain, superstructure, secondaryWaitTime))
       else -> println("ERROR: unexpected auto mode: $mode")
     }
     return InstantCommand()

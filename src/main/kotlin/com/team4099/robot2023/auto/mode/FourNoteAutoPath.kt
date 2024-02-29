@@ -116,7 +116,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               ),
               FieldWaypoint(
                 Translation2d(
-                  ((1.48.meters + 3.inches) + (2.34.meters + 0.25.meters)) / 2,
+                  ((1.48.meters + 3.inches) + (2.34.meters + 0.3.meters)) / 2,
                   5.55.meters
                 )
                   .translation2d,
@@ -124,13 +124,13 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 180.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(2.34.meters + 0.25.meters, 5.5.meters).translation2d,
+                Translation2d(2.34.meters + 0.3.meters, 5.5.meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
               ),
               FieldWaypoint(
                 Translation2d(
-                  ((1.48.meters + 3.inches) + (2.34.meters + 0.25.meters)) / 2,
+                  ((1.48.meters + 3.inches) + (2.34.meters + 0.3.meters)) / 2,
                   5.45.meters
                 )
                   .translation2d,

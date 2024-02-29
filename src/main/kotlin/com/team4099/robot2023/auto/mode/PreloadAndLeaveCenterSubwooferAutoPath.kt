@@ -10,19 +10,23 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Translation2d
+import org.team4099.lib.units.base.Time
+import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
 
 class PreloadAndLeaveCenterSubwooferAutoPath(
     val drivetrain: Drivetrain,
-    val superstructure: Superstructure
+    val superstructure: Superstructure,
+    secondaryWaitTime: Time
 ) : SequentialCommandGroup() {
     init {
         addRequirements(drivetrain, superstructure)
 
         addCommands(
             superstructure.scoreCommand(),
+            WaitCommand(secondaryWaitTime.inSeconds),
             DrivePathCommand.createPathInFieldFrame(
                 drivetrain,
                 {
