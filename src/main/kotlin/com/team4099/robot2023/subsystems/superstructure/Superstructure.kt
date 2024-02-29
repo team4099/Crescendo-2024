@@ -560,12 +560,6 @@ class Superstructure(
           )
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.outtakeVoltage.get())
-        if (!feeder.hasNote &&
-          Clock.fpgaTime - shootStartTime > Flywheel.TunableFlywheelStates.ampScoreTime.get()
-        ) {
-          currentRequest = Request.SuperstructureRequest.Idle()
-          nextState = SuperstructureStates.IDLE
-        }
 
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {

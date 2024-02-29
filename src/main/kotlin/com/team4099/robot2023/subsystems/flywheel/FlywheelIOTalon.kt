@@ -196,18 +196,7 @@ object FlywheelIOTalon : FlywheelIO {
   override fun setFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {
     velocityRequest.setFeedforward(feedforward)
     velocityRequest.setVelocity(velocity)
-    flywheelRightTalon.setControl(
-         VelocityDutyCycle(
-          flywheelRightSensor.velocityToRawUnits(velocity),
-          flywheelRightSensor.accelerationToRawUnits(0.0.rotations.perMinute.perSecond),
-          true,
-          feedforward.inVolts,
-          0,
-          false,
-          false,
-          false
-        )
-    )
+    flywheelRightTalon.setControl(velocityRequest.velocityVoltagePhoenix6)
   }
 
   private fun updateSignals() {
