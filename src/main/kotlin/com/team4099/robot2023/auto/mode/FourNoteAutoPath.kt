@@ -2,7 +2,6 @@ package com.team4099.robot2023.auto.mode
 
 import com.team4099.lib.trajectory.FieldWaypoint
 import com.team4099.robot2023.commands.drivetrain.DrivePathCommand
-import com.team4099.robot2023.commands.drivetrain.ResetPoseCommand
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
@@ -23,9 +22,6 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
     addRequirements(drivetrain, superstructure)
 
     addCommands(
-      ResetPoseCommand(
-        drivetrain, Pose2d(startingPose.x, startingPose.y, startingPose.rotation)
-      ),
       superstructure.scoreCommand(),
       WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds),
       ParallelCommandGroup(
@@ -50,7 +46,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               )
             )
           },
-          keepTrapping = false
+          keepTrapping = true
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
@@ -70,7 +66,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               FieldWaypoint(
                 Translation2d(
                   (1.48.meters + 3.inches + 2.41.meters + 0.225.meters) / 2 +
-                    0.25.meters,
+                          0.25.meters,
                   4.87.meters
                 )
                   .translation2d,
@@ -86,7 +82,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               FieldWaypoint(
                 Translation2d(
                   (1.48.meters + 3.inches + 2.41.meters + 0.225.meters) / 2 +
-                    0.25.meters,
+                          0.25.meters,
                   4.77.meters
                 )
                   .translation2d,
@@ -101,7 +97,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               )
             )
           },
-          keepTrapping = false
+          keepTrapping = true
         ),
         WaitCommand(1.0).andThen(superstructure.groundIntakeCommand())
       ),
@@ -121,7 +117,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               FieldWaypoint(
                 Translation2d(
                   ((1.48.meters + 3.inches) + (2.34.meters + 0.3.meters)) / 2 +
-                    0.25.meters,
+                          0.25.meters,
                   5.55.meters
                 )
                   .translation2d,
@@ -137,7 +133,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               FieldWaypoint(
                 Translation2d(
                   ((1.48.meters + 3.inches) + (2.34.meters + 0.3.meters)) / 2 +
-                    0.25.meters,
+                          0.25.meters,
                   5.45.meters
                 )
                   .translation2d,
@@ -152,7 +148,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               ) // Subwoofer
             )
           },
-          keepTrapping = false
+          keepTrapping = true
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
