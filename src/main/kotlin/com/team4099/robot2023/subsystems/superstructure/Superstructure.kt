@@ -631,9 +631,8 @@ class Superstructure(
 
   fun groundIntakeCommand(): Command {
     val returnCommand =
-      runOnce { currentRequest = Request.SuperstructureRequest.GroundIntake() }.until {
-        isAtRequestedState && currentState == SuperstructureStates.GROUND_INTAKE
-      }
+      runOnce { currentRequest = Request.SuperstructureRequest.GroundIntake() }
+
     returnCommand.name = "GroundIntakeCommand"
     return returnCommand
   }

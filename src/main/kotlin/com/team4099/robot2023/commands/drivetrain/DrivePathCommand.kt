@@ -217,7 +217,7 @@ private constructor(
     if (keepTrapping) {
       swerveDriveController.setTolerance(Pose2d(3.inches, 3.inches, 2.5.degrees).pose2d)
     } else {
-      swerveDriveController.setTolerance(Pose2d(6.inches, 6.inches, 5.degrees).pose2d)
+      swerveDriveController.setTolerance(Pose2d(6.inches, 6.inches, 10.degrees).pose2d)
     }
   }
 
@@ -420,8 +420,8 @@ private constructor(
   override fun isFinished(): Boolean {
     trajCurTime = Clock.fpgaTime - trajStartTime
     return endPathOnceAtReference &&
-      (swerveDriveController.atReference()) &&
-      trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
+            ((swerveDriveController.atReference()) &&
+      trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds)
   }
 
   override fun end(interrupted: Boolean) {

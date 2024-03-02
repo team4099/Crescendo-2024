@@ -425,6 +425,9 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     val allianceFlippedDriveVector =
       Pair(driveVector.first * flipDrive, driveVector.second * flipDrive)
 
+    Logger.recordOutput("Drivetrain/driveVectorFirst", allianceFlippedDriveVector.first.inMetersPerSecond)
+    Logger.recordOutput("Drivetrain/driveVectorSecond", allianceFlippedDriveVector.second.inMetersPerSecond)
+
     val swerveModuleStates: Array<SwerveModuleState>
     var desiredChassisSpeeds: ChassisSpeeds
 
@@ -435,7 +438,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
           allianceFlippedDriveVector.first,
           allianceFlippedDriveVector.second,
           angularVelocity,
-          odomTRobot.rotation
+          odomTField.rotation
         )
     } else {
       desiredChassisSpeeds =

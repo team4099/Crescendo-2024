@@ -7,4 +7,5 @@ object FMSData {
 
   val isBlue: Boolean
     get() = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue
+
 }
