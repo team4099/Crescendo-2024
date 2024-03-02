@@ -32,12 +32,12 @@ object ControlBoard {
   val slowMode: Boolean
     get() = driver.leftShoulderButton
 
-  val resetGyro = Trigger { driver.startButton && driver.selectButton }
+  val resetGyro = Trigger { driver.startButton && driver.selectButton}
 
   // sim triggers
   val score = Trigger { driver.leftTriggerAxis > 0.5 }
   val intake = Trigger { driver.rightShoulderButton }
-  val forceIdle = Trigger { driver.yButton || operator.startButton && operator.selectButton }
+  val forceIdle = Trigger { driver.dPadDown || operator.startButton && operator.selectButton }
 
   // sim trigger
   // val score = Trigger {driver.bButton}
@@ -63,5 +63,9 @@ object ControlBoard {
 
   val characterizeWrist = Trigger { driver.rightShoulderButton }
 
+
+  val climbAlignFar = Trigger {driver.yButton}
+  val climbAlignLeft = Trigger {driver.xButton}
+  val climbAlignRight = Trigger {driver.bButton}
   // week0 controls
 }

@@ -2,6 +2,7 @@ package com.team4099.robot2023.auto.mode
 
 import com.team4099.lib.trajectory.FieldWaypoint
 import com.team4099.robot2023.commands.drivetrain.DrivePathCommand
+import com.team4099.robot2023.commands.drivetrain.ResetPoseCommand
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
@@ -49,7 +50,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               )
             )
           },
-          keepTrapping = true
+          keepTrapping = false
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
@@ -100,7 +101,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               )
             )
           },
-          keepTrapping = true
+          keepTrapping = false
         ),
         WaitCommand(1.0).andThen(superstructure.groundIntakeCommand())
       ),
@@ -151,7 +152,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               ) // Subwoofer
             )
           },
-          keepTrapping = true
+          keepTrapping = false
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),

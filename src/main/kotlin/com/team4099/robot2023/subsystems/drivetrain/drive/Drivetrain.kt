@@ -288,6 +288,8 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
       VisionConstants.POSE_TOPIC_NAME,
       doubleArrayOf(odomTRobot.x.inMeters, odomTRobot.y.inMeters, odomTRobot.rotation.inRadians)
     )
+    Logger.recordOutput("" +
+            "FieldRelativePose/robotPose", fieldTRobot.toDoubleArray().toDoubleArray())
 
     Logger.recordOutput("Drivetrain/ModuleStates", *measuredStates)
     Logger.recordOutput("Drivetrain/setPointStates", *setPointStates.toTypedArray())
@@ -308,7 +310,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     )
 
     Logger.recordOutput(
-      "FieldFrameEstimator/odomTField", odomTField.toDoubleArray().toDoubleArray()
+      "FieldFrameEstimator/odomTField", odomTField.toDoubleArray()
     )
 
     Logger.recordOutput(

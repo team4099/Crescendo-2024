@@ -39,6 +39,14 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
+import com.team4099.robot2023.util.AllianceFlipUtil
+import edu.wpi.first.hal.AllianceStationID
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.wpilibj.DriverStation
+import java.sql.Driver
+import org.team4099.lib.units.derived.inRotation2ds
+import org.team4099.lib.units.derived.inRotations
+import org.team4099.lib.units.derived.radians
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -176,9 +184,51 @@ object RobotContainer {
         { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain,
-        (-90).degrees,
+        (90).degrees,
       )
     )
+
+
+    ControlBoard.climbAlignFar.whileTrue(
+      TargetAngleCommand(
+        driver = Ryan(),
+        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { ControlBoard.slowMode },
+        drivetrain,
+        if (DriverStation.getAlliance().isPresent && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) 0.0.degrees else 180.0.degrees
+      )
+    )
+
+    /*
+    ControlBoard.climbAlignLeft.whileTrue(
+      TargetAngleCommand(
+        driver = Ryan(),
+        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { ControlBoard.slowMode },
+        drivetrain,
+        if (DriverStation.getAlliance().isPresent && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) 120.degrees else -60.degrees
+      )
+    )
+
+     */
+
+
+    ControlBoard.climbAlignRight.whileTrue(
+      TargetAngleCommand(
+        driver = Ryan(),
+        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { ControlBoard.slowMode },
+        drivetrain,
+        if (DriverStation.getAlliance().isPresent && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) -120.0.degrees else 60.0.degrees,
+      )
+    )
+
 
     /*
     TUNING COMMANDS

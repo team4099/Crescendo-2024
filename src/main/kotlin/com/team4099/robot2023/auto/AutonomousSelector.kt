@@ -1,6 +1,9 @@
 package com.team4099.robot2023.auto
 
 import com.team4099.robot2023.auto.mode.FourNoteAutoPath
+import com.team4099.robot2023.auto.mode.FourNoteLeftCenterLine
+import com.team4099.robot2023.auto.mode.FourNoteMiddleCenterLine
+import com.team4099.robot2023.auto.mode.FourNoteRightCenterLine
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveCenterSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveLeftSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveRightSubwooferAutoPath
@@ -35,19 +38,13 @@ object AutonomousSelector {
     //    autoTab.add("Starting Orientation", orientationChooser)
 
     autonomousModeChooser.addOption("Four Note Wing Auto", AutonomousMode.FOUR_NOTE_AUTO_PATH)
-    autonomousModeChooser.addOption(
-      "Preload + Leave from Left Side of Subwoofer",
-      AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER
-    )
-    autonomousModeChooser.addOption(
-      "Preload + Leave from Right Side of Subwoofer",
-      AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER
-    )
-    autonomousModeChooser.addOption(
-      "Preload + Leave from Center Side of Subwoofer",
-      AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER
-    )
 
+    autonomousModeChooser.addOption("Four Note Right Auto(1 Wing + 2 Centerline)", AutonomousMode.FOUR_NOTE_RIGHT_AUTO_PATH)
+    autonomousModeChooser.addOption("Four Note Middle Auto(1 Wing + 2 Centerline)", AutonomousMode.FOUR_NOTE_MIDDLE_AUTO_PATH)
+    autonomousModeChooser.addOption("Four Note LEFT Auto(1 Wing + 2 Centerline)", AutonomousMode.FOUR_NOTE_LEFT_AUTO_PATH)
+    autonomousModeChooser.addOption("Preload + Leave from Left Side of Subwoofer", AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER)
+    autonomousModeChooser.addOption("Preload + Leave from Right Side of Subwoofer", AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER)
+    autonomousModeChooser.addOption("Preload + Leave from Center Side of Subwoofer", AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER)
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
     autoTab.add("Mode", autonomousModeChooser.sendableChooser).withSize(4, 2).withPosition(2, 0)
@@ -94,6 +91,27 @@ object AutonomousSelector {
             )
           })
           .andThen(FourNoteAutoPath(drivetrain, superstructure))
+      AutonomousMode.FOUR_NOTE_RIGHT_AUTO_PATH ->
+        return WaitCommand(waitTime.inSeconds).andThen({
+          drivetrain.resetFieldFrameEstimator(
+            AllianceFlipUtil.apply(FourNoteRightCenterLine.startingPose)
+          )
+        })
+          .andThen(FourNoteRightCenterLine(drivetrain, superstructure))
+      AutonomousMode.FOUR_NOTE_MIDDLE_AUTO_PATH ->
+        return WaitCommand(waitTime.inSeconds).andThen({
+          drivetrain.resetFieldFrameEstimator(
+            AllianceFlipUtil.apply(FourNoteMiddleCenterLine.startingPose)
+          )
+        })
+          .andThen(FourNoteMiddleCenterLine(drivetrain, superstructure))
+      AutonomousMode.FOUR_NOTE_LEFT_AUTO_PATH ->
+        return WaitCommand(waitTime.inSeconds).andThen({
+          drivetrain.resetFieldFrameEstimator(
+            AllianceFlipUtil.apply(FourNoteLeftCenterLine.startingPose)
+          )
+        })
+          .andThen(FourNoteMiddleCenterLine(drivetrain, superstructure))
       AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
@@ -138,8 +156,11 @@ object AutonomousSelector {
   private enum class AutonomousMode {
     TEST_AUTO_PATH,
     FOUR_NOTE_AUTO_PATH,
+    FOUR_NOTE_RIGHT_AUTO_PATH,
+    FOUR_NOTE_MIDDLE_AUTO_PATH,
+    FOUR_NOTE_LEFT_AUTO_PATH,
     PRELOAD_AND_LEAVE_LEFT_SUBWOOFER,
     PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER,
-    PRELOAD_AND_LEAVE_CENTER_SUBWOOFER
+    PRELOAD_AND_LEAVE_CENTER_SUBWOOFER;
   }
 }

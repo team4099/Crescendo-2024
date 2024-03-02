@@ -63,6 +63,7 @@ import org.team4099.lib.units.perSecond
 import java.util.function.Supplier
 import kotlin.math.PI
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
+import edu.wpi.first.wpilibj.RobotBase
 
 class DrivePathCommand<T : Waypoint>
 private constructor(
@@ -181,6 +182,12 @@ private constructor(
 
   init {
     addRequirements(drivetrain)
+
+    if (RobotBase.isSimulation()) {
+      thetakP.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP)
+      thetakI.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI)
+      thetakD.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD)
+    }
 
     xPID = PIDController(poskP.get(), poskI.get(), poskD.get())
     yPID = PIDController(poskP.get(), poskI.get(), poskD.get())
