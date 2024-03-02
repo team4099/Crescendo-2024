@@ -6,7 +6,6 @@ import com.team4099.robot2023.util.AllianceFlipUtil
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
-import org.team4099.lib.geometry.Pose2dWPILIB
 
 class ResetPoseCommand(val drivetrain: Drivetrain, val pose: Pose2d) : Command() {
   init {

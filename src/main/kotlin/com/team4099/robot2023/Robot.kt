@@ -137,11 +137,12 @@ object Robot : LoggedRobot() {
     }
 
     val autoTab = Shuffleboard.getTab("Pre-match")
-    allianceSelected = autoTab
-      .add("Alliance Selected", "No alliance")
-      .withPosition(0, 1)
-      .withWidget(BuiltInWidgets.kTextView)
-      .entry
+    allianceSelected =
+      autoTab
+        .add("Alliance Selected", "No alliance")
+        .withPosition(0, 1)
+        .withWidget(BuiltInWidgets.kTextView)
+        .entry
   }
 
   override fun autonomousInit() {
@@ -190,12 +191,12 @@ object Robot : LoggedRobot() {
 
     ControlBoard.rumbleConsumer.accept(RobotContainer.rumbleState)
 
-    val currentAlliance = try {
-      DriverStation.getAlliance().get().toString()
-    }
-    catch (_: NoSuchElementException) {
-      "No alliance"
-    }
+    val currentAlliance =
+      try {
+        DriverStation.getAlliance().get().toString()
+      } catch (_: NoSuchElementException) {
+        "No alliance"
+      }
 
     allianceSelected.set(NetworkTableValue.makeString(currentAlliance))
 

@@ -207,7 +207,11 @@ private constructor(
         xPID.wpiPidController, yPID.wpiPidController, thetaPID.wpiPidController
       )
 
-    swerveDriveController.setTolerance(Pose2d(3.inches, 3.inches, 2.5.degrees).pose2d)
+    if (keepTrapping) {
+      swerveDriveController.setTolerance(Pose2d(3.inches, 3.inches, 2.5.degrees).pose2d)
+    } else {
+      swerveDriveController.setTolerance(Pose2d(6.inches, 6.inches, 5.degrees).pose2d)
+    }
   }
 
   override fun initialize() {

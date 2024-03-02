@@ -37,12 +37,12 @@ class TargetAngleCommand(
   private var thetaPID: PIDController<Radian, Velocity<Radian>>
   val thetakP =
     LoggedTunableValue(
-      "Pathfollow/thetakP",
+      "Pathfollow/thetaAmpkP",
       Pair({ it.inDegreesPerSecondPerDegree }, { it.degrees.perSecond.perDegree })
     )
   val thetakI =
     LoggedTunableValue(
-      "Pathfollow/thetakI",
+      "Pathfollow/thetaAmpkI",
       Pair(
         { it.inDegreesPerSecondPerDegreeSeconds }, { it.degrees.perSecond.perDegreeSeconds }
       )
@@ -67,6 +67,7 @@ class TargetAngleCommand(
       )
 
     if (!(RobotBase.isSimulation())) {
+
       thetakP.initDefault(DrivetrainConstants.PID.TELEOP_ALIGN_PID_KP)
       thetakI.initDefault(DrivetrainConstants.PID.TELEOP_ALIGN_PID_KI)
       thetakD.initDefault(DrivetrainConstants.PID.TELEOP_ALIGN_PID_KD)
@@ -95,9 +96,14 @@ class TargetAngleCommand(
 
   override fun initialize() {
     thetaPID.reset() // maybe do first for x?
+
+    if (thetakP.hasChanged() || thetakI.hasChanged() || thetakD.hasChanged()) {
+      thetaPID = PIDController(thetakP.get(), thetakI.get(), thetakD.get())
+    }
   }
 
   override fun execute() {
+
     drivetrain.defaultCommand.end(true)
     Logger.recordOutput("ActiveCommands/TargetAngleCommand", true)
     Logger.recordOutput(

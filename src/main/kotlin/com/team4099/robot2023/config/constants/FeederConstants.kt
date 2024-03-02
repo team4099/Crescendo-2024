@@ -23,7 +23,7 @@ object FeederConstants {
 
   var NOTE_VELOCITY_THRESHOLD = 60.degrees.perSecond
 
-  var WAIT_BEFORE_DETECT_VELOCITY_DROP = 1.seconds
+  var WAIT_BEFORE_DETECT_VELOCITY_DROP = 0.5.seconds
 
   val IDLE_VOLTAGE = 0.volts
   val INTAKE_NOTE_VOLTAGE = 1.volts

@@ -129,8 +129,8 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
   private var lastRightFlywheelVoltage = 0.0.volts
 
   var flywheelTargetVoltage = 0.volts
-  var flywheelRightTargetVelocity: AngularVelocity = 0.0.rotations.perMinute
-  var flywheelLeftTargetVelocity: AngularVelocity = 0.0.rotations.perMinute
+  var flywheelRightTargetVelocity: AngularVelocity = -1337.0.rotations.perMinute
+  var flywheelLeftTargetVelocity: AngularVelocity = -1337.0.rotations.perMinute
 
   val isAtTargetedVelocity: Boolean
     get() =

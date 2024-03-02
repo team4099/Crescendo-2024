@@ -278,8 +278,8 @@ class Superstructure(
             nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
           }
           is Request.SuperstructureRequest.PrepScoreSpeakerLow -> {
-          nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
-        }
+            nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
+          }
           is Request.SuperstructureRequest.PrepScoreSpeakerMid -> {
             nextState = SuperstructureStates.SCORE_SPEAKER_MID_PREP
           }
@@ -346,6 +346,12 @@ class Superstructure(
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
+          }
+          is Request.SuperstructureRequest.PrepScoreSpeakerLow -> {
+            nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
+          }
+          is Request.SuperstructureRequest.ScoreSpeaker -> {
+            nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
           }
         }
       }
@@ -428,7 +434,7 @@ class Superstructure(
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.shootVoltage.get())
 
-        if (!feeder.hasNote &&
+        if ((!feeder.hasNote) &&
           Clock.fpgaTime - shootStartTime >
           Flywheel.TunableFlywheelStates.speakerScoreTime.get()
         ) {

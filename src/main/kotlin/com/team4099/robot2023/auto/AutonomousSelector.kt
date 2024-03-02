@@ -5,26 +5,19 @@ import com.team4099.robot2023.auto.mode.PreloadAndLeaveCenterSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveLeftSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveRightSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.TestAutoPath
-import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.util.AllianceFlipUtil
 import edu.wpi.first.networktables.GenericEntry
-import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj.DriverStation.Alliance
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
-import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.seconds
-import org.team4099.lib.units.derived.Angle
-import org.team4099.lib.units.derived.cos
-import org.team4099.lib.units.derived.sin
 
 object AutonomousSelector {
   //  private var orientationChooser: SendableChooser<Angle> = SendableChooser()
@@ -42,9 +35,18 @@ object AutonomousSelector {
     //    autoTab.add("Starting Orientation", orientationChooser)
 
     autonomousModeChooser.addOption("Four Note Wing Auto", AutonomousMode.FOUR_NOTE_AUTO_PATH)
-    autonomousModeChooser.addOption("Preload + Leave from Left Side of Subwoofer", AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER)
-    autonomousModeChooser.addOption("Preload + Leave from Right Side of Subwoofer", AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER)
-    autonomousModeChooser.addOption("Preload + Leave from Center Side of Subwoofer", AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER)
+    autonomousModeChooser.addOption(
+      "Preload + Leave from Left Side of Subwoofer",
+      AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER
+    )
+    autonomousModeChooser.addOption(
+      "Preload + Leave from Right Side of Subwoofer",
+      AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER
+    )
+    autonomousModeChooser.addOption(
+      "Preload + Leave from Center Side of Subwoofer",
+      AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER
+    )
 
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
@@ -99,7 +101,11 @@ object AutonomousSelector {
               AllianceFlipUtil.apply(PreloadAndLeaveLeftSubwooferAutoPath.startingPose)
             )
           })
-          .andThen(PreloadAndLeaveLeftSubwooferAutoPath(drivetrain, superstructure, secondaryWaitTime))
+          .andThen(
+            PreloadAndLeaveLeftSubwooferAutoPath(
+              drivetrain, superstructure, secondaryWaitTime
+            )
+          )
       AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
@@ -107,7 +113,11 @@ object AutonomousSelector {
               AllianceFlipUtil.apply(PreloadAndLeaveRightSubwooferAutoPath.startingPose)
             )
           })
-          .andThen(PreloadAndLeaveRightSubwooferAutoPath(drivetrain, superstructure, secondaryWaitTime))
+          .andThen(
+            PreloadAndLeaveRightSubwooferAutoPath(
+              drivetrain, superstructure, secondaryWaitTime
+            )
+          )
       AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
@@ -115,7 +125,11 @@ object AutonomousSelector {
               AllianceFlipUtil.apply(PreloadAndLeaveCenterSubwooferAutoPath.startingPose)
             )
           })
-          .andThen(PreloadAndLeaveCenterSubwooferAutoPath(drivetrain, superstructure, secondaryWaitTime))
+          .andThen(
+            PreloadAndLeaveCenterSubwooferAutoPath(
+              drivetrain, superstructure, secondaryWaitTime
+            )
+          )
       else -> println("ERROR: unexpected auto mode: $mode")
     }
     return InstantCommand()
