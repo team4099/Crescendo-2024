@@ -147,10 +147,13 @@ object Robot : LoggedRobot() {
 
   override fun autonomousInit() {
     RobotContainer.zeroSensors(isInAutonomous = true)
-    FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
     RobotContainer.setDriveBrakeMode()
     RobotContainer.setSteeringBrakeMode()
     RobotContainer.getAutonomousCommand().schedule()
+  }
+
+  override fun disabledPeriodic() {
+    FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
   }
 
   override fun disabledInit() {

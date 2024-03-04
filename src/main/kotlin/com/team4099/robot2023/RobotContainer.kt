@@ -33,20 +33,13 @@ import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
 import com.team4099.robot2023.subsystems.wrist.WristIOTalon
 import com.team4099.robot2023.util.driver.Ryan
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
-import com.team4099.robot2023.util.AllianceFlipUtil
-import edu.wpi.first.hal.AllianceStationID
-import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.wpilibj.DriverStation
-import java.sql.Driver
-import org.team4099.lib.units.derived.inRotation2ds
-import org.team4099.lib.units.derived.inRotations
-import org.team4099.lib.units.derived.radians
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -149,7 +142,7 @@ object RobotContainer {
 
   fun mapTeleopControls() {
 
-    ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain, toAngle = 180.degrees))
+    ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain))
     ControlBoard.intake.whileTrue(superstructure.groundIntakeCommand())
     ControlBoard.prepAmp.whileTrue(superstructure.prepAmpCommand())
 
@@ -184,10 +177,9 @@ object RobotContainer {
         { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain,
-        (90).degrees,
+        270.0.degrees
       )
     )
-
 
     ControlBoard.climbAlignFar.whileTrue(
       TargetAngleCommand(
@@ -197,10 +189,13 @@ object RobotContainer {
         { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain,
-        if (DriverStation.getAlliance().isPresent && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) 0.0.degrees else 180.0.degrees
+        if (DriverStation.getAlliance().isPresent &&
+          DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+        )
+          0.0.degrees
+        else 180.0.degrees
       )
     )
-
 
     ControlBoard.climbAlignLeft.whileTrue(
       TargetAngleCommand(
@@ -210,12 +205,13 @@ object RobotContainer {
         { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain,
-        if (DriverStation.getAlliance().isPresent && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) 120.degrees else -60.degrees
+        if (DriverStation.getAlliance().isPresent &&
+          DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+        )
+          120.degrees
+        else -60.degrees
       )
     )
-
-
-
 
     ControlBoard.climbAlignRight.whileTrue(
       TargetAngleCommand(
@@ -225,10 +221,13 @@ object RobotContainer {
         { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain,
-        if (DriverStation.getAlliance().isPresent && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) -120.0.degrees else 60.0.degrees,
+        if (DriverStation.getAlliance().isPresent &&
+          DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+        )
+          -120.0.degrees
+        else 60.0.degrees,
       )
     )
-
 
     /*
     TUNING COMMANDS

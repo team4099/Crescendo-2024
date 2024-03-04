@@ -21,10 +21,10 @@ object ControlBoard {
     }
 
   val strafe: Double
-    get() = driver.leftXAxis
+    get() = -driver.leftXAxis
 
   val forward: Double
-    get() = driver.leftYAxis
+    get() = -driver.leftYAxis
 
   val turn: Double
     get() = driver.rightXAxis
@@ -32,7 +32,7 @@ object ControlBoard {
   val slowMode: Boolean
     get() = driver.leftShoulderButton
 
-  val resetGyro = Trigger { driver.startButton && driver.selectButton}
+  val resetGyro = Trigger { driver.startButton && driver.selectButton }
 
   // sim triggers
   val score = Trigger { driver.leftTriggerAxis > 0.5 }
@@ -63,9 +63,8 @@ object ControlBoard {
 
   val characterizeWrist = Trigger { driver.rightShoulderButton }
 
-
-  val climbAlignFar = Trigger {driver.yButton}
-  val climbAlignLeft = Trigger {driver.xButton}
-  val climbAlignRight = Trigger {driver.bButton}
+  val climbAlignFar = Trigger { driver.yButton }
+  val climbAlignLeft = Trigger { driver.xButton }
+  val climbAlignRight = Trigger { driver.bButton }
   // week0 controls
 }

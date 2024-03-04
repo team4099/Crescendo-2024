@@ -39,12 +39,27 @@ object AutonomousSelector {
 
     autonomousModeChooser.addOption("Four Note Wing Auto", AutonomousMode.FOUR_NOTE_AUTO_PATH)
 
-    autonomousModeChooser.addOption("Four Note Right Auto(1 Wing + 2 Centerline)", AutonomousMode.FOUR_NOTE_RIGHT_AUTO_PATH)
-    autonomousModeChooser.addOption("Four Note Middle Auto(1 Wing + 2 Centerline)", AutonomousMode.FOUR_NOTE_MIDDLE_AUTO_PATH)
-    autonomousModeChooser.addOption("Four Note LEFT Auto(1 Wing + 2 Centerline)", AutonomousMode.FOUR_NOTE_LEFT_AUTO_PATH)
-    autonomousModeChooser.addOption("Preload + Leave from Left Side of Subwoofer", AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER)
-    autonomousModeChooser.addOption("Preload + Leave from Right Side of Subwoofer", AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER)
-    autonomousModeChooser.addOption("Preload + Leave from Center Side of Subwoofer", AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER)
+    autonomousModeChooser.addOption(
+      "Four Note Right Auto(1 Wing + 2 Centerline)", AutonomousMode.FOUR_NOTE_RIGHT_AUTO_PATH
+    )
+    autonomousModeChooser.addOption(
+      "Four Note Middle Auto(1 Wing + 2 Centerline)", AutonomousMode.FOUR_NOTE_MIDDLE_AUTO_PATH
+    )
+    autonomousModeChooser.addOption(
+      "Four Note LEFT Auto(1 Wing + 2 Centerline)", AutonomousMode.FOUR_NOTE_LEFT_AUTO_PATH
+    )
+    autonomousModeChooser.addOption(
+      "Preload + Leave from Left Side of Subwoofer",
+      AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER
+    )
+    autonomousModeChooser.addOption(
+      "Preload + Leave from Right Side of Subwoofer",
+      AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER
+    )
+    autonomousModeChooser.addOption(
+      "Preload + Leave from Center Side of Subwoofer",
+      AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER
+    )
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
     autoTab.add("Mode", autonomousModeChooser.sendableChooser).withSize(4, 2).withPosition(2, 0)
@@ -78,6 +93,7 @@ object AutonomousSelector {
       AutonomousMode.TEST_AUTO_PATH ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
+            drivetrain.tempZeroGyroYaw(TestAutoPath.startingPose.rotation)
             drivetrain.resetFieldFrameEstimator(
               AllianceFlipUtil.apply(TestAutoPath.startingPose)
             )
@@ -86,38 +102,42 @@ object AutonomousSelector {
       AutonomousMode.FOUR_NOTE_AUTO_PATH ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
-            drivetrain.resetFieldFrameEstimator(
-              AllianceFlipUtil.apply(FourNoteAutoPath.startingPose)
-            )
+            val flippedPose = AllianceFlipUtil.apply(FourNoteAutoPath.startingPose)
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(FourNoteAutoPath(drivetrain, superstructure))
       AutonomousMode.FOUR_NOTE_RIGHT_AUTO_PATH ->
-        return WaitCommand(waitTime.inSeconds).andThen({
-          drivetrain.resetFieldFrameEstimator(
-            AllianceFlipUtil.apply(FourNoteRightCenterLine.startingPose)
-          )
-        })
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            val flippedPose = AllianceFlipUtil.apply(FourNoteRightCenterLine.startingPose)
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
+          })
           .andThen(FourNoteRightCenterLine(drivetrain, superstructure))
       AutonomousMode.FOUR_NOTE_MIDDLE_AUTO_PATH ->
-        return WaitCommand(waitTime.inSeconds).andThen({
-          drivetrain.resetFieldFrameEstimator(
-            AllianceFlipUtil.apply(FourNoteMiddleCenterLine.startingPose)
-          )
-        })
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            val flippedPose = AllianceFlipUtil.apply(FourNoteMiddleCenterLine.startingPose)
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
+          })
           .andThen(FourNoteMiddleCenterLine(drivetrain, superstructure))
       AutonomousMode.FOUR_NOTE_LEFT_AUTO_PATH ->
-        return WaitCommand(waitTime.inSeconds).andThen({
-          drivetrain.resetFieldFrameEstimator(
-            AllianceFlipUtil.apply(FourNoteLeftCenterLine.startingPose)
-          )
-        })
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            val flippedPose = AllianceFlipUtil.apply(FourNoteLeftCenterLine.startingPose)
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
+          })
           .andThen(FourNoteMiddleCenterLine(drivetrain, superstructure))
       AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
-            drivetrain.resetFieldFrameEstimator(
+            val flippedPose =
               AllianceFlipUtil.apply(PreloadAndLeaveLeftSubwooferAutoPath.startingPose)
-            )
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(
             PreloadAndLeaveLeftSubwooferAutoPath(
@@ -127,9 +147,10 @@ object AutonomousSelector {
       AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
-            drivetrain.resetFieldFrameEstimator(
+            val flippedPose =
               AllianceFlipUtil.apply(PreloadAndLeaveRightSubwooferAutoPath.startingPose)
-            )
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(
             PreloadAndLeaveRightSubwooferAutoPath(
@@ -139,9 +160,10 @@ object AutonomousSelector {
       AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
-            drivetrain.resetFieldFrameEstimator(
+            val flippedPose =
               AllianceFlipUtil.apply(PreloadAndLeaveCenterSubwooferAutoPath.startingPose)
-            )
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(
             PreloadAndLeaveCenterSubwooferAutoPath(
@@ -161,6 +183,6 @@ object AutonomousSelector {
     FOUR_NOTE_LEFT_AUTO_PATH,
     PRELOAD_AND_LEAVE_LEFT_SUBWOOFER,
     PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER,
-    PRELOAD_AND_LEAVE_CENTER_SUBWOOFER;
+    PRELOAD_AND_LEAVE_CENTER_SUBWOOFER
   }
 }

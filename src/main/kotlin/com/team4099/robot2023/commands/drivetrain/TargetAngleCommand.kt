@@ -113,6 +113,7 @@ class TargetAngleCommand(
     )
 
     val thetaFeedback = thetaPID.calculate(drivetrain.odomTRobot.rotation, targetAngle)
+    Logger.recordOutput("Testing/error", thetaPID.error.inDegrees)
     Logger.recordOutput("Testing/thetaFeedback", thetaFeedback.inDegreesPerSecond)
 
     drivetrain.currentRequest =

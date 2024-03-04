@@ -14,6 +14,7 @@ class ResetPoseCommand(val drivetrain: Drivetrain, val pose: Pose2d) : Command()
 
   override fun initialize() {
     drivetrain.resetFieldFrameEstimator(AllianceFlipUtil.apply(pose))
+    drivetrain.zeroGyroYaw(AllianceFlipUtil.apply(pose).rotation)
     Logger.recordOutput(
       "Drivetrain/lastResetPose", AllianceFlipUtil.apply(pose).toDoubleArray().toDoubleArray()
     )

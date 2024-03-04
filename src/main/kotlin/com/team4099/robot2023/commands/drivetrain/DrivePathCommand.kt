@@ -20,6 +20,7 @@ import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGeneratio
 import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint
 import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
@@ -63,7 +64,6 @@ import org.team4099.lib.units.perSecond
 import java.util.function.Supplier
 import kotlin.math.PI
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
-import edu.wpi.first.wpilibj.RobotBase
 
 class DrivePathCommand<T : Waypoint>
 private constructor(
@@ -420,8 +420,10 @@ private constructor(
   override fun isFinished(): Boolean {
     trajCurTime = Clock.fpgaTime - trajStartTime
     return endPathOnceAtReference &&
-            ((swerveDriveController.atReference()) &&
-      trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds)
+      (
+        (swerveDriveController.atReference()) &&
+          trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
+        )
   }
 
   override fun end(interrupted: Boolean) {
