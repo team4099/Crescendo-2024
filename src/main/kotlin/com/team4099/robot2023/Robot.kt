@@ -3,6 +3,7 @@ package com.team4099.robot2023
 import com.team4099.lib.hal.Clock
 import com.team4099.robot2023.auto.AutonomousSelector
 import com.team4099.robot2023.auto.PathStore
+import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.util.Alert
@@ -10,10 +11,14 @@ import com.team4099.robot2023.util.Alert.AlertType
 import com.team4099.robot2023.util.FMSData
 import com.team4099.robot2023.util.NTSafePublisher
 import edu.wpi.first.hal.AllianceStationID
+import edu.wpi.first.networktables.GenericEntry
+import edu.wpi.first.networktables.NetworkTableValue
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.simulation.DriverStationSim
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
@@ -43,6 +48,7 @@ object Robot : LoggedRobot() {
   val logSimulationAlert = Alert("Running in simulation", AlertType.INFO)
   val logTuningModeEnabled =
     Alert("Tuning Mode Enabled. Expect loop times to be greater", AlertType.WARNING)
+  lateinit var allianceSelected: GenericEntry
   /*
   val port0 = AnalogInput(0)
   val port1 = AnalogInput(1)
@@ -129,14 +135,25 @@ object Robot : LoggedRobot() {
     CommandScheduler.getInstance().onCommandInterrupt { command: Command ->
       Logger.recordOutput("/ActiveCommands/${command.name}", false)
     }
+
+    val autoTab = Shuffleboard.getTab("Pre-match")
+    allianceSelected =
+      autoTab
+        .add("Alliance Selected", "No alliance")
+        .withPosition(0, 1)
+        .withWidget(BuiltInWidgets.kTextView)
+        .entry
   }
 
   override fun autonomousInit() {
-    RobotContainer.zeroSensors()
-    FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
+    RobotContainer.zeroSensors(isInAutonomous = true)
     RobotContainer.setDriveBrakeMode()
     RobotContainer.setSteeringBrakeMode()
     RobotContainer.getAutonomousCommand().schedule()
+  }
+
+  override fun disabledPeriodic() {
+    FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
   }
 
   override fun disabledInit() {
@@ -174,6 +191,17 @@ object Robot : LoggedRobot() {
     )
 
     Logger.recordOutput("LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds)
+
+    ControlBoard.rumbleConsumer.accept(RobotContainer.rumbleState)
+
+    val currentAlliance =
+      try {
+        DriverStation.getAlliance().get().toString()
+      } catch (_: NoSuchElementException) {
+        "No alliance"
+      }
+
+    allianceSelected.set(NetworkTableValue.makeString(currentAlliance))
 
     /*
     Logger.recordOutput("LoggedRobot/port0", port0.voltage)

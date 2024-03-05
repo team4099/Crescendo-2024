@@ -50,8 +50,8 @@ object DrivetrainConstants {
       .perSecond // 648
 
   // cruise velocity and accel for steering motor
-  val STEERING_VEL_MAX = 270.degrees.perSecond
-  val STEERING_ACCEL_MAX = 600.degrees.perSecond.perSecond
+  val STEERING_VEL_MAX = 151.degrees.perSecond
+  val STEERING_ACCEL_MAX = 302.degrees.perSecond.perSecond
 
   const val GYRO_RATE_COEFFICIENT = 0.0 // TODO: Change this value
 
@@ -59,7 +59,7 @@ object DrivetrainConstants {
   val SLOW_AUTO_ACCEL = 2.0.meters.perSecond.perSecond
 
   val MAX_AUTO_VEL = 3.meters.perSecond // 4
-  val MAX_AUTO_ACCEL = 3.meters.perSecond.perSecond // 3
+  val MAX_AUTO_ACCEL = 2.meters.perSecond.perSecond // 3
 
   val MAX_AUTO_BRAKE_VEL = 0.5.meters.perSecond // 4
   val MAX_AUTO_BRAKE_ACCEL = 0.5.meters.perSecond.perSecond // 3
@@ -73,11 +73,11 @@ object DrivetrainConstants {
   val ALLOWED_STEERING_ANGLE_ERROR = 1.degrees
 
   val STEERING_SUPPLY_CURRENT_LIMIT = 20.0.amps
-  val DRIVE_SUPPLY_CURRENT_LIMIT = 35.0.amps
+  val DRIVE_SUPPLY_CURRENT_LIMIT = 60.0.amps
   val DRIVE_THRESHOLD_CURRENT_LIMIT = 60.0.amps
   val DRIVE_TRIGGER_THRESHOLD_TIME = 0.1.seconds
 
-  val DRIVE_STATOR_CURRENT_LIMIT = 65.0.amps
+  val DRIVE_STATOR_CURRENT_LIMIT = 60.0.amps
   val DRIVE_STATOR_THRESHOLD_CURRENT_LIMIT = 80.0.amps
   val DRIVE_STATOR_TRIGGER_THRESHOLD_TIME = 1.0.seconds
 
@@ -101,7 +101,7 @@ object DrivetrainConstants {
     val AUTO_POS_KP: ProportionalGain<Meter, Velocity<Meter>>
       get() {
         if (RobotBase.isReal()) {
-          return 8.0.meters.perSecond / 1.0.meters
+          return 0.23.meters.perSecond / 1.0.meters // todo:4
         } else {
           return 7.0.meters.perSecond / 1.0.meters
         }
@@ -118,7 +118,8 @@ object DrivetrainConstants {
     val AUTO_POS_KD: DerivativeGain<Meter, Velocity<Meter>>
       get() {
         if (RobotBase.isReal()) {
-          return (0.05.meters.perSecond / (1.0.meters.perSecond)).metersPerSecondPerMetersPerSecond
+          return (0.14.meters.perSecond / (1.0.meters.perSecond))
+            .metersPerSecondPerMetersPerSecond // todo: 0.25
         } else {
           return (0.0.meters.perSecond / (1.0.meters.perSecond)).metersPerSecondPerMetersPerSecond
         }
@@ -126,21 +127,20 @@ object DrivetrainConstants {
 
     val AUTO_THETA_ALLOWED_ERROR = 3.degrees
 
-    val AUTO_THETA_PID_KP = 15.degrees.perSecond / 1.degrees
+    val AUTO_THETA_PID_KP = 0.1.degrees.perSecond / 1.degrees // 0.1
     val AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val AUTO_THETA_PID_KD =
-      (0.1.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (0.02.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
-    val SIM_AUTO_THETA_PID_KP = 15.degrees.perSecond / 1.degrees
+    val TELEOP_ALIGN_PID_KP = 4.degrees.perSecond / 1.degrees
+    val TELEOP_ALIGN_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
+    val TELEOP_ALIGN_PID_KD =
+      (0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+
+    val SIM_AUTO_THETA_PID_KP = 5.degrees.perSecond / 1.degrees
     val SIM_AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val SIM_AUTO_THETA_PID_KD =
-      (0.0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
-
-    val AUTO_LEVEL_KP = 1.meters.perSecond / 1.0.degrees // tune this
-    val AUTO_LEVEL_KI = 0.0.meters.perSecond / (1.0.degrees * 1.seconds) // tune this
-    val AUTO_LEVEL_KD = 0.0.meters.perSecond / (1.0.degrees.perSecond) // tune this
-    val AUTO_LEVEL_MAX_VEL_SETPOINT = 2.degrees.perSecond
-    val AUTO_LEVEL_MAX_ACCEL_SETPOINT = 2.degrees.perSecond.perSecond
+      (1.0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val MAX_AUTO_ANGULAR_VEL = 270.0.degrees.perSecond
     val MAX_AUTO_ANGULAR_ACCEL = 600.0.degrees.perSecond.perSecond
@@ -158,7 +158,7 @@ object DrivetrainConstants {
     val DRIVE_KFF = 12.0.volts / 4.1675.meters.perSecond
 
     val DRIVE_KS = 0.5.volts
-    val DRIVE_KV = 0.0.volts / 1.0.meters.perSecond
+    val DRIVE_KV = 0.11.volts / 1.0.meters.perSecond
     val DRIVE_KA = 0.0.volts / 1.0.meters.perSecond.perSecond
 
     //    val DRIVE_KS = 0.23677.volts

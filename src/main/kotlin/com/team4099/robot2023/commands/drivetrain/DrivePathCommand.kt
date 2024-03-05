@@ -11,7 +11,6 @@ import com.team4099.lib.trajectory.OdometryWaypoint
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.AllianceFlipUtil
 import com.team4099.robot2023.util.FrameType
 import com.team4099.robot2023.util.Velocity2d
@@ -21,6 +20,7 @@ import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGeneratio
 import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint
 import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
@@ -122,26 +122,25 @@ private constructor(
 
   val poskP =
     LoggedTunableValue(
-      "Pathfollow/poskP",
+      "Pathfollow/posKP",
       DrivetrainConstants.PID.AUTO_POS_KP,
       Pair({ it.inMetersPerSecondPerMeter }, { it.meters.perSecond.perMeter })
     )
   val poskI =
     LoggedTunableValue(
-      "Pathfollow/poskI",
+      "Pathfollow/posKI",
       DrivetrainConstants.PID.AUTO_POS_KI,
       Pair({ it.inMetersPerSecondPerMeterSeconds }, { it.meters.perSecond.perMeterSeconds })
     )
   val poskD =
     LoggedTunableValue(
-      "Pathfollow/poskD",
+      "Pathfollow/posKD",
       DrivetrainConstants.PID.AUTO_POS_KD,
       Pair(
         { it.inMetersPerSecondPerMetersPerSecond }, { it.metersPerSecondPerMetersPerSecond }
       )
     )
 
-  private var pathFollowRequest = Request.DrivetrainRequest.ClosedLoop(ChassisSpeeds(0.0, 0.0, 0.0))
   private var lastSampledPose = Pose2d()
   private lateinit var pathTransform: Transform2d
 
@@ -184,6 +183,12 @@ private constructor(
   init {
     addRequirements(drivetrain)
 
+    if (RobotBase.isSimulation()) {
+      thetakP.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP)
+      thetakI.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI)
+      thetakD.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD)
+    }
+
     xPID = PIDController(poskP.get(), poskI.get(), poskD.get())
     yPID = PIDController(poskP.get(), poskI.get(), poskD.get())
     thetaPID =
@@ -209,7 +214,11 @@ private constructor(
         xPID.wpiPidController, yPID.wpiPidController, thetaPID.wpiPidController
       )
 
-    swerveDriveController.setTolerance(Pose2d(0.5.inches, 0.5.inches, 2.5.degrees).pose2d)
+    if (keepTrapping) {
+      swerveDriveController.setTolerance(Pose2d(3.inches, 3.inches, 2.5.degrees).pose2d)
+    } else {
+      swerveDriveController.setTolerance(Pose2d(6.inches, 6.inches, 10.degrees).pose2d)
+    }
   }
 
   override fun initialize() {
@@ -217,7 +226,7 @@ private constructor(
     pathTransform =
       Transform2d(
         Translation2d(waypoints.get()[0].translation),
-        waypoints.get()[0].driveRotation?.radians?.radians ?: drivePoseSupplier().rotation
+        waypoints.get()[0].holonomicRotation?.radians?.radians ?: drivePoseSupplier().rotation
       )
 
     // trajectory generation!
@@ -252,38 +261,71 @@ private constructor(
       trajectoryGenerator.holonomicRotationSequence.sample(trajCurTime.inSeconds)
 
     val targetHolonomicPose =
-      Pose2d(
-        desiredState.poseMeters.x.meters,
-        desiredState.poseMeters.y.meters,
-        desiredRotation.position.radians.radians
+      AllianceFlipUtil.apply(
+        Pose2d(
+          desiredState.poseMeters.x.meters,
+          desiredState.poseMeters.y.meters,
+          desiredRotation.position.radians.radians
+        )
       )
 
-    val robotPoseInSelectedFrame: Pose2d = drivePoseSupplier()
+    var robotPoseInSelectedFrame: Pose2d = drivePoseSupplier()
     if (pathFrame == stateFrame) {
       lastSampledPose = targetHolonomicPose
+      when (stateFrame) {
+        FrameType.FIELD -> {
+          Logger.recordOutput(
+            "Pathfollow/fieldTRobotTargetVisualized",
+            targetHolonomicPose.toDoubleArray().toDoubleArray()
+          )
+
+          Logger.recordOutput(
+            "Pathfollow/fieldTRobot", robotPoseInSelectedFrame.toDoubleArray().toDoubleArray()
+          )
+        }
+        FrameType.ODOMETRY -> {
+          Logger.recordOutput(
+            "Pathfollow/odomTRobotTargetVisualized",
+            targetHolonomicPose.toDoubleArray().toDoubleArray()
+          )
+
+          Logger.recordOutput(
+            "Pathfollow/odomTRobot", robotPoseInSelectedFrame.toDoubleArray().toDoubleArray()
+          )
+        }
+      }
+
       //        pathTransform.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
     } else {
       when (pathFrame) {
-        FrameType.ODOMETRY ->
+        FrameType.ODOMETRY -> {
+          // TODO (saraansh) we disallow this, not possible to get to. remove or find use case
           lastSampledPose =
             odoTField.inverse().asPose2d().transformBy(targetHolonomicPose.asTransform2d())
-        FrameType.FIELD ->
+        }
+        FrameType.FIELD -> {
+          // robotPose is currently odomTrobot we want fieldTRobot. we obtain that via fieldTodo x
+          // odoTRobot
+          robotPoseInSelectedFrame =
+            odoTField.inverse().asPose2d().transformBy(robotPoseInSelectedFrame.asTransform2d())
           lastSampledPose = odoTField.asPose2d().transformBy(targetHolonomicPose.asTransform2d())
+
+          Logger.recordOutput(
+            "Pathfollow/fieldTRobotTargetVisualized",
+            targetHolonomicPose.toDoubleArray().toDoubleArray()
+          )
+
+          Logger.recordOutput(
+            "Pathfollow/fieldTRobot", robotPoseInSelectedFrame.toDoubleArray().toDoubleArray()
+          )
+        }
       }
     }
     // flip
     lastSampledPose = AllianceFlipUtil.apply(lastSampledPose)
 
     Logger.recordOutput(
-      "Pathfollow/frameSpecificTargetPose", lastSampledPose.toDoubleArray().toDoubleArray()
-    )
-    val pathFrameTRobotPose = robotPoseInSelectedFrame
-    Logger.recordOutput(
-      "Pathfollow/fieldTRobotVisualized", pathFrameTRobotPose.toDoubleArray().toDoubleArray()
-    )
-    Logger.recordOutput(
-      "Pathfollow/fieldTRobotTargetVisualized",
-      targetHolonomicPose.toDoubleArray().toDoubleArray()
+      "Pathfollow/targetPoseInStateFrame", lastSampledPose.toDoubleArray().toDoubleArray()
     )
 
     if (flipForAlliances) {
@@ -299,7 +341,9 @@ private constructor(
         desiredState.curvatureRadPerMeter.radians.sin
 
     var nextDriveState =
-      swerveDriveController.calculate(pathFrameTRobotPose.pose2d, desiredState, desiredRotation)
+      swerveDriveController.calculate(
+        robotPoseInSelectedFrame.pose2d, desiredState, desiredRotation
+      )
 
     if (leaveOutYAdjustment) {
       nextDriveState =
@@ -367,7 +411,7 @@ private constructor(
       xPID.integralGain = poskI.get()
       yPID.integralGain = poskI.get()
     }
-    if (poskD.hasChanged()) {
+    if (poskD.hasChanged() && poskD.hasChanged()) {
       xPID.derivativeGain = poskD.get()
       yPID.derivativeGain = poskD.get()
     }
@@ -376,8 +420,10 @@ private constructor(
   override fun isFinished(): Boolean {
     trajCurTime = Clock.fpgaTime - trajStartTime
     return endPathOnceAtReference &&
-      (swerveDriveController.atReference()) &&
-      trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
+      (
+        (swerveDriveController.atReference()) &&
+          trajCurTime > trajectoryGenerator.driveTrajectory.totalTimeSeconds.seconds
+        )
   }
 
   override fun end(interrupted: Boolean) {

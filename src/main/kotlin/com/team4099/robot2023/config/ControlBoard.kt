@@ -21,10 +21,10 @@ object ControlBoard {
     }
 
   val strafe: Double
-    get() = driver.leftXAxis
+    get() = -driver.leftXAxis
 
   val forward: Double
-    get() = driver.leftYAxis
+    get() = -driver.leftYAxis
 
   val turn: Double
     get() = driver.rightXAxis
@@ -34,34 +34,37 @@ object ControlBoard {
 
   val resetGyro = Trigger { driver.startButton && driver.selectButton }
 
-  val shooterUp = Trigger { driver.bButton }
-  val shooterDown = Trigger { driver.xButton }
-  val wristTestUp = Trigger { driver.yButton }
-  val wristTestDown = Trigger { driver.aButton }
-  val feederTest = Trigger { driver.rightShoulderButton }
+  // sim triggers
+  val score = Trigger { driver.leftTriggerAxis > 0.5 }
+  val intake = Trigger { driver.rightShoulderButton }
+  val forceIdle = Trigger { driver.dPadDown || operator.startButton && operator.selectButton }
 
-  val elevatorUp = Trigger { driver.rightTriggerAxis > 0.5 }
-  val elevatorDown = Trigger { driver.leftTriggerAxis > 0.5 }
+  // sim trigger
+  // val score = Trigger {driver.bButton}
+  // val intake = Trigger { driver.xButton}
 
-  val runGroundIntake = Trigger { driver.leftShoulderButton }
-  val ejectGamePiece = Trigger { driver.rightShoulderButton }
-  val prepAmpScore = Trigger { driver.xButton }
-  val ampScore = Trigger { driver.yButton }
+  // real triggers
+  // val score = Trigger {driver.leftTriggerAxis > 0.5}
+  // val intake = Trigger { driver.rightShoulderButton}
 
-  val scoreSpeakerLow = Trigger { operator.aButton }
-  val scoreSpeakerMid = Trigger { operator.bButton }
-  val scoreSpeakerHigh = Trigger { operator.xButton }
-  val requestIdle = Trigger { operator.yButton }
+  val targetAmp = Trigger { driver.aButton }
+  val prepAmp = Trigger { operator.aButton }
+  val prepLow = Trigger { operator.xButton }
+  val prepHighProtected = Trigger { operator.bButton }
+  val prepHigh = Trigger { operator.yButton }
 
-  val climbExtend = Trigger { driver.dPadUp }
-  val climbRetract = Trigger { driver.dPadDown }
+  val extendClimb = Trigger { operator.dPadUp }
+  val retractClimb = Trigger { operator.dPadDown }
 
-  // testing Trigger
-  val testIntake = Trigger { driver.aButton }
-  val testFeederIntake = Trigger { driver.bButton }
-  val testFeederShoot = Trigger { driver.xButton }
-  val testFlywheel = Trigger { driver.yButton }
-  val testWrist = Trigger { operator.aButton }
-  val testElevator = Trigger { operator.bButton }
-  val setTuningMode = Trigger { driver.rightShoulderButton }
+  val prepTrap = Trigger { operator.rightShoulderButton }
+  val ejectGamePiece = Trigger { driver.rightTriggerAxis > 0.5 }
+
+  val testWrist = Trigger { driver.aButton }
+
+  val characterizeWrist = Trigger { driver.rightShoulderButton }
+
+  val climbAlignFar = Trigger { driver.yButton }
+  val climbAlignLeft = Trigger { driver.xButton }
+  val climbAlignRight = Trigger { driver.bButton }
+  // week0 controls
 }

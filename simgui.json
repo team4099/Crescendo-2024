@@ -14,8 +14,17 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Pre-match/Alliance": "String Chooser",
       "/Shuffleboard/Pre-match/Mode": "String Chooser",
+      "/SmartDashboard/AllianceColor": "String Chooser",
       "/SmartDashboard/AutonomousMode": "String Chooser"
+    },
+    "windows": {
+      "/Shuffleboard/Pre-match/Mode": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {
@@ -24,6 +33,18 @@
     },
     "transitory": {
       "AdvantageKit": {
+        "open": true
+      },
+      "Shuffleboard": {
+        "Pre-match": {
+          "Mode": {
+            "open": true,
+            "string[]##v_/Shuffleboard/Pre-match/Mode/options": {
+              "open": true
+            }
+          },
+          "open": true
+        },
         "open": true
       },
       "SmartDashboard": {
@@ -41,6 +62,24 @@
     }
   },
   "NetworkTables Info": {
+    "AdvantageScope@1": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
+      "open": true
+    },
+    "Clients": {
+      "open": true
+    },
+    "Server": {
+      "open": true
+    },
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

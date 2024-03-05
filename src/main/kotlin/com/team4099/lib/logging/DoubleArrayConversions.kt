@@ -38,8 +38,10 @@ fun Rotation3d.toDoubleArray(): Array<Double> {
   return arrayOf(this.x.inRadians, this.y.inRadians, this.z.inRadians)
 }
 
-fun Transform2d.toDoubleArray(): Array<Double> {
-  return arrayOf(this.translation.x.inMeters, this.translation.y.inMeters, this.rotation.inRadians)
+fun Transform2d.toDoubleArray(): DoubleArray {
+  return doubleArrayOf(
+    this.translation.x.inMeters, this.translation.y.inMeters, this.rotation.inRadians
+  )
 }
 
 fun Transform3d.toDoubleArray(): Array<Double> {
