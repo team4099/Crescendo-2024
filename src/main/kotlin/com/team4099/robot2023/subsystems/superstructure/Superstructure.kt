@@ -233,8 +233,8 @@ class Superstructure(
             )
         } else {
           flywheel.currentRequest =
-            Request.FlywheelRequest.TargetingVelocity(
-              Flywheel.TunableFlywheelStates.idleVelocity.get()
+            Request.FlywheelRequest.OpenLoop(
+              0.0.volts
             )
         }
 

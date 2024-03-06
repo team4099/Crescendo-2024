@@ -6,6 +6,8 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs
 import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.Follower
+import com.ctre.phoenix6.controls.PositionDutyCycle
+import com.ctre.phoenix6.controls.VelocityDutyCycle
 import com.ctre.phoenix6.controls.VoltageOut
 import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.NeutralModeValue
@@ -17,6 +19,7 @@ import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
+import com.team4099.robot2023.subsystems.wrist.WristIOTalon
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.amps
@@ -33,6 +36,7 @@ import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.newtons
+import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
 
@@ -188,9 +192,18 @@ object FlywheelIOTalon : FlywheelIO {
   }
 
   override fun setFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {
-    velocityRequest.setFeedforward(feedforward)
-    velocityRequest.setVelocity(velocity)
-    flywheelRightTalon.setControl(velocityRequest.velocityVoltagePhoenix6)
+    flywheelRightTalon.setControl(
+      com.ctre.phoenix6.controls.VelocityVoltage(
+        flywheelRightSensor.velocityToRawUnits(velocity),
+        flywheelRightSensor.accelerationToRawUnits(0.0.radians.perSecond.perSecond),
+        true,
+        feedforward.inVolts,
+        0,
+        false,
+        false,
+        false
+      )
+    )
   }
 
   private fun updateSignals() {
