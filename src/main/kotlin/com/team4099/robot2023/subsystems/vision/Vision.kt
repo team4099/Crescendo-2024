@@ -6,7 +6,9 @@ import com.team4099.lib.vision.TimestampedVisionUpdate
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.vision.camera.CameraIO
+import com.team4099.robot2023.util.FMSData
 import edu.wpi.first.math.VecBuilder
+import edu.wpi.first.math.filter.MedianFilter
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
@@ -14,15 +16,21 @@ import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Pose3dWPILIB
+import org.team4099.lib.geometry.Quaternion
 import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inRadians
+import org.team4099.lib.units.derived.radians
+import org.team4099.lib.units.derived.tan
 import java.util.function.Consumer
 import java.util.function.Supplier
+import kotlin.math.atan2
 import kotlin.math.pow
+import kotlin.math.tan
 
 class Vision(vararg cameras: CameraIO) : SubsystemBase() {
   val io: List<CameraIO> = cameras.toList()
@@ -90,6 +98,42 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
       var cameraPose: Pose3d? = inputs[instance].frame
       var robotPose: Pose2d? = cameraPose?.transformBy(cameraPoses[instance])?.toPose2d()
+      var tagTargets = inputs[instance].cameraTargets
+
+      var cornerData = mutableListOf<Double>()
+
+      for (tag in tagTargets) {
+        if (
+          (tag.fiducialId in intArrayOf(3, 4) && FMSData.isBlue) ||
+          (tag.fiducialId in intArrayOf(11, 12) && !FMSData.isBlue)
+        ) { // i made the tag IDS up
+          for (corner in tag.detectedCorners){
+            /*val px = corner.x
+            val pz = corner.y
+
+            val nx = (1 / (VisionConstants.CAMERA_OV2387.CAMERA_PX / 2)) * (px - (VisionConstants.CAMERA_OV2387.CAMERA_PX / 2) - 0.5)
+            val nz = (1 / (VisionConstants.CAMERA_OV2387.CAMERA_PY / 2)) * (pz - (VisionConstants.CAMERA_OV2387.CAMERA_PY / 2) - 0.5)
+
+            val x = VisionConstants.CAMERA_OV2387.vpw/2 * nx
+            val z = VisionConstants.CAMERA_OV2387.vph/2 * nz
+
+            val ax = atan2(1.0, x).radians
+
+            val az = atan2(1.0, z).radians
+
+            val realZ = FieldConstants.aprilTags.get(tag.fiducialId).pose.z - (cameraPose?.z ?: 0.meters)
+            val realY = realZ / az.tan
+            val realX = realY * ax.tan
+
+            Quaternion()*/
+
+            cornerData.add(corner.x)
+            cornerData.add(corner.y)
+          }
+        }
+      }
+
+      Logger.recordOutput("Vision/cornerDetections/${instance}}", cornerData.toArray())
 
       if (cameraPose == null || robotPose == null) {
         continue

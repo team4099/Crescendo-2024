@@ -19,10 +19,13 @@ import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.angle
+import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.radians
+import org.team4099.lib.units.derived.rotations
 import kotlin.math.abs
 import kotlin.math.hypot
+import kotlin.time.times
 
 class WheelRadiusCharacterizationCommand(
   val drivetrain: Drivetrain,
@@ -50,7 +53,7 @@ class WheelRadiusCharacterizationCommand(
   override fun initialize() {
     lastGyroYawRads = gyroYawSupplier()
     accumGyroYawRads = 0.0.radians
-    startWheelPositions = drivetrain.swerveModules.map { it.modulePosition.angle.angle }
+    startWheelPositions = drivetrain.swerveModules.map { (it.inputs.drivePosition / (DrivetrainConstants.WHEEL_DIAMETER * Math.PI)).rotations}
     omegaLimiter.reset(0.0)
   }
 
@@ -69,18 +72,21 @@ class WheelRadiusCharacterizationCommand(
     accumGyroYawRads +=
       MathUtil.angleModulus((gyroYawSupplier() - lastGyroYawRads).inRadians).radians
     lastGyroYawRads = gyroYawSupplier()
-    var averageWheelPosition = 0.0
-    val wheelPositions = drivetrain.swerveModules.map { it.modulePosition.angle.angle }
+    var averageWheelPositionDelta = 0.0.radians
+    val wheelPositions = drivetrain.swerveModules.map { (it.inputs.drivePosition / (DrivetrainConstants.WHEEL_DIAMETER * Math.PI)).rotations}
     for (i in 0 until 4) {
-      averageWheelPosition += abs((wheelPositions[i] - startWheelPositions[i]).inRadians)
+      averageWheelPositionDelta += ((wheelPositions[i] - startWheelPositions[i])).absoluteValue
     }
 
-    averageWheelPosition /= 4.0
+    averageWheelPositionDelta /= 4.0
     currentEffectiveWheelRadius =
-      (accumGyroYawRads.inRadians * driveRadius / averageWheelPosition).meters
-    Logger.recordOutput("Drivetrain/RadiusCharacterization/DrivePosition", averageWheelPosition)
+      (accumGyroYawRads * driveRadius / averageWheelPositionDelta).meters
+    Logger.recordOutput("Drivetrain/RadiusCharacterization/DrivePosition", averageWheelPositionDelta.inRadians)
     Logger.recordOutput(
       "Drivetrain/RadiusCharacterization/AccumGyroYawRads", accumGyroYawRads.inRadians
+    )
+    Logger.recordOutput(
+      "Drivetrain/RadiusCharacterization/LastGyroYawRads", lastGyroYawRads.inRadians
     )
     Logger.recordOutput(
       "Drivetrain/RadiusCharacterization/CurrentWheelRadiusInches",

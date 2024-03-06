@@ -5,6 +5,9 @@ import org.team4099.lib.geometry.Transform3d
 import org.team4099.lib.geometry.Translation3d
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inDegrees
+import org.team4099.lib.units.derived.inRadians
+import kotlin.math.tan
 
 object VisionConstants {
   const val FRONT_CAMERA_NAME = "limelight"
@@ -57,6 +60,18 @@ object VisionConstants {
     )
 
   val CAMERA_NAMES = listOf("parakeet_1", "parakeet_2", "parakeet_3")
+
+  object CAMERA_OV2387 {
+    val CAMERA_PX = 1600
+    val CAMERA_PY = 1200
+
+    val HORIZONTAL_FOV = 59.6.degrees //i made these up lol
+    val VERTICAL_FOV = 45.7.degrees
+
+    val vpw = 2.0*tan(HORIZONTAL_FOV.inRadians/2)
+    val vph = 2.0*tan(VERTICAL_FOV.inRadians/2)
+
+  }
 
   object Limelight {
     val LIMELIGHT_NAME = "limelight-zapdos"
