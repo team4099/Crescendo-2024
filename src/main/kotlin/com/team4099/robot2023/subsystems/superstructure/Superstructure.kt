@@ -301,7 +301,7 @@ class Superstructure(
         }
       }
       SuperstructureStates.GROUND_INTAKE_PREP -> {
-        wrist.currentRequest = Request.WristRequest.OpenLoop(-2.volts)
+        wrist.currentRequest = Request.WristRequest.OpenLoop(-0.25.volts)
         if (wrist.isAtTargetedPosition) {
           nextState = SuperstructureStates.GROUND_INTAKE
         }

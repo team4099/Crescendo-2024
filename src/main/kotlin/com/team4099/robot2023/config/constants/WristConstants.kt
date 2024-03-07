@@ -70,10 +70,12 @@ object WristConstants {
     val SIM_WRIST_KS = 0.15.volts
   }
 
-  val WRIST_TOLERANCE = 0.1.degrees
+  val WRIST_TOLERANCE = 0.2.degrees
 
   val IDLE_ANGLE = (-35.0).degrees
-  val AMP_SCORE_ANGLE = -16.0.degrees
+  //week 1 amp amgle
+  //val AMP_SCORE_ANGLE = -16.0.degrees
+  val AMP_SCORE_ANGLE = -7.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = -36.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = -7.5.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH = -2.degrees

@@ -319,16 +319,11 @@ class Wrist(val io: WristIO) : SubsystemBase() {
   }
 
   val isAtTargetedPosition: Boolean
-    get() = true
-  /*
-  (
+    get() =
     currentState == WristStates.TARGETING_POSITION &&
       wristProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
       (inputs.wristPosition - wristPositionTarget).absoluteValue <=
       WristConstants.WRIST_TOLERANCE
-    )
-
-   */
 
   fun setWristVoltage(appliedVoltage: ElectricalPotential) {
     io.setWristVoltage(appliedVoltage)

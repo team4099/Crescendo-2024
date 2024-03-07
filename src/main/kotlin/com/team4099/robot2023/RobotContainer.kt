@@ -144,7 +144,7 @@ object RobotContainer {
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain))
     ControlBoard.intake.whileTrue(superstructure.groundIntakeCommand())
-    ControlBoard.prepAmp.whileTrue(superstructure.prepAmpCommand())
+    ControlBoard.targetAmp.whileTrue(superstructure.prepAmpCommand())
 
     ControlBoard.prepHighProtected.whileTrue(
       ParallelCommandGroup(
