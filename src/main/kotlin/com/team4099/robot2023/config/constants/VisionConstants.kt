@@ -42,8 +42,8 @@ object VisionConstants {
   val CAMERA_TRANSFORMS =
     listOf(
       Transform3d(
-        Translation3d(12.75.inches, 7.3125.inches, 28.75.inches), // 18.69
-        Rotation3d(180.degrees, 0.degrees, 0.degrees)
+        Translation3d(12.653.inches, -9.1.inches, 14.25.inches), // 18.69
+        Rotation3d(0.degrees, 30.degrees, -72.77.degrees)
       ),
       //        Transform3d(
       //          Translation3d(-10.965.inches, -11.85.inches, 16.437.inches),
@@ -65,8 +65,8 @@ object VisionConstants {
     val CAMERA_PX = 1600
     val CAMERA_PY = 1200
 
-    val HORIZONTAL_FOV = 59.6.degrees //i made these up lol
-    val VERTICAL_FOV = 45.7.degrees
+    val HORIZONTAL_FOV = 75.degrees //i made these up lol
+    val VERTICAL_FOV = 56.25.degrees
 
     val vpw = 2.0*tan(HORIZONTAL_FOV.inRadians/2)
     val vph = 2.0*tan(VERTICAL_FOV.inRadians/2)

@@ -50,8 +50,11 @@ object FieldConstants {
 
   val fieldAprilTags: List<AprilTag> =
     listOf(
-      AprilTag(4, Pose3d()),
-      AprilTag(3, Pose3d(Translation3d(0.meters, 0.5.meters, 0.meters), Rotation3d()))
+      AprilTag(0, Pose3d(Translation3d(1.meters, 57.25.inches, 57.125.inches), Rotation3d(0.degrees, 0.degrees, 180.degrees))),
+      AprilTag(1, Pose3d(Translation3d(1.meters, 57.25.inches, 57.125.inches), Rotation3d(0.degrees, 0.degrees, 180.degrees))),
+      AprilTag(2, Pose3d(Translation3d(1.meters, 57.25.inches, 57.125.inches), Rotation3d(0.degrees, 0.degrees, 180.degrees))),
+      AprilTag(3, Pose3d(Translation3d(652.755.inches, 218.416.inches, 57.125.inches), Rotation3d(0.degrees, 0.degrees, 180.degrees))),
+      AprilTag(4, Pose3d(Translation3d(652.755.inches, 218.416.inches - 22.25.inches, 57.125.inches), Rotation3d(0.degrees, 0.degrees, 180.degrees)))
     )
 
   val tags = AprilTagFields.k2024Crescendo
