@@ -27,7 +27,7 @@ object IntakeConstants {
 
   val IDLE_CENTER_WHEEL_VOLTAGE = 0.0.volts
   val INTAKE_ROLLER_VOLTAGE = -12.volts
-  val INTAKE_CENTER_WHEEL_VOLTAGE = -9.volts
+  val INTAKE_CENTER_WHEEL_VOLTAGE = -12.volts
   val OUTTAKE_ROLLER_VOLTAGE = (10).volts
   val OUTTAKE_CENTER_WHEEL_VOLTAGE = (10).volts
 }

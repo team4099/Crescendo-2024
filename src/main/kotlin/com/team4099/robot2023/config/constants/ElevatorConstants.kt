@@ -49,7 +49,7 @@ object ElevatorConstants {
   val ELEVATOR_OPEN_LOOP_RETRACT_VOLTAGE = -12.0.volts
 
   val ENABLE_ELEVATOR = true
-  val ELEVATOR_IDLE_HEIGHT = 0.5.inches
+  val ELEVATOR_IDLE_HEIGHT = 0.25.inches
   val ELEVATOR_SOFT_LIMIT_EXTENSION = 17.5.inches
   val ELEVATOR_SOFT_LIMIT_RETRACTION = 0.5.inches
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_EXTENSION = 0.0.inches
@@ -67,7 +67,7 @@ object ElevatorConstants {
 
   //week 1 amp amgle
   //val SHOOT_AMP_POSITION = 17.0.degrees
-  val SHOOT_AMP_POSITION = 14.0.inches
+  val SHOOT_AMP_POSITION = 16.0.inches
   val SOURCE_NOTE_OFFSET = 0.0.inches
   val ELEVATOR_THETA_POS = 0.0.degrees
   val HOMING_STATOR_CURRENT = 3.0.amps

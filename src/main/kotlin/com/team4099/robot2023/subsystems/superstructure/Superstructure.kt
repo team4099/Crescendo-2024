@@ -301,7 +301,7 @@ class Superstructure(
         }
       }
       SuperstructureStates.GROUND_INTAKE_PREP -> {
-        wrist.currentRequest = Request.WristRequest.OpenLoop(-0.25.volts)
+        wrist.currentRequest = Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.intakeAngle.get())
         if (wrist.isAtTargetedPosition) {
           nextState = SuperstructureStates.GROUND_INTAKE
         }
@@ -313,6 +313,7 @@ class Superstructure(
         }
       }
       SuperstructureStates.GROUND_INTAKE -> {
+        wrist.currentRequest = Request.WristRequest.OpenLoop(-0.5.volts)
         intake.currentRequest =
           Request.IntakeRequest.OpenLoop(
             Intake.TunableIntakeStates.intakeRollerVoltage.get(),
