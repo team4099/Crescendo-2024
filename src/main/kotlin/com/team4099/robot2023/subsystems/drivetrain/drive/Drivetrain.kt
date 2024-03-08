@@ -570,6 +570,8 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     fieldFrameEstimator.resetFieldFrameFilter(
       odomTRobot.asTransform2d() + fieldTRobot.asTransform2d().inverse()
     )
+
+    Logger.recordOutput("Drivetrain/lastResetPose", fieldTRobot.toDoubleArray().toDoubleArray())
   }
 
   fun tempZeroGyroYaw(toAngle: Angle = 0.0.degrees) {

@@ -60,6 +60,7 @@ object AutonomousSelector {
       "Preload + Leave from Center Side of Subwoofer",
       AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER
     )
+    autonomousModeChooser.addOption("Test Auto Path", AutonomousMode.TEST_AUTO_PATH)
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
     autoTab.add("Mode", autonomousModeChooser.sendableChooser).withSize(4, 2).withPosition(2, 0)
@@ -87,16 +88,15 @@ object AutonomousSelector {
     get() = secondaryWaitInAuto.getDouble(0.0).seconds
 
   fun getCommand(drivetrain: Drivetrain, superstructure: Superstructure): Command {
-    val mode = AutonomousMode.TEST_AUTO_PATH
+    val mode = autonomousModeChooser.get()
 
     when (mode) {
       AutonomousMode.TEST_AUTO_PATH ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
-            drivetrain.tempZeroGyroYaw(TestAutoPath.startingPose.rotation)
-            drivetrain.resetFieldFrameEstimator(
-              AllianceFlipUtil.apply(TestAutoPath.startingPose)
-            )
+            val flippedPose = AllianceFlipUtil.apply(TestAutoPath.startingPose)
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(TestAutoPath(drivetrain))
       AutonomousMode.FOUR_NOTE_AUTO_PATH ->
