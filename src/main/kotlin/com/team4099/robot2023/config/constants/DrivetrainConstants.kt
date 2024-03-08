@@ -101,7 +101,7 @@ object DrivetrainConstants {
     val AUTO_POS_KP: ProportionalGain<Meter, Velocity<Meter>>
       get() {
         if (RobotBase.isReal()) {
-          return 0.4.meters.perSecond / 1.0.meters // todo:4
+          return 9.0.meters.perSecond / 1.0.meters // todo:4
         } else {
           return 7.0.meters.perSecond / 1.0.meters
         }
@@ -118,7 +118,7 @@ object DrivetrainConstants {
     val AUTO_POS_KD: DerivativeGain<Meter, Velocity<Meter>>
       get() {
         if (RobotBase.isReal()) {
-          return (0.4.meters.perSecond / (1.0.meters.perSecond))
+          return (0.7.meters.perSecond / (1.0.meters.perSecond))
             .metersPerSecondPerMetersPerSecond // todo: 0.25
         } else {
           return (0.0.meters.perSecond / (1.0.meters.perSecond)).metersPerSecondPerMetersPerSecond
@@ -126,10 +126,12 @@ object DrivetrainConstants {
       }
 
     val AUTO_THETA_ALLOWED_ERROR = 3.degrees
-    val AUTO_THETA_PID_KP = 5.0.degrees.perSecond / 1.degrees
+    //5.0
+    val AUTO_THETA_PID_KP = 1.0.degrees.perSecond / 1.degrees
     val AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
+    //0.25
     val AUTO_THETA_PID_KD =
-      (0.25.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (0.0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val TELEOP_ALIGN_PID_KP = 4.degrees.perSecond / 1.degrees
     val TELEOP_ALIGN_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)

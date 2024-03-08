@@ -143,12 +143,13 @@ object Robot : LoggedRobot() {
         .withPosition(0, 1)
         .withWidget(BuiltInWidgets.kTextView)
         .entry
+
+    RobotContainer.setDriveBrakeMode()
+    RobotContainer.setSteeringCoastMode()
   }
 
   override fun autonomousInit() {
     RobotContainer.zeroSensors(isInAutonomous = true)
-    RobotContainer.setDriveBrakeMode()
-    RobotContainer.setSteeringBrakeMode()
     RobotContainer.getAutonomousCommand().schedule()
   }
 
@@ -158,9 +159,6 @@ object Robot : LoggedRobot() {
 
   override fun disabledInit() {
     RobotContainer.getAutonomousCommand().cancel()
-    RobotContainer.setSteeringCoastMode()
-    RobotContainer.setDriveBrakeMode()
-    RobotContainer.requestIdle()
     // autonomousCommand.cancel()
   }
 
