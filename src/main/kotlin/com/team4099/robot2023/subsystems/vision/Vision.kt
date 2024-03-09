@@ -29,12 +29,14 @@ import org.team4099.lib.geometry.Translation3d
 import org.team4099.lib.geometry.Translation3dWPILIB
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Time
+import org.team4099.lib.units.base.inInches
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.tan
@@ -49,6 +51,8 @@ import kotlin.math.tan
 class Vision(vararg cameras: CameraIO) : SubsystemBase() {
   val io: List<CameraIO> = cameras.toList()
   val inputs = List(io.size) { CameraIO.CameraInputs() }
+
+  var drivetrainOdometry: () -> Pose2d = { Pose2d() }
 
   companion object {
     val ambiguityThreshold = 0.7
@@ -128,30 +132,55 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
             val px = tag.detectedCorners[corner].x
             val py = tag.detectedCorners[corner].y
 
+            val px2 = tag.detectedCorners[corner+1].x
+            val py2 = tag.detectedCorners[corner+1].y
+
 
             val nx = -(1.0 / (VisionConstants.CAMERA_OV2387.CAMERA_PX / 2)) * (px - (VisionConstants.CAMERA_OV2387.CAMERA_PX / 2) - 0.5)
             val ny = (1.0 / (VisionConstants.CAMERA_OV2387.CAMERA_PY / 2)) * ((VisionConstants.CAMERA_OV2387.CAMERA_PY / 2) - 0.5 - py)
 
+            val nx2 = -(1.0 / (VisionConstants.CAMERA_OV2387.CAMERA_PX / 2)) * (px2 - (VisionConstants.CAMERA_OV2387.CAMERA_PX / 2) - 0.5)
+
             val cameraY = VisionConstants.CAMERA_OV2387.vpw / 2 * nx
+            val cameraY2 = VisionConstants.CAMERA_OV2387.vpw / 2 * nx2
             val cameraZ = VisionConstants.CAMERA_OV2387.vph / 2 * ny
             val cameraX = 1
 
-            val unscaledPosition = Translation3d(
+            val scaledYTagDist = FieldConstants.aprilTagWidth * ((px2 - px) / hypot((px2-px), (py2-py)))
+            val scalar = scaledYTagDist / (cameraY2.meters - cameraY.meters).absoluteValue
+
+
+            // good up
+
+
+            var scaledPositionCameraSpace = Translation3d(
               cameraX.meters, cameraY.meters, cameraZ.meters
-            ).rotateBy(cameraPoses[0].rotation.unaryMinus())
+            ).times(scalar).rotateBy(cameraPoses[0].rotation.unaryMinus())
 
-            println(px)
+            Logger.recordOutput("\"Vision/${instance}/${tag.fiducialId}/${corner}/guesstimatedCameraPosewrtRobot", scaledPositionCameraSpace.toDoubleArray().toDoubleArray())
 
-            val zt = FieldConstants.fieldAprilTags.get(tag.fiducialId).pose.z - 3.25.inches - Vision.cameraPoses[0].z
+            Logger.recordOutput("Vision/odometryRotation", drivetrainOdometry.invoke().rotation.inDegrees)
+            scaledPositionCameraSpace = scaledPositionCameraSpace.rotateBy(
+              Rotation3d(
+                0.degrees,
+                0.degrees,
+                drivetrainOdometry.invoke().rotation
+              ))
 
-            val s = zt / unscaledPosition.z
-            val realX = unscaledPosition.x * s
-            val realY = unscaledPosition.y * s
+//            if (drivetrainOdometry.invoke().rotation != null){
+//              println("rotating")
+//              println(drivetrainOdometry.invoke().rotation)
+//              scaledPositionCameraSpace = scaledPositionCameraSpace.rotateBy(
+//                Rotation3d(
+//                  0.degrees,
+//                  0.degrees,
+//                  tag.yaw.degrees
+//                )
+//              )
+//            }
 
             val detectionTransformation = Transform3d(
-              Translation3d(
-                realX, realY, zt
-              ),
+              scaledPositionCameraSpace,
               Rotation3d()
             )
 
@@ -162,22 +191,36 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
             var estimatedRobotPose = Pose2d()
 
+
+
             if (tag.fiducialId in intArrayOf(3, 4)){
               estimatedRobotPose = FieldConstants.fieldAprilTags.get(tag.fiducialId).pose
+                .transformBy(
+                  Transform3d(
+                    Translation3d(0.inches, 0.inches, -3.25.inches),
+                    Rotation3d()
+                  )
+                )
                 .transformBy(
                   flipTransform
                 )
                 .transformBy(
                   detectionTransformation.inverse()
-                ).transformBy(
+                )
+                .transformBy(
                   Transform3d(
-                    cameraPoses[0].translation,
+                    cameraPoses[0].translation.unaryMinus(),
                     Rotation3d()
-                  )
-                ).toPose2d()
+                  ))
+                .toPose2d()
             } else {
               estimatedRobotPose = FieldConstants.fieldAprilTags.get(tag.fiducialId).pose
                 .transformBy(
+                  Transform3d(
+                    Translation3d(0.inches, 0.inches, -3.25.inches),
+                    Rotation3d()
+                  )
+                ).transformBy(
                   detectionTransformation.inverse()
                 ).transformBy(
                   Transform3d(
@@ -187,19 +230,24 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
                 ).toPose2d()
             }
 
-            Logger.recordOutput("Vision/${instance}/${tag.fiducialId}/guesstimatedPose", estimatedRobotPose.toDoubleArray().toDoubleArray())
+            Logger.recordOutput("Vision/${instance}/${tag.fiducialId}/${corner}/guesstimatedPose", estimatedRobotPose.toDoubleArray().toDoubleArray())
 
             Logger.recordOutput("Vision/${instance}/${tag.fiducialId}/guesstimatedTag", FieldConstants.fieldAprilTags.get(tag.fiducialId).pose.toDoubleArray().toDoubleArray())
             //Logger.recordOutput("Vision/${instance}/${tag.fiducialId}/guesstimatedReal", Pose2d(15.meters, 5.meters, 70.degrees).toDoubleArray().toDoubleArray())
 
             cornerData.add(px)
             cornerData.add(py)
+            cornerData.add(px2)
+            cornerData.add(py2)
+
             break
           }
         }
       }
 
       Logger.recordOutput("Vision/cornerDetections/${instance}}", cornerData.toDoubleArray())
+
+      Logger.recordOutput("Vision/realPose", Pose2d(537.212500.inches - 4.875.inches, 161.628.inches - 39.5.inches, 0.degrees).toDoubleArray().toDoubleArray())
 
       if (cameraPose == null || robotPose == null) {
         continue

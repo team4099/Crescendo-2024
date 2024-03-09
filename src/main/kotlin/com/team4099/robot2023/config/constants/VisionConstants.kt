@@ -4,6 +4,7 @@ import org.team4099.lib.geometry.Rotation3d
 import org.team4099.lib.geometry.Transform3d
 import org.team4099.lib.geometry.Translation3d
 import org.team4099.lib.units.base.inches
+import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
@@ -43,7 +44,7 @@ object VisionConstants {
     listOf(
       Transform3d(
         Translation3d(12.653.inches, -9.1.inches, 14.25.inches), // 18.69
-        Rotation3d(0.degrees, 30.degrees, -72.77.degrees)
+        Rotation3d(-5.3.degrees, 30.degrees, -72.77.degrees)
       ),
       //        Transform3d(
       //          Translation3d(-10.965.inches, -11.85.inches, 16.437.inches),
@@ -61,12 +62,25 @@ object VisionConstants {
 
   val CAMERA_NAMES = listOf("parakeet_1", "parakeet_2", "parakeet_3")
 
+  val robotTtag = Transform3d(
+    Translation3d(
+    102.6.inches + 25.75.inches,
+    14.inches + 74.inches + 13.inches + 3.25.inches,
+      19.25.inches + 1.meters - 3.25.inches
+    ),
+    Rotation3d(
+      0.degrees,
+      0.degrees,
+      0.degrees
+    )
+  )
+
   object CAMERA_OV2387 {
     val CAMERA_PX = 1600
     val CAMERA_PY = 1200
 
     val HORIZONTAL_FOV = 75.degrees //i made these up lol
-    val VERTICAL_FOV = 56.25.degrees
+    val VERTICAL_FOV = 46.25.degrees
 
     val vpw = 2.0*tan(HORIZONTAL_FOV.inRadians/2)
     val vph = 2.0*tan(VERTICAL_FOV.inRadians/2)
