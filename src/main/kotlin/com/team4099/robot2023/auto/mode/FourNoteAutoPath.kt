@@ -49,8 +49,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 180.degrees.inRotation2ds
               )
             )
-          },
-          keepTrapping = false
+          }
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
@@ -83,8 +82,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 180.degrees.inRotation2ds
               )
             )
-          },
-          keepTrapping = false
+          }
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
@@ -131,8 +129,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 180.degrees.inRotation2ds
               ) // Subwoofer
             )
-          },
-          keepTrapping = false
+          }
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),

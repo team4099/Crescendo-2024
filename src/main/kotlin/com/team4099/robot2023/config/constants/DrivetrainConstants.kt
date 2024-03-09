@@ -58,8 +58,8 @@ object DrivetrainConstants {
   val SLOW_AUTO_VEL = 2.meters.perSecond
   val SLOW_AUTO_ACCEL = 2.0.meters.perSecond.perSecond
 
-  val MAX_AUTO_VEL = 3.meters.perSecond // 4
-  val MAX_AUTO_ACCEL = 2.meters.perSecond.perSecond // 3
+  val MAX_AUTO_VEL = 4.meters.perSecond // 4
+  val MAX_AUTO_ACCEL = 3.meters.perSecond.perSecond // 3
 
   val MAX_AUTO_BRAKE_VEL = 0.5.meters.perSecond // 4
   val MAX_AUTO_BRAKE_ACCEL = 0.5.meters.perSecond.perSecond // 3
@@ -101,7 +101,7 @@ object DrivetrainConstants {
     val AUTO_POS_KP: ProportionalGain<Meter, Velocity<Meter>>
       get() {
         if (RobotBase.isReal()) {
-          return 0.23.meters.perSecond / 1.0.meters // todo:4
+          return 10.meters.perSecond / 1.0.meters // todo:4
         } else {
           return 7.0.meters.perSecond / 1.0.meters
         }
@@ -118,7 +118,7 @@ object DrivetrainConstants {
     val AUTO_POS_KD: DerivativeGain<Meter, Velocity<Meter>>
       get() {
         if (RobotBase.isReal()) {
-          return (0.14.meters.perSecond / (1.0.meters.perSecond))
+          return (0.5.meters.perSecond / (1.0.meters.perSecond))
             .metersPerSecondPerMetersPerSecond // todo: 0.25
         } else {
           return (0.0.meters.perSecond / (1.0.meters.perSecond)).metersPerSecondPerMetersPerSecond
@@ -126,11 +126,10 @@ object DrivetrainConstants {
       }
 
     val AUTO_THETA_ALLOWED_ERROR = 3.degrees
-
-    val AUTO_THETA_PID_KP = 0.1.degrees.perSecond / 1.degrees // 0.1
+    val AUTO_THETA_PID_KP = 5.degrees.perSecond / 1.degrees
     val AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val AUTO_THETA_PID_KD =
-      (0.02.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (1.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val TELEOP_ALIGN_PID_KP = 4.degrees.perSecond / 1.degrees
     val TELEOP_ALIGN_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
@@ -158,7 +157,7 @@ object DrivetrainConstants {
     val DRIVE_KFF = 12.0.volts / 4.1675.meters.perSecond
 
     val DRIVE_KS = 0.5.volts
-    val DRIVE_KV = 0.11.volts / 1.0.meters.perSecond
+    val DRIVE_KV = 0.13.volts / 1.0.meters.perSecond
     val DRIVE_KA = 0.0.volts / 1.0.meters.perSecond.perSecond
 
     //    val DRIVE_KS = 0.23677.volts

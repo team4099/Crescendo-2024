@@ -246,7 +246,6 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       }
 
       Logger.recordOutput("Vision/cornerDetections/${instance}}", cornerData.toDoubleArray())
-
       Logger.recordOutput("Vision/realPose", Pose2d(537.212500.inches - 4.875.inches, 161.628.inches - 39.5.inches, 0.degrees).toDoubleArray().toDoubleArray())
 
       if (cameraPose == null || robotPose == null) {
