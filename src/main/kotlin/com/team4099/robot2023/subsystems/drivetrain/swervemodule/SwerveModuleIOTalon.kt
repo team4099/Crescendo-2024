@@ -41,6 +41,7 @@ import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
+import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.inVoltsPerMetersPerSecond
@@ -279,6 +280,7 @@ class SwerveModuleIOTalon(
   }
 
   override fun setSteeringSetpoint(angle: Angle) {
+    Logger.recordOutput("$label/steeringSetpointDegrees", angle.inDegrees)
     steeringFalcon.setControl(
       PositionDutyCycle(
         steeringSensor.positionToRawUnits(angle),
@@ -304,7 +306,7 @@ class SwerveModuleIOTalon(
         driveSensor.velocityToRawUnits(speed),
         driveSensor.accelerationToRawUnits(acceleration),
         DrivetrainConstants.FOC_ENABLED,
-        feedforward.inVolts,
+        0.0,
         0,
         false,
         false,

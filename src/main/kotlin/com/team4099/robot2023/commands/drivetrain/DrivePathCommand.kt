@@ -360,11 +360,22 @@ private constructor(
       Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position)
     )
 
+    /*
+    drivetrain.setOpenLoop(
+        nextDriveState.omegaRadiansPerSecond.radians.perSecond,
+        nextDriveState.vxMetersPerSecond.meters.perSecond to nextDriveState.vyMetersPerSecond.meters.perSecond,
+        ChassisAccels(xAccel, yAccel, 0.0.radians.perSecond.perSecond).chassisAccelsWPILIB,
+        true
+      )
+
+     */
+
     drivetrain.currentRequest =
       DrivetrainRequest.ClosedLoop(
         nextDriveState,
         ChassisAccels(xAccel, yAccel, 0.0.radians.perSecond.perSecond).chassisAccelsWPILIB
       )
+
 
     Logger.recordOutput("Pathfollow/thetaPIDPositionErrorRadians", thetaPID.error.inRadians)
 

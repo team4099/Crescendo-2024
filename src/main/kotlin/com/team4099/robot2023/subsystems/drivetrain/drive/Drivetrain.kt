@@ -486,6 +486,85 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     }
   }
 
+  fun setOpenLoop(
+    angularVelocity: AngularVelocity,
+    driveVector: Pair<LinearVelocity, LinearVelocity>,
+    chassisAccels: edu.wpi.first.math.kinematics.ChassisSpeeds =
+      edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0),
+    fieldOriented: Boolean = true
+  ) {
+
+    Logger.recordOutput("Drivetrain/isFieldOriented", fieldOriented)
+    // flip the direction base don alliance color
+    val flipDrive = if (FMSData.allianceColor == DriverStation.Alliance.Red) -1 else 1
+    val allianceFlippedDriveVector =
+      Pair(driveVector.first * flipDrive, driveVector.second * flipDrive)
+
+    Logger.recordOutput(
+      "Drivetrain/driveVectorFirst", allianceFlippedDriveVector.first.inMetersPerSecond
+    )
+    Logger.recordOutput(
+      "Drivetrain/driveVectorSecond", allianceFlippedDriveVector.second.inMetersPerSecond
+    )
+
+    val swerveModuleStates: Array<SwerveModuleState>
+    var desiredChassisSpeeds: ChassisSpeeds
+
+    // calculated chasis speeds, apply field oriented transformation
+    if (fieldOriented) {
+      desiredChassisSpeeds =
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+          allianceFlippedDriveVector.first,
+          allianceFlippedDriveVector.second,
+          angularVelocity,
+          odomTRobot.rotation
+        )
+    } else {
+      desiredChassisSpeeds =
+        ChassisSpeeds(
+          allianceFlippedDriveVector.first,
+          allianceFlippedDriveVector.second,
+          angularVelocity,
+        )
+    }
+
+    if (DrivetrainConstants.MINIMIZE_SKEW) {
+      val velocityTransform =
+        Transform2d(
+          Translation2d(
+            Constants.Universal.LOOP_PERIOD_TIME * desiredChassisSpeeds.vx,
+            Constants.Universal.LOOP_PERIOD_TIME * desiredChassisSpeeds.vy
+          ),
+          Constants.Universal.LOOP_PERIOD_TIME * desiredChassisSpeeds.omega
+        )
+
+      val twistToNextPose: Twist2d = velocityTransform.log()
+
+      desiredChassisSpeeds =
+        ChassisSpeeds(
+          (twistToNextPose.dx / Constants.Universal.LOOP_PERIOD_TIME),
+          (twistToNextPose.dy / Constants.Universal.LOOP_PERIOD_TIME),
+          (twistToNextPose.dtheta / Constants.Universal.LOOP_PERIOD_TIME)
+        )
+    }
+
+    // convert target chassis speeds to individual module setpoint states
+    swerveModuleStates =
+      swerveDriveKinematics.toSwerveModuleStates(desiredChassisSpeeds.chassisSpeedsWPILIB)
+    val accelSwerveModuleStates: Array<SwerveModuleState> =
+      swerveDriveKinematics.toSwerveModuleStates(chassisAccels)
+
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+      swerveModuleStates, DrivetrainConstants.DRIVE_SETPOINT_MAX.inMetersPerSecond
+    )
+    setPointStates = swerveModuleStates.toMutableList()
+
+    // set each module openloop based on corresponding states
+    for (moduleIndex in 0 until DrivetrainConstants.WHEEL_COUNT) {
+      swerveModules[moduleIndex].setPositionClosedLoop(swerveModuleStates[moduleIndex], accelSwerveModuleStates[moduleIndex])
+    }
+  }
+
   /**
    * Sets the drivetrain to the specified angular and X & Y velocities based on the current angular
    * and linear acceleration. Calculates both angular and linear velocities and acceleration and
@@ -511,12 +590,12 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
         Transform2d(
           Translation2d(
             Constants.Universal.LOOP_PERIOD_TIME *
-              chassisSpeeds.vxMetersPerSecond.meters.perSecond,
+                    chassisSpeeds.vxMetersPerSecond.meters.perSecond,
             Constants.Universal.LOOP_PERIOD_TIME *
-              chassisSpeeds.vyMetersPerSecond.meters.perSecond
+                    chassisSpeeds.vyMetersPerSecond.meters.perSecond
           ),
           Constants.Universal.LOOP_PERIOD_TIME *
-            chassisSpeeds.omegaRadiansPerSecond.radians.perSecond
+                  chassisSpeeds.omegaRadiansPerSecond.radians.perSecond
         )
 
       val twistToNextPose: Twist2d = velocityTransform.log()
