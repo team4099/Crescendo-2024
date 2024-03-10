@@ -137,6 +137,11 @@ class NoteSimulation(
           else -6.meters.perSecond.perSecond * azimuthalAnglePhi.sin.absoluteValue * lastYVel.sign
         zAccel = (Constants.Universal.gravity)
 
+        if (lastZPos <= FieldConstants.noteThickness/2) {
+          currentState = NoteStates.IN_ROBOT
+        }
+        update()
+
         update()
 
         if (xVel.absoluteValue < 0.1.meters.perSecond &&

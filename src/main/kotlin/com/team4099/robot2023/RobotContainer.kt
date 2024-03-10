@@ -40,7 +40,13 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
+import com.team4099.robot2023.commands.drivetrain.TargetPoseCommand
+import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIO
+import com.team4099.robot2023.util.AllianceFlipUtil
+import com.team4099.robot2023.util.FrameCoordinate
+import org.team4099.lib.geometry.Pose2d
+import org.team4099.lib.geometry.Translation2d
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -228,6 +234,27 @@ object RobotContainer {
           -120.0.degrees
         else 60.0.degrees,
       )
+    )
+
+    ControlBoard.autoAim.whileTrue(
+      ParallelCommandGroup(
+        TargetPoseCommand(
+          driver = Ryan(),
+          { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+          { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+          { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+          { ControlBoard.slowMode },
+          drivetrain,
+          FrameCoordinate.FieldCoordinate(
+            Pose2d(
+              Translation2d(
+                FieldConstants.Speaker.centerSpeakerOpening.x,
+                FieldConstants.Speaker.centerSpeakerOpening.y
+              ), 0.degrees
+            )
+          )
+        ),
+        superstructure.autoAimCommand())
     )
 
     /*

@@ -261,7 +261,12 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       WristStates.TARGETING_POSITION -> {
         Logger.recordOutput("Wrist/RequestedPosition", wristPositionTarget.inDegrees)
 
-        if (wristPositionTarget != lastWristPositionTarget) {
+        if ((wristPositionTarget - lastWristPositionTarget).absoluteValue < 5.degrees) {
+          wristProfile =
+            TrapezoidProfile(wristConstraints,
+              TrapezoidProfile.State(wristPositionTarget, 0.0.radians.perSecond),
+              wristProfile.initial)
+        } else {
           val preProfileGenerate = Clock.fpgaTime
           wristProfile =
             TrapezoidProfile(
@@ -269,7 +274,6 @@ class Wrist(val io: WristIO) : SubsystemBase() {
               TrapezoidProfile.State(wristPositionTarget, 0.0.radians.perSecond),
               TrapezoidProfile.State(inputs.wristPosition, inputs.wristVelocity)
             )
-
           val postProfileGenerate = Clock.fpgaTime
           Logger.recordOutput(
             "/Wrist/ProfileGenerationMS",
