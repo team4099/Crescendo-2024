@@ -22,7 +22,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
 
         addCommands(
             superstructure.scoreCommand(),
-            WaitCommand(0.25),
+            WaitCommand(0.5),
             ParallelCommandGroup(
                 DrivePathCommand.createPathInFieldFrame(
                     drivetrain,
@@ -52,7 +52,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                     },
                     keepTrapping = false
                 ),
-                WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
+                WaitCommand(0.25).andThen(superstructure.groundIntakeCommand())
             ),
             superstructure.prepSpeakerLowCommand(),
             superstructure.scoreCommand(),
@@ -85,7 +85,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                     },
                     keepTrapping = false
                 ),
-                WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
+                WaitCommand(0.25).andThen(superstructure.groundIntakeCommand())
             ),
             superstructure.prepSpeakerLowCommand(),
             superstructure.scoreCommand(),
@@ -133,7 +133,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                     },
                     keepTrapping = false
                 ),
-                WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
+                WaitCommand(0.25).andThen(superstructure.groundIntakeCommand())
             ),
             superstructure.prepSpeakerLowCommand(),
             superstructure.scoreCommand()

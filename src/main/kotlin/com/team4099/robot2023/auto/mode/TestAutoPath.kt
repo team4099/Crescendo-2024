@@ -47,7 +47,7 @@ class TestAutoPath(val drivetrain: Drivetrain) : SequentialCommandGroup() {
             )
           )
         }
-      )
+      , keepTrapping = true)
     )
   }
 

@@ -544,8 +544,8 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     // Once we have all of our states obtained for both velocity and acceleration, apply these
     // states to each swerve module
     for (moduleIndex in 0 until DrivetrainConstants.WHEEL_COUNT) {
-      swerveModules[moduleIndex].setPositionClosedLoop(
-        velSwerveModuleStates[moduleIndex], accelSwerveModuleStates[moduleIndex]
+      swerveModules[moduleIndex].setPositionOpenLoop(
+        velSwerveModuleStates[moduleIndex]
       )
     }
   }

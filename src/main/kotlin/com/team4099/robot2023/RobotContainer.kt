@@ -73,7 +73,7 @@ object RobotContainer {
       intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
-      flywheel = Flywheel(object : FlywheelIO {})
+      flywheel = Flywheel(FlywheelIOTalon)
       wrist = Wrist(WristIOTalon)
     } else {
       // Simulation implementations

@@ -482,11 +482,15 @@ class Superstructure(
         ) {
 
           currentRequest = Request.SuperstructureRequest.Idle()
+          nextState = SuperstructureStates.IDLE
         }
 
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
+          }
+          is Request.SuperstructureRequest.GroundIntake -> {
+            nextState = SuperstructureStates.GROUND_INTAKE_PREP
           }
         }
       }
@@ -675,7 +679,9 @@ class Superstructure(
   }
 
   fun groundIntakeCommand(): Command {
-    val returnCommand = runOnce { currentRequest = Request.SuperstructureRequest.GroundIntake() }
+    val returnCommand = runOnce { currentRequest = Request.SuperstructureRequest.GroundIntake() }.until {
+      currentState == SuperstructureStates.GROUND_INTAKE_PREP
+    }
 
     returnCommand.name = "GroundIntakeCommand"
     return returnCommand
