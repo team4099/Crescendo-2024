@@ -32,6 +32,8 @@ object DrivetrainConstants {
   const val FOC_ENABLED = false
   const val MINIMIZE_SKEW = false
 
+  const val TELEOP_TURNING_SPEED_PERCENT = 0.75
+
   const val OMOMETRY_UPDATE_FREQUENCY = 250.0
 
   const val WHEEL_COUNT = 4
@@ -134,7 +136,7 @@ object DrivetrainConstants {
     val TELEOP_ALIGN_PID_KP = 4.degrees.perSecond / 1.degrees
     val TELEOP_ALIGN_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val TELEOP_ALIGN_PID_KD =
-      (0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (0.2.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val SIM_AUTO_THETA_PID_KP = 10.degrees.perSecond / 1.degrees
     val SIM_AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)

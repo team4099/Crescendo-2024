@@ -134,8 +134,8 @@ object ElevatorIOKraken : ElevatorIO {
     pidConfiguration.kP = leaderSensor.proportionalPositionGainToRawUnits(kP)
     pidConfiguration.kI = leaderSensor.integralPositionGainToRawUnits(kI)
     pidConfiguration.kD = leaderSensor.derivativePositionGainToRawUnits(kD)
+
     elevatorLeaderKraken.configurator.apply(pidConfiguration)
-    elevatorFollowerKraken.configurator.apply(pidConfiguration)
   }
 
   override fun updateInputs(inputs: ElevatorIO.ElevatorInputs) {
@@ -154,9 +154,9 @@ object ElevatorIOKraken : ElevatorIO {
   override fun setOutputVoltage(voltage: ElectricalPotential) {
     if (((leaderSensor.position < 0.5.inches) && (voltage < 0.volts)) ||
       (
-        leaderSensor.position > ElevatorConstants.ELEVATOR_MAX_EXTENSION - 0.5.inches &&
-          (voltage > 0.volts)
-        )
+              leaderSensor.position > ElevatorConstants.ELEVATOR_MAX_EXTENSION - 0.5.inches &&
+                      (voltage > 0.volts)
+              )
     ) {
       elevatorLeaderKraken.setVoltage(0.0)
     } else {
