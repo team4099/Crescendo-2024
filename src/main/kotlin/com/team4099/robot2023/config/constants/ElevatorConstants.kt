@@ -56,7 +56,7 @@ object ElevatorConstants {
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_RETRACTION = 0.0.inches
   val ELEVATOR_SAFE_THRESHOLD = 5.0.inches
 
-  val ELEVATOR_TOLERANCE = 0.25.inches
+  val ELEVATOR_TOLERANCE = 0.5.inches
 
   val MAX_VELOCITY = 1.meters.perSecond
   val MAX_ACCELERATION = 2.0.meters.perSecond.perSecond

@@ -73,7 +73,9 @@ object WristConstants {
   val WRIST_TOLERANCE = 0.25.degrees
 
   val IDLE_ANGLE = (-35.0).degrees
-  val AMP_SCORE_ANGLE = -16.0.degrees
+
+
+  val AMP_SCORE_ANGLE = -8.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = -36.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = -7.5.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH = -2.degrees

@@ -716,7 +716,7 @@ class Superstructure(
 
   fun scoreCommand(): Command {
     val returnCommand =
-      runOnce {
+      run {
         if (currentState == SuperstructureStates.SCORE_AMP_PREP) {
           currentRequest = Request.SuperstructureRequest.ScoreAmp()
         } else if (currentState == SuperstructureStates.SCORE_TRAP_PREP) {
