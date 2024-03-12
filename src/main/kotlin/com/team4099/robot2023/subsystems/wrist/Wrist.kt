@@ -172,7 +172,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
   private fun isOutOfBounds(velocity: AngularVelocity): Boolean {
     return (velocity > 0.0.degrees.perSecond && forwardLimitReached) ||
-      (velocity < 0.0.degrees.perSecond && reverseLimitReached)
+            (velocity < 0.0.degrees.perSecond && reverseLimitReached)
   }
 
   init {
@@ -261,7 +261,12 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       WristStates.TARGETING_POSITION -> {
         Logger.recordOutput("Wrist/RequestedPosition", wristPositionTarget.inDegrees)
 
-        if (wristPositionTarget != lastWristPositionTarget) {
+        if ((wristPositionTarget - lastWristPositionTarget).absoluteValue < 5.degrees) {
+          wristProfile =
+            TrapezoidProfile(wristConstraints,
+              TrapezoidProfile.State(wristPositionTarget, 0.0.radians.perSecond),
+              wristProfile.initial)
+        } else {
           val preProfileGenerate = Clock.fpgaTime
           wristProfile =
             TrapezoidProfile(
@@ -269,7 +274,6 @@ class Wrist(val io: WristIO) : SubsystemBase() {
               TrapezoidProfile.State(wristPositionTarget, 0.0.radians.perSecond),
               TrapezoidProfile.State(inputs.wristPosition, inputs.wristVelocity)
             )
-
           val postProfileGenerate = Clock.fpgaTime
           Logger.recordOutput(
             "/Wrist/ProfileGenerationMS",
@@ -319,16 +323,11 @@ class Wrist(val io: WristIO) : SubsystemBase() {
   }
 
   val isAtTargetedPosition: Boolean
-    get() = true
-  /*
-  (
-    currentState == WristStates.TARGETING_POSITION &&
-      wristProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
-      (inputs.wristPosition - wristPositionTarget).absoluteValue <=
-      WristConstants.WRIST_TOLERANCE
-    )
-
-   */
+    get() =
+      currentState == WristStates.TARGETING_POSITION &&
+              wristProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
+              (inputs.wristPosition - wristPositionTarget).absoluteValue <=
+              WristConstants.WRIST_TOLERANCE
 
   fun setWristVoltage(appliedVoltage: ElectricalPotential) {
     io.setWristVoltage(appliedVoltage)
@@ -362,10 +361,10 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
       inline fun equivalentToRequest(request: Request.WristRequest): Boolean {
         return (
-          (request is Request.WristRequest.Zero && this == ZERO) ||
-            (request is Request.WristRequest.OpenLoop && this == OPEN_LOOP) ||
-            (request is Request.WristRequest.TargetingPosition && this == TARGETING_POSITION)
-          )
+                (request is Request.WristRequest.Zero && this == ZERO) ||
+                        (request is Request.WristRequest.OpenLoop && this == OPEN_LOOP) ||
+                        (request is Request.WristRequest.TargetingPosition && this == TARGETING_POSITION)
+                )
       }
     }
 

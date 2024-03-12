@@ -64,7 +64,8 @@ object ControlBoard {
   val characterizeWrist = Trigger { driver.rightShoulderButton }
 
   val climbAlignFar = Trigger { driver.yButton }
-  val climbAlignLeft = Trigger { driver.xButton }
+//  val climbAlignLeft = Trigger { driver.xButton }
+  val targetSpeaker = Trigger { driver.xButton } // TODO: switch back to climbAlignLeft
   val climbAlignRight = Trigger { driver.bButton }
   // week0 controls
 }

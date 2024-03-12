@@ -18,7 +18,9 @@ object VisionConstants {
   const val SIM_POSE_TOPIC_NAME = "Odometry/groundTruthPose"
   const val POSE_TOPIC_NAME = "Odometry/pose"
 
-  const val NUM_OF_CAMERAS = 1
+  const val NUM_OF_CAMERAS = 2
+
+  val TRUSTED_CAMERA_ORDER = arrayOf<Int>(1, 0)
 
   //  val CAMERA_TRANSFORMS =
   //    listOf(
@@ -45,19 +47,11 @@ object VisionConstants {
       Transform3d(
         Translation3d(12.653.inches, -9.1.inches, 14.25.inches), // 18.69
         Rotation3d(-5.3.degrees, 30.degrees, -72.77.degrees)
-      ),
-      //        Transform3d(
-      //          Translation3d(-10.965.inches, -11.85.inches, 16.437.inches),
-      //          Rotation3d(0.0.degrees, 0.0.degrees, 180.degrees)
-      //        ),
+      ), // left
       Transform3d(
-        Translation3d(-6.560.inches, -13.575.inches, 16.25.inches),
-        Rotation3d(0.0.degrees, 0.0.degrees, -40.degrees)
-      ), // camera facing rightward
-      Transform3d(
-        Translation3d(-6.560.inches, 13.575.inches, 16.25.inches),
-        Rotation3d(180.0.degrees, 0.0.degrees, 40.degrees)
-      ) // camera facing leftward
+        Translation3d(4.8.inches, 0.inches, 17.164.inches), // 18.69
+        Rotation3d(0.degrees, 30.degrees, 0.degrees)
+      ), // front
     )
 
   val CAMERA_NAMES = listOf("parakeet_1", "parakeet_2", "parakeet_3")

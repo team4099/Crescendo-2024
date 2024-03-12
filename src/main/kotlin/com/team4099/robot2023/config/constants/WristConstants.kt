@@ -46,12 +46,12 @@ object WristConstants {
 
   val WRIST_ZERO_SIM_OFFSET = 27.5.degrees
 
-  val MAX_WRIST_VELOCITY = 300.degrees.perSecond
-  val MAX_WRIST_ACCELERATION = 600.degrees.perSecond.perSecond
+  val MAX_WRIST_VELOCITY = 200.degrees.perSecond
+  val MAX_WRIST_ACCELERATION = 150.degrees.perSecond.perSecond
 
   val HARDSTOP_OFFSET = 47.degrees
   object PID {
-    val REAL_KP: ProportionalGain<Radian, Volt> = 0.5.volts / 1.0.degrees
+    val REAL_KP: ProportionalGain<Radian, Volt> = 0.8.volts / 1.0.degrees
     val REAL_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val REAL_KD: DerivativeGain<Radian, Volt> = 0.0.volts / (1.0.rotations / 1.0.seconds)
 
@@ -70,7 +70,7 @@ object WristConstants {
     val SIM_WRIST_KS = 0.15.volts
   }
 
-  val WRIST_TOLERANCE = 0.1.degrees
+  val WRIST_TOLERANCE = 0.25.degrees
 
   val IDLE_ANGLE = (-35.0).degrees
   val AMP_SCORE_ANGLE = -16.0.degrees

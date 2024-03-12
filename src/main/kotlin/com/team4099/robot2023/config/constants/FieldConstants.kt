@@ -47,6 +47,8 @@ object FieldConstants {
   var wingX = 229.201.inches
   var podiumX = 126.75.inches
   var startingLineX = 74.111.inches
+  var subwooferX = 28.inches
+  val edgeOfBumperToCenter = 12.75.inches + 3.5.inches
 
   val fieldAprilTags: List<AprilTag> =
     listOf(

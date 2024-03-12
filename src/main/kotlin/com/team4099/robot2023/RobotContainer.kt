@@ -3,6 +3,7 @@ package com.team4099.robot2023
 import com.team4099.robot2023.auto.AutonomousSelector
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TargetAngleCommand
+import com.team4099.robot2023.commands.drivetrain.TargetSpeakerCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
@@ -61,7 +62,10 @@ object RobotContainer {
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
 
       drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
-      vision = Vision(CameraIOPhotonvision("parakeet_1"))
+      vision = Vision(
+        CameraIOPhotonvision("parakeet_1"),
+        CameraIOPhotonvision("parakeet_2")
+      )
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
@@ -80,7 +84,7 @@ object RobotContainer {
       wrist = Wrist(WristIOSim)
     }
 
-    superstructure = Superstructure(intake, feeder, elevator, wrist, flywheel, drivetrain)
+    superstructure = Superstructure(intake, feeder, elevator, wrist, flywheel, drivetrain, vision)
     vision.setDataInterfaces({ drivetrain.fieldTRobot }, { drivetrain.addVisionData(it) })
     vision.drivetrainOdometry = {drivetrain.odomTRobot}
     limelight.poseSupplier = { drivetrain.odomTRobot }
@@ -198,21 +202,21 @@ object RobotContainer {
       )
     )
 
-    ControlBoard.climbAlignLeft.whileTrue(
-      TargetAngleCommand(
-        driver = Ryan(),
-        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
-        { ControlBoard.slowMode },
-        drivetrain,
-        if (DriverStation.getAlliance().isPresent &&
-          DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-        )
-          120.degrees
-        else -60.degrees
-      )
-    )
+//    ControlBoard.climbAlignLeft.whileTrue(
+//      TargetAngleCommand(
+//        driver = Ryan(),
+//        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+//        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+//        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+//        { ControlBoard.slowMode },
+//        drivetrain,
+//        if (DriverStation.getAlliance().isPresent &&
+//          DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+//        )
+//          120.degrees
+//        else -60.degrees
+//      )
+//    )
 
     ControlBoard.climbAlignRight.whileTrue(
       TargetAngleCommand(
@@ -227,6 +231,21 @@ object RobotContainer {
         )
           -120.0.degrees
         else 60.0.degrees,
+      )
+    )
+
+    ControlBoard.targetSpeaker.whileTrue(
+      ParallelCommandGroup(
+        TargetSpeakerCommand(
+          driver = Ryan(),
+          { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+          { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+          { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+          { ControlBoard.slowMode },
+          drivetrain,
+          vision
+        ),
+        superstructure.autoAimCommand()
       )
     )
 
