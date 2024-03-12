@@ -19,6 +19,7 @@ import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
 import com.team4099.robot2023.subsystems.feeder.FeederIOSim
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIO
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
 import com.team4099.robot2023.subsystems.intake.Intake
@@ -70,7 +71,7 @@ object RobotContainer {
       intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
-      flywheel = Flywheel(FlywheelIOTalon)
+      flywheel = Flywheel(object : FlywheelIO {})
       wrist = Wrist(WristIOTalon)
     } else {
       // Simulation implementations

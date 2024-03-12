@@ -96,7 +96,7 @@ object Robot : LoggedRobot() {
         Constants.Universal.POWER_DISTRIBUTION_HUB_ID, PowerDistribution.ModuleType.kRev
       )
     } else {
-      when (Constants.Tuning.SimType.REPLAY) {
+      when (Constants.Tuning.SimType.SIM) {
         Constants.Tuning.SimType.SIM -> {
           Logger.addDataReceiver(NTSafePublisher())
           logSimulationAlert.set(true)
@@ -143,12 +143,11 @@ object Robot : LoggedRobot() {
         .withPosition(0, 1)
         .withWidget(BuiltInWidgets.kTextView)
         .entry
+
+    RobotContainer.zeroSensors(isInAutonomous = true)
   }
 
   override fun autonomousInit() {
-    RobotContainer.zeroSensors(isInAutonomous = true)
-    RobotContainer.setDriveBrakeMode()
-    RobotContainer.setSteeringBrakeMode()
     RobotContainer.getAutonomousCommand().schedule()
   }
 
@@ -214,10 +213,11 @@ object Robot : LoggedRobot() {
 
   override fun teleopInit() {
     FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
+    RobotContainer.zeroSensors(isInAutonomous = false)
     RobotContainer.mapTeleopControls()
     RobotContainer.getAutonomousCommand().cancel()
     RobotContainer.setDriveBrakeMode()
-    RobotContainer.setSteeringBrakeMode()
+    RobotContainer.setSteeringCoastMode()
     if (Constants.Tuning.TUNING_MODE) {
       RobotContainer.mapTunableCommands()
     }

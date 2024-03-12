@@ -326,7 +326,8 @@ class SwerveModule(val io: SwerveModuleIO) {
       speedSetPoint = desiredVelState.speedMetersPerSecond.meters.perSecond
       accelerationSetPoint = desiredAccelState.speedMetersPerSecond.meters.perSecond.perSecond
 
-      io.setClosedLoop(steeringSetPoint, speedSetPoint, accelerationSetPoint)
+      io.setClosedLoop(steeringSetPoint, speedSetPoint
+      , accelerationSetPoint)
     }
   }
 

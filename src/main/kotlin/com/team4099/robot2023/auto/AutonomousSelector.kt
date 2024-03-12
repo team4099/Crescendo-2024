@@ -60,6 +60,10 @@ object AutonomousSelector {
       "Preload + Leave from Center Side of Subwoofer",
       AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER
     )
+    autonomousModeChooser.addOption(
+      "Test Auto Path",
+      AutonomousMode.TEST_AUTO_PATH
+    )
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
     autoTab.add("Mode", autonomousModeChooser.sendableChooser).withSize(4, 2).withPosition(2, 0)
