@@ -306,7 +306,7 @@ class SwerveModuleIOTalon(
         driveSensor.velocityToRawUnits(speed),
         driveSensor.accelerationToRawUnits(acceleration),
         DrivetrainConstants.FOC_ENABLED,
-        0.0,
+        feedforward.inVolts / 12.0,
         0,
         false,
         false,
@@ -318,7 +318,7 @@ class SwerveModuleIOTalon(
   }
 
   /**
-   * Open Loop Control using PercentO`utput control on a Falcon
+   * Open Loop Control using PercentOutput control on a Falcon
    *
    * @param steering: Desired angle
    * @param speed: Desired speed

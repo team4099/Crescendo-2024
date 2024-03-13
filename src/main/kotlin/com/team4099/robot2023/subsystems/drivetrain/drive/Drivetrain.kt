@@ -289,9 +289,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
       VisionConstants.POSE_TOPIC_NAME,
       doubleArrayOf(odomTRobot.x.inMeters, odomTRobot.y.inMeters, odomTRobot.rotation.inRadians)
     )
-    Logger.recordOutput(
-      "" + "FieldRelativePose/robotPose", fieldTRobot.toDoubleArray().toDoubleArray()
-    )
+    Logger.recordOutput("" + "FieldRelativePose/robotPose", fieldTRobot.pose2d)
 
     Logger.recordOutput("Drivetrain/ModuleStates", *measuredStates)
     Logger.recordOutput("Drivetrain/setPointStates", *setPointStates.toTypedArray())
@@ -561,7 +559,9 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
     // set each module openloop based on corresponding states
     for (moduleIndex in 0 until DrivetrainConstants.WHEEL_COUNT) {
-      swerveModules[moduleIndex].setPositionClosedLoop(swerveModuleStates[moduleIndex], accelSwerveModuleStates[moduleIndex])
+      swerveModules[moduleIndex].setPositionClosedLoop(
+        swerveModuleStates[moduleIndex], accelSwerveModuleStates[moduleIndex]
+      )
     }
   }
 
@@ -590,12 +590,12 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
         Transform2d(
           Translation2d(
             Constants.Universal.LOOP_PERIOD_TIME *
-                    chassisSpeeds.vxMetersPerSecond.meters.perSecond,
+              chassisSpeeds.vxMetersPerSecond.meters.perSecond,
             Constants.Universal.LOOP_PERIOD_TIME *
-                    chassisSpeeds.vyMetersPerSecond.meters.perSecond
+              chassisSpeeds.vyMetersPerSecond.meters.perSecond
           ),
           Constants.Universal.LOOP_PERIOD_TIME *
-                  chassisSpeeds.omegaRadiansPerSecond.radians.perSecond
+            chassisSpeeds.omegaRadiansPerSecond.radians.perSecond
         )
 
       val twistToNextPose: Twist2d = velocityTransform.log()

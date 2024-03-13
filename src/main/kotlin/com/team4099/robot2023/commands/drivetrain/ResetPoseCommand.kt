@@ -1,6 +1,5 @@
 package com.team4099.robot2023.commands.drivetrain
 
-import com.team4099.lib.logging.toDoubleArray
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.util.AllianceFlipUtil
 import edu.wpi.first.wpilibj2.command.Command
@@ -15,9 +14,7 @@ class ResetPoseCommand(val drivetrain: Drivetrain, val pose: Pose2d) : Command()
   override fun initialize() {
     drivetrain.resetFieldFrameEstimator(AllianceFlipUtil.apply(pose))
     drivetrain.zeroGyroYaw(AllianceFlipUtil.apply(pose).rotation)
-    Logger.recordOutput(
-      "Drivetrain/lastResetPose", AllianceFlipUtil.apply(pose).toDoubleArray().toDoubleArray()
-    )
+    Logger.recordOutput("Drivetrain/lastResetPose", AllianceFlipUtil.apply(pose).pose2d)
     Logger.recordOutput("ActiveCommands/ResetPoseCommand", true)
   }
 
