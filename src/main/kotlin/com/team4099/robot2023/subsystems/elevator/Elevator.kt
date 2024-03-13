@@ -199,24 +199,24 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
   val isAtTargetedPosition: Boolean
     get() =
       (
-              currentRequest is ElevatorRequest.TargetingPosition &&
-                      elevatorProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
-                      (inputs.elevatorPosition - elevatorPositionTarget).absoluteValue <=
-                      ElevatorConstants.ELEVATOR_TOLERANCE
-              ) ||
-              (TunableElevatorHeights.enableElevator.get() != 1.0)
+        currentRequest is ElevatorRequest.TargetingPosition &&
+          elevatorProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
+          (inputs.elevatorPosition - elevatorPositionTarget).absoluteValue <=
+          ElevatorConstants.ELEVATOR_TOLERANCE
+        ) ||
+        (TunableElevatorHeights.enableElevator.get() != 1.0)
 
   val canContinueSafely: Boolean
     get() =
       currentRequest is ElevatorRequest.TargetingPosition &&
-              (
-                      (
-                              (inputs.elevatorPosition - elevatorPositionTarget).absoluteValue <=
-                                      ElevatorConstants.ELEVATOR_SAFE_THRESHOLD
-                              ) ||
-                              elevatorProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt)
-                      ) &&
-              lastRequestedPosition == elevatorPositionTarget
+        (
+          (
+            (inputs.elevatorPosition - elevatorPositionTarget).absoluteValue <=
+              ElevatorConstants.ELEVATOR_SAFE_THRESHOLD
+            ) ||
+            elevatorProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt)
+          ) &&
+        lastRequestedPosition == elevatorPositionTarget
 
   init {
     TunableElevatorHeights
@@ -259,13 +259,7 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
     }
 
     if (kS.hasChanged() || kV.hasChanged() || kA.hasChanged() || kG.hasChanged()) {
-      elevatorFeedforward =
-        ElevatorFeedforward(
-          kS.get(),
-          kG.get(),
-          kV.get(),
-          kA.get()
-        )
+      elevatorFeedforward = ElevatorFeedforward(kS.get(), kG.get(), kV.get(), kA.get())
     }
     Logger.processInputs("Elevator", inputs)
     Logger.recordOutput("Elevator/currentState", currentState.name)
@@ -421,8 +415,8 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
       HOME;
       inline fun equivalentToRequest(request: ElevatorRequest): Boolean {
         return (request is ElevatorRequest.Home && this == HOME) ||
-                (request is ElevatorRequest.OpenLoop && this == OPEN_LOOP) ||
-                (request is ElevatorRequest.TargetingPosition && this == TARGETING_POSITION)
+          (request is ElevatorRequest.OpenLoop && this == OPEN_LOOP) ||
+          (request is ElevatorRequest.TargetingPosition && this == TARGETING_POSITION)
       }
     }
 

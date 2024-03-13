@@ -62,10 +62,7 @@ object RobotContainer {
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
 
       drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
-      vision = Vision(
-        CameraIOPhotonvision("parakeet_1"),
-        CameraIOPhotonvision("parakeet_2")
-      )
+      vision = Vision(CameraIOPhotonvision("parakeet_1"), CameraIOPhotonvision("parakeet_2"))
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
@@ -202,21 +199,21 @@ object RobotContainer {
       )
     )
 
-//    ControlBoard.climbAlignLeft.whileTrue(
-//      TargetAngleCommand(
-//        driver = Ryan(),
-//        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-//        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-//        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
-//        { ControlBoard.slowMode },
-//        drivetrain,
-//        if (DriverStation.getAlliance().isPresent &&
-//          DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-//        )
-//          120.degrees
-//        else -60.degrees
-//      )
-//    )
+    //    ControlBoard.climbAlignLeft.whileTrue(
+    //      TargetAngleCommand(
+    //        driver = Ryan(),
+    //        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+    //        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+    //        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+    //        { ControlBoard.slowMode },
+    //        drivetrain,
+    //        if (DriverStation.getAlliance().isPresent &&
+    //          DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+    //        )
+    //          120.degrees
+    //        else -60.degrees
+    //      )
+    //    )
 
     ControlBoard.climbAlignRight.whileTrue(
       TargetAngleCommand(

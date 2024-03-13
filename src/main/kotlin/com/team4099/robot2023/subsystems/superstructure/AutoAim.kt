@@ -1,19 +1,11 @@
 package com.team4099.robot2023.subsystems.superstructure
 
-import com.ctre.phoenix6.controls.VelocityDutyCycle
 import com.team4099.lib.logging.LoggedTunableValue
-import com.team4099.robot2023.config.constants.Constants
-import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.SuperstructureConstants
 import com.team4099.robot2023.subsystems.vision.Vision
-import com.team4099.robot2023.util.PoseEstimator
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap
-import edu.wpi.first.math.interpolation.Interpolator
 import edu.wpi.first.wpilibj.RobotBase
-import java.util.function.Consumer
 import org.littletonrobotics.junction.Logger
-import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.Length
@@ -26,106 +18,151 @@ import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
-import org.team4099.lib.units.derived.meterSquared
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.inRotationsPerMinute
 import org.team4099.lib.units.perMinute
 import kotlin.math.hypot
 
 class AutoAim(val vision: Vision) {
-    val flywheelSpeedRPMInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
-    val wristAngleDegreesInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
+  val flywheelSpeedRPMInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
+  val wristAngleDegreesInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
 
-    val tunableFlywheelInterpolationTable: List<Pair<LoggedTunableValue<Meter>, LoggedTunableValue<Velocity<Radian>>>>
+  val tunableFlywheelInterpolationTable:
+    List<Pair<LoggedTunableValue<Meter>, LoggedTunableValue<Velocity<Radian>>>>
 
-    val tunableWristInterpolationTable:  List<Pair<LoggedTunableValue<Meter>, LoggedTunableValue<Radian>>>
+  val tunableWristInterpolationTable:
+    List<Pair<LoggedTunableValue<Meter>, LoggedTunableValue<Radian>>>
 
-    val interpolationTestDistance = LoggedTunableValue("AutoAim/TestDistance", 0.0.meters, Pair({it.inInches}, {it.inches}))
+  val interpolationTestDistance =
+    LoggedTunableValue("AutoAim/TestDistance", 0.0.meters, Pair({ it.inInches }, { it.inches }))
 
-    init {
+  init {
 
-        if (RobotBase.isReal()) {
-            tunableFlywheelInterpolationTable = SuperstructureConstants.distanceFlywheelSpeedTableReal.mapIndexed {i, it ->
-                Pair(
-                    LoggedTunableValue("AutoAim/FlywheelInterpolation/${i}/Distance", it.first, Pair({ it.inInches }, { it.inches })),
-                    LoggedTunableValue("AutoAim/FlywheelInterpolation/${i}/SpeedRPM", it.second, Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute }))
-                )
-            }
-
-            tunableWristInterpolationTable = SuperstructureConstants.distanceWristAngleTableReal.mapIndexed {i, it ->
-                Pair(
-                    LoggedTunableValue("AutoAim/WristInterpolation/${i}/Distance", it.first, Pair({ it.inInches }, { it.inches })),
-                    LoggedTunableValue("AutoAim/WristInterpolation/${i}/AngleDegrees", it.second, Pair({ it.inDegrees }, { it.degrees }))
-                )
-            }
-        } else {
-            tunableFlywheelInterpolationTable = SuperstructureConstants.distanceFlywheelSpeedTableSim.mapIndexed {i, it ->
-                Pair(
-                    LoggedTunableValue("AutoAim/FlywheelInterpolation/${i}/Distance", it.first, Pair({ it.inInches }, { it.inches })),
-                    LoggedTunableValue("AutoAim/FlywheelInterpolation/${i}/SpeedRPM", it.second, Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute }))
-                )
-            }
-
-            tunableWristInterpolationTable = SuperstructureConstants.distanceWristAngleTableSim.mapIndexed {i, it ->
-                Pair(
-                    LoggedTunableValue("AutoAim/WristInterpolation/${i}/Distance", it.first, Pair({ it.inInches }, { it.inches })),
-                    LoggedTunableValue("AutoAim/WristInterpolation/${i}/AngleDegrees", it.second, Pair({ it.inDegrees }, { it.degrees }))
-                )
-            }
+    if (RobotBase.isReal()) {
+      tunableFlywheelInterpolationTable =
+        SuperstructureConstants.distanceFlywheelSpeedTableReal.mapIndexed { i, it ->
+          Pair(
+            LoggedTunableValue(
+              "AutoAim/FlywheelInterpolation/$i/Distance",
+              it.first,
+              Pair({ it.inInches }, { it.inches })
+            ),
+            LoggedTunableValue(
+              "AutoAim/FlywheelInterpolation/$i/SpeedRPM",
+              it.second,
+              Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+            )
+          )
         }
 
+      tunableWristInterpolationTable =
+        SuperstructureConstants.distanceWristAngleTableReal.mapIndexed { i, it ->
+          Pair(
+            LoggedTunableValue(
+              "AutoAim/WristInterpolation/$i/Distance",
+              it.first,
+              Pair({ it.inInches }, { it.inches })
+            ),
+            LoggedTunableValue(
+              "AutoAim/WristInterpolation/$i/AngleDegrees",
+              it.second,
+              Pair({ it.inDegrees }, { it.degrees })
+            )
+          )
+        }
+    } else {
+      tunableFlywheelInterpolationTable =
+        SuperstructureConstants.distanceFlywheelSpeedTableSim.mapIndexed { i, it ->
+          Pair(
+            LoggedTunableValue(
+              "AutoAim/FlywheelInterpolation/$i/Distance",
+              it.first,
+              Pair({ it.inInches }, { it.inches })
+            ),
+            LoggedTunableValue(
+              "AutoAim/FlywheelInterpolation/$i/SpeedRPM",
+              it.second,
+              Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+            )
+          )
+        }
 
+      tunableWristInterpolationTable =
+        SuperstructureConstants.distanceWristAngleTableSim.mapIndexed { i, it ->
+          Pair(
+            LoggedTunableValue(
+              "AutoAim/WristInterpolation/$i/Distance",
+              it.first,
+              Pair({ it.inInches }, { it.inches })
+            ),
+            LoggedTunableValue(
+              "AutoAim/WristInterpolation/$i/AngleDegrees",
+              it.second,
+              Pair({ it.inDegrees }, { it.degrees })
+            )
+          )
+        }
+    }
 
+    updateFlywheelInterpolationTable()
+    updateWristInterpolationTable()
+  }
+
+  fun periodic() {
+    for (point in tunableFlywheelInterpolationTable) {
+      if (point.first.hasChanged() || point.second.hasChanged()) {
         updateFlywheelInterpolationTable()
+        break
+      }
+    }
+
+    for (point in tunableWristInterpolationTable) {
+      if (point.first.hasChanged() || point.second.hasChanged()) {
         updateWristInterpolationTable()
+        break
+      }
     }
 
-    fun periodic() {
-        for (point in tunableFlywheelInterpolationTable) {
-            if (point.first.hasChanged() || point.second.hasChanged()) {
-                updateFlywheelInterpolationTable()
-                break
-            }
-        }
+    Logger.recordOutput(
+      "AutoAim/InterpolatedFlywheelSpeed",
+      flywheelSpeedRPMInterpolationTable.get(interpolationTestDistance.get().inMeters)
+    )
 
-        for (point in tunableWristInterpolationTable) {
-            if (point.first.hasChanged() || point.second.hasChanged()) {
-                updateWristInterpolationTable()
-                break
-            }
-        }
+    Logger.recordOutput(
+      "AutoAim/InterpolatedWristAngle",
+      wristAngleDegreesInterpolationTable.get(interpolationTestDistance.get().inMeters)
+    )
+  }
 
-        Logger.recordOutput("AutoAim/InterpolatedFlywheelSpeed", flywheelSpeedRPMInterpolationTable.get(interpolationTestDistance.get().inMeters))
+  fun calculateDistanceFromSpeaker(): Length {
+    val distance = hypot(vision.robotTSpeaker.x.inMeters, vision.robotTSpeaker.y.inMeters).meters
+    Logger.recordOutput("AutoAim/currentDistanceInhces", distance.inInches)
+    return distance
+  }
 
-        Logger.recordOutput("AutoAim/InterpolatedWristAngle", wristAngleDegreesInterpolationTable.get(interpolationTestDistance.get().inMeters))
+  fun calculateFlywheelSpeed(): AngularVelocity {
+    return flywheelSpeedRPMInterpolationTable.get(calculateDistanceFromSpeaker().inMeters)
+      .rotations
+      .perMinute
+  }
+
+  fun calculateWristAngle(): Angle {
+    return wristAngleDegreesInterpolationTable.get(calculateDistanceFromSpeaker().inMeters).degrees
+  }
+
+  fun updateFlywheelInterpolationTable() {
+    flywheelSpeedRPMInterpolationTable.clear()
+    tunableFlywheelInterpolationTable.forEach {
+      flywheelSpeedRPMInterpolationTable.put(
+        it.first.get().inMeters, it.second.get().inRotationsPerMinute
+      )
     }
+  }
 
-
-    fun calculateDistanceFromSpeaker(): Length {
-        val distance = hypot(vision.robotTSpeaker.x.inMeters, vision.robotTSpeaker.y.inMeters).meters
-        Logger.recordOutput("AutoAim/currentDistanceInhces", distance.inInches)
-        return distance
+  fun updateWristInterpolationTable() {
+    wristAngleDegreesInterpolationTable.clear()
+    tunableWristInterpolationTable.forEach {
+      wristAngleDegreesInterpolationTable.put(it.first.get().inMeters, it.second.get().inDegrees)
     }
-
-    fun calculateFlywheelSpeed(): AngularVelocity {
-        return flywheelSpeedRPMInterpolationTable.get(calculateDistanceFromSpeaker().inMeters).rotations.perMinute
-    }
-
-    fun calculateWristAngle(): Angle {
-        return wristAngleDegreesInterpolationTable.get(calculateDistanceFromSpeaker().inMeters).degrees
-    }
-
-    fun updateFlywheelInterpolationTable() {
-        flywheelSpeedRPMInterpolationTable.clear()
-        tunableFlywheelInterpolationTable.forEach {
-            flywheelSpeedRPMInterpolationTable.put(it.first.get().inMeters, it.second.get().inRotationsPerMinute)
-        }
-    }
-
-    fun updateWristInterpolationTable() {
-        wristAngleDegreesInterpolationTable.clear()
-        tunableWristInterpolationTable.forEach {
-            wristAngleDegreesInterpolationTable.put(it.first.get().inMeters, it.second.get().inDegrees)
-        }
-    }
+  }
 }

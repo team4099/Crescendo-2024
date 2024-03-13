@@ -13,7 +13,6 @@ import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.inMeters
-import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -30,124 +29,126 @@ import kotlin.math.PI
 import kotlin.math.atan2
 
 class TargetSpeakerCommand(
-    val driver: DriverProfile,
-    val driveX: () -> Double,
-    val driveY: () -> Double,
-    val turn: () -> Double,
-    val slowMode: () -> Boolean,
-    val drivetrain: Drivetrain,
-    val vision: Vision
+  val driver: DriverProfile,
+  val driveX: () -> Double,
+  val driveY: () -> Double,
+  val turn: () -> Double,
+  val slowMode: () -> Boolean,
+  val drivetrain: Drivetrain,
+  val vision: Vision
 ) : Command() {
-    private var thetaPID: PIDController<Radian, Velocity<Radian>>
-    val thetakP =
-        LoggedTunableValue(
-            "Pathfollow/thetaAmpkP",
-            Pair({ it.inDegreesPerSecondPerDegree }, { it.degrees.perSecond.perDegree })
+  private var thetaPID: PIDController<Radian, Velocity<Radian>>
+  val thetakP =
+    LoggedTunableValue(
+      "Pathfollow/thetaAmpkP",
+      Pair({ it.inDegreesPerSecondPerDegree }, { it.degrees.perSecond.perDegree })
+    )
+  val thetakI =
+    LoggedTunableValue(
+      "Pathfollow/thetaAmpkI",
+      Pair(
+        { it.inDegreesPerSecondPerDegreeSeconds }, { it.degrees.perSecond.perDegreeSeconds }
+      )
+    )
+  val thetakD =
+    LoggedTunableValue(
+      "Pathfollow/thetakD",
+      Pair(
+        { it.inDegreesPerSecondPerDegreePerSecond },
+        { it.degrees.perSecond.perDegreePerSecond }
+      )
+    )
+  var desiredAngle = 0.0.degrees
+
+  init {
+    addRequirements(drivetrain)
+
+    thetaPID =
+      PIDController(
+        thetakP.get(),
+        thetakI.get(),
+        thetakD.get(),
+      )
+
+    if (!(RobotBase.isSimulation())) {
+
+      thetakP.initDefault(DrivetrainConstants.PID.TELEOP_ALIGN_PID_KP)
+      thetakI.initDefault(DrivetrainConstants.PID.TELEOP_ALIGN_PID_KI)
+      thetakD.initDefault(DrivetrainConstants.PID.TELEOP_ALIGN_PID_KD)
+
+      thetaPID =
+        PIDController(
+          DrivetrainConstants.PID.TELEOP_ALIGN_PID_KP,
+          DrivetrainConstants.PID.TELEOP_ALIGN_PID_KI,
+          DrivetrainConstants.PID.TELEOP_ALIGN_PID_KD
         )
-    val thetakI =
-        LoggedTunableValue(
-            "Pathfollow/thetaAmpkI",
-            Pair(
-                { it.inDegreesPerSecondPerDegreeSeconds }, { it.degrees.perSecond.perDegreeSeconds }
-            )
+    } else {
+      thetakP.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP)
+      thetakI.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI)
+      thetakD.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD)
+
+      thetaPID =
+        PIDController(
+          DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP,
+          DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI,
+          DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD
         )
-    val thetakD =
-        LoggedTunableValue(
-            "Pathfollow/thetakD",
-            Pair(
-                { it.inDegreesPerSecondPerDegreePerSecond },
-                { it.degrees.perSecond.perDegreePerSecond }
-            )
-        )
-    var desiredAngle = 0.0.degrees
-
-    init {
-        addRequirements(drivetrain)
-
-        thetaPID =
-            PIDController(
-                thetakP.get(),
-                thetakI.get(),
-                thetakD.get(),
-            )
-
-        if (!(RobotBase.isSimulation())) {
-
-            thetakP.initDefault(DrivetrainConstants.PID.TELEOP_ALIGN_PID_KP)
-            thetakI.initDefault(DrivetrainConstants.PID.TELEOP_ALIGN_PID_KI)
-            thetakD.initDefault(DrivetrainConstants.PID.TELEOP_ALIGN_PID_KD)
-
-            thetaPID =
-                PIDController(
-                    DrivetrainConstants.PID.TELEOP_ALIGN_PID_KP,
-                    DrivetrainConstants.PID.TELEOP_ALIGN_PID_KI,
-                    DrivetrainConstants.PID.TELEOP_ALIGN_PID_KD
-                )
-        } else {
-            thetakP.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP)
-            thetakI.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI)
-            thetakD.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD)
-
-            thetaPID =
-                PIDController(
-                    DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP,
-                    DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI,
-                    DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD
-                )
-        }
-
-        thetaPID.enableContinuousInput(-PI.radians, PI.radians)
     }
 
-    override fun initialize() {
-        thetaPID.reset() // maybe do first for x?
-        /*
-        if (thetakP.hasChanged() || thetakI.hasChanged() || thetakD.hasChanged()) {
-          thetaPID = PIDController(thetakP.get(), thetakI.get(), thetakD.get())
-        }
+    thetaPID.enableContinuousInput(-PI.radians, PI.radians)
+  }
 
-         */
+  override fun initialize() {
+    thetaPID.reset() // maybe do first for x?
+    /*
+    if (thetakP.hasChanged() || thetakI.hasChanged() || thetakD.hasChanged()) {
+      thetaPID = PIDController(thetakP.get(), thetakI.get(), thetakD.get())
     }
 
-    override fun execute() {
+     */
+  }
 
-        drivetrain.defaultCommand.end(true)
-        Logger.recordOutput("ActiveCommands/TargetAngleCommand", true)
-        Logger.recordOutput(
-            "Testing/CurrentDrivetrainRotation", drivetrain.odomTRobot.rotation.inDegrees
-        )
+  override fun execute() {
 
-        val currentPose = drivetrain.odomTRobot
-        val relativeToRobotPose = vision.robotTSpeaker
+    drivetrain.defaultCommand.end(true)
+    Logger.recordOutput("ActiveCommands/TargetAngleCommand", true)
+    Logger.recordOutput(
+      "Testing/CurrentDrivetrainRotation", drivetrain.odomTRobot.rotation.inDegrees
+    )
 
-        desiredAngle = atan2(relativeToRobotPose.y.inMeters, relativeToRobotPose.x.inMeters).radians
+    val currentPose = drivetrain.odomTRobot
+    val relativeToRobotPose = vision.robotTSpeaker
 
-        val thetaFeedback = thetaPID.calculate(currentPose.rotation, desiredAngle)
+    desiredAngle = atan2(relativeToRobotPose.y.inMeters, relativeToRobotPose.x.inMeters).radians
 
-        Logger.recordOutput("Testing/desiredAngle", desiredAngle.inDegrees)
-        Logger.recordOutput("Testing/error", thetaPID.error.inDegrees)
-        Logger.recordOutput("Testing/thetaFeedback", thetaFeedback.inDegreesPerSecond)
-        Logger.recordOutput("Testing/relativeToRobotPose", relativeToRobotPose.toDoubleArray().toDoubleArray())
+    val thetaFeedback = thetaPID.calculate(currentPose.rotation, desiredAngle)
 
-        drivetrain.currentRequest =
-            Request.DrivetrainRequest.OpenLoop(
-                thetaFeedback,
-                driver.driveSpeedClampedSupplier(driveX, driveY, slowMode),
-                fieldOriented = true
-            )
-    }
+    Logger.recordOutput("Testing/desiredAngle", desiredAngle.inDegrees)
+    Logger.recordOutput("Testing/error", thetaPID.error.inDegrees)
+    Logger.recordOutput("Testing/thetaFeedback", thetaFeedback.inDegreesPerSecond)
+    Logger.recordOutput(
+      "Testing/relativeToRobotPose", relativeToRobotPose.toDoubleArray().toDoubleArray()
+    )
 
-    override fun isFinished(): Boolean {
-        return false
-    }
+    drivetrain.currentRequest =
+      Request.DrivetrainRequest.OpenLoop(
+        thetaFeedback,
+        driver.driveSpeedClampedSupplier(driveX, driveY, slowMode),
+        fieldOriented = true
+      )
+  }
 
-    override fun end(interrupted: Boolean) {
-        Logger.recordOutput("ActiveCommands/TargetAngleCommand", false)
-        drivetrain.currentRequest =
-            Request.DrivetrainRequest.OpenLoop(
-                driver.rotationSpeedClampedSupplier(turn, slowMode),
-                driver.driveSpeedClampedSupplier(driveX, driveY, slowMode),
-                fieldOriented = true
-            )
-    }
+  override fun isFinished(): Boolean {
+    return false
+  }
+
+  override fun end(interrupted: Boolean) {
+    Logger.recordOutput("ActiveCommands/TargetAngleCommand", false)
+    drivetrain.currentRequest =
+      Request.DrivetrainRequest.OpenLoop(
+        driver.rotationSpeedClampedSupplier(turn, slowMode),
+        driver.driveSpeedClampedSupplier(driveX, driveY, slowMode),
+        fieldOriented = true
+      )
+  }
 }

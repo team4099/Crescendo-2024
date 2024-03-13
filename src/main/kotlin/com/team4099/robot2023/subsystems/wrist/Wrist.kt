@@ -172,7 +172,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
   private fun isOutOfBounds(velocity: AngularVelocity): Boolean {
     return (velocity > 0.0.degrees.perSecond && forwardLimitReached) ||
-            (velocity < 0.0.degrees.perSecond && reverseLimitReached)
+      (velocity < 0.0.degrees.perSecond && reverseLimitReached)
   }
 
   init {
@@ -263,9 +263,11 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
         if ((wristPositionTarget - lastWristPositionTarget).absoluteValue < 5.degrees) {
           wristProfile =
-            TrapezoidProfile(wristConstraints,
+            TrapezoidProfile(
+              wristConstraints,
               TrapezoidProfile.State(wristPositionTarget, 0.0.radians.perSecond),
-              wristProfile.initial)
+              wristProfile.initial
+            )
         } else {
           val preProfileGenerate = Clock.fpgaTime
           wristProfile =
@@ -325,9 +327,9 @@ class Wrist(val io: WristIO) : SubsystemBase() {
   val isAtTargetedPosition: Boolean
     get() =
       currentState == WristStates.TARGETING_POSITION &&
-              wristProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
-              (inputs.wristPosition - wristPositionTarget).absoluteValue <=
-              WristConstants.WRIST_TOLERANCE
+        wristProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
+        (inputs.wristPosition - wristPositionTarget).absoluteValue <=
+        WristConstants.WRIST_TOLERANCE
 
   fun setWristVoltage(appliedVoltage: ElectricalPotential) {
     io.setWristVoltage(appliedVoltage)
@@ -361,10 +363,10 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
       inline fun equivalentToRequest(request: Request.WristRequest): Boolean {
         return (
-                (request is Request.WristRequest.Zero && this == ZERO) ||
-                        (request is Request.WristRequest.OpenLoop && this == OPEN_LOOP) ||
-                        (request is Request.WristRequest.TargetingPosition && this == TARGETING_POSITION)
-                )
+          (request is Request.WristRequest.Zero && this == ZERO) ||
+            (request is Request.WristRequest.OpenLoop && this == OPEN_LOOP) ||
+            (request is Request.WristRequest.TargetingPosition && this == TARGETING_POSITION)
+          )
       }
     }
 

@@ -239,10 +239,7 @@ class Superstructure(
               Flywheel.TunableFlywheelStates.speakerVelocity.get()
             )
         } else {
-          flywheel.currentRequest =
-            Request.FlywheelRequest.OpenLoop(
-              0.0.volts
-            )
+          flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(0.0.volts)
         }
 
         if (DriverStation.isAutonomous()) {
@@ -311,7 +308,8 @@ class Superstructure(
         }
       }
       SuperstructureStates.GROUND_INTAKE_PREP -> {
-        wrist.currentRequest = Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.intakeAngle.get())
+        wrist.currentRequest =
+          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.intakeAngle.get())
         if (wrist.isAtTargetedPosition) {
           nextState = SuperstructureStates.GROUND_INTAKE
         }
@@ -372,20 +370,14 @@ class Superstructure(
         Logger.recordOutput("AutoAim/FlywheelSpeed", targetFlywheelSpeed.inRotationsPerMinute)
         Logger.recordOutput("AutoAim/WristAngle", targetWristAngle.inDegrees)
 
-        flywheel.currentRequest =
-          Request.FlywheelRequest.TargetingVelocity(
-            targetFlywheelSpeed
-          )
-        wrist.currentRequest =
-          Request.WristRequest.TargetingPosition(
-            targetWristAngle
-          )
+        flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(targetFlywheelSpeed)
+        wrist.currentRequest = Request.WristRequest.TargetingPosition(targetWristAngle)
 
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
           }
-          is Request.SuperstructureRequest.PrepScoreSpeakerLow-> {
+          is Request.SuperstructureRequest.PrepScoreSpeakerLow -> {
             nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
@@ -394,8 +386,6 @@ class Superstructure(
           }
         }
       }
-
-
       SuperstructureStates.SCORE_AMP_PREP -> {
         elevator.currentRequest =
           Request.ElevatorRequest.TargetingPosition(
@@ -653,8 +643,8 @@ class Superstructure(
     if (!(checkAtRequestedStateNextLoopCycle)) {
       isAtRequestedState =
         elevator.isAtTargetedPosition &&
-                flywheel.isAtTargetedVelocity &&
-                wrist.isAtTargetedPosition
+        flywheel.isAtTargetedVelocity &&
+        wrist.isAtTargetedPosition
     } else {
       checkAtRequestedStateNextLoopCycle = false
     }
@@ -679,9 +669,10 @@ class Superstructure(
   }
 
   fun groundIntakeCommand(): Command {
-    val returnCommand = runOnce { currentRequest = Request.SuperstructureRequest.GroundIntake() }.until {
-      currentState == SuperstructureStates.GROUND_INTAKE_PREP
-    }
+    val returnCommand =
+      runOnce { currentRequest = Request.SuperstructureRequest.GroundIntake() }.until {
+        currentState == SuperstructureStates.GROUND_INTAKE_PREP
+      }
 
     returnCommand.name = "GroundIntakeCommand"
     return returnCommand

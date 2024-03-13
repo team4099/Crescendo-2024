@@ -1,7 +1,6 @@
 package com.team4099.robot2023.subsystems.vision.camera
 
 import edu.wpi.first.math.MatBuilder
-import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.Nat
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N3
@@ -15,7 +14,6 @@ import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Pose3dWPILIB
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.seconds
-import kotlin.math.round
 
 interface CameraIO {
   class CameraInputs : LoggableInputs {
@@ -54,13 +52,11 @@ interface CameraIO {
 
       table?.get("cameraTargets/indices", 0)?.let { indices = it }
 
-      table?.get("distCoeff", MatBuilder.fill(Nat.N5(), Nat.N1(), *DoubleArray(5) { 0.0 }).data)?.let {
-        distCoeff = MatBuilder.fill(Nat.N5(), Nat.N1(), *it)
-      }
+      table?.get("distCoeff", MatBuilder.fill(Nat.N5(), Nat.N1(), *DoubleArray(5) { 0.0 }).data)
+        ?.let { distCoeff = MatBuilder.fill(Nat.N5(), Nat.N1(), *it) }
 
-      table?.get("cameraMatrix", MatBuilder.fill(Nat.N3(), Nat.N3(), *DoubleArray(9) { 0.0 }).data)?.let {
-        cameraMatrix = MatBuilder.fill(Nat.N3(), Nat.N3(), *it)
-      }
+      table?.get("cameraMatrix", MatBuilder.fill(Nat.N3(), Nat.N3(), *DoubleArray(9) { 0.0 }).data)
+        ?.let { cameraMatrix = MatBuilder.fill(Nat.N3(), Nat.N3(), *it) }
 
       cameraTargets = mutableListOf<PhotonTrackedTarget>()
 
