@@ -68,5 +68,6 @@ object ControlBoard {
   //  val climbAlignLeft = Trigger { driver.xButton }
   val targetSpeaker = Trigger { driver.xButton } // TODO: switch back to climbAlignLeft
   val climbAlignRight = Trigger { driver.bButton }
+  val characterizeSubsystem = Trigger { driver.bButton }
   // week0 controls
 }

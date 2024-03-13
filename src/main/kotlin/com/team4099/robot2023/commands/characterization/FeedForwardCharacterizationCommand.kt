@@ -15,7 +15,7 @@ import java.util.LinkedList
 import java.util.function.Consumer
 import java.util.function.Supplier
 
-class FeedForwardCharacterization(
+class FeedForwardCharacterizationCommand(
   val subsystem: SubsystemBase,
   val voltageConsumer: Consumer<ElectricalPotential>,
   val velocitySupplier: Supplier<LinearVelocity>

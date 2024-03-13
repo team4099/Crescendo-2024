@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.DutyCycleOut
 import com.ctre.phoenix6.controls.PositionDutyCycle
 import com.ctre.phoenix6.controls.VelocityVoltage
+import com.ctre.phoenix6.controls.VoltageOut
 import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.InvertedValue
 import com.ctre.phoenix6.signals.NeutralModeValue
@@ -37,6 +38,7 @@ import org.team4099.lib.units.ctreAngularMechanismSensor
 import org.team4099.lib.units.ctreLinearMechanismSensor
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.DerivativeGain
+import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
@@ -427,5 +429,9 @@ class SwerveModuleIOTalon(
     steeringFalcon.configurator.apply(motorOutputConfig)
     // motor output configs might overwrite invert?
     steeringFalcon.inverted = true
+  }
+
+  override fun runCharacterization(input: ElectricalPotential) {
+    driveFalcon.setControl(VoltageOut(input.inVolts))
   }
 }

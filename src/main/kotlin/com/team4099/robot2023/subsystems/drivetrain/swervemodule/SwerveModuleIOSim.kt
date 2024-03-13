@@ -6,6 +6,7 @@ import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
 import com.team4099.robot2023.subsystems.falconspin.SimulatedMotor
+import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.wpilibj.simulation.BatterySim
 import edu.wpi.first.wpilibj.simulation.FlywheelSim
@@ -274,5 +275,10 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     maxAccel: AngularAcceleration
   ) {
     println("Can't configure motion magic in simulation")
+  }
+
+  override fun runCharacterization(input: ElectricalPotential) {
+    val appliedVolts = MathUtil.clamp(input.inVolts, -12.0, 12.0)
+    driveMotorSim.setInputVoltage(appliedVolts)
   }
 }

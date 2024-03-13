@@ -13,6 +13,7 @@ import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.Angle
+import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.angle
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -351,5 +352,9 @@ class SwerveModule(val io: SwerveModuleIO) {
 
   fun setSteeringBrakeMode(brake: Boolean) {
     io.setSteeringBrakeMode(brake)
+  }
+
+  fun runCharacterization(input: ElectricalPotential) {
+    io.runCharacterization(input)
   }
 }

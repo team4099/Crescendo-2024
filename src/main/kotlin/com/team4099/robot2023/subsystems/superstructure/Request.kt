@@ -1,5 +1,6 @@
 package com.team4099.robot2023.subsystems.superstructure
 
+import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearVelocity
@@ -61,6 +62,7 @@ sealed interface Request {
     class Idle : DrivetrainRequest
 
     class LockWheels : DrivetrainRequest
+    class Characterize(val voltage: ElectricalPotential) : DrivetrainRequest
   }
 
   sealed interface IntakeRequest : Request {

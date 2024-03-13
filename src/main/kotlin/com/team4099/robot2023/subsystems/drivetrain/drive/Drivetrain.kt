@@ -46,6 +46,7 @@ import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inRotation2ds
 import org.team4099.lib.units.derived.radians
+import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.perSecond
 import java.util.concurrent.locks.Lock
@@ -93,6 +94,8 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
   private var omegaVelocity = 0.0.radians.perSecond
 
+  private var characterizationInput = 0.0.volts
+
   var lastGyroYaw = { gyroInputs.gyroYaw }
 
   var currentState: DrivetrainState = DrivetrainState.UNINITIALIZED
@@ -128,6 +131,9 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
         }
         is DrivetrainRequest.ZeroSensors -> {
           isInAutonomous = value.isInAutonomous
+        }
+        is DrivetrainRequest.Characterize -> {
+          characterizationInput = value.voltage
         }
         else -> {}
       }
@@ -360,6 +366,12 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
         Logger.recordOutput("Drivetrain/TargetChassisSpeeds", targetedChassisSpeeds)
         Logger.recordOutput("Drivetrain/TargetChassisAccels", targetedChassisAccels)
+
+        // Transitions
+        nextState = fromRequestToState(currentRequest)
+      }
+      DrivetrainState.CHARACTERIZE -> {
+        swerveModules.forEach { it.runCharacterization(characterizationInput) }
 
         // Transitions
         nextState = fromRequestToState(currentRequest)
@@ -762,7 +774,8 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
       ZEROING_SENSORS,
       OPEN_LOOP,
       LOCK_WHEELS,
-      CLOSED_LOOP;
+      CLOSED_LOOP,
+      CHARACTERIZE;
 
       inline fun equivalentToRequest(request: Request.DrivetrainRequest): Boolean {
         return (
@@ -770,7 +783,8 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
             (request is DrivetrainRequest.OpenLoop && this == OPEN_LOOP) ||
             (request is DrivetrainRequest.ClosedLoop && this == CLOSED_LOOP) ||
             (request is DrivetrainRequest.Idle && this == IDLE) ||
-            (request is DrivetrainRequest.LockWheels && this == LOCK_WHEELS)
+            (request is DrivetrainRequest.LockWheels && this == LOCK_WHEELS) ||
+            (request is DrivetrainRequest.Characterize && this == CHARACTERIZE)
           )
       }
     }
@@ -782,6 +796,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
         is DrivetrainRequest.ZeroSensors -> DrivetrainState.ZEROING_SENSORS
         is DrivetrainRequest.Idle -> DrivetrainState.IDLE
         is DrivetrainRequest.LockWheels -> DrivetrainState.LOCK_WHEELS
+        is DrivetrainRequest.Characterize -> DrivetrainState.CHARACTERIZE
       }
     }
   }
