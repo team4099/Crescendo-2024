@@ -1,5 +1,6 @@
 package com.team4099.robot2023
 
+import WheelRadiusCharacterizationCommand
 import com.team4099.robot2023.auto.AutonomousSelector
 import com.team4099.robot2023.commands.characterization.FeedForwardCharacterizationCommand
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
@@ -216,22 +217,22 @@ object RobotContainer {
     //        else -60.degrees
     //      )
     //    )
-
-    ControlBoard.climbAlignRight.whileTrue(
-      TargetAngleCommand(
-        driver = Ryan(),
-        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
-        { ControlBoard.slowMode },
-        drivetrain,
-        if (DriverStation.getAlliance().isPresent &&
-          DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-        )
-          -120.0.degrees
-        else 60.0.degrees,
-      )
-    )
+//
+//    ControlBoard.climbAlignRight.whileTrue(
+//      TargetAngleCommand(
+//        driver = Ryan(),
+//        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+//        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+//        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+//        { ControlBoard.slowMode },
+//        drivetrain,
+//        if (DriverStation.getAlliance().isPresent &&
+//          DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+//        )
+//          -120.0.degrees
+//        else 60.0.degrees,
+//      )
+//    )
 
     ControlBoard.targetSpeaker.whileTrue(
       ParallelCommandGroup(
@@ -249,11 +250,7 @@ object RobotContainer {
     )
 
     ControlBoard.characterizeSubsystem.whileTrue(
-      FeedForwardCharacterizationCommand(
-        drivetrain,
-        { voltage -> drivetrain.currentRequest = DrivetrainRequest.Characterize(voltage) },
-        { drivetrain.fieldVelocity.magnitude }
-      )
+      WheelRadiusCharacterizationCommand(drivetrain, WheelRadiusCharacterizationCommand.Companion.Direction.CLOCKWISE)
     )
 
     /*

@@ -101,10 +101,14 @@ class WheelRadiusCharacterizationCommand(
 
   override fun end(interrupted: Boolean) {
     if (accumGyroYawRads <= (Math.PI * 2.0).radians) {
-      println("Not enough data for characterization")
+      Logger.recordOutput("Drivetrain/radiansOffFromWheelRadius", ((Math.PI * 2.0).radians - accumGyroYawRads).inRadians)
     } else {
-      println("Effective Wheel Radius: ${currentEffectiveWheelRadius.inInches} inches")
+      Logger.recordOutput("Drivetrain/effectiveWheelRadius", currentEffectiveWheelRadius.inInches)
     }
+  }
+
+  override fun isFinished(): Boolean {
+    return false
   }
 
   companion object {

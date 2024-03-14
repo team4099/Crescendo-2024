@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.DutyCycleOut
 import com.ctre.phoenix6.controls.PositionDutyCycle
+import com.ctre.phoenix6.controls.TorqueCurrentFOC
 import com.ctre.phoenix6.controls.VelocityVoltage
 import com.ctre.phoenix6.controls.VoltageOut
 import com.ctre.phoenix6.hardware.TalonFX
@@ -432,6 +433,11 @@ class SwerveModuleIOTalon(
   }
 
   override fun runCharacterization(input: ElectricalPotential) {
-    driveFalcon.setControl(VoltageOut(input.inVolts))
+    if (label == Constants.Drivetrain.FRONT_LEFT_MODULE_NAME) {
+      driveFalcon.setControl(DutyCycleOut(-input.inVolts / 12.0))
+    }
+    else {
+      driveFalcon.setControl(DutyCycleOut(input.inVolts / 12.0))
+    }
   }
 }

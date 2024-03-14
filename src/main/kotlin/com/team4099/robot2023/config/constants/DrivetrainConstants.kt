@@ -37,7 +37,7 @@ object DrivetrainConstants {
   const val OMOMETRY_UPDATE_FREQUENCY = 250.0
 
   const val WHEEL_COUNT = 4
-  val WHEEL_DIAMETER = 3.827.inches
+  val WHEEL_DIAMETER = (2.083 * 2).inches
   val DRIVETRAIN_LENGTH = 22.750.inches
   val DRIVETRAIN_WIDTH = 22.750.inches
 
@@ -158,8 +158,8 @@ object DrivetrainConstants {
 
     val DRIVE_KFF = 12.0.volts / 4.1675.meters.perSecond
 
-    val DRIVE_KS = 0.5.volts
-    val DRIVE_KV = 0.145.volts / 1.0.meters.perSecond
+    val DRIVE_KS = 0.177.volts
+    val DRIVE_KV = 0.12.volts / 1.0.meters.perSecond
     val DRIVE_KA = 0.0.volts / 1.0.meters.perSecond.perSecond
 
     //    val DRIVE_KS = 0.23677.volts
