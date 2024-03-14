@@ -309,7 +309,7 @@ class SwerveModuleIOTalon(
         driveSensor.velocityToRawUnits(speed),
         driveSensor.accelerationToRawUnits(acceleration),
         DrivetrainConstants.FOC_ENABLED,
-        feedforward.inVolts / 12.0,
+        feedforward.inVolts,
         0,
         false,
         false,
