@@ -4,8 +4,10 @@ import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.team4099.lib.units.AngularAcceleration
 import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.Fraction
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
+import org.team4099.lib.units.Value
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Meter
@@ -149,7 +151,9 @@ interface SwerveModuleIO {
   fun configureDrivePID(
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
-    kD: DerivativeGain<Velocity<Meter>, Volt>
+    kD: DerivativeGain<Velocity<Meter>, Volt>,
+    kV: Value<Fraction<Volt, Velocity<Meter>>>,
+    kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
   ) {}
   fun configureSteeringPID(
     kP: ProportionalGain<Radian, Volt>,

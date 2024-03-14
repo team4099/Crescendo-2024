@@ -101,7 +101,10 @@ class WheelRadiusCharacterizationCommand(
 
   override fun end(interrupted: Boolean) {
     if (accumGyroYawRads <= (Math.PI * 2.0).radians) {
-      Logger.recordOutput("Drivetrain/radiansOffFromWheelRadius", ((Math.PI * 2.0).radians - accumGyroYawRads).inRadians)
+      Logger.recordOutput(
+        "Drivetrain/radiansOffFromWheelRadius",
+        ((Math.PI * 2.0).radians - accumGyroYawRads).inRadians
+      )
     } else {
       Logger.recordOutput("Drivetrain/effectiveWheelRadius", currentEffectiveWheelRadius.inInches)
     }
