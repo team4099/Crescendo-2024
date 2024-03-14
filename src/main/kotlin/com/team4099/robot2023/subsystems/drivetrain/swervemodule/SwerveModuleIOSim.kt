@@ -16,8 +16,10 @@ import org.team4099.lib.controller.PIDController
 import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.AngularAcceleration
 import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.Fraction
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
+import org.team4099.lib.units.Value
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Meter
@@ -77,7 +79,7 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     )
   private val driveFeedForward =
     SimpleMotorFeedforward(
-      DrivetrainConstants.PID.SIM_DRIVE_KS, DrivetrainConstants.PID.SIM_DRIVE_KV
+      DrivetrainConstants.PID.SIM_DRIVE_KS, DrivetrainConstants.PID.SIM_DRIVE_KV, DrivetrainConstants.PID.SIM_DRIVE_KA
     )
 
   private val steeringFeedback =
@@ -253,7 +255,9 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
   override fun configureDrivePID(
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
-    kD: DerivativeGain<Velocity<Meter>, Volt>
+    kD: DerivativeGain<Velocity<Meter>, Volt>,
+    kV: Value<Fraction<Volt, Velocity<Meter>>>,
+    kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
   ) {
     driveFeedback.setPID(kP, kI, kD)
   }

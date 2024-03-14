@@ -1,23 +1,17 @@
 package com.team4099.robot2023.commands.characterization
 
-import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOReal
 import com.team4099.utils.PolynomialRegression
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.base.inSeconds
-import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.ElectricalPotential
-import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
-import org.team4099.lib.units.perSecond
 import java.util.LinkedList
 import java.util.function.Consumer
 import java.util.function.Supplier
@@ -47,8 +41,7 @@ class FeedForwardCharacterizationCommand(
 
     if (timer.get() < startDelay.inSeconds) {
       voltageConsumer.accept(0.volts)
-    }
-    else {
+    } else {
       val voltage = ((timer.get() - startDelay.inSeconds) * rampRatePerSecond.inVolts).volts
       voltageConsumer.accept(voltage)
       data.add(velocitySupplier.get(), voltage)
@@ -81,11 +74,18 @@ class FeedForwardCharacterizationCommand(
         if (velocityData.size == 0 || voltageData.size == 0) {
           return
         }
-        val regression = PolynomialRegression(
-          velocityData.stream().mapToDouble { obj: LinearVelocity -> obj.inMetersPerSecond }.toArray(),
-          voltageData.stream().mapToDouble { obj: ElectricalPotential -> obj.inVolts }.toArray(),
-          1
-        )
+        val regression =
+          PolynomialRegression(
+            velocityData
+              .stream()
+              .mapToDouble { obj: LinearVelocity -> obj.inMetersPerSecond }
+              .toArray(),
+            voltageData
+              .stream()
+              .mapToDouble { obj: ElectricalPotential -> obj.inVolts }
+              .toArray(),
+            1
+          )
         println("FF Characterization Results:")
         println("\tCount=" + Integer.toString(velocityData.size) + "")
         println(String.format("\tR2=%.5f", regression.R2()))

@@ -1,6 +1,5 @@
 package com.team4099.robot2023.subsystems.superstructure
 
-import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearVelocity
