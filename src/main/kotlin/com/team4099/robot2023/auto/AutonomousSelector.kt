@@ -1,5 +1,6 @@
 package com.team4099.robot2023.auto
 
+import com.team4099.robot2023.auto.mode.FiveNoteAutoPath
 import com.team4099.robot2023.auto.mode.FourNoteAutoPath
 import com.team4099.robot2023.auto.mode.FourNoteLeftCenterLine
 import com.team4099.robot2023.auto.mode.FourNoteMiddleCenterLine
@@ -49,6 +50,9 @@ object AutonomousSelector {
       "Four Note LEFT Auto(1 Wing + 2 Centerline)", AutonomousMode.FOUR_NOTE_LEFT_AUTO_PATH
     )
     autonomousModeChooser.addOption(
+      "Five Note Auto from Center Subwoofer", AutonomousMode.FIVE_NOTE_AUTO_PATH
+    )
+    autonomousModeChooser.addOption(
       "Preload + Leave from Left Side of Subwoofer",
       AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER
     )
@@ -88,7 +92,7 @@ object AutonomousSelector {
     get() = secondaryWaitInAuto.getDouble(0.0).seconds
 
   fun getCommand(drivetrain: Drivetrain, superstructure: Superstructure): Command {
-    val mode = AutonomousMode.TEST_AUTO_PATH
+    val mode = autonomousModeChooser.get()
 
     when (mode) {
       AutonomousMode.TEST_AUTO_PATH ->
@@ -132,6 +136,13 @@ object AutonomousSelector {
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(FourNoteMiddleCenterLine(drivetrain, superstructure))
+      AutonomousMode.FIVE_NOTE_AUTO_PATH ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            val flippedPose = AllianceFlipUtil.apply(FiveNoteAutoPath.startingPose)
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
+          })
       AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
@@ -184,6 +195,7 @@ object AutonomousSelector {
     FOUR_NOTE_LEFT_AUTO_PATH,
     PRELOAD_AND_LEAVE_LEFT_SUBWOOFER,
     PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER,
-    PRELOAD_AND_LEAVE_CENTER_SUBWOOFER
+    PRELOAD_AND_LEAVE_CENTER_SUBWOOFER,
+    FIVE_NOTE_AUTO_PATH
   }
 }
