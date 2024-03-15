@@ -2,135 +2,147 @@ package com.team4099.robot2023.auto.mode
 
 import com.team4099.lib.trajectory.FieldWaypoint
 import com.team4099.robot2023.commands.drivetrain.DrivePathCommand
+import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.flywheel.Flywheel
+import com.team4099.robot2023.subsystems.superstructure.Superstructure
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Translation2d
+import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
 
-class FiveNoteAutoPath(val drivetrain: Drivetrain) : SequentialCommandGroup() {
+class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstructure) : SequentialCommandGroup() {
   init {
     addRequirements(drivetrain)
     addCommands(
-      DrivePathCommand.createPathInFieldFrame(
-        drivetrain,
-        {
-          listOf(
-            FieldWaypoint(
-              Translation2d(1.37.meters, 5.50.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(1.47.meters, 5.50.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(2.39.meters, 5.45.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(2.58.meters, 5.50.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(2.82.meters, 5.57.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(7.33.meters, 7.16.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(8.19.meters, 5.83.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(8.55.meters, 5.26.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(7.67.meters, 4.91.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(7.29.meters, 4.58.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(6.68.meters, 4.05.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(4.89.meters, 4.31.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(2.87.meters, 5.50.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(2.21.meters, 5.89.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(2.30.meters, 6.76.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(2.75.meters, 6.85.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(3.20.meters, 6.95.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(1.68.meters, 4.63.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(2.03.meters, 4.47.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(2.29.meters, 4.35.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(2.51.meters, 4.30.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-            FieldWaypoint(
-              Translation2d(2.75.meters, 4.21.meters).translation2d,
-              null,
-              180.degrees.inRotation2ds
-            ),
-          )
-        }
-      )
+      superstructure.scoreCommand(),
+      WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds),
+      ParallelCommandGroup(
+        DrivePathCommand.createPathInFieldFrame(
+          drivetrain,
+          {
+            listOf(
+              FieldWaypoint(
+                Translation2d(1.37.meters, 5.50.meters).translation2d,
+                null,
+                180.degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d(2.84.meters, 5.50.meters).translation2d,
+                null,
+                180.degrees.inRotation2ds
+              )
+            )
+          }
+        ),
+        WaitCommand(0.25).andThen(superstructure.groundIntakeCommand())
+      ),
+      superstructure.autoAimCommand()
+        .andThen(WaitCommand(0.25))
+        .andThen(superstructure.scoreCommand())
+        .andThen(WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds)),
+      ParallelCommandGroup(
+        DrivePathCommand.createPathInFieldFrame(
+          drivetrain,
+          {
+            listOf(
+              FieldWaypoint(
+                Translation2d(2.84.meters, 5.5.meters).translation2d,
+                null,
+                180.degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d((2.84.meters + 8.19.meters) / 2, 6.45.meters).translation2d,
+                null,
+                170.degrees.inRotation2ds
+              ), // In order to avoid stage
+              FieldWaypoint(
+                Translation2d(8.19.meters, 5.86.meters).translation2d,
+                null,
+                160.degrees.inRotation2ds
+              ), // Second leftmost centerline note
+              FieldWaypoint(
+                Translation2d((2.84.meters + 8.19.meters) / 2, 6.55.meters).translation2d,
+                null,
+                170.degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d(2.84.meters, 5.50.meters).translation2d,
+                null,
+                180.degrees.inRotation2ds
+              )
+            )
+          }
+        ),
+        WaitCommand(1.0).andThen(superstructure.groundIntakeCommand())
+      ),
+      superstructure.autoAimCommand()
+        .andThen(WaitCommand(0.25))
+        .andThen(superstructure.scoreCommand())
+        .andThen(WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds)),
+      ParallelCommandGroup(
+        DrivePathCommand.createPathInFieldFrame(
+          drivetrain,
+          {
+            listOf(
+              FieldWaypoint(
+                Translation2d(2.84.meters, 5.50.meters).translation2d,
+                null,
+                180.degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d(2.3.meters, 6.4.meters).translation2d,
+                null,
+                200.degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d(2.75.meters, 6.85.meters).translation2d,
+                null,
+                207.89.degrees.inRotation2ds
+              ),
+            )
+          }
+        ),
+        WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
+      ),
+      superstructure.autoAimCommand()
+        .andThen(WaitCommand(0.25))
+        .andThen(superstructure.scoreCommand())
+        .andThen(WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds)),
+      ParallelCommandGroup(
+        DrivePathCommand.createPathInFieldFrame(
+          drivetrain,
+          {
+            listOf(
+              FieldWaypoint(
+                Translation2d(2.75.meters, 6.85.meters).translation2d,
+                null,
+                207.degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d(2.3.meters, 4.6.meters).translation2d,
+                null,
+                160.degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d(2.65.meters, 4.26.meters).translation2d,
+                null,
+                152.degrees.inRotation2ds
+              ),
+            )
+          }
+        ),
+        WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
+      ),
+      superstructure.autoAimCommand()
+        .andThen(WaitCommand(0.25))
+        .andThen(superstructure.scoreCommand())
+        .andThen(WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds)),
     )
   }
 

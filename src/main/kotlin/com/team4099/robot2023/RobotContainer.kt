@@ -20,8 +20,8 @@ import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
 import com.team4099.robot2023.subsystems.feeder.FeederIOSim
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIO
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
-import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
 import com.team4099.robot2023.subsystems.intake.Intake
 import com.team4099.robot2023.subsystems.intake.IntakeIONEO
 import com.team4099.robot2023.subsystems.intake.IntakeIOSim
@@ -42,7 +42,6 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
-import com.team4099.robot2023.subsystems.flywheel.FlywheelIO
 
 object RobotContainer {
   private val drivetrain: Drivetrain

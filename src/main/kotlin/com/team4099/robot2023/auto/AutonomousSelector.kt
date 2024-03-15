@@ -143,6 +143,7 @@ object AutonomousSelector {
             drivetrain.tempZeroGyroYaw(flippedPose.rotation)
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
+          .andThen(FiveNoteAutoPath(drivetrain, superstructure))
       AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
