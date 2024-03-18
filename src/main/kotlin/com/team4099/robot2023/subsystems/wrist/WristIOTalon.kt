@@ -21,6 +21,7 @@ import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
+import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
@@ -209,5 +210,6 @@ object WristIOTalon : WristIO {
 
   override fun zeroEncoder() {
     wristTalon.setPosition(wristSensor.positionToRawUnits((absoluteEncoderSignal.value * 32.0/ 50.0 * 180 + WristConstants.WRIST_ZERO_ENCODER_OFFSET).degrees ))
+    Logger.recordOutput("Wrist/encoderOutput", wristSensor.positionToRawUnits((absoluteEncoderSignal.value * 32.0/ 50.0 * 180 + WristConstants.WRIST_ZERO_ENCODER_OFFSET).degrees))
   }
 }
