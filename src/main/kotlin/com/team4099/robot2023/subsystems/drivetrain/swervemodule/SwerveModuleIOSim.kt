@@ -79,7 +79,9 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     )
   private val driveFeedForward =
     SimpleMotorFeedforward(
-      DrivetrainConstants.PID.SIM_DRIVE_KS, DrivetrainConstants.PID.SIM_DRIVE_KV, DrivetrainConstants.PID.SIM_DRIVE_KA
+      DrivetrainConstants.PID.SIM_DRIVE_KS,
+      DrivetrainConstants.PID.SIM_DRIVE_KV,
+      DrivetrainConstants.PID.SIM_DRIVE_KA
     )
 
   private val steeringFeedback =

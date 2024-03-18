@@ -65,7 +65,7 @@ class SwerveModule(val io: SwerveModuleIO) {
     LoggedTunableValue(
       "Drivetrain/kA",
       DrivetrainConstants.PID.DRIVE_KA,
-      Pair({ it.inVoltsPerMetersPerSecondPerSecond }, { it.volts.perMeterPerSecondPerSecond})
+      Pair({ it.inVoltsPerMetersPerSecondPerSecond }, { it.volts.perMeterPerSecondPerSecond })
     )
 
   private val steeringkP =
@@ -174,14 +174,19 @@ class SwerveModule(val io: SwerveModuleIO) {
       io.configureSteeringPID(steeringkP.get(), steeringkI.get(), steeringkD.get())
     }
 
-
-
     if (steeringMaxVel.hasChanged() || steeringMaxAccel.hasChanged()) {
       io.configureSteeringMotionMagic(steeringMaxVel.get(), steeringMaxAccel.get())
     }
 
-    if (drivekP.hasChanged() || drivekI.hasChanged() || drivekD.hasChanged() || driveKV.hasChanged() || driveKA.hasChanged()) {
-      io.configureDrivePID(drivekP.get(), drivekI.get(), drivekD.get(), driveKV.get(), driveKA.get())
+    if (drivekP.hasChanged() ||
+      drivekI.hasChanged() ||
+      drivekD.hasChanged() ||
+      driveKV.hasChanged() ||
+      driveKA.hasChanged()
+    ) {
+      io.configureDrivePID(
+        drivekP.get(), drivekI.get(), drivekD.get(), driveKV.get(), driveKA.get()
+      )
     }
 
     Logger.processInputs(io.label, inputs)

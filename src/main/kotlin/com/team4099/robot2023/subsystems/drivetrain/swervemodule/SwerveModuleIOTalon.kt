@@ -23,8 +23,10 @@ import edu.wpi.first.wpilibj.RobotController
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.AngularAcceleration
 import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.Fraction
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
+import org.team4099.lib.units.Value
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
@@ -45,14 +47,12 @@ import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.inVoltsPerMetersPerSecond
+import org.team4099.lib.units.derived.inVoltsPerMetersPerSecondPerSecond
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
 import java.lang.Math.PI
 import java.util.Queue
-import org.team4099.lib.units.Fraction
-import org.team4099.lib.units.Value
-import org.team4099.lib.units.derived.inVoltsPerMetersPerSecondPerSecond
 
 class SwerveModuleIOTalon(
   private val steeringFalcon: TalonFX,
@@ -137,7 +137,8 @@ class SwerveModuleIOTalon(
     driveConfiguration.Slot0.kD =
       driveSensor.derivativeVelocityGainToRawUnits(DrivetrainConstants.PID.DRIVE_KD)
     driveConfiguration.Slot0.kV = DrivetrainConstants.PID.DRIVE_KV.inVoltsPerMetersPerSecond
-    driveConfiguration.Slot0.kA = DrivetrainConstants.PID.DRIVE_KA.inVoltsPerMetersPerSecondPerSecond
+    driveConfiguration.Slot0.kA =
+      DrivetrainConstants.PID.DRIVE_KA.inVoltsPerMetersPerSecondPerSecond
     //      driveSensor.velocityFeedforwardToRawUnits(DrivetrainConstants.PID.DRIVE_KFF)
     driveConfiguration.CurrentLimits.SupplyCurrentLimit =
       DrivetrainConstants.DRIVE_SUPPLY_CURRENT_LIMIT.inAmperes
