@@ -75,8 +75,8 @@ object DrivetrainConstants {
   val ALLOWED_STEERING_ANGLE_ERROR = 1.degrees
 
   val STEERING_SUPPLY_CURRENT_LIMIT = 20.0.amps
-  val DRIVE_SUPPLY_CURRENT_LIMIT = 80.0.amps
-  val DRIVE_THRESHOLD_CURRENT_LIMIT = 80.0.amps
+  val DRIVE_SUPPLY_CURRENT_LIMIT = 70.0.amps
+  val DRIVE_THRESHOLD_CURRENT_LIMIT = 70.0.amps
   val DRIVE_TRIGGER_THRESHOLD_TIME = 0.1.seconds
 
   val DRIVE_STATOR_CURRENT_LIMIT = 80.0.amps
@@ -158,7 +158,7 @@ object DrivetrainConstants {
 
     val DRIVE_KFF = 12.0.volts / 4.1675.meters.perSecond
 
-    val DRIVE_KS = 0.35.volts
+    val DRIVE_KS = 0.177.volts
     val DRIVE_KV = 0.12.volts / 1.0.meters.perSecond
     val DRIVE_KA = 0.0.volts / 1.0.meters.perSecond.perSecond
 

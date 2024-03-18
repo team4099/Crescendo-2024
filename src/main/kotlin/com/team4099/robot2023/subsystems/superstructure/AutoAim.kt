@@ -134,12 +134,6 @@ class AutoAim(val vision: Vision) {
     )
   }
 
-  fun calculateDistanceFromSpeaker(): Length {
-    val distance = hypot(vision.robotTSpeaker.x.inMeters, vision.robotTSpeaker.y.inMeters).meters
-    Logger.recordOutput("AutoAim/currentDistanceInhces", distance.inInches)
-    return distance
-  }
-
   fun calculateFlywheelSpeed(): AngularVelocity {
     return flywheelSpeedRPMInterpolationTable.get(calculateDistanceFromSpeaker().inMeters)
       .rotations
@@ -163,6 +157,13 @@ class AutoAim(val vision: Vision) {
     wristAngleDegreesInterpolationTable.clear()
     tunableWristInterpolationTable.forEach {
       wristAngleDegreesInterpolationTable.put(it.first.get().inMeters, it.second.get().inDegrees)
+
     }
+  }
+
+  fun calculateDistanceFromSpeaker(): Length {
+      val distance = vision.trustedRobotDistanceToTarget
+      Logger.recordOutput("AutoAim/currentDistanceInches", distance.inInches)
+      return distance
   }
 }

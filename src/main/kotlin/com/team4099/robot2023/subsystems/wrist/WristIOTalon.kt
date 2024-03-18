@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.VoltageOut
 import com.ctre.phoenix6.hardware.CANcoder
 import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue
 import com.ctre.phoenix6.signals.InvertedValue
 import com.ctre.phoenix6.signals.NeutralModeValue
 import com.ctre.phoenix6.signals.SensorDirectionValue
@@ -65,6 +66,7 @@ object WristIOTalon : WristIO {
   var motorVoltage: StatusSignal<Double>
   var motorTorque: StatusSignal<Double>
   var motorAcceleration: StatusSignal<Double>
+  var absoluteEncoderSignal: StatusSignal<Double>
 
   init {
     wristTalon.configurator.apply(TalonFXConfiguration())
@@ -74,9 +76,9 @@ object WristIOTalon : WristIO {
     absoluteEncoderConfiguration.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf
     absoluteEncoderConfiguration.SensorDirection = SensorDirectionValue.CounterClockwise_Positive
     absoluteEncoderConfiguration.MagnetOffset =
-      WristConstants.ABSOLUTE_ENCODER_OFFSET.inDegrees / 180
+      WristConstants.ABSOLUTE_ENCODER_OFFSET_IN_RAW_UNITS
 
-    /*
+
     absoluteEncoder.configurator.apply(absoluteEncoderConfiguration)
 
     wristConfiguration.Feedback.FeedbackRemoteSensorID = absoluteEncoder.deviceID
@@ -85,8 +87,6 @@ object WristIOTalon : WristIO {
     wristConfiguration.Feedback.SensorToMechanismRatio = WristConstants.WRIST_GEAR_RATIO
     wristConfiguration.Feedback.RotorToSensorRatio = WristConstants.WRIST_ENCODER_GEAR_RATIO
 
-
-     */
     wristConfiguration.Slot0.kP =
       wristSensor.proportionalPositionGainToRawUnits(WristConstants.PID.REAL_KP)
     wristConfiguration.Slot0.kI =
@@ -117,6 +117,8 @@ object WristIOTalon : WristIO {
     motorVoltage = wristTalon.motorVoltage
     motorTorque = wristTalon.torqueCurrent
     motorAcceleration = wristTalon.acceleration
+
+    absoluteEncoderSignal = absoluteEncoder.position
 
     MotorChecker.add(
       "Wrist",
@@ -167,7 +169,7 @@ object WristIOTalon : WristIO {
 
   private fun updateSignals() {
     BaseStatusSignal.refreshAll(
-      motorTorque, motorVoltage, dutyCycle, supplyCurrentSignal, tempSignal, motorAcceleration
+      motorTorque, motorVoltage, dutyCycle, supplyCurrentSignal, tempSignal, motorAcceleration, absoluteEncoderSignal
     )
   }
 
@@ -175,6 +177,8 @@ object WristIOTalon : WristIO {
 
     updateSignals()
 
+
+    inputs.wristAbsoluteEncoderPosition = absoluteEncoderSignal.value.degrees
     inputs.wristPosition = wristSensor.position
     inputs.wristAcceleration =
       (motorAcceleration.value * WristConstants.WRIST_GEAR_RATIO).rotations.perSecond.perSecond
@@ -203,7 +207,7 @@ object WristIOTalon : WristIO {
     wristTalon.configurator.apply(motorOutputConfig)
   }
 
-  override fun zeroEncoder(encoderAngle: Angle) {
-    wristTalon.setPosition(wristSensor.positionToRawUnits(encoderAngle))
+  override fun zeroEncoder() {
+    wristTalon.setPosition(wristSensor.positionToRawUnits((absoluteEncoderSignal.value * 32.0/ 50.0 * 180 + WristConstants.WRIST_ZERO_ENCODER_OFFSET).degrees ))
   }
 }

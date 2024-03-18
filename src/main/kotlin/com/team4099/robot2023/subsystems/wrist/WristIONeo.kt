@@ -68,7 +68,7 @@ object WristIONeo : WristIO {
   // uses the absolute encoder position to calculate the arm position
   private val armAbsolutePosition: Angle
     get() {
-      return (encoderAbsolutePosition - WristConstants.ABSOLUTE_ENCODER_OFFSET).inDegrees.IEEErem(
+      return (encoderAbsolutePosition).inDegrees.IEEErem(
         360.0
       )
         .degrees
@@ -168,7 +168,7 @@ object WristIONeo : WristIO {
     }
   }
 
-  override fun zeroEncoder(encoderOffset: Angle) {
+  override fun zeroEncoder() {
     wristSparkMax.encoder.position = wristSensor.positionToRawUnits(armAbsolutePosition)
   }
 }
