@@ -25,6 +25,7 @@ interface WristIO {
   class WristIOInputs : LoggableInputs {
 
     var wristPosition = 0.0.degrees
+    var wristAbsoluteEncoderPosition = 0.0.degrees
     var wristVelocity = 0.0.degrees.perSecond
     var wristAppliedVoltage = 0.0.volts
     var wristDutyCycle = 0.0.volts
@@ -38,7 +39,8 @@ interface WristIO {
     var isSimulated = false
 
     override fun toLog(table: LogTable) {
-      table.put("wristPostion", wristPosition.inDegrees)
+      table.put("wristPosition", wristPosition.inDegrees)
+      table.put("wristAbosluteEncoderPosition", wristAbsoluteEncoderPosition.inDegrees)
       table.put("wristVelocity", wristVelocity.inDegreesPerSecond)
       table.put("wristAppliedVoltage", wristAppliedVoltage.inVolts)
       table.put("wristStatorCurrent", wristStatorCurrent.inAmperes)
@@ -51,6 +53,7 @@ interface WristIO {
 
       // wrist logs
       table.get("wristPostion", wristPosition.inDegrees).let { wristPosition = it.degrees }
+      table.get("wristPostion", wristAbsoluteEncoderPosition.inDegrees).let { wristAbsoluteEncoderPosition = it.degrees }
       table.get("wristVelocity", wristVelocity.inDegreesPerSecond).let {
         wristVelocity = it.degrees.perSecond
       }
@@ -98,5 +101,5 @@ interface WristIO {
     kD: DerivativeGain<Radian, Volt>
   ) {}
 
-  fun zeroEncoder(encoderOffset: Angle) {}
+  fun zeroEncoder() {}
 }

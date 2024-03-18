@@ -138,7 +138,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         currentState == FlywheelStates.TARGETING_VELOCITY &&
           (inputs.leftFlywheelVelocity - flywheelLeftTargetVelocity).absoluteValue <=
           FlywheelConstants.FLYWHEEL_TOLERANCE
-        )
+        ) || inputs.isSimulated
 
   var currentState = Companion.FlywheelStates.UNINITIALIZED
 

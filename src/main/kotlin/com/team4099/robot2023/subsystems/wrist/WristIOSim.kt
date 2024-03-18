@@ -129,5 +129,5 @@ object WristIOSim : WristIO {
   }
 
   /** recalculates the current position of the neo encoder using value from the absolute encoder */
-  override fun zeroEncoder(encoderOffet: Angle) {}
+  override fun zeroEncoder() {}
 }

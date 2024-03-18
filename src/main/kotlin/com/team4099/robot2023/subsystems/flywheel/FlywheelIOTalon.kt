@@ -232,6 +232,7 @@ object FlywheelIOTalon : FlywheelIO {
 
     updateSignals()
 
+    inputs.isSimulated = false
     inputs.rightFlywheelVelocity = flywheelRightSensor.velocity
     inputs.rightFlywheelAppliedVoltage = motorVoltage.value.volts
     inputs.rightFlywheelStatorCurrent = rightFlywheelStatorCurrentSignal.value.amps

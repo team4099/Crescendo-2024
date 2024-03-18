@@ -30,6 +30,7 @@ import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.subsystems.vision.Vision
+import com.team4099.robot2023.subsystems.vision.camera.CameraIO
 import com.team4099.robot2023.subsystems.vision.camera.CameraIOPhotonvision
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
@@ -69,12 +70,12 @@ object RobotContainer {
       intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
-      flywheel = Flywheel(object : FlywheelIO {})
+      flywheel = Flywheel(FlywheelIOTalon)
       wrist = Wrist(WristIOTalon)
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
-      vision = Vision(CameraIOPhotonvision("parakeet_1"))
+      vision = Vision(CameraIOPhotonvision("parakeet_0"), CameraIOPhotonvision("parakeet_1"))
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIOSim)
       feeder = Feeder(FeederIOSim)

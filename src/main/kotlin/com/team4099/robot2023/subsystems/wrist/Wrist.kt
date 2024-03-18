@@ -248,7 +248,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         nextState = fromRequestToState(currentRequest)
       }
       WristStates.ZERO -> {
-        io.zeroEncoder(-36.25.degrees)
+        io.zeroEncoder()
         currentRequest = Request.WristRequest.OpenLoop(0.volts)
         isZeroed = true
         nextState = fromRequestToState(currentRequest)
