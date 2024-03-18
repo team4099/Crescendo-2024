@@ -106,7 +106,7 @@ object WristIOTalon : WristIO {
     wristConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
 
     wristConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
-    wristConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive
+    wristConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive
 
     wristTalon.configurator.apply(wristConfiguration)
 
