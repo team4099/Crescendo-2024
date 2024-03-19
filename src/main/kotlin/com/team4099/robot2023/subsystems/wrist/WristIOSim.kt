@@ -32,7 +32,7 @@ object WristIOSim : WristIO {
   val wristSim =
     SingleJointedArmSim(
       DCMotor.getNEO(1),
-      1 / WristConstants.WRIST_GEAR_RATIO,
+      1 / WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO,
       WristConstants.WRIST_INERTIA.inKilogramsMeterSquared,
       WristConstants.WRIST_LENGTH.inMeters,
       WristConstants.WRIST_MIN_ROTATION.inRadians,

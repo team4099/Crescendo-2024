@@ -242,10 +242,6 @@ class Superstructure(
           flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(0.0.volts)
         }
 
-        if(wrist.isAtTargetedPosition) {
-          wrist.io.zeroEncoder()
-        }
-
         if (DriverStation.isAutonomous()) {
           wrist.currentRequest =
             Request.WristRequest.TargetingPosition(

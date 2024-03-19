@@ -8,15 +8,10 @@ import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.vision.camera.CameraIO
 import com.team4099.robot2023.util.FMSData
-import edu.wpi.first.math.Matrix
-import edu.wpi.first.math.numbers.N1
-import edu.wpi.first.math.numbers.N3
-import edu.wpi.first.math.numbers.N5
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.photonvision.PhotonUtils
-import org.photonvision.estimation.OpenCVHelp
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Rotation3d
@@ -24,7 +19,6 @@ import org.team4099.lib.geometry.Transform3d
 import org.team4099.lib.geometry.Translation3d
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Time
-import org.team4099.lib.units.base.inInches
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
@@ -35,7 +29,6 @@ import org.team4099.lib.units.derived.inRadians
 import java.util.function.Consumer
 import java.util.function.Supplier
 import kotlin.math.hypot
-import kotlin.math.round
 
 class Vision(vararg cameras: CameraIO) : SubsystemBase() {
   val io: List<CameraIO> = cameras.toList()
@@ -172,8 +165,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
             // good up
 
-
-            when (instance){
+            when (instance) {
               0 -> {
                 scaledPositionCameraSpace =
                   Translation3d(cameraX.meters, cameraY.meters, cameraZ.meters)
@@ -188,15 +180,26 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
                     )
               }
               1 -> {
-                scaledPositionCameraSpace = Translation3d(
-                  cameraX.meters, cameraY.meters, cameraZ.meters
-                ).times(scalar).rotateBy(
-                  Rotation3d(0.degrees, 30.degrees, 0.degrees - drivetrainOdometry.invoke().rotation).unaryMinus()
-                ).plus(cameraPoses[instance].translation)
+                scaledPositionCameraSpace =
+                  Translation3d(cameraX.meters, cameraY.meters, cameraZ.meters)
+                    .times(scalar)
+                    .rotateBy(
+                      Rotation3d(
+                        0.degrees,
+                        30.degrees,
+                        0.degrees - drivetrainOdometry.invoke().rotation
+                      )
+                        .unaryMinus()
+                    )
+                    .plus(cameraPoses[instance].translation)
 
-                Logger.recordOutput("Vision/cameraTtag", Translation3d(
-                  cameraX.meters, cameraY.meters, cameraZ.meters
-                ).times(scalar).toDoubleArray().toDoubleArray())
+                Logger.recordOutput(
+                  "Vision/cameraTtag",
+                  Translation3d(cameraX.meters, cameraY.meters, cameraZ.meters)
+                    .times(scalar)
+                    .toDoubleArray()
+                    .toDoubleArray()
+                )
               }
               else -> {
                 scaledPositionCameraSpace =
@@ -216,46 +219,50 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
             robotTSpeaker = scaledPositionCameraSpace
 
-
-            robotDistanceToTarget = PhotonUtils.calculateDistanceToTargetMeters(
+            robotDistanceToTarget =
+              PhotonUtils.calculateDistanceToTargetMeters(
               cameraPoses[instance].translation.z.inMeters,
               FieldConstants.fieldAprilTags.get(tag.fiducialId).pose.z.inMeters,
               21.25.degrees.inRadians,
               tag.pitch.degrees.inRadians
-            ).meters + cameraPoses[instance].translation.x
+            )
+              .meters + cameraPoses[instance].translation.x
 
             println("Tag PITCH: ${tag.pitch}")
 
-            Logger.recordOutput("Vision/robotTspeaker", robotTSpeaker.toDoubleArray().toDoubleArray())
-            Logger.recordOutput("Vision/${instance}/distCamera", robotDistanceToTarget.inMeters)
-
-
-            Logger.recordOutput("\"Vision/${instance}/${tag.fiducialId}/${corner}/guesstimatedCameraPosewrtRobot", scaledPositionCameraSpace.toDoubleArray().toDoubleArray())
-
-            Logger.recordOutput("Vision/odometryRotation", drivetrainOdometry.invoke().rotation.inDegrees)
-//            scaledPositionCameraSpace = scaledPositionCameraSpace.rotateBy(
-//              Rotation3d(
-//                0.degrees,
-//                0.degrees,
-//                drivetrainOdometry.invoke().rotation
-//              ))
-
-//            if (drivetrainOdometry.invoke().rotation != null){
-//              println("rotating")
-//              println(drivetrainOdometry.invoke().rotation)
-//              scaledPositionCameraSpace = scaledPositionCameraSpace.rotateBy(
-//                Rotation3d(
-//                  0.degrees,
-//                  0.degrees,
-//                  tag.yaw.degrees
-//                )
-//              )
-//            }
-
-            val detectionTransformation = Transform3d(
-              scaledPositionCameraSpace,
-              Rotation3d()
+            Logger.recordOutput(
+              "Vision/robotTspeaker", robotTSpeaker.toDoubleArray().toDoubleArray()
             )
+            Logger.recordOutput("Vision/$instance/distCamera", robotDistanceToTarget.inMeters)
+
+            Logger.recordOutput(
+              "\"Vision/$instance/${tag.fiducialId}/$corner/guesstimatedCameraPosewrtRobot",
+              scaledPositionCameraSpace.toDoubleArray().toDoubleArray()
+            )
+
+            Logger.recordOutput(
+              "Vision/odometryRotation", drivetrainOdometry.invoke().rotation.inDegrees
+            )
+            //            scaledPositionCameraSpace = scaledPositionCameraSpace.rotateBy(
+            //              Rotation3d(
+            //                0.degrees,
+            //                0.degrees,
+            //                drivetrainOdometry.invoke().rotation
+            //              ))
+
+            //            if (drivetrainOdometry.invoke().rotation != null){
+            //              println("rotating")
+            //              println(drivetrainOdometry.invoke().rotation)
+            //              scaledPositionCameraSpace = scaledPositionCameraSpace.rotateBy(
+            //                Rotation3d(
+            //                  0.degrees,
+            //                  0.degrees,
+            //                  tag.yaw.degrees
+            //                )
+            //              )
+            //            }
+
+            val detectionTransformation = Transform3d(scaledPositionCameraSpace, Rotation3d())
 
             Logger.recordOutput(
               "\"Vision/$instance/${tag.fiducialId}/$corner/guesstimatedCameraPosewrtRobot",
@@ -443,8 +450,8 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       }
     }
 
-    for (cameraInstance in VisionConstants.TRUSTED_CAMERA_ORDER){
-      if (cameraInstance in io.indices && robotDistancesToTarget[cameraInstance] != null){
+    for (cameraInstance in VisionConstants.TRUSTED_CAMERA_ORDER) {
+      if (cameraInstance in io.indices && robotDistancesToTarget[cameraInstance] != null) {
         trustedRobotDistanceToTarget = robotDistancesToTarget[cameraInstance]!!
         break
       }

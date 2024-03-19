@@ -69,7 +69,7 @@ object VisionConstants {
     val CAMERA_PX = 1600
     val CAMERA_PY = 1200
 
-    val HORIZONTAL_FOV = 80.degrees //i made these up lol
+    val HORIZONTAL_FOV = 80.degrees // i made these up lol
     val VERTICAL_FOV = 64.25.degrees
 
     val vpw = 2.0 * tan(HORIZONTAL_FOV.inRadians / 2)

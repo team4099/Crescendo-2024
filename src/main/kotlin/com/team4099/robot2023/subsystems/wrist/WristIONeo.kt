@@ -38,7 +38,9 @@ object WristIONeo : WristIO {
     CANSparkMax(Constants.WRIST.WRIST_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
   private val wristSensor =
     sparkMaxAngularMechanismSensor(
-      wristSparkMax, WristConstants.WRIST_GEAR_RATIO, WristConstants.WRIST_VOLTAGE_COMPENSATION
+      wristSparkMax,
+      WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO,
+      WristConstants.WRIST_VOLTAGE_COMPENSATION
     )
   private val wristPIDController: SparkMaxPIDController = wristSparkMax.pidController
   // private val feederSparkMax = CANSparkMax(Constants.Shooter.FEEDER_MOTOR_ID,
@@ -54,8 +56,8 @@ object WristIONeo : WristIO {
     get() {
       var output =
         (
-          (-throughBoreEncoder.absolutePosition.rotations) *
-            WristConstants.WRIST_ENCODER_GEAR_RATIO
+          (-throughBoreEncoder.absolutePosition.rotations) /
+            WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
           )
 
       if (output in (-55).degrees..0.0.degrees) {
@@ -68,10 +70,7 @@ object WristIONeo : WristIO {
   // uses the absolute encoder position to calculate the arm position
   private val armAbsolutePosition: Angle
     get() {
-      return (encoderAbsolutePosition).inDegrees.IEEErem(
-        360.0
-      )
-        .degrees
+      return (encoderAbsolutePosition).inDegrees.IEEErem(360.0).degrees
     }
 
   init {

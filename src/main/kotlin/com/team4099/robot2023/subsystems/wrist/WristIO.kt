@@ -15,6 +15,7 @@ import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
+import org.team4099.lib.units.derived.inRotations
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inDegreesPerSecond
@@ -40,6 +41,8 @@ interface WristIO {
 
     override fun toLog(table: LogTable) {
       table.put("wristPosition", wristPosition.inDegrees)
+      table.put("wristAbsoluteEncoderRotations", wristAbsoluteEncoderPosition.inRotations)
+      table.put("wristPositionRotations", wristPosition.inRotations)
       table.put("wristAbosluteEncoderPosition", wristAbsoluteEncoderPosition.inDegrees)
       table.put("wristVelocity", wristVelocity.inDegreesPerSecond)
       table.put("wristAppliedVoltage", wristAppliedVoltage.inVolts)
@@ -53,7 +56,9 @@ interface WristIO {
 
       // wrist logs
       table.get("wristPostion", wristPosition.inDegrees).let { wristPosition = it.degrees }
-      table.get("wristPostion", wristAbsoluteEncoderPosition.inDegrees).let { wristAbsoluteEncoderPosition = it.degrees }
+      table.get("wristPostion", wristAbsoluteEncoderPosition.inDegrees).let {
+        wristAbsoluteEncoderPosition = it.degrees
+      }
       table.get("wristVelocity", wristVelocity.inDegreesPerSecond).let {
         wristVelocity = it.degrees.perSecond
       }

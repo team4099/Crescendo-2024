@@ -21,7 +21,6 @@ import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.inRotationsPerMinute
 import org.team4099.lib.units.perMinute
-import kotlin.math.hypot
 
 class AutoAim(val vision: Vision) {
   val flywheelSpeedRPMInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
@@ -157,13 +156,12 @@ class AutoAim(val vision: Vision) {
     wristAngleDegreesInterpolationTable.clear()
     tunableWristInterpolationTable.forEach {
       wristAngleDegreesInterpolationTable.put(it.first.get().inMeters, it.second.get().inDegrees)
-
     }
   }
 
   fun calculateDistanceFromSpeaker(): Length {
-      val distance = vision.trustedRobotDistanceToTarget
-      Logger.recordOutput("AutoAim/currentDistanceInches", distance.inInches)
-      return distance
+    val distance = vision.trustedRobotDistanceToTarget
+    Logger.recordOutput("AutoAim/currentDistanceInches", distance.inInches)
+    return distance
   }
 }
