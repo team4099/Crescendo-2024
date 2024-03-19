@@ -17,9 +17,9 @@ object SuperstructureConstants {
         Pair(104.5.inches, 3500.rotations.perMinute),
         Pair(114.45.inches, 3500.rotations.perMinute),
         Pair(124.15.inches, 3500.rotations.perMinute),
-        Pair(134.2.inches, 3500.rotations.perMinute),
-        Pair(144.75.inches, 4000.rotations.perMinute),
-        Pair(153.2.inches, 4500.rotations.perMinute),
+        Pair(128.5.inches, 3500.rotations.perMinute),
+        Pair(136.1.inches, 3500.rotations.perMinute),
+        Pair(149.3.inches, 4000.rotations.perMinute),
     )
 
     val distanceWristAngleTableReal = listOf(
@@ -32,9 +32,9 @@ object SuperstructureConstants {
         Pair(104.5.inches, -4.degrees),
         Pair(114.45.inches, -2.degrees),
         Pair(124.15.inches, 0.degrees),
-        Pair(134.2.inches, 0.5.degrees),
-        Pair(144.75.inches, 1.3.degrees),
-        Pair(153.2.inches, 2.degrees),
+        Pair(128.5.inches, 0.4.degrees),
+        Pair(136.1.inches, 1.0.degrees),
+        Pair(149.3.inches, 3.6.degrees),
         Pair(0.inches, 0.degrees),
         Pair(0.inches, 0.degrees),
         Pair(0.inches, 0.degrees),

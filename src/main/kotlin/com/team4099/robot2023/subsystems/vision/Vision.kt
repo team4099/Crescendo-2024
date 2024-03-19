@@ -220,7 +220,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
             robotDistanceToTarget = PhotonUtils.calculateDistanceToTargetMeters(
               cameraPoses[instance].translation.z.inMeters,
               FieldConstants.fieldAprilTags.get(tag.fiducialId).pose.z.inMeters,
-              21.93.degrees.inRadians,
+              21.25.degrees.inRadians,
               tag.pitch.degrees.inRadians
             ).meters + cameraPoses[instance].translation.x
 
