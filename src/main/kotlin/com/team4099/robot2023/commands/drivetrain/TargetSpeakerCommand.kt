@@ -109,7 +109,6 @@ class TargetSpeakerCommand(
   }
 
   override fun execute() {
-
     drivetrain.defaultCommand.end(true)
     Logger.recordOutput("ActiveCommands/TargetAngleCommand", true)
     Logger.recordOutput(

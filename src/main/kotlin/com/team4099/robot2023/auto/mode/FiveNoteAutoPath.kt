@@ -4,7 +4,6 @@ import com.team4099.lib.trajectory.FieldWaypoint
 import com.team4099.robot2023.commands.drivetrain.DrivePathCommand
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.flywheel.Flywheel
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
@@ -16,7 +15,8 @@ import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
 
-class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstructure) : SequentialCommandGroup() {
+class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstructure) :
+  SequentialCommandGroup() {
   init {
     addRequirements(drivetrain)
     addCommands(
@@ -42,7 +42,8 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
         ),
         WaitCommand(0.25).andThen(superstructure.groundIntakeCommand())
       ),
-      superstructure.autoAimCommand()
+      superstructure
+        .autoAimCommand()
         .andThen(WaitCommand(0.25))
         .andThen(superstructure.scoreCommand())
         .andThen(WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds)),
@@ -81,7 +82,8 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
         ),
         WaitCommand(1.0).andThen(superstructure.groundIntakeCommand())
       ),
-      superstructure.autoAimCommand()
+      superstructure
+        .autoAimCommand()
         .andThen(WaitCommand(0.25))
         .andThen(superstructure.scoreCommand())
         .andThen(WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds)),
@@ -110,7 +112,8 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
-      superstructure.autoAimCommand()
+      superstructure
+        .autoAimCommand()
         .andThen(WaitCommand(0.25))
         .andThen(superstructure.scoreCommand())
         .andThen(WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds)),
@@ -139,7 +142,8 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
-      superstructure.autoAimCommand()
+      superstructure
+        .autoAimCommand()
         .andThen(WaitCommand(0.25))
         .andThen(superstructure.scoreCommand())
         .andThen(WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds)),

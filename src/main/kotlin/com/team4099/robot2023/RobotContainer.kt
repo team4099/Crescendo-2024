@@ -20,16 +20,17 @@ import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
 import com.team4099.robot2023.subsystems.feeder.FeederIOSim
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
-import com.team4099.robot2023.subsystems.flywheel.FlywheelIO
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
+import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
 import com.team4099.robot2023.subsystems.intake.Intake
-import com.team4099.robot2023.subsystems.intake.IntakeIONEO
+import com.team4099.robot2023.subsystems.intake.IntakeIO
 import com.team4099.robot2023.subsystems.intake.IntakeIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.subsystems.vision.Vision
+import com.team4099.robot2023.subsystems.vision.camera.CameraIO
 import com.team4099.robot2023.subsystems.vision.camera.CameraIOPhotonvision
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
@@ -42,8 +43,6 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
-import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
-import com.team4099.robot2023.subsystems.vision.camera.CameraIO
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -65,9 +64,9 @@ object RobotContainer {
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
 
       drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
-      vision = Vision(object: CameraIO {}, CameraIOPhotonvision("parakeet_2"))
+      vision = Vision(object : CameraIO {}, CameraIOPhotonvision("parakeet_2"))
       limelight = LimelightVision(object : LimelightVisionIO {})
-      intake = Intake(IntakeIONEO)
+      intake = Intake(object : IntakeIO {})
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
       flywheel = Flywheel(FlywheelIOTalon)
