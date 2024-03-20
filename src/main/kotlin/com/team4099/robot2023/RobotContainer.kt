@@ -43,6 +43,7 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
+import com.team4099.robot2023.subsystems.intake.IntakeIONEO
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -66,7 +67,7 @@ object RobotContainer {
       drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
       vision = Vision(object : CameraIO {}, CameraIOPhotonvision("parakeet_2"))
       limelight = LimelightVision(object : LimelightVisionIO {})
-      intake = Intake(object : IntakeIO {})
+      intake = Intake(IntakeIONEO)
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
       flywheel = Flywheel(FlywheelIOTalon)
