@@ -28,7 +28,7 @@ object WristConstants {
 
   val ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO = 50.0 / 32.0
   val MOTOR_TO_ABSOLUTE_ENCODER_GEAR_RATIO =
-    5.0 / 1.0 * 4.0 / 1.0 * 3.0 / 1.0 * 46.0 / 42.0 * 90.0 / 32.0 * 32.0 / 50.0
+    5.0 / 1.0 * 4.0 / 1.0 * 3.0 / 1.0 * 46.0 / 42.0 * 90.0 / 33.0 * 32.0 / 50.0
 
   val VOLTAGE_COMPENSATION = 12.0.volts
   val ABSOLUTE_ENCODER_OFFSET =
@@ -54,9 +54,13 @@ object WristConstants {
 
   val HARDSTOP_OFFSET = 47.degrees
   object PID {
-    val REAL_KP: ProportionalGain<Radian, Volt> = 2.volts / 1.0.degrees
+    val REAL_KP: ProportionalGain<Radian, Volt> = 0.3.volts / 1.0.degrees
     val REAL_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val REAL_KD: DerivativeGain<Radian, Volt> = 0.0.volts / 1.0.degrees.perSecond
+
+    val SECOND_STAGE_KP: ProportionalGain<Radian, Volt> = 1.volts / 1.0.degrees
+    val SECOND_STAGE_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
+    val SECOND_STAGE_KD: DerivativeGain<Radian, Volt> = 0.0.volts / 1.0.degrees.perSecond
 
     val SIM_KP: ProportionalGain<Radian, Volt> = 3.volts / 1.0.degrees
     val SIM_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
@@ -73,7 +77,7 @@ object WristConstants {
     val SIM_WRIST_KS = 0.15.volts
   }
 
-  val WRIST_TOLERANCE = 0.25.degrees
+  val WRIST_TOLERANCE = 0.2.degrees
 
   val IDLE_ANGLE = (-35.0).degrees
 

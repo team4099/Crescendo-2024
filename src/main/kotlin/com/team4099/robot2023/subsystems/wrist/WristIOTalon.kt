@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.VoltageOut
 import com.ctre.phoenix6.hardware.CANcoder
 import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue
 import com.ctre.phoenix6.signals.InvertedValue
 import com.ctre.phoenix6.signals.NeutralModeValue
 import com.ctre.phoenix6.signals.SensorDirectionValue
@@ -82,13 +83,13 @@ object WristIOTalon : WristIO {
 
     absoluteEncoder.configurator.apply(absoluteEncoderConfiguration)
 
-    // wristConfiguration.Feedback.FeedbackRemoteSensorID = absoluteEncoder.deviceID
-    // wristConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder
+    wristConfiguration.Feedback.FeedbackRemoteSensorID = absoluteEncoder.deviceID
+    wristConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder
 
     wristConfiguration.Feedback.SensorToMechanismRatio =
-      1 / WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
+      WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
     wristConfiguration.Feedback.RotorToSensorRatio =
-      1 / WristConstants.MOTOR_TO_ABSOLUTE_ENCODER_GEAR_RATIO
+      WristConstants.MOTOR_TO_ABSOLUTE_ENCODER_GEAR_RATIO
 
     wristConfiguration.Slot0.kP =
       wristSensor.proportionalPositionGainToRawUnits(WristConstants.PID.REAL_KP)
@@ -96,6 +97,13 @@ object WristIOTalon : WristIO {
       wristSensor.integralPositionGainToRawUnits(WristConstants.PID.REAL_KI)
     wristConfiguration.Slot0.kD =
       wristSensor.derivativePositionGainToRawUnits(WristConstants.PID.REAL_KD)
+
+    wristConfiguration.Slot1.kP =
+      wristSensor.proportionalPositionGainToRawUnits(WristConstants.PID.SECOND_STAGE_KP)
+    wristConfiguration.Slot1.kI =
+      wristSensor.integralPositionGainToRawUnits(WristConstants.PID.SECOND_STAGE_KI)
+    wristConfiguration.Slot1.kD =
+      wristSensor.derivativePositionGainToRawUnits(WristConstants.PID.SECOND_STAGE_KD)
 
     wristConfiguration.CurrentLimits.SupplyCurrentLimit =
       WristConstants.WRIST_SUPPLY_CURRENT_LIMIT.inAmperes
@@ -156,13 +164,19 @@ object WristIOTalon : WristIO {
   override fun setWristPosition(position: Angle, feedforward: ElectricalPotential) {
     positionRequest.setFeedforward(feedforward)
     positionRequest.setPosition(position)
+
+    var slot = 0
+    if ((wristSensor.position - position).absoluteValue <= 1.degrees){
+      slot = 1
+    }
+
     wristTalon.setControl(
       PositionDutyCycle(
         wristSensor.positionToRawUnits(position),
         wristSensor.velocityToRawUnits(0.0.radians.perSecond),
         true,
         feedforward.inVolts,
-        0,
+        slot,
         false,
         false,
         false
@@ -187,6 +201,7 @@ object WristIOTalon : WristIO {
     updateSignals()
 
     wristTalon.rotorPosition.refresh()
+    wristTalon.position.refresh()
     Logger.recordOutput(
       "Wrist/rotorTMechanismDegrees",
       (
@@ -199,14 +214,15 @@ object WristIOTalon : WristIO {
         .inDegrees
     )
     Logger.recordOutput("Wrist/absoluteEncoderRots", absoluteEncoderSignal.value)
+    Logger.recordOutput("Wrist/hopefullyAbsoluteEncoderRots", wristTalon.position.value)
 
     inputs.wristAbsoluteEncoderPosition =
       (absoluteEncoderSignal.value).rotations /
       WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
-    inputs.wristPosition =
-      wristSensor.position /
-      WristConstants.MOTOR_TO_ABSOLUTE_ENCODER_GEAR_RATIO /
-      WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO + angleToZero
+    inputs.wristPosition = wristSensor.position
+//      wristTalon.position.value.rotations /
+//      WristConstants.MOTOR_TO_ABSOLUTE_ENCODER_GEAR_RATIO /
+//      WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO + angleToZero
     inputs.wristAcceleration =
       (motorAcceleration.value * WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO)
         .rotations
@@ -241,6 +257,7 @@ object WristIOTalon : WristIO {
     angleToZero =
       (absoluteEncoderSignal.value).rotations /
       WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
+    Logger.recordOutput("Wrist/angleToZero", angleToZero.inDegrees)
     wristTalon.setPosition(angleToZero.inRotations)
   }
 }
