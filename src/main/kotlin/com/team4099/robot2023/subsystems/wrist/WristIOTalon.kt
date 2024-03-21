@@ -5,6 +5,8 @@ import com.ctre.phoenix6.StatusSignal
 import com.ctre.phoenix6.configs.MagnetSensorConfigs
 import com.ctre.phoenix6.configs.MotorOutputConfigs
 import com.ctre.phoenix6.configs.Slot0Configs
+import com.ctre.phoenix6.configs.Slot1Configs
+import com.ctre.phoenix6.configs.Slot2Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.PositionDutyCycle
 import com.ctre.phoenix6.controls.VoltageOut
@@ -15,6 +17,8 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue
 import com.ctre.phoenix6.signals.InvertedValue
 import com.ctre.phoenix6.signals.NeutralModeValue
 import com.ctre.phoenix6.signals.SensorDirectionValue
+import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.lib.logging.TunableNumber
 import com.team4099.lib.phoenix6.PositionVoltage
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.WristConstants
@@ -41,6 +45,7 @@ import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
+import org.team4099.lib.units.inDegreesPerSecond
 import org.team4099.lib.units.perSecond
 
 object WristIOTalon : WristIO {
@@ -53,6 +58,25 @@ object WristIOTalon : WristIO {
   private val absoluteEncoderConfiguration: MagnetSensorConfigs = MagnetSensorConfigs()
 
   var positionRequest = PositionVoltage(-1337.degrees, slot = 0, feedforward = -1337.volts)
+
+  val drivenPulley = TunableNumber("Wrist/drivenPulley", 50.0)
+  val drivingPulley = TunableNumber("Wrist/drivingPulley", 32.0)
+
+  val firstStagePosErrSwitchThreshold =
+    LoggedTunableValue("Wrist/slot1SwitchThreshold", Pair({ it.inDegrees }, { it.degrees }))
+  val secondStagePosErrSwitchThreshold =
+    LoggedTunableValue("Wrist/slot2SwitchThreshold", Pair({ it.inDegrees }, { it.degrees }))
+
+  val firstStageVelocitySwitchThreshold =
+    LoggedTunableValue(
+      "Wrist/slot1VelSwitchThreshold",
+      Pair({ it.inDegreesPerSecond }, { it.degrees.perSecond })
+    )
+  val secondStageVelocitySwitchThreshold =
+    LoggedTunableValue(
+      "Wrist/slot2VelSwitchThreshold",
+      Pair({ it.inDegreesPerSecond }, { it.degrees.perSecond })
+    )
 
   private val wristSensor =
     ctreAngularMechanismSensor(
@@ -73,6 +97,18 @@ object WristIOTalon : WristIO {
   var angleToZero: Angle = 0.0.degrees
 
   init {
+    firstStagePosErrSwitchThreshold.initDefault(WristConstants.PID.FIRST_STAGE_POS_SWITCH_THRESHOLD)
+    secondStagePosErrSwitchThreshold.initDefault(
+      WristConstants.PID.SECOND_STAGE_POS_SWITCH_THRESHOLD
+    )
+
+    firstStageVelocitySwitchThreshold.initDefault(
+      WristConstants.PID.FIRST_STAGE_VEL_SWITCH_THRESHOLD
+    )
+    secondStageVelocitySwitchThreshold.initDefault(
+      WristConstants.PID.SECOND_STAGE_VEL_SWITCH_THRESHOLD
+    )
+
     wristTalon.configurator.apply(TalonFXConfiguration())
 
     wristTalon.clearStickyFaults()
@@ -99,10 +135,17 @@ object WristIOTalon : WristIO {
       wristSensor.derivativePositionGainToRawUnits(WristConstants.PID.REAL_KD)
 
     wristConfiguration.Slot1.kP =
-      wristSensor.proportionalPositionGainToRawUnits(WristConstants.PID.SECOND_STAGE_KP)
+      wristSensor.proportionalPositionGainToRawUnits(WristConstants.PID.FIRST_STAGE_KP)
     wristConfiguration.Slot1.kI =
-      wristSensor.integralPositionGainToRawUnits(WristConstants.PID.SECOND_STAGE_KI)
+      wristSensor.integralPositionGainToRawUnits(WristConstants.PID.FIRST_STAGE_KI)
     wristConfiguration.Slot1.kD =
+      wristSensor.derivativePositionGainToRawUnits(WristConstants.PID.FIRST_STAGE_KD)
+
+    wristConfiguration.Slot2.kP =
+      wristSensor.proportionalPositionGainToRawUnits(WristConstants.PID.SECOND_STAGE_KP)
+    wristConfiguration.Slot2.kI =
+      wristSensor.integralPositionGainToRawUnits(WristConstants.PID.SECOND_STAGE_KI)
+    wristConfiguration.Slot2.kD =
       wristSensor.derivativePositionGainToRawUnits(WristConstants.PID.SECOND_STAGE_KD)
 
     wristConfiguration.CurrentLimits.SupplyCurrentLimit =
@@ -144,6 +187,32 @@ object WristIOTalon : WristIO {
     )
   }
 
+  override fun configPIDSlot2(
+    kP: ProportionalGain<Radian, Volt>,
+    kI: IntegralGain<Radian, Volt>,
+    kD: DerivativeGain<Radian, Volt>
+  ) {
+    val PIDConfig = Slot2Configs()
+    PIDConfig.kP = wristSensor.proportionalPositionGainToRawUnits(kP)
+    PIDConfig.kI = wristSensor.integralPositionGainToRawUnits(kI)
+    PIDConfig.kD = wristSensor.derivativePositionGainToRawUnits(kD)
+
+    wristTalon.configurator.apply(PIDConfig)
+  }
+
+  override fun configPIDSlot1(
+    kP: ProportionalGain<Radian, Volt>,
+    kI: IntegralGain<Radian, Volt>,
+    kD: DerivativeGain<Radian, Volt>
+  ) {
+    val PIDConfig = Slot1Configs()
+    PIDConfig.kP = wristSensor.proportionalPositionGainToRawUnits(kP)
+    PIDConfig.kI = wristSensor.integralPositionGainToRawUnits(kI)
+    PIDConfig.kD = wristSensor.derivativePositionGainToRawUnits(kD)
+
+    wristTalon.configurator.apply(PIDConfig)
+  }
+
   override fun configPID(
     kP: ProportionalGain<Radian, Volt>,
     kI: IntegralGain<Radian, Volt>,
@@ -165,10 +234,24 @@ object WristIOTalon : WristIO {
     positionRequest.setFeedforward(feedforward)
     positionRequest.setPosition(position)
 
+    val curError = (wristSensor.position - position).absoluteValue
+    val curVel = wristSensor.velocity
+
     var slot = 0
-    if ((wristSensor.position - position).absoluteValue <= 1.degrees){
-      slot = 1
+    if (curError <= firstStagePosErrSwitchThreshold.get() &&
+      curVel.absoluteValue <= firstStageVelocitySwitchThreshold.get()
+    ) {
+      if (curError <= secondStagePosErrSwitchThreshold.get() &&
+        curVel.absoluteValue <= secondStageVelocitySwitchThreshold.get()
+      ) {
+        slot = 2
+      } else {
+        slot = 1
+      }
     }
+
+    Logger.recordOutput("Wrist/feedForwardApplied", feedforward.inVolts)
+    Logger.recordOutput("Wrist/slotBeingUsed", slot)
 
     wristTalon.setControl(
       PositionDutyCycle(
@@ -208,21 +291,27 @@ object WristIOTalon : WristIO {
         (
           wristTalon.rotorPosition.value.rotations /
             WristConstants.MOTOR_TO_ABSOLUTE_ENCODER_GEAR_RATIO /
-            WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
+            (1.06488 / 1.0)
           ) + angleToZero
         )
         .inDegrees
     )
     Logger.recordOutput("Wrist/absoluteEncoderRots", absoluteEncoderSignal.value)
+    Logger.recordOutput(
+      "Wrist/absoluteEncoderTMechanismDegrees",
+      (absoluteEncoderSignal.value / (drivenPulley.get() / drivingPulley.get()))
+        .rotations
+        .inDegrees
+    )
     Logger.recordOutput("Wrist/hopefullyAbsoluteEncoderRots", wristTalon.position.value)
 
     inputs.wristAbsoluteEncoderPosition =
       (absoluteEncoderSignal.value).rotations /
       WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
     inputs.wristPosition = wristSensor.position
-//      wristTalon.position.value.rotations /
-//      WristConstants.MOTOR_TO_ABSOLUTE_ENCODER_GEAR_RATIO /
-//      WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO + angleToZero
+    //      wristTalon.position.value.rotations /
+    //      WristConstants.MOTOR_TO_ABSOLUTE_ENCODER_GEAR_RATIO /
+    //      WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO + angleToZero
     inputs.wristAcceleration =
       (motorAcceleration.value * WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO)
         .rotations

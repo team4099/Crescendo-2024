@@ -23,7 +23,7 @@ object IntakeConstants {
   const val CENTER_WHEEL_GEAR_RATIO = 34.0 / 14.0
 
   // TODO: Update the idle roller voltage later
-  val IDLE_ROLLER_VOLTAGE = 1.0.volts
+  val IDLE_ROLLER_VOLTAGE = 0.0.volts
 
   val IDLE_CENTER_WHEEL_VOLTAGE = 0.0.volts
   val INTAKE_ROLLER_VOLTAGE = -12.volts

@@ -106,5 +106,17 @@ interface WristIO {
     kD: DerivativeGain<Radian, Volt>
   ) {}
 
+  fun configPIDSlot1(
+    kP: ProportionalGain<Radian, Volt>,
+    kI: IntegralGain<Radian, Volt>,
+    kD: DerivativeGain<Radian, Volt>
+  ) {}
+
+  fun configPIDSlot2(
+    kP: ProportionalGain<Radian, Volt>,
+    kI: IntegralGain<Radian, Volt>,
+    kD: DerivativeGain<Radian, Volt>
+  ) {}
+
   fun zeroEncoder() {}
 }

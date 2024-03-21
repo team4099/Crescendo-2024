@@ -38,6 +38,9 @@ import org.team4099.lib.units.perSecond
 class Wrist(val io: WristIO) : SubsystemBase() {
   val inputs = WristIO.WristIOInputs()
 
+  val arbitraryFeedforward =
+    LoggedTunableValue("Wrist/arbitraryFeedforward", Pair({ it.inVolts }, { it.volts }))
+
   object TunableWristStates {
     val idleAngle =
       LoggedTunableValue(
@@ -121,6 +124,28 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       "Wrist/kD", Pair({ it.inVoltsPerDegreePerSecond }, { it.volts.perDegreePerSecond })
     )
 
+  private val wristSlot1kP =
+    LoggedTunableValue("Wrist/slot1kP", Pair({ it.inVoltsPerDegree }, { it.volts.perDegree }))
+  private val wristSlot1kI =
+    LoggedTunableValue(
+      "Wrist/slot1KI", Pair({ it.inVoltsPerDegreeSeconds }, { it.volts.perDegreeSeconds })
+    )
+  private val wristSlot1kD =
+    LoggedTunableValue(
+      "Wrist/slot1kD", Pair({ it.inVoltsPerDegreePerSecond }, { it.volts.perDegreePerSecond })
+    )
+
+  private val wristSlot2kP =
+    LoggedTunableValue("Wrist/slot2kP", Pair({ it.inVoltsPerDegree }, { it.volts.perDegree }))
+  private val wristSlot2kI =
+    LoggedTunableValue(
+      "Wrist/slot2kI", Pair({ it.inVoltsPerDegreeSeconds }, { it.volts.perDegreeSeconds })
+    )
+  private val wristSlot2kD =
+    LoggedTunableValue(
+      "Wrist/slot2kD", Pair({ it.inVoltsPerDegreePerSecond }, { it.volts.perDegreePerSecond })
+    )
+
   private val testAngleUp =
     LoggedTunableValue("Wrist/testAngleUp", Pair({ it.inDegrees }, { it.degrees }))
   private val testAngleDown =
@@ -176,10 +201,20 @@ class Wrist(val io: WristIO) : SubsystemBase() {
   }
 
   init {
+    arbitraryFeedforward.initDefault(WristConstants.PID.ARBITRARY_FEEDFORWARD)
+
     if (RobotBase.isReal()) {
       wristkP.initDefault(WristConstants.PID.REAL_KP)
       wristkI.initDefault(WristConstants.PID.REAL_KI)
       wristkD.initDefault(WristConstants.PID.REAL_KD)
+
+      wristSlot1kP.initDefault(WristConstants.PID.FIRST_STAGE_KP)
+      wristSlot1kI.initDefault(WristConstants.PID.FIRST_STAGE_KI)
+      wristSlot1kD.initDefault(WristConstants.PID.FIRST_STAGE_KD)
+
+      wristSlot2kP.initDefault(WristConstants.PID.FIRST_STAGE_KP)
+      wristSlot2kI.initDefault(WristConstants.PID.FIRST_STAGE_KI)
+      wristSlot2kD.initDefault(WristConstants.PID.FIRST_STAGE_KD)
 
       wristkS.initDefault(WristConstants.PID.REAL_WRIST_KS)
       wristkG.initDefault(WristConstants.PID.REAL_WRIST_KG)
@@ -221,6 +256,15 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     if (wristkP.hasChanged() || wristkI.hasChanged() || wristkD.hasChanged()) {
       io.configPID(wristkP.get(), wristkI.get(), wristkD.get())
     }
+
+    if (wristSlot1kP.hasChanged() || wristSlot1kI.hasChanged() || wristSlot1kD.hasChanged()) {
+      io.configPIDSlot1(wristSlot1kP.get(), wristSlot1kI.get(), wristSlot1kD.get())
+    }
+
+    if (wristSlot2kP.hasChanged() || wristSlot2kI.hasChanged() || wristSlot2kD.hasChanged()) {
+      io.configPIDSlot2(wristSlot2kP.get(), wristSlot2kI.get(), wristSlot2kD.get())
+    }
+
     if (wristkA.hasChanged() ||
       wristkV.hasChanged() ||
       wristkG.hasChanged() ||
@@ -315,7 +359,11 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     if (isOutOfBounds(setPoint.velocity)) {
       io.setWristVoltage(wristFeedForward.calculate(inputs.wristPosition, 0.degrees.perSecond))
     } else {
-      io.setWristPosition(setPoint.position, feedforward)
+      if (inputs.wristPosition > 7.0.degrees) {
+        io.setWristPosition(setPoint.position, arbitraryFeedforward.get())
+      } else {
+        io.setWristPosition(setPoint.position, feedforward)
+      }
     }
 
     Logger.recordOutput("Wrist/profileIsOutOfBounds", isOutOfBounds(setPoint.velocity))

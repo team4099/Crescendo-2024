@@ -23,7 +23,7 @@ import com.team4099.robot2023.subsystems.flywheel.Flywheel
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
 import com.team4099.robot2023.subsystems.intake.Intake
-import com.team4099.robot2023.subsystems.intake.IntakeIO
+import com.team4099.robot2023.subsystems.intake.IntakeIONEO
 import com.team4099.robot2023.subsystems.intake.IntakeIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
@@ -43,7 +43,6 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
-import com.team4099.robot2023.subsystems.intake.IntakeIONEO
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -85,7 +84,11 @@ object RobotContainer {
     }
 
     superstructure = Superstructure(intake, feeder, elevator, wrist, flywheel, drivetrain, vision)
-    vision.setDataInterfaces({ drivetrain.fieldTRobot }, { drivetrain.addVisionData(it) })
+    vision.setDataInterfaces(
+      { drivetrain.fieldTRobot },
+      { drivetrain.addVisionData(it) },
+      { drivetrain.addSpeakerVisionData(it) }
+    )
     vision.drivetrainOdometry = { drivetrain.odomTRobot }
     limelight.poseSupplier = { drivetrain.odomTRobot }
   }

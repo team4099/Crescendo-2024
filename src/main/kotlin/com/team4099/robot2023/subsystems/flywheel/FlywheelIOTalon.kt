@@ -194,22 +194,18 @@ object FlywheelIOTalon : FlywheelIO {
   override fun setFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {
     val error = velocity - flywheelRightSensor.velocity
     Logger.recordOutput("Flywheel/isApplying12Volt", error > 500.rotations.perMinute)
-    if (error > 500.rotations.perMinute) {
-      flywheelRightTalon.setControl(VoltageOut(12.0))
-    } else {
-      flywheelRightTalon.setControl(
-        com.ctre.phoenix6.controls.VelocityVoltage(
-          flywheelRightSensor.velocityToRawUnits(velocity),
-          flywheelRightSensor.accelerationToRawUnits(0.0.radians.perSecond.perSecond),
-          true,
-          feedforward.inVolts,
-          0,
-          false,
-          false,
-          false
-        )
+    flywheelRightTalon.setControl(
+      com.ctre.phoenix6.controls.VelocityVoltage(
+        flywheelRightSensor.velocityToRawUnits(velocity),
+        flywheelRightSensor.accelerationToRawUnits(0.0.radians.perSecond.perSecond),
+        true,
+        feedforward.inVolts,
+        0,
+        false,
+        false,
+        false
       )
-    }
+    )
   }
 
   private fun updateSignals() {

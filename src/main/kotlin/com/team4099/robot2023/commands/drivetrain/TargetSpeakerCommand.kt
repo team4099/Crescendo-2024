@@ -7,6 +7,7 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.util.driver.DriverProfile
+import com.team4099.robot2023.util.inverse
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
@@ -115,18 +116,19 @@ class TargetSpeakerCommand(
       "Testing/CurrentDrivetrainRotation", drivetrain.odomTRobot.rotation.inDegrees
     )
 
-    val currentPose = drivetrain.odomTRobot
-    val relativeToRobotPose = vision.robotTSpeaker
+    val odomTRobot = drivetrain.odomTRobot
+    val odomTSpeaker = drivetrain.odomTSpeaker
+    val robotTSpeaker = odomTRobot.inverse().transformBy(odomTSpeaker)
 
-    desiredAngle = atan2(relativeToRobotPose.y.inMeters, relativeToRobotPose.x.inMeters).radians
+    desiredAngle = atan2(robotTSpeaker.y.inMeters, robotTSpeaker.x.inMeters).radians
 
-    val thetaFeedback = thetaPID.calculate(currentPose.rotation, desiredAngle)
+    val thetaFeedback = thetaPID.calculate(odomTRobot.rotation, desiredAngle)
 
     Logger.recordOutput("Testing/desiredAngle", desiredAngle.inDegrees)
     Logger.recordOutput("Testing/error", thetaPID.error.inDegrees)
     Logger.recordOutput("Testing/thetaFeedback", thetaFeedback.inDegreesPerSecond)
     Logger.recordOutput(
-      "Testing/relativeToRobotPose", relativeToRobotPose.toDoubleArray().toDoubleArray()
+      "Testing/relativeToRobotPose", robotTSpeaker.toDoubleArray().toDoubleArray()
     )
 
     drivetrain.currentRequest =
