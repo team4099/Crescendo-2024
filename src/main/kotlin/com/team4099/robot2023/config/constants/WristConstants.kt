@@ -12,7 +12,6 @@ import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.radians
-import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.kilo
 import org.team4099.lib.units.perSecond
@@ -46,16 +45,16 @@ object WristConstants {
 
   val WRIST_ZERO_SIM_OFFSET = 27.5.degrees
 
-  val MAX_WRIST_VELOCITY = 300.degrees.perSecond
-  val MAX_WRIST_ACCELERATION = 600.degrees.perSecond.perSecond
+  val MAX_WRIST_VELOCITY = 200.degrees.perSecond
+  val MAX_WRIST_ACCELERATION = 150.degrees.perSecond.perSecond
 
   val HARDSTOP_OFFSET = 47.degrees
   object PID {
-    val REAL_KP: ProportionalGain<Radian, Volt> = 0.5.volts / 1.0.degrees
+    val REAL_KP: ProportionalGain<Radian, Volt> = 2.0.volts / 1.0.degrees
     val REAL_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
-    val REAL_KD: DerivativeGain<Radian, Volt> = 0.0.volts / (1.0.rotations / 1.0.seconds)
+    val REAL_KD: DerivativeGain<Radian, Volt> = 0.0.volts / 1.0.degrees.perSecond
 
-    val SIM_KP: ProportionalGain<Radian, Volt> = 1.volts / 1.0.degrees
+    val SIM_KP: ProportionalGain<Radian, Volt> = 3.volts / 1.0.degrees
     val SIM_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val SIM_KD: DerivativeGain<Radian, Volt> = 0.0175.volts / (1.0.degrees / 1.0.seconds)
 
@@ -70,10 +69,11 @@ object WristConstants {
     val SIM_WRIST_KS = 0.15.volts
   }
 
-  val WRIST_TOLERANCE = 0.1.degrees
+  val WRIST_TOLERANCE = 0.25.degrees
 
   val IDLE_ANGLE = (-35.0).degrees
-  val AMP_SCORE_ANGLE = -16.0.degrees
+
+  val AMP_SCORE_ANGLE = -8.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = -36.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = -7.5.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH = -2.degrees

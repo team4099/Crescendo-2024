@@ -1,7 +1,6 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.lib.logging.LoggedTunableValue
-import com.team4099.lib.logging.toDoubleArray
 import com.team4099.lib.math.asPose2d
 import com.team4099.lib.math.asTransform2d
 import com.team4099.lib.trajectory.CustomHolonomicDriveController
@@ -12,6 +11,7 @@ import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.util.AllianceFlipUtil
+import com.team4099.robot2023.util.DebugLogger
 import com.team4099.robot2023.util.FrameType
 import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -88,6 +88,8 @@ private constructor(
 
   private var trajCurTime = 0.0.seconds
   private var trajStartTime = 0.0.seconds
+
+  private var changeStartTimeOnExecute = true
 
   var trajectoryGenerator = CustomTrajectoryGenerator()
 
@@ -219,24 +221,24 @@ private constructor(
     } else {
       swerveDriveController.setTolerance(Pose2d(6.inches, 6.inches, 10.degrees).pose2d)
     }
+
+    // trajectory generation!
+    generate(waypoints.get())
   }
 
   override fun initialize() {
+    val trajectory = trajectoryGenerator.driveTrajectory
+
+    if (trajectory.states.size <= 1) {
+      return
+    }
+
     odoTField = drivetrain.odomTField
     pathTransform =
       Transform2d(
         Translation2d(waypoints.get()[0].translation),
         waypoints.get()[0].holonomicRotation?.radians?.radians ?: drivePoseSupplier().rotation
       )
-
-    // trajectory generation!
-    generate(waypoints.get())
-
-    val trajectory = trajectoryGenerator.driveTrajectory
-
-    if (trajectory.states.size <= 1) {
-      return
-    }
 
     //    if (resetPose) {
     //      drivetrain.odometryPose = AllianceFlipUtil.apply(Pose2d(trajectory.initialPose))
@@ -252,6 +254,11 @@ private constructor(
 
     if (trajectory.states.size <= 1) {
       return
+    }
+
+    if (changeStartTimeOnExecute) {
+      trajStartTime = Clock.fpgaTime + trajectory.states[0].timeSeconds.seconds
+      changeStartTimeOnExecute = false
     }
 
     trajCurTime = Clock.fpgaTime - trajStartTime
@@ -274,24 +281,14 @@ private constructor(
       lastSampledPose = targetHolonomicPose
       when (stateFrame) {
         FrameType.FIELD -> {
-          Logger.recordOutput(
-            "Pathfollow/fieldTRobotTargetVisualized",
-            targetHolonomicPose.toDoubleArray().toDoubleArray()
-          )
+          Logger.recordOutput("Pathfollow/fieldTRobotTargetVisualized", targetHolonomicPose.pose2d)
 
-          Logger.recordOutput(
-            "Pathfollow/fieldTRobot", robotPoseInSelectedFrame.toDoubleArray().toDoubleArray()
-          )
+          Logger.recordOutput("Pathfollow/fieldTRobot", robotPoseInSelectedFrame.pose2d)
         }
         FrameType.ODOMETRY -> {
-          Logger.recordOutput(
-            "Pathfollow/odomTRobotTargetVisualized",
-            targetHolonomicPose.toDoubleArray().toDoubleArray()
-          )
+          Logger.recordOutput("Pathfollow/odomTRobotTargetVisualized", targetHolonomicPose.pose2d)
 
-          Logger.recordOutput(
-            "Pathfollow/odomTRobot", robotPoseInSelectedFrame.toDoubleArray().toDoubleArray()
-          )
+          Logger.recordOutput("Pathfollow/odomTRobot", robotPoseInSelectedFrame.pose2d)
         }
       }
 
@@ -310,23 +307,16 @@ private constructor(
             odoTField.inverse().asPose2d().transformBy(robotPoseInSelectedFrame.asTransform2d())
           lastSampledPose = odoTField.asPose2d().transformBy(targetHolonomicPose.asTransform2d())
 
-          Logger.recordOutput(
-            "Pathfollow/fieldTRobotTargetVisualized",
-            targetHolonomicPose.toDoubleArray().toDoubleArray()
-          )
+          Logger.recordOutput("Pathfollow/fieldTRobotTargetVisualized", targetHolonomicPose.pose2d)
 
-          Logger.recordOutput(
-            "Pathfollow/fieldTRobot", robotPoseInSelectedFrame.toDoubleArray().toDoubleArray()
-          )
+          Logger.recordOutput("Pathfollow/fieldTRobot", robotPoseInSelectedFrame.pose2d)
         }
       }
     }
     // flip
     lastSampledPose = AllianceFlipUtil.apply(lastSampledPose)
 
-    Logger.recordOutput(
-      "Pathfollow/targetPoseInStateFrame", lastSampledPose.toDoubleArray().toDoubleArray()
-    )
+    Logger.recordOutput("Pathfollow/targetPoseInStateFrame", lastSampledPose.pose2d)
 
     if (flipForAlliances) {
       desiredState = AllianceFlipUtil.apply(desiredState)
@@ -360,6 +350,16 @@ private constructor(
       Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position)
     )
 
+    /*
+    drivetrain.setOpenLoop(
+        nextDriveState.omegaRadiansPerSecond.radians.perSecond,
+        nextDriveState.vxMetersPerSecond.meters.perSecond to nextDriveState.vyMetersPerSecond.meters.perSecond,
+        ChassisAccels(xAccel, yAccel, 0.0.radians.perSecond.perSecond).chassisAccelsWPILIB,
+        true
+      )
+
+     */
+
     drivetrain.currentRequest =
       DrivetrainRequest.ClosedLoop(
         nextDriveState,
@@ -391,13 +391,10 @@ private constructor(
       desiredRotation.velocityRadiansPerSec.radians.perSecond.inDegreesPerSecond
     )
 
-    Logger.recordOutput(
-      "Pathfollow/trajectory", edu.wpi.first.math.trajectory.Trajectory.proto, trajectory
-    )
     Logger.recordOutput("Pathfollow/isAtReference", swerveDriveController.atReference())
     Logger.recordOutput("Pathfollow/trajectoryTimeSeconds", trajectory.totalTimeSeconds)
 
-    Logger.recordOutput("ActiveCommands/DrivePathCommand", true)
+    DebugLogger.recordDebugOutput("ActiveCommands/DrivePathCommand", true)
 
     if (thetakP.hasChanged()) thetaPID.proportionalGain = thetakP.get()
     if (thetakI.hasChanged()) thetaPID.integralGain = thetakI.get()
@@ -427,7 +424,7 @@ private constructor(
   }
 
   override fun end(interrupted: Boolean) {
-    Logger.recordOutput("ActiveCommands/DrivePathCommand", false)
+    DebugLogger.recordDebugOutput("ActiveCommands/DrivePathCommand", false)
     if (interrupted) {
       DriverStation.reportError(errorString, true)
       // Stop where we are if interrupted

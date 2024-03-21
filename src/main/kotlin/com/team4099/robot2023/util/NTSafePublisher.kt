@@ -43,9 +43,7 @@ class NTSafePublisher : LogDataReceiver {
         var publisher = publishers[key]
         if (publisher == null) {
           publisher =
-            rootTable
-              .getTopic(key)
-              .genericPublish(newValue.type.nT4Type, PubSubOption.sendAll(true))
+            rootTable.getTopic(key).genericPublish(newValue.nT4Type, PubSubOption.sendAll(true))
           publishers[key] = publisher
         }
 

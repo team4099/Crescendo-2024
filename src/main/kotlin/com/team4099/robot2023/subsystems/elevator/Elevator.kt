@@ -54,7 +54,7 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
   private val kG = LoggedTunableValue("Elevator/kG", Pair({ it.inVolts }, { it.volts }))
   private val kV =
     LoggedTunableValue(
-      "Elevator/kG", Pair({ it.inVoltsPerInchPerSecond }, { it.volts / 1.0.inches.perSecond })
+      "Elevator/kV", Pair({ it.inVoltsPerInchPerSecond }, { it.volts / 1.0.inches.perSecond })
     )
   private val kA =
     LoggedTunableValue(
@@ -238,6 +238,11 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
       io.configPID(kP.get(), kI.get(), kD.get())
     }
 
+    kV.initDefault(ElevatorConstants.ELEVATOR_KV)
+    kS.initDefault(ElevatorConstants.ELEVATOR_KS)
+    kG.initDefault(ElevatorConstants.ELEVATOR_KG)
+    kA.initDefault(ElevatorConstants.ELEVATOR_KA)
+
     elevatorFeedforward =
       ElevatorFeedforward(
         ElevatorConstants.ELEVATOR_KS,
@@ -251,6 +256,10 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
     io.updateInputs(inputs)
     if ((kP.hasChanged()) || (kI.hasChanged()) || (kD.hasChanged())) {
       io.configPID(kP.get(), kI.get(), kD.get())
+    }
+
+    if (kS.hasChanged() || kV.hasChanged() || kA.hasChanged() || kG.hasChanged()) {
+      elevatorFeedforward = ElevatorFeedforward(kS.get(), kG.get(), kV.get(), kA.get())
     }
     Logger.processInputs("Elevator", inputs)
     Logger.recordOutput("Elevator/currentState", currentState.name)

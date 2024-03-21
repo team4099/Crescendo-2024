@@ -28,9 +28,10 @@ sealed interface Request {
     class PrepScoreSpeakerHigh() : SuperstructureRequest
 
     class ScoreSpeaker() : SuperstructureRequest
-    class ScoreSpeakerLow() : SuperstructureRequest
     class ScoreSpeakerMid() : SuperstructureRequest
     class ScoreSpeakerHigh() : SuperstructureRequest
+
+    class AutoAim() : SuperstructureRequest
 
     class PrepTrap() : SuperstructureRequest
 
@@ -60,6 +61,7 @@ sealed interface Request {
     class Idle : DrivetrainRequest
 
     class LockWheels : DrivetrainRequest
+    class Characterize(val voltage: ElectricalPotential) : DrivetrainRequest
   }
 
   sealed interface IntakeRequest : Request {

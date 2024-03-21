@@ -189,8 +189,5 @@ object ElevatorIONEO : ElevatorIO {
     leaderPIDController.p = leaderSensor.proportionalPositionGainToRawUnits(kP)
     leaderPIDController.i = leaderSensor.integralPositionGainToRawUnits(kI)
     leaderPIDController.d = leaderSensor.derivativePositionGainToRawUnits(kD)
-    followerPIDController.p = followerSensor.proportionalPositionGainToRawUnits(kP)
-    followerPIDController.i = followerSensor.integralPositionGainToRawUnits(kI)
-    followerPIDController.d = followerSensor.derivativePositionGainToRawUnits(kD)
   }
 }

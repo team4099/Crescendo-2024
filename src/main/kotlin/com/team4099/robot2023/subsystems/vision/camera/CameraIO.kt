@@ -1,5 +1,10 @@
 package com.team4099.robot2023.subsystems.vision.camera
 
+import edu.wpi.first.math.MatBuilder
+import edu.wpi.first.math.Nat
+import edu.wpi.first.math.numbers.N1
+import edu.wpi.first.math.numbers.N3
+import edu.wpi.first.math.numbers.N5
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.photonvision.common.dataflow.structures.Packet
@@ -19,12 +24,16 @@ interface CameraIO {
     var cameraTargets = mutableListOf<PhotonTrackedTarget>()
     var indices = 0
     val photonPacketSerde = APacketSerde()
+    var cameraMatrix = MatBuilder.fill(Nat.N3(), Nat.N3(), *DoubleArray(9) { 0.0 })
+    var distCoeff = MatBuilder.fill(Nat.N5(), Nat.N1(), *DoubleArray(5) { 0.0 })
 
     override fun toLog(table: LogTable?) {
       table?.put("timestampSeconds", timestamp.inSeconds)
       table?.put("frame", frame.pose3d)
       table?.put("fps", fps)
       table?.put("usedTargets", usedTargets.toIntArray())
+      table?.put("cameraMatrix", cameraMatrix.data)
+      table?.put("distCoeff", distCoeff.data)
 
       for (targetID in cameraTargets.indices) {
         val photonPacket = Packet(photonPacketSerde.maxByteSize)
@@ -42,6 +51,12 @@ interface CameraIO {
       table?.get("usedTargets", intArrayOf())?.let { usedTargets = it.toList() }
 
       table?.get("cameraTargets/indices", 0)?.let { indices = it }
+
+      table?.get("distCoeff", MatBuilder.fill(Nat.N5(), Nat.N1(), *DoubleArray(5) { 0.0 }).data)
+        ?.let { distCoeff = MatBuilder.fill(Nat.N5(), Nat.N1(), *it) }
+
+      table?.get("cameraMatrix", MatBuilder.fill(Nat.N3(), Nat.N3(), *DoubleArray(9) { 0.0 }).data)
+        ?.let { cameraMatrix = MatBuilder.fill(Nat.N3(), Nat.N3(), *it) }
 
       cameraTargets = mutableListOf<PhotonTrackedTarget>()
 

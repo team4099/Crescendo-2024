@@ -1,17 +1,18 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.lib.logging.toDoubleArray
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.util.driver.DriverProfile
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.Velocity
-import org.team4099.lib.units.derived.Angle
+import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -25,15 +26,16 @@ import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.inDegreesPerSecond
 import org.team4099.lib.units.perSecond
 import kotlin.math.PI
+import kotlin.math.atan2
 
-class TargetAngleCommand(
+class TargetSpeakerCommand(
   val driver: DriverProfile,
   val driveX: () -> Double,
   val driveY: () -> Double,
   val turn: () -> Double,
   val slowMode: () -> Boolean,
   val drivetrain: Drivetrain,
-  val targetAngle: Angle
+  val vision: Vision
 ) : Command() {
   private var thetaPID: PIDController<Radian, Velocity<Radian>>
   val thetakP =
@@ -56,6 +58,7 @@ class TargetAngleCommand(
         { it.degrees.perSecond.perDegreePerSecond }
       )
     )
+  var desiredAngle = 0.0.degrees
 
   init {
     addRequirements(drivetrain)
@@ -108,14 +111,24 @@ class TargetAngleCommand(
   override fun execute() {
 
     drivetrain.defaultCommand.end(true)
-    DebugLogger.recordDebugOutput("ActiveCommands/TargetAngleCommand", true)
+    Logger.recordOutput("ActiveCommands/TargetAngleCommand", true)
     Logger.recordOutput(
       "Testing/CurrentDrivetrainRotation", drivetrain.odomTRobot.rotation.inDegrees
     )
 
-    val thetaFeedback = thetaPID.calculate(drivetrain.odomTRobot.rotation, targetAngle)
-    DebugLogger.recordDebugOutput("Testing/error", thetaPID.error.inDegrees)
-    DebugLogger.recordDebugOutput("Testing/thetaFeedback", thetaFeedback.inDegreesPerSecond)
+    val currentPose = drivetrain.odomTRobot
+    val relativeToRobotPose = vision.robotTSpeaker
+
+    desiredAngle = atan2(relativeToRobotPose.y.inMeters, relativeToRobotPose.x.inMeters).radians
+
+    val thetaFeedback = thetaPID.calculate(currentPose.rotation, desiredAngle)
+
+    Logger.recordOutput("Testing/desiredAngle", desiredAngle.inDegrees)
+    Logger.recordOutput("Testing/error", thetaPID.error.inDegrees)
+    Logger.recordOutput("Testing/thetaFeedback", thetaFeedback.inDegreesPerSecond)
+    Logger.recordOutput(
+      "Testing/relativeToRobotPose", relativeToRobotPose.toDoubleArray().toDoubleArray()
+    )
 
     drivetrain.currentRequest =
       Request.DrivetrainRequest.OpenLoop(
@@ -130,7 +143,7 @@ class TargetAngleCommand(
   }
 
   override fun end(interrupted: Boolean) {
-    DebugLogger.recordDebugOutput("ActiveCommands/TargetAngleCommand", false)
+    Logger.recordOutput("ActiveCommands/TargetAngleCommand", false)
     drivetrain.currentRequest =
       Request.DrivetrainRequest.OpenLoop(
         driver.rotationSpeedClampedSupplier(turn, slowMode),
