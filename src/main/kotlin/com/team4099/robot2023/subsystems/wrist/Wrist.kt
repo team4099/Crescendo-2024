@@ -5,6 +5,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.util.DebugLogger
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
@@ -259,8 +260,6 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         nextState = fromRequestToState(currentRequest)
       }
       WristStates.TARGETING_POSITION -> {
-        Logger.recordOutput("Wrist/RequestedPosition", wristPositionTarget.inDegrees)
-
         if ((wristPositionTarget - lastWristPositionTarget).absoluteValue < 5.degrees) {
           wristProfile =
             TrapezoidProfile(
@@ -318,7 +317,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       io.setWristPosition(setPoint.position, feedforward)
     }
 
-    Logger.recordOutput("Wrist/profileIsOutOfBounds", isOutOfBounds(setPoint.velocity))
+    DebugLogger.recordDebugOutput("Wrist/profileIsOutOfBounds", isOutOfBounds(setPoint.velocity))
     Logger.recordOutput("Wrist/armFeedForward", feedforward.inVolts)
     Logger.recordOutput("Wrist/armTargetPosition", setPoint.position.inDegrees)
     Logger.recordOutput("Wrist/armTargetVelocity", setPoint.velocity.inDegreesPerSecond)

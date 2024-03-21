@@ -9,6 +9,7 @@ import com.team4099.lib.logging.LoggedTunableNumber
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.util.DebugLogger
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -84,16 +85,16 @@ class WheelRadiusCharacterizationCommand(
     averageWheelPositionDelta /= 4.0
     currentEffectiveWheelRadius =
       (accumGyroYawRads * driveRadius / averageWheelPositionDelta).meters
-    Logger.recordOutput(
+    DebugLogger.recordDebugOutput(
       "Drivetrain/RadiusCharacterization/DrivePosition", averageWheelPositionDelta.inRadians
     )
-    Logger.recordOutput(
+    DebugLogger.recordDebugOutput(
       "Drivetrain/RadiusCharacterization/AccumGyroYawRads", accumGyroYawRads.inRadians
     )
-    Logger.recordOutput(
+    DebugLogger.recordDebugOutput(
       "Drivetrain/RadiusCharacterization/LastGyroYawRads", lastGyroYawRads.inRadians
     )
-    Logger.recordOutput(
+    DebugLogger.recordDebugOutput(
       "Drivetrain/RadiusCharacterization/CurrentWheelRadiusInches",
       currentEffectiveWheelRadius.inInches
     )
@@ -101,12 +102,12 @@ class WheelRadiusCharacterizationCommand(
 
   override fun end(interrupted: Boolean) {
     if (accumGyroYawRads <= (Math.PI * 2.0).radians) {
-      Logger.recordOutput(
+      DebugLogger.recordDebugOutput(
         "Drivetrain/radiansOffFromWheelRadius",
         ((Math.PI * 2.0).radians - accumGyroYawRads).inRadians
       )
     } else {
-      Logger.recordOutput("Drivetrain/effectiveWheelRadius", currentEffectiveWheelRadius.inInches)
+      DebugLogger.recordDebugOutput("Drivetrain/effectiveWheelRadius", currentEffectiveWheelRadius.inInches)
     }
   }
 

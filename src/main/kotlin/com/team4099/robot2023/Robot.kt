@@ -8,6 +8,7 @@ import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.util.Alert
 import com.team4099.robot2023.util.Alert.AlertType
+import com.team4099.robot2023.util.DebugLogger
 import com.team4099.robot2023.util.FMSData
 import com.team4099.robot2023.util.NTSafePublisher
 import edu.wpi.first.hal.AllianceStationID
@@ -125,15 +126,15 @@ object Robot : LoggedRobot() {
 
     // Set the scheduler to log events for command initialize, interrupt, finish
     CommandScheduler.getInstance().onCommandInitialize { command: Command ->
-      Logger.recordOutput("/ActiveCommands/${command.name}", true)
+      DebugLogger.recordDebugOutput("/ActiveCommands/${command.name}", true)
     }
 
     CommandScheduler.getInstance().onCommandFinish { command: Command ->
-      Logger.recordOutput("/ActiveCommands/${command.name}", false)
+      DebugLogger.recordDebugOutput("/ActiveCommands/${command.name}", false)
     }
 
     CommandScheduler.getInstance().onCommandInterrupt { command: Command ->
-      Logger.recordOutput("/ActiveCommands/${command.name}", false)
+      DebugLogger.recordDebugOutput("/ActiveCommands/${command.name}", false)
     }
 
     val autoTab = Shuffleboard.getTab("Pre-match")
@@ -178,18 +179,18 @@ object Robot : LoggedRobot() {
     // motor checker stuff
     val motorCheckerStartTime = Clock.realTimestamp
     MotorChecker.periodic()
-    Logger.recordOutput(
+    DebugLogger.recordDebugOutput(
       "LoggedRobot/Subsystems/MotorCheckerLoopTimeMS",
       (Clock.realTimestamp - motorCheckerStartTime).inMilliseconds
     )
 
     RobotContainer.superstructure.periodic()
 
-    Logger.recordOutput(
+    DebugLogger.recordDebugOutput(
       "LoggedRobot/RemainingRamMB", Runtime.getRuntime().freeMemory() / 1024 / 1024
     )
 
-    Logger.recordOutput("LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds)
+    DebugLogger.recordDebugOutput("LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds)
 
     ControlBoard.rumbleConsumer.accept(RobotContainer.rumbleState)
 
@@ -203,9 +204,9 @@ object Robot : LoggedRobot() {
     allianceSelected.set(NetworkTableValue.makeString(currentAlliance))
 
     /*
-    Logger.recordOutput("LoggedRobot/port0", port0.voltage)
-    Logger.recordOutput("LoggedRobot/port1", port1.voltage)
-    Logger.recordOutput("LoggedRobot/port2", port2.voltage)
+    DebugLogger.recordDebugOutput("LoggedRobot/port0", port0.voltage)
+    DebugLogger.recordDebugOutput("LoggedRobot/port1", port1.voltage)
+    DebugLogger.recordDebugOutput("LoggedRobot/port2", port2.voltage)
     Logger.recordOutput("LoggedRobot/port3", port3.voltage)
 
      */

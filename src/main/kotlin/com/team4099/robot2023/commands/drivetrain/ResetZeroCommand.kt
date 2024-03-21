@@ -1,6 +1,7 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.util.DebugLogger
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 
@@ -14,6 +15,6 @@ class ResetZeroCommand(val drivetrain: Drivetrain) : Command() {
   }
 
   override fun execute() {
-    Logger.recordOutput("ActiveCommands/ResetZeroCommand", true)
+    DebugLogger.recordDebugOutput("ActiveCommands/ResetZeroCommand", true)
   }
 }
