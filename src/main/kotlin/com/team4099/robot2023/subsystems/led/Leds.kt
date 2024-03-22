@@ -1,11 +1,13 @@
 package com.team4099.robot2023.subsystems.led
 
+import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.LEDConstants
+import com.team4099.robot2023.util.FMSData
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 
-class Leds(val io: LedIO) : SubsystemBase() {
+class Leds(val io: LedIO) {
   var inputs = LedIO.LedIOInputs()
 
   var hasNote = false
@@ -22,10 +24,20 @@ class Leds(val io: LedIO) : SubsystemBase() {
     state = state
   }
 
-  override fun periodic() {
+  fun periodic() {
     io.updateInputs(inputs)
     if (batteryIsLow && DriverStation.isDisabled()) {
       state = LEDConstants.CandleState.LOW_BATTERY
+    } else if (DriverStation.isDisabled()){
+          if (DriverStation.getAlliance().isPresent){
+            if (FMSData.isBlue){
+              state = LEDConstants.CandleState.BLUE
+            } else{
+              state = LEDConstants.CandleState.RED
+            }
+          } else {
+            state = LEDConstants.CandleState.NOTHING
+          }
     } else if (hasNote) {
       if (isIdle) {
         state = LEDConstants.CandleState.HAS_NOTE

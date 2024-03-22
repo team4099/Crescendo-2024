@@ -1,9 +1,13 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.lib.math.asPose2d
+import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.SuperstructureConstants
+import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.vision.Vision
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.AngularVelocity
@@ -21,8 +25,9 @@ import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.inRotationsPerMinute
 import org.team4099.lib.units.perMinute
+import kotlin.math.hypot
 
-class AutoAim(val vision: Vision) {
+class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
   val flywheelSpeedRPMInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
   val wristAngleDegreesInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
 
@@ -160,7 +165,15 @@ class AutoAim(val vision: Vision) {
   }
 
   fun calculateDistanceFromSpeaker(): Length {
-    val distance = vision.trustedRobotDistanceToTarget
+    val distance =
+      if (DriverStation.isAutonomous()) {
+        val speakerTransformWithOdometry =
+          drivetrain.odomTField.asPose2d().relativeTo(FieldConstants.centerSpeakerOpening)
+        hypot(speakerTransformWithOdometry.x.inMeters, speakerTransformWithOdometry.y.inMeters)
+          .meters
+      } else {
+        vision.trustedRobotDistanceToTarget
+      }
     Logger.recordOutput("AutoAim/currentDistanceInches", distance.inInches)
     return distance
   }
