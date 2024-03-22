@@ -11,6 +11,7 @@ import org.team4099.lib.geometry.Translation3d
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
+import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
 
 // Copyright (c) 2024 FRC 6328
@@ -96,6 +97,14 @@ object FieldConstants {
   var aprilTagWidth = 6.50.inches
 
   var noteThickness = 2.inches
+
+  val bottomRightSpeaker = Pose2d(0.0.inches, 238.815.inches, 0.degrees)
+  val bottomLeftSpeaker = Pose2d(0.0.inches, 197.765.inches, 0.degrees)
+  val topRightSpeaker = Pose2d(18.055.inches, 238.815.inches, 0.degrees)
+  val topLeftSpeaker = Pose2d(18.055.inches, 197.765.inches, 0.degrees)
+
+  // Center of the speaker opening for the blue alliance
+  val centerSpeakerOpening = bottomLeftSpeaker.interpolate(topRightSpeaker, 0.5.seconds)
 
   /** Staging locations for each note */
   object StagingLocations {

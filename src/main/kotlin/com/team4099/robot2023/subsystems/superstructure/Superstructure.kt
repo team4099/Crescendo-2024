@@ -47,7 +47,7 @@ class Superstructure(
 
   var leds = Leds(LedIOCandle)
 
-  var aimer = AutoAim(vision)
+  var aimer = AutoAim(drivetrain, vision)
 
   var currentRequest: Request.SuperstructureRequest = Request.SuperstructureRequest.Idle()
 
@@ -119,9 +119,11 @@ class Superstructure(
   override fun periodic() {
     leds.hasNote = feeder.hasNote
     leds.isIdle = currentState == SuperstructureStates.IDLE
-    leds.subsystemsAtPosition = wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity
+    leds.subsystemsAtPosition = wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity && elevator.isAtTargetedPosition
     leds.batteryIsLow =
       RobotController.getBatteryVoltage() < LEDConstants.BATTERY_WARNING_THRESHOLD.inVolts
+
+    leds.periodic()
 
     notes.forEach { it.periodic() }
     notes.forEach { Logger.recordOutput("NoteSimulation/${it.id}", toDoubleArray(it.currentPose)) }
@@ -643,7 +645,6 @@ class Superstructure(
           }
         }
       }
-
       SuperstructureStates.PASSING_SHOT_PREP -> {
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.passingShotAngle.get())
