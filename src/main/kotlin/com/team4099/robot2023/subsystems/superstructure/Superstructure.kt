@@ -2,18 +2,21 @@ package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.hal.Clock
 import com.team4099.robot2023.config.constants.FieldConstants
+import com.team4099.robot2023.config.constants.LEDConstants
 import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.elevator.Elevator
 import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.flywheel.Flywheel
 import com.team4099.robot2023.subsystems.intake.Intake
+import com.team4099.robot2023.subsystems.led.LedIOCandle
 import com.team4099.robot2023.subsystems.led.Leds
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.util.NoteSimulation
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
+import edu.wpi.first.wpilibj.RobotController
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
@@ -28,6 +31,7 @@ import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
+import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inRotationsPerMinute
 
@@ -41,7 +45,7 @@ class Superstructure(
   private val vision: Vision
 ) : SubsystemBase() {
 
-  var leds = Leds()
+  var leds = Leds(LedIOCandle)
 
   var aimer = AutoAim(vision)
 
@@ -115,6 +119,9 @@ class Superstructure(
   override fun periodic() {
     leds.hasNote = feeder.hasNote
     leds.isIdle = currentState == SuperstructureStates.IDLE
+    leds.subsystemsAtPosition = wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity
+    leds.batteryIsLow =
+      RobotController.getBatteryVoltage() < LEDConstants.BATTERY_WARNING_THRESHOLD.inVolts
 
     notes.forEach { it.periodic() }
     notes.forEach { Logger.recordOutput("NoteSimulation/${it.id}", toDoubleArray(it.currentPose)) }

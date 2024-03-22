@@ -7,19 +7,19 @@ import com.team4099.robot2023.config.constants.LEDConstants
 object LedIOCandle : LedIO {
 
   private val ledController = CANdle(Constants.LED.LED_CANDLE_ID, Constants.Universal.CANIVORE_NAME)
-  private var lastState: LEDConstants.BlinkinLEDState = LEDConstants.BlinkinLEDState.IDLE
+  private var lastState: LEDConstants.CandleState = LEDConstants.CandleState.NO_NOTE
 
   override fun updateInputs(inputs: LedIO.LedIOInputs) {
     inputs.ledState = lastState.name
   }
 
-  override fun setState(newState: LEDConstants.BlinkinLEDState) {
+  override fun setState(newState: LEDConstants.CandleState) {
     lastState = newState
     when (newState) {
-      LEDConstants.BlinkinLEDState.IDLE -> setCANdleState(LEDConstants.CandleState.IDLE)
-      LEDConstants.BlinkinLEDState.AUTO -> setCANdleState(LEDConstants.CandleState.AUTO)
-      LEDConstants.BlinkinLEDState.HAS_NOTE -> setCANdleState(LEDConstants.CandleState.HAS_NOTE)
-      LEDConstants.BlinkinLEDState.NO_NOTE -> setCANdleState(LEDConstants.CandleState.NO_NOTE)
+      LEDConstants.CandleState.LOW_BATTERY -> setCANdleState(LEDConstants.CandleState.LOW_BATTERY)
+      LEDConstants.CandleState.NO_NOTE -> setCANdleState(LEDConstants.CandleState.NO_NOTE)
+      LEDConstants.CandleState.HAS_NOTE -> setCANdleState(LEDConstants.CandleState.HAS_NOTE)
+      LEDConstants.CandleState.CAN_SHOOT -> setCANdleState(LEDConstants.CandleState.CAN_SHOOT)
     }
   }
 
