@@ -643,6 +643,10 @@ class Superstructure(
           }
         }
       }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 021c18c (passing shot angle)
       SuperstructureStates.PASSING_SHOT_PREP -> {
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.passingShotAngle.get())
@@ -949,9 +953,15 @@ class Superstructure(
       CLIMB_RETRACT,
       EJECT_GAME_PIECE,
       EJECT_GAME_PIECE_PREP,
+<<<<<<< HEAD
       AUTO_AIM,
       PASSING_SHOT_PREP,
       PASSING_SHOT
+=======
+      PASSING_SHOT_PREP,
+      PASSING_SHOT,
+      AUTO_AIM
+>>>>>>> 021c18c (passing shot angle)
     }
   }
 }
