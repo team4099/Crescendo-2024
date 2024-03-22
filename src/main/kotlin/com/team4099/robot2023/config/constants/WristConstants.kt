@@ -99,9 +99,23 @@ object WristConstants {
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = -7.5.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH = -2.degrees
   val CLIMB_ANGLE = 10.0.degrees
+<<<<<<< HEAD
 
   val TRAP_ANGLE = 34.0.degrees
   val INTAKE_ANGLE = (-34.0).degrees
   val IDLE_ANGLE_HAS_GAMEPEICE = -35.0.degrees
   val PASSING_SHOT_ANGLE = -15.degrees
+=======
+<<<<<<< HEAD
+  val TRAP_ANGLE = -34.degrees
+  val INTAKE_ANGLE = (-34).degrees
+  val IDLE_ANGLE_HAS_GAMEPEICE = -34.degrees
+  val PASSING_SHOT_ANGLE = 0.degrees
+=======
+  val TRAP_ANGLE = 35.0.degrees
+  val INTAKE_ANGLE = (-35.0).degrees
+  val IDLE_ANGLE_HAS_GAMEPEICE = -35.0.degrees
+  val PASSING_SHOT_ANGLE = -15.degrees
+>>>>>>> fc86ed9 (passing shot stuff)
+>>>>>>> ca30445 (fix merge conflicts p2:)
 }
