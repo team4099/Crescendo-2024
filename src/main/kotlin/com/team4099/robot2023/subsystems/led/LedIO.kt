@@ -6,18 +6,18 @@ import org.littletonrobotics.junction.inputs.LoggableInputs
 
 interface LedIO {
   class LedIOInputs : LoggableInputs {
-    var ledState = LEDConstants.BlinkinLEDState.IDLE.name
+    var ledState = LEDConstants.CandleState.NO_NOTE.toString()
 
     override fun toLog(table: LogTable?) {
-      table?.put("ledState", ledState)
+      table?.put("ledState", ledState.toString())
     }
 
     override fun fromLog(table: LogTable?) {
-      table?.getString("ledState", ledState)?.let { ledState = it }
+      table?.getString("ledState", ledState.toString())?.let { ledState = it }
     }
   }
 
-  fun setState(newState: LEDConstants.BlinkinLEDState) {}
+  fun setState(newState: LEDConstants.CandleState) {}
 
   fun updateInputs(inputs: LedIOInputs) {}
 }
