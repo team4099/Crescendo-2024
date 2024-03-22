@@ -2,6 +2,7 @@ package com.team4099.robot2023.util
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.math.asTransform2d
+import com.team4099.lib.vision.TimestampedTrigVisionUpdate
 import com.team4099.lib.vision.TimestampedVisionUpdate
 import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.Nat
@@ -37,12 +38,20 @@ class FieldFrameEstimator(stateStdDevs: Matrix<N3?, N1?>) {
   private var odometryTField: Transform2d =
     Transform2d(Translation2d(0.meters, 0.meters), 0.radians)
 
+  private var odometryTSpeaker: Transform2d =
+    Transform2d(Translation2d(0.meters, 0.meters), 0.radians)
+
   private val updates: NavigableMap<Time, PoseUpdate> = TreeMap()
   private val q: Matrix<N3?, N1?> = Matrix(Nat.N3(), Nat.N1())
 
   /** Returns the latest robot pose based on drive and vision data. */
   fun getLatestOdometryTField(): Transform2d {
     return odometryTField
+  }
+
+  /** Returns the latest speaker pose in the odometry frame. */
+  fun getLatestOdometryTSpeaker(): Transform2d {
+    return odometryTSpeaker
   }
 
   /** Resets the field frame transform to a known pose. */
@@ -56,6 +65,36 @@ class FieldFrameEstimator(stateStdDevs: Matrix<N3?, N1?>) {
   fun addDriveData(timestamp: Time, odomTRobot: Pose2d) {
     updates[timestamp] = PoseUpdate(odomTRobot, ArrayList<VisionUpdate>())
     update()
+  }
+
+  fun addSpeakerVisionData(visionData: TimestampedTrigVisionUpdate) {
+    val timestamp: Time = visionData.timestamp
+    if (updates.containsKey(timestamp)) {
+      // There was already an odometry update at this timestamp, add to it
+      val odomTRobotAtVisionTimestamp = updates[timestamp]!!.odomTRobot
+      val robotTSpeaker = visionData.robotTSpeaker
+      odometryTSpeaker = odomTRobotAtVisionTimestamp.transformBy(robotTSpeaker).asTransform2d()
+    } else {
+      // Insert a new update
+      val prevUpdate = updates.floorEntry(timestamp)
+      val nextUpdate = updates.ceilingEntry(timestamp)
+      if (prevUpdate == null || nextUpdate == null) {
+        // Outside the range of existing data
+        return
+      }
+
+      // Create partial twists (prev -> vision, vision -> next)
+      val prevToVisionTwist =
+        multiplyTwist(
+          prevUpdate.value.odomTRobot.log(nextUpdate.value.odomTRobot),
+          (timestamp - prevUpdate.key) / (nextUpdate.key - prevUpdate.key)
+        )
+
+      // Add new pose updates
+      val odomTRobotAtVisionTimestamp = prevUpdate.value.odomTRobot.exp(prevToVisionTwist)
+      val robotTSpeaker = visionData.robotTSpeaker
+      odometryTSpeaker = odomTRobotAtVisionTimestamp.transformBy(robotTSpeaker).asTransform2d()
+    }
   }
 
   /** Records a new set of vision updates. */

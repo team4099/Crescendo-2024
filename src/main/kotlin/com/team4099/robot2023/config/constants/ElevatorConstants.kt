@@ -58,8 +58,8 @@ object ElevatorConstants {
 
   val ELEVATOR_TOLERANCE = 0.5.inches
 
-  val MAX_VELOCITY = 1.meters.perSecond
-  val MAX_ACCELERATION = 2.0.meters.perSecond.perSecond
+  val MAX_VELOCITY = 2.meters.perSecond
+  val MAX_ACCELERATION = 4.0.meters.perSecond.perSecond
 
   val SHOOT_SPEAKER_LOW_POSITION = 0.0.inches
   val SHOOT_SPEAKER_MID_POSITION = 15.0.inches

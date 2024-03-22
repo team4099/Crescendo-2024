@@ -5,6 +5,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.lib.logging.toDoubleArray
 import com.team4099.lib.math.asPose2d
 import com.team4099.lib.math.asTransform2d
+import com.team4099.lib.vision.TimestampedTrigVisionUpdate
 import com.team4099.lib.vision.TimestampedVisionUpdate
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
@@ -204,6 +205,9 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   val odomTField: Transform2d
     get() = fieldFrameEstimator.getLatestOdometryTField()
 
+  val odomTSpeaker: Transform2d
+    get() = fieldFrameEstimator.getLatestOdometryTSpeaker()
+
   private var undriftedPose: Pose2d
     get() = Pose2d(undriftedSwerveDriveOdometry.poseMeters)
     set(value) {
@@ -274,6 +278,11 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
     // updating odometry every loop cycle
     updateOdometry()
+
+    Logger.recordOutput(
+      "FieldFrameEstimator/odomTSpeaker",
+      fieldFrameEstimator.getLatestOdometryTSpeaker().transform2d
+    )
 
     Logger.recordOutput("Drivetrain/OdometryGyroRotationValue", odomTRobot.rotation.inDegrees)
 
@@ -735,6 +744,10 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
   fun addVisionData(visionData: List<TimestampedVisionUpdate>) {
     fieldFrameEstimator.addVisionData(visionData)
+  }
+
+  fun addSpeakerVisionData(visionData: TimestampedTrigVisionUpdate) {
+    fieldFrameEstimator.addSpeakerVisionData(visionData)
   }
 
   fun lockWheels() {

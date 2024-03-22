@@ -374,12 +374,12 @@ class Superstructure(
         flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(targetFlywheelSpeed)
         wrist.currentRequest = Request.WristRequest.TargetingPosition(targetWristAngle)
 
+        if (wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity) {
+          nextState = SuperstructureStates.SCORE_SPEAKER
+        }
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
-          }
-          is Request.SuperstructureRequest.PrepScoreSpeakerLow -> {
-            nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
             nextState = SuperstructureStates.SCORE_SPEAKER
@@ -456,6 +456,9 @@ class Superstructure(
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
+          }
+          is Request.SuperstructureRequest.AutoAim -> {
+            nextState = SuperstructureStates.AUTO_AIM
           }
         }
       }
