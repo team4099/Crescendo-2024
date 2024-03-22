@@ -39,8 +39,8 @@ object WristConstants {
   // val WRIST_GEAR_RATIO = 1.0 / 5.0 * 1.0 / 4.0 * 1.0 / 3.0 * 42.0 / 46.0 * 33.0 / 90.0
 
   val WRIST_VOLTAGE_COMPENSATION = 12.0.volts
-  val WRIST_STATOR_CURRENT_LIMIT = 10.0.amps
-  val WRIST_SUPPLY_CURRENT_LIMIT = 10.amps
+  val WRIST_STATOR_CURRENT_LIMIT = 30.0.amps
+  val WRIST_SUPPLY_CURRENT_LIMIT = 30.amps
   val WRIST_THRESHOLD_CURRENT_LIMIT = 1.0.amps
   val WRIST_TRIGGER_THRESHOLD_TIME = 10.0.seconds
 
@@ -57,21 +57,21 @@ object WristConstants {
 
     val ARBITRARY_FEEDFORWARD = 0.03.volts
 
-    val REAL_KP: ProportionalGain<Radian, Volt> = 0.20.volts / 1.0.degrees
+    val REAL_KP: ProportionalGain<Radian, Volt> = 0.45.volts / 1.0.degrees
     val REAL_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val REAL_KD: DerivativeGain<Radian, Volt> = 0.0.volts / 1.0.degrees.perSecond
 
     val FIRST_STAGE_POS_SWITCH_THRESHOLD = 3.0.degrees
     val FIRST_STAGE_VEL_SWITCH_THRESHOLD = 5.0.degrees.perSecond
 
-    val FIRST_STAGE_KP: ProportionalGain<Radian, Volt> = 1.0.volts / 1.0.degrees
+    val FIRST_STAGE_KP: ProportionalGain<Radian, Volt> = 0.35.volts / 1.0.degrees
     val FIRST_STAGE_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val FIRST_STAGE_KD: DerivativeGain<Radian, Volt> = 0.0.volts / 1.0.degrees.perSecond
 
-    val SECOND_STAGE_POS_SWITCH_THRESHOLD = 1.5.degrees
-    val SECOND_STAGE_VEL_SWITCH_THRESHOLD = 2.0.degrees.perSecond
+    val SECOND_STAGE_POS_SWITCH_THRESHOLD = 1.0.degrees
+    val SECOND_STAGE_VEL_SWITCH_THRESHOLD = 5.0.degrees.perSecond
 
-    val SECOND_STAGE_KP: ProportionalGain<Radian, Volt> = 2.0.volts / 1.0.degrees
+    val SECOND_STAGE_KP: ProportionalGain<Radian, Volt> = 1.5.volts / 1.0.degrees
     val SECOND_STAGE_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val SECOND_STAGE_KD: DerivativeGain<Radian, Volt> = 0.0.volts / 1.0.degrees.perSecond
 
@@ -92,14 +92,14 @@ object WristConstants {
 
   val WRIST_TOLERANCE = 0.3.degrees
 
-  val IDLE_ANGLE = (-34.5).degrees
+  val IDLE_ANGLE = (-34).degrees
 
   val AMP_SCORE_ANGLE = -8.0.degrees
-  val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = -34.5.degrees
+  val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = -34.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = -7.5.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH = -2.degrees
   val CLIMB_ANGLE = 10.0.degrees
-  val TRAP_ANGLE = -34.5.degrees
-  val INTAKE_ANGLE = (-34.5).degrees
-  val IDLE_ANGLE_HAS_GAMEPEICE = -34.5.degrees
+  val TRAP_ANGLE = -34.degrees
+  val INTAKE_ANGLE = (-34).degrees
+  val IDLE_ANGLE_HAS_GAMEPEICE = -34.degrees
 }

@@ -107,7 +107,11 @@ object WristIOSim : WristIO {
     appliedVoltage = clampedVoltage
   }
 
-  override fun setWristPosition(position: Angle, feedforward: ElectricalPotential) {
+  override fun setWristPosition(
+    position: Angle,
+    feedforward: ElectricalPotential,
+    travelingUp: Boolean
+  ) {
     val feedback = wristController.calculate(wristSim.angleRads.radians, position)
     setWristVoltage(feedback + feedforward)
   }

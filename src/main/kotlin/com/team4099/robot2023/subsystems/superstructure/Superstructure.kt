@@ -246,7 +246,10 @@ class Superstructure(
               Flywheel.TunableFlywheelStates.speakerVelocity.get()
             )
         } else {
-          flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(0.0.volts)
+          flywheel.currentRequest =
+            Request.FlywheelRequest.TargetingVelocity(
+              Flywheel.TunableFlywheelStates.idleVelocity.get()
+            )
         }
 
         if (DriverStation.isAutonomous()) {

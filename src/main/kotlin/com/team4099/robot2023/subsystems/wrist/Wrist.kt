@@ -169,6 +169,8 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
   var isZeroed = false
 
+  var travelingUp: Boolean = false
+
   var wristTargetVoltage: ElectricalPotential = 0.0.volts
 
   private var lastWristPositionTarget = -1337.0.degrees
@@ -326,6 +328,8 @@ class Wrist(val io: WristIO) : SubsystemBase() {
             postProfileGenerate.inSeconds - preProfileGenerate.inSeconds
           )
 
+          travelingUp = wristPositionTarget > inputs.wristPosition
+
           timeProfileGeneratedAt = Clock.fpgaTime
           lastWristPositionTarget = wristPositionTarget
         }
@@ -333,6 +337,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         val setPoint: TrapezoidProfile.State<Radian> = wristProfile.calculate(timeElapsed)
         setWristPosition(setPoint)
         Logger.recordOutput("Wrist/completedMotionProfile", wristProfile.isFinished(timeElapsed))
+        Logger.recordOutput("Wrist/travelingUp", travelingUp)
         nextState = fromRequestToState(currentRequest)
         // if we're transitioning out of targeting position, we want to make sure the next time we
         // enter targeting position, we regenerate profile (even if the arm setpoint is the same as
@@ -359,10 +364,12 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     if (isOutOfBounds(setPoint.velocity)) {
       io.setWristVoltage(wristFeedForward.calculate(inputs.wristPosition, 0.degrees.perSecond))
     } else {
-      if (inputs.wristPosition > 7.0.degrees) {
-        io.setWristPosition(setPoint.position, arbitraryFeedforward.get())
+      if (inputs.wristPosition > 0.5.degrees && travelingUp) {
+        io.setWristPosition(
+          setPoint.position, feedforward + arbitraryFeedforward.get(), travelingUp
+        )
       } else {
-        io.setWristPosition(setPoint.position, feedforward)
+        io.setWristPosition(setPoint.position, feedforward, travelingUp)
       }
     }
 
