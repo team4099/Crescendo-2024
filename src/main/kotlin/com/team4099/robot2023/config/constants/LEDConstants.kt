@@ -15,18 +15,14 @@ object LEDConstants {
   enum class CandleState(val animation: Animation?, val r: Int, val g: Int, val b: Int) {
     // Gold
     NO_NOTE(null, 0, 0, 0),
-
     NOTHING(null, 0, 0, 0),
-
     RED(null, 255, 0, 0),
-
     BLUE(null, 0, 0, 255),
-
-
 
     // Blue
 
     HAS_NOTE(null, 0, 0, 255),
+    HAS_NOTE_VISION(StrobeAnimation(0, 0, 255), 0, 0, 0),
 
     // Red
     LOW_BATTERY(StrobeAnimation(255, 165, 0), 0, 0, 0),

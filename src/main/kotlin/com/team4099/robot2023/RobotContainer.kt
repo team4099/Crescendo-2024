@@ -84,8 +84,6 @@ object RobotContainer {
       wrist = Wrist(WristIOSim)
     }
 
-
-
     superstructure = Superstructure(intake, feeder, elevator, wrist, flywheel, drivetrain, vision)
     vision.setDataInterfaces(
       { drivetrain.fieldTRobot },

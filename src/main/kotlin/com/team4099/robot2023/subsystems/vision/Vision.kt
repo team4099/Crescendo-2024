@@ -41,6 +41,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
   var drivetrainOdometry: () -> Pose2d = { Pose2d() }
   var robotTSpeaker: Translation3d = Translation3d()
   var trustedRobotDistanceToTarget: Length = 0.meters
+  var timeSinceLastVisionUpdate = Clock.fpgaTime
 
   companion object {
     val ambiguityThreshold = 0.7
@@ -465,6 +466,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
     for (cameraInstance in VisionConstants.TRUSTED_CAMERA_ORDER) {
       if (cameraInstance in io.indices && robotPoses[cameraInstance] != null) {
         trustedRobotPose = robotPoses[cameraInstance]
+        timeSinceLastVisionUpdate = Clock.fpgaTime
         break
       }
     }

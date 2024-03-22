@@ -29,6 +29,7 @@ import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
+import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inVolts
@@ -119,7 +120,9 @@ class Superstructure(
   override fun periodic() {
     leds.hasNote = feeder.hasNote
     leds.isIdle = currentState == SuperstructureStates.IDLE
-    leds.subsystemsAtPosition = wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity && elevator.isAtTargetedPosition
+    leds.subsystemsAtPosition =
+      wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity && elevator.isAtTargetedPosition
+    leds.recentVisionUpdate = vision.timeSinceLastVisionUpdate - Clock.fpgaTime < 1.seconds
     leds.batteryIsLow =
       RobotController.getBatteryVoltage() < LEDConstants.BATTERY_WARNING_THRESHOLD.inVolts
 
