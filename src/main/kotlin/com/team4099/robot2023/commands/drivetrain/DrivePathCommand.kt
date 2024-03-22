@@ -69,7 +69,7 @@ private constructor(
   val drivetrain: Drivetrain,
   private val waypoints: Supplier<List<T>>,
   val resetPose: Boolean = false,
-  val keepTrapping: Boolean = false,
+  val useLowerTolerance: Boolean = false,
   val flipForAlliances: Boolean = true,
   val endPathOnceAtReference: Boolean = true,
   val leaveOutYAdjustment: Boolean = false,
@@ -215,10 +215,10 @@ private constructor(
         xPID.wpiPidController, yPID.wpiPidController, thetaPID.wpiPidController
       )
 
-    if (keepTrapping) {
-      swerveDriveController.setTolerance(Pose2d(3.inches, 3.inches, 2.5.degrees).pose2d)
+    if (useLowerTolerance) {
+      swerveDriveController.setTolerance(Pose2d(3.inches, 3.inches, 1.5.degrees).pose2d)
     } else {
-      swerveDriveController.setTolerance(Pose2d(6.inches, 6.inches, 10.degrees).pose2d)
+      swerveDriveController.setTolerance(Pose2d(6.inches, 6.inches, 3.degrees).pose2d)
     }
 
     // trajectory generation!

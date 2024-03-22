@@ -50,7 +50,7 @@ object WristConstants {
   val WRIST_ZERO_SIM_OFFSET = 27.5.degrees
 
   val MAX_WRIST_VELOCITY = 300.degrees.perSecond
-  val MAX_WRIST_ACCELERATION = 300.degrees.perSecond.perSecond
+  val MAX_WRIST_ACCELERATION = 1000.degrees.perSecond.perSecond
 
   val HARDSTOP_OFFSET = 47.degrees
   object PID {

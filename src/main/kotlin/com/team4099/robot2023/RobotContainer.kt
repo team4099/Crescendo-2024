@@ -1,6 +1,5 @@
 package com.team4099.robot2023
 
-import WheelRadiusCharacterizationCommand
 import com.team4099.robot2023.auto.AutonomousSelector
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TargetAngleCommand
@@ -38,6 +37,7 @@ import com.team4099.robot2023.subsystems.wrist.WristIOTalon
 import com.team4099.robot2023.util.driver.Ryan
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
+import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
@@ -57,6 +57,7 @@ object RobotContainer {
 
   val rumbleState
     get() = feeder.rumbleTrigger
+  var climbAngle: Angle = -1337.degrees
 
   init {
     if (RobotBase.isReal()) {
@@ -205,6 +206,47 @@ object RobotContainer {
       )
     )
 
+    ControlBoard.climbAlignLeft.whileTrue(
+      runOnce({
+        climbAngle =
+          if (DriverStation.getAlliance().isPresent &&
+            DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+          )
+            120.degrees
+          else (-60).degrees
+      })
+    )
+    ControlBoard.climbAlignRight.whileTrue(
+      runOnce({
+        climbAngle =
+          if (DriverStation.getAlliance().isPresent &&
+            DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+          )
+            (-120).degrees
+          else 60.degrees
+      })
+    )
+    ControlBoard.climbAlignRight.whileTrue(
+      runOnce({
+        climbAngle =
+          if (DriverStation.getAlliance().isPresent &&
+            DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+          )
+            (-180).degrees
+          else 0.degrees
+      })
+    )
+    ControlBoard.climbAutoAlign.whileTrue(
+      TargetAngleCommand(
+        driver = Ryan(),
+        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { ControlBoard.slowMode },
+        drivetrain,
+        climbAngle
+      )
+    )
     //    ControlBoard.climbAlignLeft.whileTrue(
     //      TargetAngleCommand(
     //        driver = Ryan(),
@@ -252,11 +294,11 @@ object RobotContainer {
       )
     )
 
-    ControlBoard.characterizeSubsystem.whileTrue(
-      WheelRadiusCharacterizationCommand(
-        drivetrain, WheelRadiusCharacterizationCommand.Companion.Direction.CLOCKWISE
-      )
-    )
+    //    ControlBoard.characterizeSubsystem.whileTrue(
+    //      WheelRadiusCharacterizationCommand(
+    //        drivetrain, WheelRadiusCharacterizationCommand.Companion.Direction.CLOCKWISE
+    //      )
+    //    )
 
     /*
     TUNING COMMANDS

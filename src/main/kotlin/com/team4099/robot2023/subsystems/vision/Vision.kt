@@ -23,6 +23,7 @@ import org.team4099.lib.geometry.Translation3d
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inMeters
+import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
@@ -195,7 +196,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
                         Rotation3d(
                           0.degrees,
                           30.degrees,
-                          0.degrees // - drivetrainOdometry.invoke().rotation
+                          0.degrees - drivetrainOdometry.invoke().rotation
                         )
                           .unaryMinus()
                       )
@@ -480,5 +481,9 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
         "Vision/guesstimatedRobotPose", trustedRobotPose.toDoubleArray().toDoubleArray()
       )
     }
+
+    Logger.recordOutput(
+      "LoggedRobot/VisionLoopTimeMS", (Clock.realTimestamp - startTime).inMilliseconds
+    )
   }
 }

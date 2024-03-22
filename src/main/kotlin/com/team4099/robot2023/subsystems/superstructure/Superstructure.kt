@@ -279,7 +279,9 @@ class Superstructure(
             nextState = SuperstructureStates.SCORE_AMP
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
-            nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
+            if (feeder.hasNote) {
+              nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
+            }
           }
           is Request.SuperstructureRequest.PrepScoreSpeakerLow -> {
             nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
@@ -303,7 +305,9 @@ class Superstructure(
             nextState = SuperstructureStates.TUNING
           }
           is Request.SuperstructureRequest.AutoAim -> {
-            nextState = SuperstructureStates.AUTO_AIM
+            if (feeder.hasNote) {
+              nextState = SuperstructureStates.AUTO_AIM
+            }
           }
         }
       }
@@ -373,16 +377,15 @@ class Superstructure(
         flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(targetFlywheelSpeed)
         wrist.currentRequest = Request.WristRequest.TargetingPosition(targetWristAngle)
 
-        if (wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity) {
-          nextState = SuperstructureStates.SCORE_SPEAKER
-        }
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
-            nextState = SuperstructureStates.SCORE_SPEAKER
-            shootStartTime = Clock.fpgaTime
+            if (wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity) {
+              nextState = SuperstructureStates.SCORE_SPEAKER
+              shootStartTime = Clock.fpgaTime
+            }
           }
         }
       }

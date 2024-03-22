@@ -12,7 +12,6 @@ import com.team4099.robot2023.util.FMSData
 import com.team4099.robot2023.util.NTSafePublisher
 import edu.wpi.first.hal.AllianceStationID
 import edu.wpi.first.networktables.GenericEntry
-import edu.wpi.first.networktables.NetworkTableValue
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.RobotBase
@@ -153,6 +152,14 @@ object Robot : LoggedRobot() {
 
   override fun disabledPeriodic() {
     FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
+    //    val currentAlliance =
+    //      try {
+    //        DriverStation.getAlliance().get().toString()
+    //      } catch (_: NoSuchElementException) {
+    //        "No alliance"
+    //      }
+    //
+    //    allianceSelected.set(NetworkTableValue.makeString(currentAlliance))
   }
 
   override fun disabledInit() {
@@ -189,18 +196,9 @@ object Robot : LoggedRobot() {
       "LoggedRobot/RemainingRamMB", Runtime.getRuntime().freeMemory() / 1024 / 1024
     )
 
-    Logger.recordOutput("LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds)
-
     ControlBoard.rumbleConsumer.accept(RobotContainer.rumbleState)
 
-    val currentAlliance =
-      try {
-        DriverStation.getAlliance().get().toString()
-      } catch (_: NoSuchElementException) {
-        "No alliance"
-      }
-
-    allianceSelected.set(NetworkTableValue.makeString(currentAlliance))
+    Logger.recordOutput("LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds)
 
     /*
     Logger.recordOutput("LoggedRobot/port0", port0.voltage)
