@@ -41,6 +41,8 @@ sealed interface Request {
 
     class ClimbRetract() : SuperstructureRequest
 
+    class PassingShot() : SuperstructureRequest
+
     class Tuning() : SuperstructureRequest
   }
 

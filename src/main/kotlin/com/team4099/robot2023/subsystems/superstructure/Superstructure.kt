@@ -643,6 +643,49 @@ class Superstructure(
           }
         }
       }
+
+      SuperstructureStates.PASSING_SHOT_PREP -> {
+        wrist.currentRequest =
+          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.passingShotAngle.get())
+        flywheel.currentRequest =
+          Request.FlywheelRequest.TargetingVelocity(
+            Flywheel.TunableFlywheelStates.passingShotVelocity.get()
+          )
+
+        shootStartTime = Clock.fpgaTime
+
+        if (wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity) {
+          nextState = SuperstructureStates.PASSING_SHOT
+        }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+        }
+      }
+      SuperstructureStates.PASSING_SHOT -> {
+        feeder.currentRequest =
+          Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.shootVoltage.get())
+
+        if ((!feeder.hasNote) &&
+          Clock.fpgaTime - shootStartTime >
+          Flywheel.TunableFlywheelStates.speakerScoreTime.get()
+        ) {
+
+          currentRequest = Request.SuperstructureRequest.Idle()
+          nextState = SuperstructureStates.IDLE
+        }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+          is Request.SuperstructureRequest.GroundIntake -> {
+            nextState = SuperstructureStates.GROUND_INTAKE_PREP
+          }
+        }
+      }
       SuperstructureStates.TUNING -> {
         if (currentRequest is Request.SuperstructureRequest.Idle) {
           nextState = SuperstructureStates.IDLE
@@ -691,6 +734,16 @@ class Superstructure(
       }
 
     returnCommand.name = "GroundIntakeCommand"
+    return returnCommand
+  }
+
+  fun passingShotCommand(): Command {
+    val returnCommand =
+      runOnce { currentRequest = Request.SuperstructureRequest.PassingShot() }.until {
+        currentState == SuperstructureStates.PASSING_SHOT_PREP
+      }
+
+    returnCommand.name = "PassingShotCommand"
     return returnCommand
   }
 
@@ -897,6 +950,8 @@ class Superstructure(
       CLIMB_RETRACT,
       EJECT_GAME_PIECE,
       EJECT_GAME_PIECE_PREP,
+      PASSING_SHOT_PREP,
+      PASSING_SHOT,
       AUTO_AIM
     }
   }
