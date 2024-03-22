@@ -230,24 +230,23 @@ object WristIOTalon : WristIO {
     wristTalon.setControl(VoltageOut(voltage.inVolts))
   }
 
-  override fun setWristPosition(position: Angle, feedforward: ElectricalPotential) {
+  override fun setWristPosition(
+    position: Angle,
+    feedforward: ElectricalPotential,
+    travelingUp: Boolean
+  ) {
     positionRequest.setFeedforward(feedforward)
     positionRequest.setPosition(position)
 
-    val curError = (wristSensor.position - position).absoluteValue
+    val curError = (wristSensor.position - position)
     val curVel = wristSensor.velocity
 
-    var slot = 0
-    if (curError <= firstStagePosErrSwitchThreshold.get() &&
-      curVel.absoluteValue <= firstStageVelocitySwitchThreshold.get()
+    var slot = if (travelingUp) 0 else 1
+
+    if (curError.absoluteValue <= secondStagePosErrSwitchThreshold.get() &&
+      curVel.absoluteValue <= secondStageVelocitySwitchThreshold.get()
     ) {
-      if (curError <= secondStagePosErrSwitchThreshold.get() &&
-        curVel.absoluteValue <= secondStageVelocitySwitchThreshold.get()
-      ) {
-        slot = 2
-      } else {
-        slot = 1
-      }
+      slot = 2
     }
 
     Logger.recordOutput("Wrist/feedForwardApplied", feedforward.inVolts)
@@ -280,7 +279,6 @@ object WristIOTalon : WristIO {
   }
 
   override fun updateInputs(inputs: WristIO.WristIOInputs) {
-
     updateSignals()
 
     wristTalon.rotorPosition.refresh()

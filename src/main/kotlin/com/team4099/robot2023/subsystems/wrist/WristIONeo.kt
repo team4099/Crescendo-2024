@@ -137,7 +137,11 @@ object WristIONeo : WristIO {
     wristPIDController.d = wristSensor.derivativePositionGainToRawUnits(kD)
   }
 
-  override fun setWristPosition(position: Angle, feedforward: ElectricalPotential) {
+  override fun setWristPosition(
+    position: Angle,
+    feedforward: ElectricalPotential,
+    travelingUp: Boolean
+  ) {
     wristPIDController.setReference(
       wristSensor.positionToRawUnits(
         clamp(position, WristConstants.WRIST_MIN_ROTATION, WristConstants.WRIST_MAX_ROTATION)

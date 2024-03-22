@@ -90,7 +90,7 @@ interface WristIO {
   // fun setFeederVoltage (voltage: ElectricalPotential){
 
   //    }
-  fun setWristPosition(position: Angle, feedforward: ElectricalPotential) {}
+  fun setWristPosition(position: Angle, feedforward: ElectricalPotential, travelingUp: Boolean) {}
 
   // fun setRollerBrakeMode (brake: Boolean){
 

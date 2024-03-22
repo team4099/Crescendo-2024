@@ -22,10 +22,10 @@ object ControlBoard {
     }
 
   val strafe: Double
-    get() = -driver.leftXAxis
+    get() = 0.0 // -driver.leftXAxis
 
   val forward: Double
-    get() = -driver.leftYAxis
+    get() = 0.0 // -driver.leftYAxis
 
   val turn: Double
     get() = driver.rightXAxis * DrivetrainConstants.TELEOP_TURNING_SPEED_PERCENT
