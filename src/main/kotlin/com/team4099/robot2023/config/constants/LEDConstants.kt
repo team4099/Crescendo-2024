@@ -8,7 +8,7 @@ import org.team4099.lib.units.derived.volts
 object LEDConstants {
   val INTAKE_CURRENT_THRESHOLD = 15.amps
   val OUTAKE_CURRENT_THRESHOLD = 20.amps
-  val LED_COUNT = 30
+  val LED_COUNT = 50
 
   val BATTERY_WARNING_THRESHOLD = 12.3.volts
 
@@ -29,10 +29,10 @@ object LEDConstants {
     HAS_NOTE(null, 0, 0, 255),
 
     // Red
-    LOW_BATTERY(StrobeAnimation(255, 165, 0), 0, 0, 0),
+    LOW_BATTERY(StrobeAnimation(255, 105, 0, 0, 0.5, LED_COUNT), 0, 0, 0),
 
     // Green
 
-    CAN_SHOOT(StrobeAnimation(0, 255, 0), 0, 0, 0)
+    CAN_SHOOT(StrobeAnimation(0, 255, 0, 0, 0.25, LED_COUNT), 0, 0, 0)
   }
 }

@@ -221,9 +221,9 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       wristSlot1kI.initDefault(WristConstants.PID.FIRST_STAGE_KI)
       wristSlot1kD.initDefault(WristConstants.PID.FIRST_STAGE_KD)
 
-      wristSlot2kP.initDefault(WristConstants.PID.FIRST_STAGE_KP)
-      wristSlot2kI.initDefault(WristConstants.PID.FIRST_STAGE_KI)
-      wristSlot2kD.initDefault(WristConstants.PID.FIRST_STAGE_KD)
+      wristSlot2kP.initDefault(WristConstants.PID.SECOND_STAGE_KP)
+      wristSlot2kI.initDefault(WristConstants.PID.SECOND_STAGE_KI)
+      wristSlot2kD.initDefault(WristConstants.PID.SECOND_STAGE_KD)
 
       wristkS.initDefault(WristConstants.PID.REAL_WRIST_KS)
       wristkG.initDefault(WristConstants.PID.REAL_WRIST_KG)
@@ -386,10 +386,10 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
   val isAtTargetedPosition: Boolean
     get() =
-      currentState == WristStates.TARGETING_POSITION &&
+      (currentState == WristStates.TARGETING_POSITION &&
         wristProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
         (inputs.wristPosition - wristPositionTarget).absoluteValue <=
-        WristConstants.WRIST_TOLERANCE
+        WristConstants.WRIST_TOLERANCE) || inputs.isSimulated
 
   fun setWristVoltage(appliedVoltage: ElectricalPotential) {
     io.setWristVoltage(appliedVoltage)

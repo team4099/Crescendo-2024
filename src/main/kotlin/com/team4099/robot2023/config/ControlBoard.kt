@@ -22,10 +22,10 @@ object ControlBoard {
     }
 
   val strafe: Double
-    get() = 0.0 // -driver.leftXAxis
+    get() = -driver.leftXAxis
 
   val forward: Double
-    get() = 0.0 // -driver.leftYAxis
+    get() = -driver.leftYAxis
 
   val turn: Double
     get() = driver.rightXAxis * DrivetrainConstants.TELEOP_TURNING_SPEED_PERCENT
@@ -57,7 +57,6 @@ object ControlBoard {
 
   val extendClimb = Trigger { operator.dPadUp }
   val retractClimb = Trigger { operator.dPadDown }
-  val passingShot = Trigger { operator.leftShoulderButton }
 
   val prepTrap = Trigger { operator.rightShoulderButton }
   val ejectGamePiece = Trigger { driver.rightTriggerAxis > 0.5 }

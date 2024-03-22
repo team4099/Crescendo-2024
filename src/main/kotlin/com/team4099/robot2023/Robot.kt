@@ -186,17 +186,20 @@ object Robot : LoggedRobot() {
     // motor checker stuff
     val motorCheckerStartTime = Clock.realTimestamp
     MotorChecker.periodic()
-    DebugLogger.recordDebugOutput(
+    Logger.recordOutput(
       "LoggedRobot/Subsystems/MotorCheckerLoopTimeMS",
       (Clock.realTimestamp - motorCheckerStartTime).inMilliseconds
     )
 
+    val superstructureLoopTimeMS = Clock.realTimestamp
     RobotContainer.superstructure.periodic()
+    Logger.recordOutput("LoggedRobot/Subsystems/SuperstructureLoopTimeMS", (Clock.realTimestamp - superstructureLoopTimeMS).inMilliseconds)
 
-    DebugLogger.recordDebugOutput(
+    Logger.recordOutput(
       "LoggedRobot/RemainingRamMB", Runtime.getRuntime().freeMemory() / 1024 / 1024
     )
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     Logger.recordOutput("LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds)
 
@@ -209,7 +212,11 @@ object Robot : LoggedRobot() {
 >>>>>>> 24a9171 (fix merge conflicts part 1)
     ControlBoard.rumbleConsumer.accept(RobotContainer.rumbleState)
 
+=======
+>>>>>>> b71bd24 (changes so far)
     Logger.recordOutput("LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds)
+
+    ControlBoard.rumbleConsumer.accept(RobotContainer.rumbleState)
 
     /*
     DebugLogger.recordDebugOutput("LoggedRobot/port0", port0.voltage)

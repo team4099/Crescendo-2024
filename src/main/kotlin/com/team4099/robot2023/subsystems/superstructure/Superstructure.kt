@@ -123,10 +123,14 @@ class Superstructure(
     leds.batteryIsLow =
       RobotController.getBatteryVoltage() < LEDConstants.BATTERY_WARNING_THRESHOLD.inVolts
 
+    val ledLoopStartTime = Clock.realTimestamp
     leds.periodic()
+    Logger.recordOutput("LoggedRobot/Subsystems/LEDLoopTimeMS", (Clock.realTimestamp - ledLoopStartTime).inMilliseconds)
 
-    notes.forEach { it.periodic() }
-    notes.forEach { Logger.recordOutput("NoteSimulation/${it.id}", toDoubleArray(it.currentPose)) }
+    if (!RobotBase.isReal()) {
+      notes.forEach { it.periodic() }
+      notes.forEach { Logger.recordOutput("NoteSimulation/${it.id}", toDoubleArray(it.currentPose)) }
+    }
 
     Logger.recordOutput(
       "SimulatedMechanisms/0",
