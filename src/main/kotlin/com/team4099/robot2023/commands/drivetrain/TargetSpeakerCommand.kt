@@ -1,13 +1,14 @@
 package com.team4099.robot2023.commands.drivetrain
 
+import com.team4099.lib.logging.LoggedTunableNumber
 import com.team4099.lib.logging.LoggedTunableValue
-import com.team4099.lib.logging.toDoubleArray
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.util.driver.DriverProfile
 import com.team4099.robot2023.util.inverse
+import edu.wpi.first.math.filter.MedianFilter
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
@@ -60,6 +61,9 @@ class TargetSpeakerCommand(
       )
     )
   var desiredAngle = 0.0.degrees
+  private val sizeOfMedianFilter =
+    LoggedTunableNumber("TargetSpeakerCommand/sizeOfMedianFilter", 10.0)
+  var angleMedianFilter = MedianFilter(10)
 
   init {
     addRequirements(drivetrain)
@@ -101,6 +105,7 @@ class TargetSpeakerCommand(
 
   override fun initialize() {
     thetaPID.reset() // maybe do first for x?
+    angleMedianFilter.reset()
     /*
     if (thetakP.hasChanged() || thetakI.hasChanged() || thetakD.hasChanged()) {
       thetaPID = PIDController(thetakP.get(), thetakI.get(), thetakD.get())
@@ -110,6 +115,10 @@ class TargetSpeakerCommand(
   }
 
   override fun execute() {
+    if (sizeOfMedianFilter.hasChanged()) {
+      angleMedianFilter = MedianFilter(sizeOfMedianFilter.get().toInt())
+    }
+
     drivetrain.defaultCommand.end(true)
     Logger.recordOutput("ActiveCommands/TargetAngleCommand", true)
     Logger.recordOutput(
@@ -121,15 +130,15 @@ class TargetSpeakerCommand(
     val robotTSpeaker = odomTRobot.inverse().transformBy(odomTSpeaker)
 
     desiredAngle = atan2(robotTSpeaker.y.inMeters, robotTSpeaker.x.inMeters).radians
+    val filteredDesiredAngle = angleMedianFilter.calculate(desiredAngle.inDegrees)
 
-    val thetaFeedback = thetaPID.calculate(odomTRobot.rotation, desiredAngle)
+    val thetaFeedback = thetaPID.calculate(odomTRobot.rotation, filteredDesiredAngle.degrees)
 
-    Logger.recordOutput("Testing/desiredAngle", desiredAngle.inDegrees)
-    Logger.recordOutput("Testing/error", thetaPID.error.inDegrees)
-    Logger.recordOutput("Testing/thetaFeedback", thetaFeedback.inDegreesPerSecond)
-    Logger.recordOutput(
-      "Testing/relativeToRobotPose", robotTSpeaker.toDoubleArray().toDoubleArray()
-    )
+    Logger.recordOutput("TargetSpeakerCommand/desiredAngleInDegrees", desiredAngle.inDegrees)
+    Logger.recordOutput("TargetSpeakerCommand/filteredDesiredAngleInDegrees", filteredDesiredAngle)
+    Logger.recordOutput("TargetSpeakerCommand/errorInDegrees", thetaPID.error.inDegrees)
+    Logger.recordOutput("TargetSpeakerCommand/thetaFeedbackInDPS", thetaFeedback.inDegreesPerSecond)
+    Logger.recordOutput("TargetSpeakerCommand/relativeToRobotPose", robotTSpeaker.pose2d)
 
     drivetrain.currentRequest =
       Request.DrivetrainRequest.OpenLoop(
