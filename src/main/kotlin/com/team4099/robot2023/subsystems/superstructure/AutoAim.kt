@@ -6,6 +6,7 @@ import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.SuperstructureConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.vision.Vision
+import com.team4099.robot2023.util.AllianceFlipUtil
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
@@ -167,9 +168,10 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
   fun calculateDistanceFromSpeaker(): Length {
     val distance =
       if (DriverStation.isAutonomous()) {
+        val odomTFieldWithAlliance = if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) drivetrain.odomTField.asPose2d() else drivetrain.odomTField.asPose2d().times(-1.0)
         val speakerTransformWithOdometry =
-          drivetrain.odomTField.asPose2d().relativeTo(FieldConstants.centerSpeakerOpening)
-        hypot(speakerTransformWithOdometry.x.inMeters, speakerTransformWithOdometry.y.inMeters)
+          odomTFieldWithAlliance.relativeTo(AllianceFlipUtil.apply(FieldConstants.centerSpeakerOpening))
+        hypot((speakerTransformWithOdometry.x + FieldConstants.subwooferX).inMeters, speakerTransformWithOdometry.y.inMeters)
           .meters
       } else {
         vision.trustedRobotDistanceToTarget

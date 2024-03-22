@@ -118,7 +118,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       for (tag in tagTargets) {
         if (DriverStation.getAlliance().isPresent) {
           if ((tag.fiducialId in intArrayOf(4) && !FMSData.isBlue) ||
-            (tag.fiducialId in intArrayOf(7, 8) && FMSData.isBlue)
+            (tag.fiducialId in intArrayOf(8) && FMSData.isBlue)
           ) { // i made the tag IDS up
 
             for (corner in 0 until tag.detectedCorners.size) {

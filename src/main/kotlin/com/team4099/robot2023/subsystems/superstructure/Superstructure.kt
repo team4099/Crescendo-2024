@@ -29,6 +29,7 @@ import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
+import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inVolts
@@ -49,7 +50,17 @@ class Superstructure(
 
   var aimer = AutoAim(drivetrain, vision)
 
+  private var wristAngleToShootAt = 0.0.degrees
+
   var currentRequest: Request.SuperstructureRequest = Request.SuperstructureRequest.Idle()
+    set(value) {
+      when (value) {
+        is Request.SuperstructureRequest.ManualScoreSpeakerPrep -> {
+          wristAngleToShootAt = value.wristAngle
+        }
+      }
+      field = value
+    }
 
   var currentState: SuperstructureStates = SuperstructureStates.UNINITIALIZED
 
@@ -325,6 +336,9 @@ class Superstructure(
               nextState = SuperstructureStates.AUTO_AIM
             }
           }
+          is Request.SuperstructureRequest.ManualScoreSpeakerPrep -> {
+            nextState = SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP
+          }
         }
       }
       SuperstructureStates.GROUND_INTAKE_PREP -> {
@@ -380,6 +394,9 @@ class Superstructure(
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
             nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
+          }
+          is Request.SuperstructureRequest.AutoAim -> {
+            nextState = SuperstructureStates.AUTO_AIM
           }
         }
       }
@@ -560,6 +577,23 @@ class Superstructure(
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
           }
+        }
+      }
+      SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP -> {
+        flywheel.currentRequest =
+          Request.FlywheelRequest.TargetingVelocity(
+            Flywheel.TunableFlywheelStates.speakerVelocity.get()
+          )
+        wrist.currentRequest =
+          Request.WristRequest.TargetingPosition(
+            wristAngleToShootAt
+          )
+        if (wrist.isAtTargetedPosition &&
+          flywheel.isAtTargetedVelocity &&
+          currentRequest is Request.SuperstructureRequest.ScoreSpeaker
+        ) {
+          nextState = SuperstructureStates.SCORE_SPEAKER
+          shootStartTime = Clock.fpgaTime
         }
       }
       SuperstructureStates.SCORE_TRAP_PREP -> {
@@ -779,6 +813,14 @@ class Superstructure(
     return returnCommand
   }
 
+  fun prepManualSpeakerCommand(wristAngle: Angle): Command {
+    val returnCommand = run { currentRequest = Request.SuperstructureRequest.ManualScoreSpeakerPrep(wristAngle) }.until {
+      isAtRequestedState && currentState == SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP
+    }
+    returnCommand.name = "PrepManualSpeakerCommand"
+    return returnCommand
+  }
+
   fun scoreCommand(): Command {
     val returnCommand =
       run {
@@ -949,6 +991,7 @@ class Superstructure(
       SCORE_SPEAKER_MID_PREP,
       SCORE_SPEAKER_HIGH_PREP,
       SCORE_SPEAKER,
+      MANUAL_SCORE_SPEAKER_PREP,
       SCORE_TRAP_PREP,
       SCORE_TRAP,
       CLIMB_EXTEND,
