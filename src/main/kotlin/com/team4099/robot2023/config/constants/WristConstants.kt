@@ -26,16 +26,18 @@ object WristConstants {
 
   val NOTE_ANGLE_SIM_OFFSET = -24.degrees
 
+  val WRIST_ENCODER_TO_OUTPUT_RATIO = 32.0 / 50.0
+
   val VOLTAGE_COMPENSATION = 12.0.volts
-  val ABSOLUTE_ENCODER_OFFSET_IN_RAW_UNITS = -0.4080674444444445
+  val ABSOLUTE_ENCODER_OFFSET_IN_RAW_UNITS = 104.677.degrees - 35.degrees - ((35 - 23.23125 + 1.0) / WRIST_ENCODER_TO_OUTPUT_RATIO).degrees
   val WRIST_LENGTH = 18.6.inches
   val WRIST_INERTIA = 0.7181257183.kilo.grams * 1.0.meters.squared
 
-  val WRIST_ZERO_ENCODER_OFFSET = -35 - (-0.4080674444444445 * 32.0/ 50.0 * 180)
+  val WRIST_ENCODER_GEAR_RATIO = 1.0 / 5.0 * 1.0 / 4.0 * 1.0 / 3.0 * 42.0 / 46.0 * 32.0 / 90.0 * 32.0 / 50.0
 
-  val WRIST_ENCODER_GEAR_RATIO = 1.0 / 5.0 * 1.0 / 4.0 * 1.0 / 3.0 * 42.0 / 46.0 * 33.0 / 90.0 * 50.0 / 32.0
 
-  val WRIST_GEAR_RATIO = 1.0 / 5.0 * 1.0 / 4.0 * 1.0 / 3.0 * 42.0 / 46.0 * 33.0 / 90.0
+
+  val WRIST_GEAR_RATIO = 1.0 / 5.0 * 1.0 / 4.0 * 1.0 / 3.0 * 42.0 / 46.0 * 32.0 / 90.0
   val WRIST_VOLTAGE_COMPENSATION = 12.0.volts
   val WRIST_STATOR_CURRENT_LIMIT = 10.0.amps
   val WRIST_SUPPLY_CURRENT_LIMIT = 10.amps
@@ -47,8 +49,8 @@ object WristConstants {
 
   val WRIST_ZERO_SIM_OFFSET = 27.5.degrees
 
-  val MAX_WRIST_VELOCITY = 50.degrees.perSecond
-  val MAX_WRIST_ACCELERATION = 40.degrees.perSecond.perSecond
+  val MAX_WRIST_VELOCITY = 200.degrees.perSecond
+  val MAX_WRIST_ACCELERATION = 150.degrees.perSecond.perSecond
 
   val HARDSTOP_OFFSET = 47.degrees
   object PID {
