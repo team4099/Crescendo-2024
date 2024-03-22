@@ -28,6 +28,7 @@ class TeleopDriveCommand(
     if (DriverStation.isTeleop()) {
       val speed = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)
       val rotation = driver.rotationSpeedClampedSupplier(turn, slowMode)
+
       drivetrain.currentRequest =
         DrivetrainRequest.OpenLoop(rotation, speed)
       DebugLogger.recordDebugOutput("ActiveCommands/TeleopDriveCommand", true)

@@ -16,15 +16,15 @@ import org.team4099.lib.units.perSecond
 
 object ElevatorConstants {
   // TODO: Change values later based on CAD
-  val REAL_KP = 4.0.volts / 1.inches
+  val REAL_KP = 8.0.volts / 1.inches
   val REAL_KI = 0.0.volts / (1.inches * 1.seconds)
   val REAL_KD = 0.0.volts / (1.inches.perSecond)
 
   val CARRIAGE_MASS = 30.892.pounds
 
   val ELEVATOR_MAX_RETRACTION = 0.0.inches
-  val ELEVATOR_MAX_EXTENSION = 17.0.inches
-  val ELEVATOR_CLIMB_EXTENSION = 16.0.inches
+  val ELEVATOR_MAX_EXTENSION = 16.0.inches
+  val ELEVATOR_CLIMB_EXTENSION = 15.5.inches
 
   val LEADER_INVERTED = false
   val FOLLOWER_INVERTED = true
@@ -49,9 +49,9 @@ object ElevatorConstants {
   val ELEVATOR_OPEN_LOOP_RETRACT_VOLTAGE = -12.0.volts
 
   val ENABLE_ELEVATOR = true
-  val ELEVATOR_IDLE_HEIGHT = 0.25.inches
-  val ELEVATOR_SOFT_LIMIT_EXTENSION = 17.5.inches
-  val ELEVATOR_SOFT_LIMIT_RETRACTION = 0.5.inches
+  val ELEVATOR_IDLE_HEIGHT = 0.0.inches
+  val ELEVATOR_SOFT_LIMIT_EXTENSION = 16.0.inches
+  val ELEVATOR_SOFT_LIMIT_RETRACTION = 0.0.inches
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_EXTENSION = 0.0.inches
   val ELEVATOR_OPEN_LOOP_SOFT_LIMIT_RETRACTION = 0.0.inches
   val ELEVATOR_SAFE_THRESHOLD = 5.0.inches
@@ -61,13 +61,13 @@ object ElevatorConstants {
   val MAX_VELOCITY = 1.meters.perSecond
   val MAX_ACCELERATION = 2.0.meters.perSecond.perSecond
 
-  val SHOOT_SPEAKER_LOW_POSITION = 0.25.inches
-  val SHOOT_SPEAKER_MID_POSITION = 16.0.inches
-  val SHOOT_SPEAKER_HIGH_POSITION = 16.0.inches
+  val SHOOT_SPEAKER_LOW_POSITION = 0.0.inches
+  val SHOOT_SPEAKER_MID_POSITION = 15.0.inches
+  val SHOOT_SPEAKER_HIGH_POSITION = 15.0.inches
 
   // week 1 amp amgle
   // val SHOOT_AMP_POSITION = 17.0.degrees
-  val SHOOT_AMP_POSITION = 16.0.inches
+  val SHOOT_AMP_POSITION = 15.0.inches
   val SOURCE_NOTE_OFFSET = 0.0.inches
   val ELEVATOR_THETA_POS = 0.0.degrees
   val HOMING_STATOR_CURRENT = 3.0.amps
