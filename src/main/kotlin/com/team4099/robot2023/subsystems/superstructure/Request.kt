@@ -33,6 +33,8 @@ sealed interface Request {
 
     class AutoAim() : SuperstructureRequest
 
+    class PassingShot() : SuperstructureRequest
+
     class PrepTrap() : SuperstructureRequest
 
     class ScoreTrap() : SuperstructureRequest

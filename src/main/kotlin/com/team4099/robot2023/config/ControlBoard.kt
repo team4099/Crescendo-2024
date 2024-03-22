@@ -56,6 +56,7 @@ object ControlBoard {
 
   val extendClimb = Trigger { operator.dPadUp }
   val retractClimb = Trigger { operator.dPadDown }
+  val passingShot = Trigger { operator.leftShoulderButton }
 
   val prepTrap = Trigger { operator.rightShoulderButton }
   val ejectGamePiece = Trigger { driver.rightTriggerAxis > 0.5 }

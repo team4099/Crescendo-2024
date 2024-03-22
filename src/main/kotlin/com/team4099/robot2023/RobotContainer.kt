@@ -171,6 +171,7 @@ object RobotContainer {
     ControlBoard.prepLow.whileTrue(superstructure.prepSpeakerLowCommand())
     ControlBoard.prepTrap.whileTrue(superstructure.prepTrapCommand())
     ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
+    ControlBoard.passingShot.whileTrue(superstructure.passingShotCommand())
 
     ControlBoard.targetAmp.whileTrue(
       TargetAngleCommand(
