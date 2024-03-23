@@ -345,6 +345,9 @@ class Superstructure(
           is Request.SuperstructureRequest.ManualScoreSpeakerPrep -> {
             nextState = SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP
           }
+          is Request.SuperstructureRequest.PassingShot -> {
+            nextState = SuperstructureStates.PASSING_SHOT_PREP
+          }
         }
       }
       SuperstructureStates.GROUND_INTAKE_PREP -> {
@@ -696,35 +699,15 @@ class Superstructure(
 
         shootStartTime = Clock.fpgaTime
 
-        if (wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity) {
-          nextState = SuperstructureStates.PASSING_SHOT
-        }
-
-        when (currentRequest) {
-          is Request.SuperstructureRequest.Idle -> {
-            nextState = SuperstructureStates.IDLE
-          }
-        }
-      }
-      SuperstructureStates.PASSING_SHOT -> {
-        feeder.currentRequest =
-          Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.shootVoltage.get())
-
-        if ((!feeder.hasNote) &&
-          Clock.fpgaTime - shootStartTime >
-          Flywheel.TunableFlywheelStates.speakerScoreTime.get()
+        if (flywheel.isAtTargetedVelocity &&
+          currentRequest is Request.SuperstructureRequest.ScoreSpeaker
         ) {
-
-          currentRequest = Request.SuperstructureRequest.Idle()
-          nextState = SuperstructureStates.IDLE
+          nextState = SuperstructureStates.SCORE_SPEAKER
         }
 
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
-          }
-          is Request.SuperstructureRequest.GroundIntake -> {
-            nextState = SuperstructureStates.GROUND_INTAKE_PREP
           }
         }
       }

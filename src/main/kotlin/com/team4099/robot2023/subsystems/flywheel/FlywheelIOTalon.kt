@@ -244,6 +244,7 @@ object FlywheelIOTalon : FlywheelIO {
     inputs.leftFlywheelStatorCurrent = leftFlywheelStatorCurrentSignal.value.amps
     inputs.leftFlywheelSupplyCurrent = leftFlywheelSupplyCurrentSignal.value.amps
     inputs.leftFlywheelTemperature = leftFlywheelTempSignal.value.celsius
+    inputs.leftFlywheelTorque = motorTorque.value.newtons
   }
 
   override fun setFlywheelBrakeMode(brake: Boolean) {

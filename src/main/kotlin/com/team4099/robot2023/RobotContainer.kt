@@ -57,7 +57,8 @@ object RobotContainer {
 
   val rumbleState
     get() = feeder.rumbleTrigger
-  var climbAngle: Angle = -1337.degrees
+  var setClimbAngle = -1337.degrees
+  var climbAngle: () -> Angle = { setClimbAngle }
 
   init {
     if (RobotBase.isReal()) {
@@ -75,7 +76,7 @@ object RobotContainer {
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
-      vision = Vision(CameraIOPhotonvision("parakeet_0"), CameraIOPhotonvision("parakeet_1"))
+      vision = Vision(object : CameraIO {})
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIOSim)
       feeder = Feeder(FeederIOSim)
@@ -165,7 +166,7 @@ object RobotContainer {
           { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
           { ControlBoard.slowMode },
           drivetrain,
-          30.degrees,
+          { 30.degrees },
         )
       )
     )
@@ -187,29 +188,24 @@ object RobotContainer {
         { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain,
-        270.0.degrees
+        { 270.0.degrees }
       )
     )
 
     ControlBoard.climbAlignFar.whileTrue(
-      TargetAngleCommand(
-        driver = Ryan(),
-        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
-        { ControlBoard.slowMode },
-        drivetrain,
-        if (DriverStation.getAlliance().isPresent &&
-          DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-        )
-          0.0.degrees
-        else 180.0.degrees
-      )
+      runOnce({
+        setClimbAngle =
+          if (DriverStation.getAlliance().isPresent &&
+            DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+          )
+            0.degrees
+          else (180).degrees
+      })
     )
 
     ControlBoard.climbAlignLeft.whileTrue(
       runOnce({
-        climbAngle =
+        setClimbAngle =
           if (DriverStation.getAlliance().isPresent &&
             DriverStation.getAlliance().get() == DriverStation.Alliance.Red
           )
@@ -217,24 +213,15 @@ object RobotContainer {
           else (-60).degrees
       })
     )
+
     ControlBoard.climbAlignRight.whileTrue(
       runOnce({
-        climbAngle =
+        setClimbAngle =
           if (DriverStation.getAlliance().isPresent &&
             DriverStation.getAlliance().get() == DriverStation.Alliance.Red
           )
             (-120).degrees
           else 60.degrees
-      })
-    )
-    ControlBoard.climbAlignRight.whileTrue(
-      runOnce({
-        climbAngle =
-          if (DriverStation.getAlliance().isPresent &&
-            DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-          )
-            (-180).degrees
-          else 0.degrees
       })
     )
     ControlBoard.climbAutoAlign.whileTrue(

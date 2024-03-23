@@ -33,8 +33,9 @@ class TargetAngleCommand(
   val turn: () -> Double,
   val slowMode: () -> Boolean,
   val drivetrain: Drivetrain,
-  val targetAngle: Angle
+  val targetAngle: () -> Angle
 ) : Command() {
+
   private var thetaPID: PIDController<Radian, Velocity<Radian>>
   val thetakP =
     LoggedTunableValue(
@@ -113,7 +114,7 @@ class TargetAngleCommand(
       "Testing/CurrentDrivetrainRotation", drivetrain.odomTRobot.rotation.inDegrees
     )
 
-    val thetaFeedback = thetaPID.calculate(drivetrain.odomTRobot.rotation, targetAngle)
+    val thetaFeedback = thetaPID.calculate(drivetrain.odomTRobot.rotation, targetAngle())
     DebugLogger.recordDebugOutput("Testing/error", thetaPID.error.inDegrees)
     DebugLogger.recordDebugOutput("Testing/thetaFeedback", thetaFeedback.inDegreesPerSecond)
 

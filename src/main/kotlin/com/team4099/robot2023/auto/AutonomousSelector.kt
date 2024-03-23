@@ -53,11 +53,11 @@ object AutonomousSelector {
       "Five Note Auto from Center Subwoofer", AutonomousMode.FIVE_NOTE_AUTO_PATH
     )
     autonomousModeChooser.addOption(
-      "Preload + Leave from Left Side of Subwoofer",
+      "Preload + Leave from Amp Side of Subwoofer",
       AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER
     )
     autonomousModeChooser.addOption(
-      "Preload + Leave from Right Side of Subwoofer",
+      "Preload + Leave from Source Side of Subwoofer",
       AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER
     )
     autonomousModeChooser.addOption(
