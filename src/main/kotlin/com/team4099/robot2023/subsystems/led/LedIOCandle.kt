@@ -1,6 +1,8 @@
 package com.team4099.robot2023.subsystems.led
 
+import com.ctre.phoenix.led.Animation
 import com.ctre.phoenix.led.CANdle
+import com.ctre.phoenix.led.StrobeAnimation
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.LEDConstants
 import org.littletonrobotics.junction.Logger
@@ -23,6 +25,7 @@ object LedIOCandle : LedIO {
   private fun setCANdleState(state: LEDConstants.CandleState) {
     Logger.recordOutput("LED/setState", state)
     if (state.animation == null) {
+      ledController.clearAnimation(0)
       ledController.setLEDs(state.r, state.g, state.b)
     } else {
       ledController.animate(state.animation)
