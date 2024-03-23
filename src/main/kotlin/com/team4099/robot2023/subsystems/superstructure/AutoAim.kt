@@ -168,10 +168,18 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
   fun calculateDistanceFromSpeaker(): Length {
     val distance =
       if (DriverStation.isAutonomous()) {
-        val odomTFieldWithAlliance = if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) drivetrain.odomTField.asPose2d() else drivetrain.odomTField.asPose2d().times(-1.0)
+        val odomTFieldWithAlliance =
+          if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red)
+            drivetrain.odomTField.asPose2d()
+          else drivetrain.odomTField.asPose2d().times(-1.0)
         val speakerTransformWithOdometry =
-          odomTFieldWithAlliance.relativeTo(AllianceFlipUtil.apply(FieldConstants.centerSpeakerOpening))
-        hypot((speakerTransformWithOdometry.x + FieldConstants.subwooferX).inMeters, speakerTransformWithOdometry.y.inMeters)
+          odomTFieldWithAlliance.relativeTo(
+            AllianceFlipUtil.apply(FieldConstants.centerSpeakerOpening)
+          )
+        hypot(
+          (speakerTransformWithOdometry.x + FieldConstants.subwooferX).inMeters,
+          speakerTransformWithOdometry.y.inMeters
+        )
           .meters
       } else {
         vision.trustedRobotDistanceToTarget

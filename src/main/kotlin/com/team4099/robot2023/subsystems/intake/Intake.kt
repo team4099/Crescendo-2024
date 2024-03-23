@@ -109,7 +109,9 @@ class Intake(val io: IntakeIO) : SubsystemBase() {
       Logger.recordOutput(
         "Intake/isAtCommandedState", currentState.equivalentToRequest(currentRequest)
       )
-      DebugLogger.recordDebugOutput("Intake/timeProfileGeneratedAt", timeProfileGeneratedAt.inSeconds)
+      DebugLogger.recordDebugOutput(
+        "Intake/timeProfileGeneratedAt", timeProfileGeneratedAt.inSeconds
+      )
       Logger.recordOutput("Intake/rollerVoltageTarget", rollerVoltageTarget.inVolts)
       Logger.recordOutput("Intake/centerWheelVoltageTarget", centerWheelVoltageTarget.inVolts)
     }

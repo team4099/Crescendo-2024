@@ -5,7 +5,6 @@ import com.team4099.robot2023.util.DebugLogger
 import com.team4099.robot2023.util.driver.DriverProfile
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.Command
-import org.littletonrobotics.junction.Logger
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 class TeleopDriveCommand(
@@ -28,8 +27,7 @@ class TeleopDriveCommand(
       val speed = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)
       val rotation = driver.rotationSpeedClampedSupplier(turn, slowMode)
 
-      drivetrain.currentRequest =
-        DrivetrainRequest.OpenLoop(rotation, speed)
+      drivetrain.currentRequest = DrivetrainRequest.OpenLoop(rotation, speed)
       DebugLogger.recordDebugOutput("ActiveCommands/TeleopDriveCommand", true)
     }
   }

@@ -1,8 +1,6 @@
 package com.team4099.robot2023.subsystems.led
 
 import com.ctre.phoenix.led.CANdle
-import com.team4099.lib.logging.LoggedTunableNumber
-import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.LEDConstants
 import org.littletonrobotics.junction.Logger
@@ -20,12 +18,13 @@ object LedIOCandle : LedIO {
     Logger.recordOutput("LED/newState", newState)
     lastState = newState
     setCANdleState(newState)
-    }
+  }
 
   private fun setCANdleState(state: LEDConstants.CandleState) {
     Logger.recordOutput("LED/setState", state)
     if (state.animation == null) {
       ledController.setLEDs(state.r, state.g, state.b)
+      ledController.clearAnimation(0)
     } else {
       ledController.animate(state.animation)
     }

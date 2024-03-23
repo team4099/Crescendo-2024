@@ -146,7 +146,9 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
       Logger.recordOutput(
         "Feeder/isAtCommandedState", currentState.equivalentToRequest(currentRequest)
       )
-      DebugLogger.recordDebugOutput("Feeder/timeProfileGeneratedAt", timeProfileGeneratedAt.inSeconds)
+      DebugLogger.recordDebugOutput(
+        "Feeder/timeProfileGeneratedAt", timeProfileGeneratedAt.inSeconds
+      )
       Logger.recordOutput("Feeder/feederVoltageTarget", feederTargetVoltage.inVolts)
     }
 

@@ -2,7 +2,6 @@ package com.team4099.robot2023.auto.mode
 
 import com.team4099.lib.trajectory.FieldWaypoint
 import com.team4099.robot2023.commands.drivetrain.DrivePathCommand
-import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
@@ -10,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Translation2d
-import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds

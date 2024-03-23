@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Subsystem
-import org.littletonrobotics.junction.Logger
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 import java.util.function.Supplier

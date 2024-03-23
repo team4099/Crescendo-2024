@@ -14,7 +14,6 @@ import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.Command
-import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.inInches
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
@@ -107,7 +106,9 @@ class WheelRadiusCharacterizationCommand(
         ((Math.PI * 2.0).radians - accumGyroYawRads).inRadians
       )
     } else {
-      DebugLogger.recordDebugOutput("Drivetrain/effectiveWheelRadius", currentEffectiveWheelRadius.inInches)
+      DebugLogger.recordDebugOutput(
+        "Drivetrain/effectiveWheelRadius", currentEffectiveWheelRadius.inInches
+      )
     }
   }
 

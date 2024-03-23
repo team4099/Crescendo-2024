@@ -27,7 +27,9 @@ object MotorChecker {
   }
 
   fun periodic() {
-    DebugLogger.recordDebugOutput("MotorChecker/subsystemNames", subsystemHardware.keys.toTypedArray())
+    DebugLogger.recordDebugOutput(
+      "MotorChecker/subsystemNames", subsystemHardware.keys.toTypedArray()
+    )
 
     for (subsystemName in subsystemHardware.keys) {
 
@@ -67,7 +69,9 @@ object MotorChecker {
           }
         }
       }
-      DebugLogger.recordDebugOutput("MotorChecker/$subsystemName/motorNames", motorNames.toTypedArray())
+      DebugLogger.recordDebugOutput(
+        "MotorChecker/$subsystemName/motorNames", motorNames.toTypedArray()
+      )
 
       Logger.recordOutput(
         "MotorChecker/baseStageTriggered", baseStageCurrentLimitTriggered.toTypedArray()
@@ -123,14 +127,18 @@ fun logMotor(subsystemName: String, motor: Motor<MotorType>) {
     "MotorChecker/$subsystemName/${motor.name}/CurrentLimitInUseAmps",
     motor.currentLimitInUse.inAmperes
   )
-  DebugLogger.recordDebugOutput("MotorChecker/$subsystemName/${motor.name}/MotorID", motor.id.toLong())
+  DebugLogger.recordDebugOutput(
+    "MotorChecker/$subsystemName/${motor.name}/MotorID", motor.id.toLong()
+  )
   DebugLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/Errors", motor.errors.toTypedArray()
   )
   DebugLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/Warnings", motor.warnings.toTypedArray()
   )
-  DebugLogger.recordDebugOutput("MotorChecker/$subsystemName/${motor.name}/Info", motor.info.toTypedArray())
+  DebugLogger.recordDebugOutput(
+    "MotorChecker/$subsystemName/${motor.name}/Info", motor.info.toTypedArray()
+  )
   DebugLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/StickyFaults", motor.stickyFaults.toTypedArray()
   )

@@ -22,10 +22,7 @@ class DebugLogger {
       }
     }
 
-    inline fun <U : edu.wpi.first.units.Unit<U>> recordDebugOutput(
-      key: String,
-      value: Measure<U>
-    ) {
+    inline fun <U : edu.wpi.first.units.Unit<U>> recordDebugOutput(key: String, value: Measure<U>) {
       if (Constants.Tuning.DEBUGING_MODE) {
         Logger.recordOutput(key, value)
       }
@@ -126,6 +123,5 @@ class DebugLogger {
         Logger.recordOutput(key, value)
       }
     }
-
   }
 }

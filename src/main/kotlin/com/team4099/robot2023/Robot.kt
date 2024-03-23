@@ -193,13 +193,18 @@ object Robot : LoggedRobot() {
 
     val superstructureLoopTimeMS = Clock.realTimestamp
     RobotContainer.superstructure.periodic()
-    Logger.recordOutput("LoggedRobot/Subsystems/SuperstructureLoopTimeMS", (Clock.realTimestamp - superstructureLoopTimeMS).inMilliseconds)
+    Logger.recordOutput(
+      "LoggedRobot/Subsystems/SuperstructureLoopTimeMS",
+      (Clock.realTimestamp - superstructureLoopTimeMS).inMilliseconds
+    )
 
     Logger.recordOutput(
       "LoggedRobot/RemainingRamMB", Runtime.getRuntime().freeMemory() / 1024 / 1024
     )
 
-    DebugLogger.recordDebugOutput("LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds)
+    DebugLogger.recordDebugOutput(
+      "LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds
+    )
 
     ControlBoard.rumbleConsumer.accept(RobotContainer.rumbleState)
 

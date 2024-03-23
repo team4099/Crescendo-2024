@@ -18,7 +18,6 @@ import com.team4099.robot2023.subsystems.falconspin.Falcon500
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
 import com.team4099.robot2023.util.DebugLogger
-import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.amps

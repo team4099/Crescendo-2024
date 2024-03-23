@@ -3,7 +3,6 @@ package com.team4099.robot2023.commands.drivetrain
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.util.DebugLogger
 import edu.wpi.first.wpilibj2.command.Command
-import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 

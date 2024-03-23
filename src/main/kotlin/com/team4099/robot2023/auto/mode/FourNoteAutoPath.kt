@@ -21,7 +21,9 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
     addRequirements(drivetrain, superstructure)
 
     addCommands(
-      superstructure.scoreCommand().withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.3),
+      superstructure
+        .scoreCommand()
+        .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.3),
       WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -56,7 +58,9 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
       superstructure.prepSpeakerLowCommand(),
-      superstructure.scoreCommand().withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.3),
+      superstructure
+        .scoreCommand()
+        .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.3),
       WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -90,7 +94,9 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
       superstructure.prepSpeakerLowCommand(),
-      superstructure.scoreCommand().withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.3),
+      superstructure
+        .scoreCommand()
+        .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.3),
       WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -140,7 +146,9 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
       superstructure.prepSpeakerLowCommand(),
-      superstructure.scoreCommand().withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.3)
+      superstructure
+        .scoreCommand()
+        .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.3)
     )
   }
 

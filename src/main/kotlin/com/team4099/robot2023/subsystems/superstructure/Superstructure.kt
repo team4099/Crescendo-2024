@@ -130,17 +130,23 @@ class Superstructure(
   override fun periodic() {
     leds.hasNote = feeder.hasNote
     leds.isIdle = currentState == SuperstructureStates.IDLE
-    leds.subsystemsAtPosition = wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity && elevator.isAtTargetedPosition
+    leds.subsystemsAtPosition =
+      wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity && elevator.isAtTargetedPosition
     leds.batteryIsLow =
       RobotController.getBatteryVoltage() < LEDConstants.BATTERY_WARNING_THRESHOLD.inVolts
 
     val ledLoopStartTime = Clock.realTimestamp
     leds.periodic()
-    Logger.recordOutput("LoggedRobot/Subsystems/LEDLoopTimeMS", (Clock.realTimestamp - ledLoopStartTime).inMilliseconds)
+    Logger.recordOutput(
+      "LoggedRobot/Subsystems/LEDLoopTimeMS",
+      (Clock.realTimestamp - ledLoopStartTime).inMilliseconds
+    )
 
     if (!RobotBase.isReal()) {
       notes.forEach { it.periodic() }
-      notes.forEach { Logger.recordOutput("NoteSimulation/${it.id}", toDoubleArray(it.currentPose)) }
+      notes.forEach {
+        Logger.recordOutput("NoteSimulation/${it.id}", toDoubleArray(it.currentPose))
+      }
     }
 
     Logger.recordOutput(
@@ -584,10 +590,7 @@ class Superstructure(
           Request.FlywheelRequest.TargetingVelocity(
             Flywheel.TunableFlywheelStates.speakerVelocity.get()
           )
-        wrist.currentRequest =
-          Request.WristRequest.TargetingPosition(
-            wristAngleToShootAt
-          )
+        wrist.currentRequest = Request.WristRequest.TargetingPosition(wristAngleToShootAt)
         if (wrist.isAtTargetedPosition &&
           flywheel.isAtTargetedVelocity &&
           currentRequest is Request.SuperstructureRequest.ScoreSpeaker
@@ -814,9 +817,11 @@ class Superstructure(
   }
 
   fun prepManualSpeakerCommand(wristAngle: Angle): Command {
-    val returnCommand = run { currentRequest = Request.SuperstructureRequest.ManualScoreSpeakerPrep(wristAngle) }.until {
-      isAtRequestedState && currentState == SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP
-    }
+    val returnCommand =
+      run { currentRequest = Request.SuperstructureRequest.ManualScoreSpeakerPrep(wristAngle) }
+        .until {
+          isAtRequestedState && currentState == SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP
+        }
     returnCommand.name = "PrepManualSpeakerCommand"
     return returnCommand
   }
