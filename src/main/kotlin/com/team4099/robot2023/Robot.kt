@@ -199,22 +199,7 @@ object Robot : LoggedRobot() {
       "LoggedRobot/RemainingRamMB", Runtime.getRuntime().freeMemory() / 1024 / 1024
     )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    Logger.recordOutput("LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds)
-
-=======
-<<<<<<< HEAD
-=======
     DebugLogger.recordDebugOutput("LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds)
-
->>>>>>> d19791e (finished debug stuff)
->>>>>>> 24a9171 (fix merge conflicts part 1)
-    ControlBoard.rumbleConsumer.accept(RobotContainer.rumbleState)
-
-=======
->>>>>>> b71bd24 (changes so far)
-    Logger.recordOutput("LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds)
 
     ControlBoard.rumbleConsumer.accept(RobotContainer.rumbleState)
 
