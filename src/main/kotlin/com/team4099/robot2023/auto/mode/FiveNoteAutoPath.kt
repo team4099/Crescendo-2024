@@ -39,8 +39,9 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
             )
           }
         ),
-        WaitCommand(0.25).andThen(superstructure.groundIntakeCommand())
-      ),
+        WaitCommand(0.25)
+          .andThen(superstructure.groundIntakeCommand())
+      ), // Center note inside wing
       superstructure.prepManualSpeakerCommand(-3.degrees),
       superstructure.scoreCommand().withTimeout(0.5),
       ParallelCommandGroup(
@@ -76,9 +77,11 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
             )
           }
         ),
-        WaitCommand(1.0).andThen(superstructure.groundIntakeCommand())
-      ),
-      superstructure.prepManualSpeakerCommand(-3.degrees),
+        WaitCommand(1.0)
+          .andThen(superstructure.groundIntakeCommand())
+          .andThen(WaitCommand(0.5))
+          .andThen(superstructure.prepManualSpeakerCommand(-3.degrees))
+      ), // Centerline note
       superstructure.scoreCommand().withTimeout(0.5),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(

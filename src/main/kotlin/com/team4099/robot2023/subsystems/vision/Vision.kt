@@ -118,7 +118,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       for (tag in tagTargets) {
         if (DriverStation.getAlliance().isPresent) {
           if ((tag.fiducialId in intArrayOf(4) && !FMSData.isBlue) ||
-            (tag.fiducialId in intArrayOf(8) && FMSData.isBlue)
+            (tag.fiducialId in intArrayOf(7) && FMSData.isBlue)
           ) { // i made the tag IDS up
 
             for (corner in 0 until tag.detectedCorners.size) {
@@ -238,7 +238,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
               robotDistanceToTarget =
                 PhotonUtils.calculateDistanceToTargetMeters(
                 cameraPoses[instance].translation.z.inMeters,
-                FieldConstants.fieldAprilTags.get(tag.fiducialId).pose.z.inMeters,
+                57.125.inches.inMeters,
                 21.25.degrees.inRadians,
                 tag.pitch.degrees.inRadians
               )
@@ -309,52 +309,55 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
               var estimatedRobotPose = Pose2d()
 
-              if (tag.fiducialId in intArrayOf(3, 4)) {
-                estimatedRobotPose =
-                  FieldConstants.fieldAprilTags
-                    .get(tag.fiducialId)
-                    .pose
-                    .transformBy(
-                      Transform3d(
-                        Translation3d(0.inches, 3.25.inches, -3.25.inches), Rotation3d()
-                      )
-                    )
-                    .transformBy(flipTransform)
-                    .transformBy(detectionTransformation.inverse())
-                    .transformBy(
-                      Transform3d(
-                        cameraPoses[instance].translation.unaryMinus(), Rotation3d()
-                      )
-                    )
-                    .toPose2d()
-              } else {
-                estimatedRobotPose =
-                  FieldConstants.fieldAprilTags
-                    .get(tag.fiducialId)
-                    .pose
-                    .transformBy(
-                      Transform3d(
-                        Translation3d(0.inches, -3.25.inches, -3.25.inches), Rotation3d()
-                      )
-                    )
-                    .transformBy(detectionTransformation.inverse())
-                    .transformBy(Transform3d(cameraPoses[instance].translation, Rotation3d()))
-                    .toPose2d()
-              }
+              //              if (tag.fiducialId in intArrayOf(3, 4)) {
+              //                estimatedRobotPose =
+              //                  FieldConstants.fieldAprilTags
+              //                    .get(tag.fiducialId)
+              //                    .pose
+              //                    .transformBy(
+              //                      Transform3d(
+              //                        Translation3d(0.inches, 3.25.inches, -3.25.inches),
+              // Rotation3d()
+              //                      )
+              //                    )
+              //                    .transformBy(flipTransform)
+              //                    .transformBy(detectionTransformation.inverse())
+              //                    .transformBy(
+              //                      Transform3d(
+              //                        cameraPoses[instance].translation.unaryMinus(), Rotation3d()
+              //                      )
+              //                    )
+              //                    .toPose2d()
+              //              } else {
+              //                estimatedRobotPose =
+              //                  FieldConstants.fieldAprilTags
+              //                    .get(tag.fiducialId)
+              //                    .pose
+              //                    .transformBy(
+              //                      Transform3d(
+              //                        Translation3d(0.inches, -3.25.inches, -3.25.inches),
+              // Rotation3d()
+              //                      )
+              //                    )
+              //                    .transformBy(detectionTransformation.inverse())
+              //                    .transformBy(Transform3d(cameraPoses[instance].translation,
+              // Rotation3d()))
+              //                    .toPose2d()
+              //              }
 
-              Logger.recordOutput(
-                "Vision/$instance/${tag.fiducialId}/$corner/guesstimatedPose",
-                estimatedRobotPose.toDoubleArray().toDoubleArray()
-              )
-
-              Logger.recordOutput(
-                "Vision/$instance/${tag.fiducialId}/guesstimatedTag",
-                FieldConstants.fieldAprilTags
-                  .get(tag.fiducialId)
-                  .pose
-                  .toDoubleArray()
-                  .toDoubleArray()
-              )
+              //              Logger.recordOutput(
+              //                "Vision/$instance/${tag.fiducialId}/$corner/guesstimatedPose",
+              //                estimatedRobotPose.toDoubleArray().toDoubleArray()
+              //              )
+              //
+              //              Logger.recordOutput(
+              //                "Vision/$instance/${tag.fiducialId}/guesstimatedTag",
+              //                FieldConstants.fieldAprilTags
+              //                  .get(tag.fiducialId)
+              //                  .pose
+              //                  .toDoubleArray()
+              //                  .toDoubleArray()
+              //              )
               // Logger.recordOutput("Vision/${instance}/${tag.fiducialId}/guesstimatedReal",
               // Pose2d(15.meters, 5.meters, 70.degrees).toDoubleArray().toDoubleArray())
 

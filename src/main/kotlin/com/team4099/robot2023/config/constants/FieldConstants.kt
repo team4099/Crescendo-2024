@@ -87,6 +87,90 @@ object FieldConstants {
           Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
           Rotation3d(0.degrees, 0.degrees, 180.degrees)
         )
+      ),
+      AprilTag(
+        5,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        6,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        7,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        8,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        9,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        10,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        11,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        12,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        13,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        14,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        15,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        16,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
       )
     )
 

@@ -160,7 +160,6 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
           // left needs to be half of the right one
           flywheelLeftTargetVelocity = value.flywheelVelocity
         }
-        else -> {}
       }
       field = value
     }
