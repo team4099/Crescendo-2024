@@ -9,6 +9,7 @@ import com.team4099.robot2023.auto.mode.PreloadAndLeaveCenterSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveLeftSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveRightSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.TestAutoPath
+import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromSourceAutoPath
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.util.AllianceFlipUtil
@@ -51,6 +52,9 @@ object AutonomousSelector {
     )
     autonomousModeChooser.addOption(
       "Five Note Auto from Center Subwoofer", AutonomousMode.FIVE_NOTE_AUTO_PATH
+    )
+    autonomousModeChooser.addOption(
+      "Two Note Centerline Auto from Source Side of Subwoofer", AutonomousMode.TWO_NOTE_CENTERLINE_FROM_SOURCE
     )
     autonomousModeChooser.addOption(
       "Preload + Leave from Amp Side of Subwoofer",
@@ -144,6 +148,14 @@ object AutonomousSelector {
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(FiveNoteAutoPath(drivetrain, superstructure))
+      AutonomousMode.TWO_NOTE_CENTERLINE_FROM_SOURCE ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            val flippedPose = AllianceFlipUtil.apply(TwoNoteCenterlineFromSourceAutoPath.startingPose)
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
+          })
+          .andThen(TwoNoteCenterlineFromSourceAutoPath(drivetrain, superstructure))
       AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
@@ -194,6 +206,7 @@ object AutonomousSelector {
     FOUR_NOTE_RIGHT_AUTO_PATH,
     FOUR_NOTE_MIDDLE_AUTO_PATH,
     FOUR_NOTE_LEFT_AUTO_PATH,
+    TWO_NOTE_CENTERLINE_FROM_SOURCE,
     PRELOAD_AND_LEAVE_LEFT_SUBWOOFER,
     PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER,
     PRELOAD_AND_LEAVE_CENTER_SUBWOOFER,
