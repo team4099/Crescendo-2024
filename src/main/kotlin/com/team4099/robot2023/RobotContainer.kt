@@ -209,8 +209,8 @@ object RobotContainer {
           if (DriverStation.getAlliance().isPresent &&
             DriverStation.getAlliance().get() == DriverStation.Alliance.Red
           )
-            120.degrees
-          else (-60).degrees
+            300.degrees
+          else (120).degrees
       })
     )
 
@@ -220,8 +220,8 @@ object RobotContainer {
           if (DriverStation.getAlliance().isPresent &&
             DriverStation.getAlliance().get() == DriverStation.Alliance.Red
           )
-            (-120).degrees
-          else 60.degrees
+            (60).degrees
+          else 240.degrees
       })
     )
     ControlBoard.climbAutoAlign.whileTrue(
