@@ -9,18 +9,19 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Translation2d
+import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRotation2ds
 
-class TwoNoteCenterlineFromSourceAutoPath(val drivetrain: Drivetrain, val superstructure: Superstructure) : SequentialCommandGroup() {
+class TwoNoteCenterlineFromAmpAutoPath(val drivetrain: Drivetrain, val superstructure: Superstructure) : SequentialCommandGroup() {
     init {
         addRequirements(drivetrain)
         addCommands(
-            superstructure.prepSpeakerLowCommand(),
-            superstructure.scoreCommand().withTimeout(0.5),
-            WaitCommand(0.25),
+//            superstructure.prepSpeakerLowCommand(),
+//            superstructure.scoreCommand().withTimeout(0.5),
+//            WaitCommand(0.25),
             ParallelCommandGroup(
                 DrivePathCommand.createPathInFieldFrame(
                     drivetrain,
@@ -32,18 +33,23 @@ class TwoNoteCenterlineFromSourceAutoPath(val drivetrain: Drivetrain, val supers
                                 startingPose.rotation.inRotation2ds
                             ),
                             FieldWaypoint(
-                                Translation2d(2.17.meters, 2.12.meters).translation2d,
+                                Translation2d(1.90.meters, 6.76.meters).translation2d,
                                 null,
-                                ((startingPose.rotation.inDegrees + 180) / 2).degrees.inRotation2ds
+                                210.degrees.inRotation2ds
                             ),
                             FieldWaypoint(
-                                Translation2d(8.2.meters, 0.77.meters).translation2d,
+                                Translation2d(2.87.meters, 6.27.meters).translation2d,
+                                null,
+                                180.degrees.inRotation2ds
+                            ),
+                            FieldWaypoint(
+                                Translation2d(8.27.meters, 7.45.meters).translation2d,
                                 null,
                                 180.degrees.inRotation2ds
                             )
                         )
                     }
-                ).withTimeout(3.828 + 0.25),
+                ),
                 WaitCommand(2.0).andThen(superstructure.groundIntakeCommand())
             ),
             ParallelCommandGroup(
@@ -52,32 +58,25 @@ class TwoNoteCenterlineFromSourceAutoPath(val drivetrain: Drivetrain, val supers
                     {
                         listOf(
                             FieldWaypoint(
-                                Translation2d(8.2.meters, 0.77.meters).translation2d,
+                                Translation2d(8.27.meters, 7.45.meters).translation2d,
                                 null,
                                 180.degrees.inRotation2ds
                             ),
-
                             FieldWaypoint(
-                                Translation2d(2.17.meters, 2.12.meters).translation2d,
+                                Translation2d(3.9.meters, 6.45.meters).translation2d,
                                 null,
-                                ((startingPose.rotation.inDegrees + 180) / 2).degrees.inRotation2ds
+                                (180 + 13.856).degrees.inRotation2ds
                             ),
-                            FieldWaypoint(
-                                startingPose.translation.translation2d,
-                                null,
-                                startingPose.rotation.inRotation2ds
-                            )
                         )
                     }
                 ),
-                WaitCommand(0.5).andThen(superstructure.prepSpeakerLowCommand())
+                WaitCommand(1.0).andThen(superstructure.prepManualSpeakerCommand(8.870702276919971.degrees))
             ),
-            superstructure.scoreCommand().withTimeout(0.5),
-            WaitCommand(0.25),
+            superstructure.scoreCommand()
         )
     }
 
     companion object {
-        val startingPose = Pose2d(0.63.meters, 4.44.meters, 120.degrees)
+        val startingPose = Pose2d(0.75.meters, 6.70.meters, 240.degrees)
     }
 }

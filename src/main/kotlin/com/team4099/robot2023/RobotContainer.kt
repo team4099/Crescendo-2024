@@ -316,5 +316,7 @@ object RobotContainer {
 
   fun getAutonomousCommand() = AutonomousSelector.getCommand(drivetrain, superstructure)
 
+  fun getAutonomousLoadingCommand() = AutonomousSelector.getLoadingCommand(drivetrain)
+
   fun mapTunableCommands() {}
 }

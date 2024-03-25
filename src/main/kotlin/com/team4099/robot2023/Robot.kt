@@ -1,6 +1,7 @@
 package com.team4099.robot2023
 
 import com.team4099.lib.hal.Clock
+import com.team4099.robot2023.Robot.autonomousCommand
 import com.team4099.robot2023.auto.AutonomousSelector
 import com.team4099.robot2023.auto.PathStore
 import com.team4099.robot2023.config.ControlBoard
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.simulation.DriverStationSim
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.ejml.EjmlVersion.BUILD_DATE
 import org.ejml.EjmlVersion.DIRTY
 import org.ejml.EjmlVersion.GIT_BRANCH
@@ -49,6 +51,8 @@ object Robot : LoggedRobot() {
   val logTuningModeEnabled =
     Alert("Tuning Mode Enabled. Expect loop times to be greater", AlertType.WARNING)
   lateinit var allianceSelected: GenericEntry
+  lateinit var autonomousCommand: Command
+  lateinit var autonomousLoadingCommand: Command
   /*
   val port0 = AnalogInput(0)
   val port1 = AnalogInput(1)
@@ -148,11 +152,13 @@ object Robot : LoggedRobot() {
   }
 
   override fun autonomousInit() {
-    RobotContainer.getAutonomousCommand().schedule()
+    val autonCommandWithWait = WaitCommand(0.001).andThen(autonomousCommand)
+    autonCommandWithWait?.schedule()
   }
 
   override fun disabledPeriodic() {
     FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
+    autonomousCommand = RobotContainer.getAutonomousCommand()
     //    val currentAlliance =
     //      try {
     //        DriverStation.getAlliance().get().toString()
@@ -164,9 +170,6 @@ object Robot : LoggedRobot() {
   }
 
   override fun disabledInit() {
-    RobotContainer.getAutonomousCommand().cancel()
-    RobotContainer.setSteeringCoastMode()
-    RobotContainer.setDriveBrakeMode()
     RobotContainer.requestIdle()
     // autonomousCommand.cancel()
   }

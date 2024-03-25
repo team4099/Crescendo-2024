@@ -1,14 +1,16 @@
 package com.team4099.robot2023.auto
 
+import com.team4099.robot2023.auto.mode.ExamplePathAuto
 import com.team4099.robot2023.auto.mode.FiveNoteAutoPath
 import com.team4099.robot2023.auto.mode.FourNoteAutoPath
 import com.team4099.robot2023.auto.mode.FourNoteLeftCenterLine
 import com.team4099.robot2023.auto.mode.FourNoteMiddleCenterLine
 import com.team4099.robot2023.auto.mode.FourNoteRightCenterLine
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveCenterSubwooferAutoPath
-import com.team4099.robot2023.auto.mode.PreloadAndLeaveLeftSubwooferAutoPath
-import com.team4099.robot2023.auto.mode.PreloadAndLeaveRightSubwooferAutoPath
+import com.team4099.robot2023.auto.mode.PreloadAndLeaveFromAmpSubwooferAutoPath
+import com.team4099.robot2023.auto.mode.PreloadAndLeaveFromSourceSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.TestAutoPath
+import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromSourceAutoPath
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
@@ -55,6 +57,10 @@ object AutonomousSelector {
     )
     autonomousModeChooser.addOption(
       "Two Note Centerline Auto from Source Side of Subwoofer", AutonomousMode.TWO_NOTE_CENTERLINE_FROM_SOURCE
+    )
+
+    autonomousModeChooser.addOption(
+      "Two Note Centerline Auto from Amp Side of Subwoofer", AutonomousMode.TWO_NOTE_CENTERLINE_FROM_AMP
     )
     autonomousModeChooser.addOption(
       "Preload + Leave from Amp Side of Subwoofer",
@@ -156,16 +162,24 @@ object AutonomousSelector {
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(TwoNoteCenterlineFromSourceAutoPath(drivetrain, superstructure))
+      AutonomousMode.TWO_NOTE_CENTERLINE_FROM_AMP ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            val flippedPose = AllianceFlipUtil.apply(TwoNoteCenterlineFromAmpAutoPath.startingPose)
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
+          })
+          .andThen(TwoNoteCenterlineFromAmpAutoPath(drivetrain, superstructure))
       AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
             val flippedPose =
-              AllianceFlipUtil.apply(PreloadAndLeaveLeftSubwooferAutoPath.startingPose)
+              AllianceFlipUtil.apply(PreloadAndLeaveFromAmpSubwooferAutoPath.startingPose)
             drivetrain.tempZeroGyroYaw(flippedPose.rotation)
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(
-            PreloadAndLeaveLeftSubwooferAutoPath(
+            PreloadAndLeaveFromAmpSubwooferAutoPath(
               drivetrain, superstructure, secondaryWaitTime
             )
           )
@@ -173,12 +187,12 @@ object AutonomousSelector {
         return WaitCommand(waitTime.inSeconds)
           .andThen({
             val flippedPose =
-              AllianceFlipUtil.apply(PreloadAndLeaveRightSubwooferAutoPath.startingPose)
+              AllianceFlipUtil.apply(PreloadAndLeaveFromSourceSubwooferAutoPath.startingPose)
             drivetrain.tempZeroGyroYaw(flippedPose.rotation)
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(
-            PreloadAndLeaveRightSubwooferAutoPath(
+            PreloadAndLeaveFromSourceSubwooferAutoPath(
               drivetrain, superstructure, secondaryWaitTime
             )
           )
@@ -200,6 +214,10 @@ object AutonomousSelector {
     return InstantCommand()
   }
 
+  fun getLoadingCommand(drivetrain: Drivetrain): Command {
+    return ExamplePathAuto(drivetrain)
+  }
+
   private enum class AutonomousMode {
     TEST_AUTO_PATH,
     FOUR_NOTE_AUTO_PATH,
@@ -207,6 +225,7 @@ object AutonomousSelector {
     FOUR_NOTE_MIDDLE_AUTO_PATH,
     FOUR_NOTE_LEFT_AUTO_PATH,
     TWO_NOTE_CENTERLINE_FROM_SOURCE,
+    TWO_NOTE_CENTERLINE_FROM_AMP,
     PRELOAD_AND_LEAVE_LEFT_SUBWOOFER,
     PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER,
     PRELOAD_AND_LEAVE_CENTER_SUBWOOFER,

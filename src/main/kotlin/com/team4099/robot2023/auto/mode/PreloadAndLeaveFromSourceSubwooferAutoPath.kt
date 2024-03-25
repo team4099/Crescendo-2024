@@ -14,7 +14,7 @@ import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
 
-class PreloadAndLeaveRightSubwooferAutoPath(
+class PreloadAndLeaveFromSourceSubwooferAutoPath(
   val drivetrain: Drivetrain,
   val superstructure: Superstructure,
   secondaryWaitTime: Time
