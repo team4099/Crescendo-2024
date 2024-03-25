@@ -18,10 +18,8 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
   init {
     addRequirements(drivetrain)
     addCommands(
-      superstructure.prepSpeakerLowCommand(),
-      superstructure.scoreCommand().withTimeout(0.5),
-      WaitCommand(0.25),
       ParallelCommandGroup(
+        superstructure.autoAimCommand().andThen(superstructure.scoreCommand().withTimeout(0.5)),
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
           {

@@ -10,6 +10,7 @@ import com.team4099.robot2023.auto.mode.PreloadAndLeaveCenterSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveFromAmpSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveFromSourceSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.TestAutoPath
+import com.team4099.robot2023.auto.mode.ThreeNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromSourceAutoPath
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
@@ -61,6 +62,9 @@ object AutonomousSelector {
 
     autonomousModeChooser.addOption(
       "Two Note Centerline Auto from Amp Side of Subwoofer", AutonomousMode.TWO_NOTE_CENTERLINE_FROM_AMP
+    )
+    autonomousModeChooser.addOption(
+      "Three Note Centerline Auto from Amp Side of Subwoofer", AutonomousMode.THREE_NOTE_CENTERLINE_FROM_AMP
     )
     autonomousModeChooser.addOption(
       "Preload + Leave from Amp Side of Subwoofer",
@@ -170,6 +174,14 @@ object AutonomousSelector {
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(TwoNoteCenterlineFromAmpAutoPath(drivetrain, superstructure))
+      AutonomousMode.THREE_NOTE_CENTERLINE_FROM_AMP ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            val flippedPose = AllianceFlipUtil.apply(TwoNoteCenterlineFromAmpAutoPath.startingPose)
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
+          })
+          .andThen(ThreeNoteCenterlineFromAmpAutoPath(drivetrain, superstructure))
       AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
@@ -226,6 +238,7 @@ object AutonomousSelector {
     FOUR_NOTE_LEFT_AUTO_PATH,
     TWO_NOTE_CENTERLINE_FROM_SOURCE,
     TWO_NOTE_CENTERLINE_FROM_AMP,
+    THREE_NOTE_CENTERLINE_FROM_AMP,
     PRELOAD_AND_LEAVE_LEFT_SUBWOOFER,
     PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER,
     PRELOAD_AND_LEAVE_CENTER_SUBWOOFER,
