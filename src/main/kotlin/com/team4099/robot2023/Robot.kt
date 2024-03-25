@@ -1,7 +1,6 @@
 package com.team4099.robot2023
 
 import com.team4099.lib.hal.Clock
-import com.team4099.robot2023.Robot.autonomousCommand
 import com.team4099.robot2023.auto.AutonomousSelector
 import com.team4099.robot2023.auto.PathStore
 import com.team4099.robot2023.config.ControlBoard

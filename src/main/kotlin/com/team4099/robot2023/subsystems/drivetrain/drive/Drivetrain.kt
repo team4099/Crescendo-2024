@@ -324,7 +324,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
         .pose3d
     )
 
-    Logger.recordOutput("FieldFrameEstimator/odomTField", odomTField.toDoubleArray())
+    Logger.recordOutput("FieldFrameEstimator/odomTField", odomTField.transform2d)
 
     Logger.recordOutput(
       "Odometry/targetPose",
