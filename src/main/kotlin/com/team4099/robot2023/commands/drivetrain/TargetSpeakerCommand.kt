@@ -132,7 +132,8 @@ class TargetSpeakerCommand(
     desiredAngle = atan2(robotTSpeaker.y.inMeters, robotTSpeaker.x.inMeters).radians
     val filteredDesiredAngle = angleMedianFilter.calculate(desiredAngle.inDegrees)
 
-    val thetaFeedback = thetaPID.calculate(odomTRobot.rotation, filteredDesiredAngle.degrees)
+    val thetaFeedback =
+      thetaPID.calculate(odomTRobot.rotation, odomTRobot.rotation + filteredDesiredAngle.degrees)
 
     Logger.recordOutput("TargetSpeakerCommand/desiredAngleInDegrees", desiredAngle.inDegrees)
     Logger.recordOutput("TargetSpeakerCommand/filteredDesiredAngleInDegrees", filteredDesiredAngle)

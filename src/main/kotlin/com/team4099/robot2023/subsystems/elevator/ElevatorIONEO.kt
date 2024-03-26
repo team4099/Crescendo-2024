@@ -94,8 +94,8 @@ object ElevatorIONEO : ElevatorIO {
         ),
         ElevatorConstants.LEADER_STATOR_CURRENT_LIMIT,
         30.celsius,
-        ElevatorConstants.LEADER_STATOR_CURRENT_LIMIT - 30.amps,
-        90.celsius
+        ElevatorConstants.LEADER_STATOR_CURRENT_LIMIT - 10.amps,
+        80.celsius
       ),
     )
   }

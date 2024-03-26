@@ -45,7 +45,7 @@ object FeederIONeo : FeederIO {
     feederSparkMax.burnFlash()
 
     MotorChecker.add(
-      "Ground Intake",
+      "Feeder",
       "Roller",
       MotorCollection(
         mutableListOf(Neo(feederSparkMax, "Roller Motor")),
