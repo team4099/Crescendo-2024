@@ -62,8 +62,8 @@ object ElevatorConstants {
   val MAX_ACCELERATION = 4.0.meters.perSecond.perSecond
 
   val SHOOT_SPEAKER_LOW_POSITION = 0.0.inches
-  val SHOOT_SPEAKER_MID_POSITION = 15.0.inches
-  val SHOOT_SPEAKER_HIGH_POSITION = 15.0.inches
+  val SHOOT_SPEAKER_MID_POSITION = 16.0.inches
+  val SHOOT_SPEAKER_HIGH_POSITION = 16.0.inches
 
   // week 1 amp amgle
   // val SHOOT_AMP_POSITION = 17.0.degrees

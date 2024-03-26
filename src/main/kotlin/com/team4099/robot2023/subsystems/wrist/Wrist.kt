@@ -47,6 +47,16 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       LoggedTunableValue(
         "Wrist/idleAngle", WristConstants.IDLE_ANGLE, Pair({ it.inDegrees }, { it.degrees })
       )
+
+    val ejectAngle =
+      LoggedTunableValue(
+        "Wrist/ejectAngle", WristConstants.EJECT_ANGLE, Pair({ it.inDegrees }, { it.degrees })
+      )
+
+    val pushDownVoltage = LoggedTunableValue(
+      "Wrist/pushDownVoltage", WristConstants.PUSH_DOWN_VOLTAGE, Pair({ it.inVolts }, { it.volts })
+    )
+
     val idleAngleHasGamepiece =
       LoggedTunableValue(
         "Wrist/idleAngleHasGamepiece",

@@ -272,9 +272,11 @@ object WristIOTalon : WristIO {
       motorVoltage,
       dutyCycle,
       supplyCurrentSignal,
+      statorCurrentSignal,
       tempSignal,
       motorAcceleration,
       absoluteEncoderSignal
+
     )
   }
 

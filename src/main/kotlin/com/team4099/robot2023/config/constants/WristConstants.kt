@@ -21,6 +21,9 @@ object WristConstants {
   // val ROLLER_VOLTAGE_COMPENSATION = 0.0.volts
   // val ROLLER_STATOR_CURRENT_LIMIT = 0.0.amps
 
+  val PUSH_DOWN_VOLTAGE = -0.5.volts
+
+  val EJECT_ANGLE = -15.degrees
   val WRIST_AXIS_TO_NOTE_HOLD_POSITION = 14.5.inches
   val WRIST_AXIS_TO_NOTE_LAUNCH_POSITION = 10.inches
 
@@ -32,7 +35,7 @@ object WristConstants {
 
   val VOLTAGE_COMPENSATION = 12.0.volts
   val ABSOLUTE_ENCODER_OFFSET =
-    (97.72227856659904.degrees - 35.degrees + 2.degrees) * ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
+    (97.72227856659904.degrees - 35.degrees + 0.5.degrees) * ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
   val WRIST_LENGTH = 18.6.inches
   val WRIST_INERTIA = 0.7181257183.kilo.grams * 1.0.meters.squared
 
@@ -96,11 +99,11 @@ object WristConstants {
 
   val AMP_SCORE_ANGLE = -8.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = -34.degrees
-  val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = -7.5.degrees
+  val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = 8.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH = -2.degrees
   val CLIMB_ANGLE = 10.0.degrees
 
-  val TRAP_ANGLE = -34.degrees
+  val TRAP_ANGLE = 35.degrees
   val INTAKE_ANGLE = (-34).degrees
   val IDLE_ANGLE_HAS_GAMEPEICE = -34.degrees
   val PASSING_SHOT_ANGLE = -20.degrees

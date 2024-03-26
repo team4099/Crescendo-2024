@@ -43,6 +43,9 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
+import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.robot2023.config.constants.WristConstants
+import org.team4099.lib.units.derived.inDegrees
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -59,6 +62,10 @@ object RobotContainer {
     get() = feeder.rumbleTrigger
   var setClimbAngle = -1337.degrees
   var climbAngle: () -> Angle = { setClimbAngle }
+
+  val podiumAngle =  LoggedTunableValue(
+    "Defense/PodiumShotAngle", 25.0.degrees, Pair({ it.inDegrees }, { it.degrees })
+  )
 
   init {
     if (RobotBase.isReal()) {
@@ -166,7 +173,11 @@ object RobotContainer {
           { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
           { ControlBoard.slowMode },
           drivetrain,
-          { 30.degrees },
+          {  if (DriverStation.getAlliance().isPresent &&
+            DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+          )
+            podiumAngle.get()
+          else 180.degrees - podiumAngle.get()},
         )
       )
     )
@@ -198,8 +209,8 @@ object RobotContainer {
           if (DriverStation.getAlliance().isPresent &&
             DriverStation.getAlliance().get() == DriverStation.Alliance.Red
           )
-            0.degrees
-          else (180).degrees
+            180.degrees
+          else (0).degrees
       })
     )
 

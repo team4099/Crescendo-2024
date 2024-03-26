@@ -1,6 +1,7 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.hal.Clock
+import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.LEDConstants
 import com.team4099.robot2023.config.constants.WristConstants
@@ -45,6 +46,8 @@ class Superstructure(
   private val drivetrain: Drivetrain,
   private val vision: Vision
 ) : SubsystemBase() {
+
+  var wristPushDownVoltage = Wrist.TunableWristStates
 
   var leds = Leds(LedIOCandle)
 
@@ -364,7 +367,7 @@ class Superstructure(
         }
       }
       SuperstructureStates.GROUND_INTAKE -> {
-        wrist.currentRequest = Request.WristRequest.OpenLoop(-0.5.volts)
+        wrist.currentRequest = Request.WristRequest.OpenLoop(Wrist.TunableWristStates.pushDownVoltage.get())
         intake.currentRequest =
           Request.IntakeRequest.OpenLoop(
             Intake.TunableIntakeStates.intakeRollerVoltage.get(),
@@ -667,6 +670,7 @@ class Superstructure(
           )
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.outtakeVoltage.get())
+        flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(-10.volts)
 
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
@@ -677,7 +681,7 @@ class Superstructure(
       }
       SuperstructureStates.EJECT_GAME_PIECE_PREP -> {
         wrist.currentRequest =
-          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.idleAngle.get())
+          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.ejectAngle.get())
 
         if (wrist.isAtTargetedPosition) {
           nextState = SuperstructureStates.EJECT_GAME_PIECE
