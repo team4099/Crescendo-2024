@@ -37,7 +37,7 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               )
             )
           },
-          keepTrapping = true
+          useLowerTolerance = true
         ),
         WaitCommand(0.25).andThen(superstructure.groundIntakeCommand())
       ),
@@ -75,7 +75,7 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               )
             )
           },
-          keepTrapping = true
+          useLowerTolerance = true
         ),
         WaitCommand(1.0)
           .andThen(superstructure.groundIntakeCommand())
@@ -104,7 +104,7 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               ),
             )
           },
-          keepTrapping = true
+          useLowerTolerance = true
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
@@ -132,7 +132,7 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               ),
             )
           },
-          keepTrapping = true
+          useLowerTolerance = true
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),

@@ -21,10 +21,9 @@ object LedIOCandle : LedIO {
   }
 
   private fun setCANdleState(state: LEDConstants.CandleState) {
-    Logger.recordOutput("LED/setState", state)
     if (state.animation == null) {
-      ledController.setLEDs(state.r, state.g, state.b)
       ledController.clearAnimation(0)
+      ledController.setLEDs(state.r, state.g, state.b)
     } else {
       ledController.animate(state.animation)
       ledController.setLEDs(state.r, state.g, state.b)

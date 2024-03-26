@@ -40,19 +40,19 @@ import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.cos
 import org.team4099.lib.units.derived.degrees
-import org.team4099.lib.units.derived.inDegreesPerSecondPerDegree
-import org.team4099.lib.units.derived.inDegreesPerSecondPerDegreePerSecond
-import org.team4099.lib.units.derived.inDegreesPerSecondPerDegreeSeconds
 import org.team4099.lib.units.derived.inMetersPerSecondPerMeter
 import org.team4099.lib.units.derived.inMetersPerSecondPerMeterSeconds
 import org.team4099.lib.units.derived.inMetersPerSecondPerMetersPerSecond
 import org.team4099.lib.units.derived.inRadians
+import org.team4099.lib.units.derived.inRadiansPerSecondPerRadian
+import org.team4099.lib.units.derived.inRadiansPerSecondPerRadianPerSecond
+import org.team4099.lib.units.derived.inRadiansPerSecondPerRadianSeconds
 import org.team4099.lib.units.derived.metersPerSecondPerMetersPerSecond
-import org.team4099.lib.units.derived.perDegree
-import org.team4099.lib.units.derived.perDegreePerSecond
-import org.team4099.lib.units.derived.perDegreeSeconds
 import org.team4099.lib.units.derived.perMeter
 import org.team4099.lib.units.derived.perMeterSeconds
+import org.team4099.lib.units.derived.perRadian
+import org.team4099.lib.units.derived.perRadianPerSecond
+import org.team4099.lib.units.derived.perRadianSeconds
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.sin
 import org.team4099.lib.units.inMetersPerSecond
@@ -95,21 +95,21 @@ private constructor(
   val thetakP =
     LoggedTunableValue(
       "Pathfollow/thetakP",
-      Pair({ it.inDegreesPerSecondPerDegree }, { it.degrees.perSecond.perDegree })
+      Pair({ it.inRadiansPerSecondPerRadian }, { it.radians.perSecond.perRadian })
     )
   val thetakI =
     LoggedTunableValue(
       "Pathfollow/thetakI",
       Pair(
-        { it.inDegreesPerSecondPerDegreeSeconds }, { it.degrees.perSecond.perDegreeSeconds }
+        { it.inRadiansPerSecondPerRadianSeconds }, { it.radians.perSecond.perRadianSeconds }
       )
     )
   val thetakD =
     LoggedTunableValue(
       "Pathfollow/thetakD",
       Pair(
-        { it.inDegreesPerSecondPerDegreePerSecond },
-        { it.degrees.perSecond.perDegreePerSecond }
+        { it.inRadiansPerSecondPerRadianPerSecond },
+        { it.radians.perSecond.perRadianPerSecond }
       )
     )
 
@@ -441,7 +441,7 @@ private constructor(
       drivetrain: Drivetrain,
       waypoints: Supplier<List<OdometryWaypoint>>,
       resetPose: Boolean = false,
-      keepTrapping: Boolean = false,
+      useLowerTolerance: Boolean = false,
       flipForAlliances: Boolean = true,
       endPathOnceAtReference: Boolean = true,
       leaveOutYAdjustment: Boolean = false,
@@ -452,7 +452,7 @@ private constructor(
         drivetrain,
         waypoints,
         resetPose,
-        keepTrapping,
+        useLowerTolerance,
         flipForAlliances,
         endPathOnceAtReference,
         leaveOutYAdjustment,
@@ -465,7 +465,7 @@ private constructor(
       drivetrain: Drivetrain,
       waypoints: Supplier<List<FieldWaypoint>>,
       resetPose: Boolean = false,
-      keepTrapping: Boolean = false,
+      useLowerTolerance: Boolean = false,
       flipForAlliances: Boolean = true,
       endPathOnceAtReference: Boolean = true,
       leaveOutYAdjustment: Boolean = false,
@@ -476,7 +476,7 @@ private constructor(
         drivetrain,
         waypoints,
         resetPose,
-        keepTrapping,
+        useLowerTolerance,
         flipForAlliances,
         endPathOnceAtReference,
         leaveOutYAdjustment,

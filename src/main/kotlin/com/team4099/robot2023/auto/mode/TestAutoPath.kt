@@ -50,7 +50,7 @@ class TestAutoPath(val drivetrain: Drivetrain, val superstructure: Superstructur
             )
           )
         },
-        keepTrapping = true
+        useLowerTolerance = true
       )
     )
   }

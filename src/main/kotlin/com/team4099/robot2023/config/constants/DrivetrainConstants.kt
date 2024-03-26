@@ -103,7 +103,7 @@ object DrivetrainConstants {
     val AUTO_POS_KP: ProportionalGain<Meter, Velocity<Meter>>
       get() {
         if (RobotBase.isReal()) {
-          return 3.meters.perSecond / 1.0.meters // todo:4
+          return 2.9.meters.perSecond / 1.0.meters // todo:4
         } else {
           return 7.0.meters.perSecond / 1.0.meters
         }
@@ -128,8 +128,8 @@ object DrivetrainConstants {
       }
 
     val AUTO_THETA_ALLOWED_ERROR = 3.degrees
-    val AUTO_THETA_PID_KP = (0.95.degrees.perSecond / 1.degrees)
-    val AUTO_THETA_PID_KI = (0.0.degrees.perSecond / (1.degrees * 1.seconds))
+    val AUTO_THETA_PID_KP = (0.95.radians.perSecond / 1.radians)
+    val AUTO_THETA_PID_KI = (0.0.radians.perSecond / (1.radians * 1.seconds))
     val AUTO_THETA_PID_KD =
       (0.2.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
@@ -152,7 +152,7 @@ object DrivetrainConstants {
 
     val STEERING_KFF = 0.0.volts / 1.0.radians.perSecond // 0.0375
 
-    val DRIVE_KP = 1.4.volts / 1.meters.perSecond
+    val DRIVE_KP = 1.45.volts / 1.meters.perSecond
     val DRIVE_KI = 0.0.volts / (1.meters.perSecond * 1.seconds)
     val DRIVE_KD = 0.1.volts / 1.meters.perSecond.perSecond
 

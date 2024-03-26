@@ -18,9 +18,6 @@ class Leds(val io: LedIO) {
       io.setState(value)
       field = value
     }
-  init {
-    state = state
-  }
 
   fun periodic() {
     io.updateInputs(inputs)

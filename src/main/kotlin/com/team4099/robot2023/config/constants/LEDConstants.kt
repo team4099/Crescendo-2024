@@ -24,7 +24,7 @@ object LEDConstants {
     HAS_NOTE(null, 0, 0, 255),
 
     // Red
-    LOW_BATTERY(StrobeAnimation(255, 105, 0, 0, 0.5, LED_COUNT), 0, 0, 0),
+    LOW_BATTERY(null, 255, 105, 0),
 
     // Green
 
