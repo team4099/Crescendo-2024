@@ -276,7 +276,6 @@ object WristIOTalon : WristIO {
       tempSignal,
       motorAcceleration,
       absoluteEncoderSignal
-
     )
   }
 

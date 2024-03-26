@@ -58,17 +58,21 @@ object AutonomousSelector {
       "Five Note Auto from Center Subwoofer", AutonomousMode.FIVE_NOTE_AUTO_PATH
     )
     autonomousModeChooser.addOption(
-      "Two Note Centerline Auto from Source Side of Subwoofer", AutonomousMode.TWO_NOTE_CENTERLINE_FROM_SOURCE
+      "Two Note Centerline Auto from Source Side of Subwoofer",
+      AutonomousMode.TWO_NOTE_CENTERLINE_FROM_SOURCE
     )
 
     autonomousModeChooser.addOption(
-      "Two Note Centerline Auto from Amp Side of Subwoofer", AutonomousMode.TWO_NOTE_CENTERLINE_FROM_AMP
+      "Two Note Centerline Auto from Amp Side of Subwoofer",
+      AutonomousMode.TWO_NOTE_CENTERLINE_FROM_AMP
     )
     autonomousModeChooser.addOption(
-      "Three Note Centerline Auto from Amp Side of Subwoofer", AutonomousMode.THREE_NOTE_CENTERLINE_FROM_AMP
+      "Three Note Centerline Auto from Amp Side of Subwoofer",
+      AutonomousMode.THREE_NOTE_CENTERLINE_FROM_AMP
     )
     autonomousModeChooser.addOption(
-      "Three Note + Pickup Centerline Auto from Source Side of Subwoofer", AutonomousMode.THREE_NOTE_AND_PICKUP_CENTERLINE_FROM_SOURCE
+      "Three Note + Pickup Centerline Auto from Source Side of Subwoofer",
+      AutonomousMode.THREE_NOTE_AND_PICKUP_CENTERLINE_FROM_SOURCE
     )
     autonomousModeChooser.addOption(
       "Preload + Leave from Amp Side of Subwoofer",
@@ -165,7 +169,8 @@ object AutonomousSelector {
       AutonomousMode.TWO_NOTE_CENTERLINE_FROM_SOURCE ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
-            val flippedPose = AllianceFlipUtil.apply(TwoNoteCenterlineFromSourceAutoPath.startingPose)
+            val flippedPose =
+              AllianceFlipUtil.apply(TwoNoteCenterlineFromSourceAutoPath.startingPose)
             drivetrain.tempZeroGyroYaw(flippedPose.rotation)
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
@@ -173,7 +178,8 @@ object AutonomousSelector {
       AutonomousMode.TWO_NOTE_CENTERLINE_FROM_AMP ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
-            val flippedPose = AllianceFlipUtil.apply(TwoNoteCenterlineFromAmpAutoPath.startingPose)
+            val flippedPose =
+              AllianceFlipUtil.apply(TwoNoteCenterlineFromAmpAutoPath.startingPose)
             drivetrain.tempZeroGyroYaw(flippedPose.rotation)
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
@@ -181,7 +187,8 @@ object AutonomousSelector {
       AutonomousMode.THREE_NOTE_CENTERLINE_FROM_AMP ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
-            val flippedPose = AllianceFlipUtil.apply(TwoNoteCenterlineFromAmpAutoPath.startingPose)
+            val flippedPose =
+              AllianceFlipUtil.apply(TwoNoteCenterlineFromAmpAutoPath.startingPose)
             drivetrain.tempZeroGyroYaw(flippedPose.rotation)
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
@@ -189,7 +196,8 @@ object AutonomousSelector {
       AutonomousMode.THREE_NOTE_AND_PICKUP_CENTERLINE_FROM_SOURCE ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
-            val flippedPose = AllianceFlipUtil.apply(ThreeNoteAndPickupCenterlineSourceAutoPath.startingPose)
+            val flippedPose =
+              AllianceFlipUtil.apply(ThreeNoteAndPickupCenterlineSourceAutoPath.startingPose)
             drivetrain.tempZeroGyroYaw(flippedPose.rotation)
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })

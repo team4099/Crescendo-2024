@@ -8,7 +8,6 @@ import com.team4099.lib.trajectory.CustomTrajectoryGenerator
 import com.team4099.lib.trajectory.FieldWaypoint
 import com.team4099.lib.trajectory.OdometryWaypoint
 import com.team4099.lib.trajectory.Waypoint
-import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.util.AllianceFlipUtil
@@ -25,14 +24,12 @@ import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
-import org.team4099.lib.controller.ProfiledPIDController
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Transform2d
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.hal.Clock
 import org.team4099.lib.kinematics.ChassisAccels
-import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.inMeters
@@ -40,7 +37,6 @@ import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
-import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.cos
 import org.team4099.lib.units.derived.degrees
@@ -59,7 +55,6 @@ import org.team4099.lib.units.derived.perMeter
 import org.team4099.lib.units.derived.perMeterSeconds
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.sin
-import org.team4099.lib.units.inDegreesPerSecond
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.inMetersPerSecondPerSecond
 import org.team4099.lib.units.inRadiansPerSecond
@@ -100,13 +95,11 @@ private constructor(
   val thetakP =
     LoggedTunableValue(
       "Pathfollow/thetakP",
-      DrivetrainConstants.PID.AUTO_THETA_PID_KP,
       Pair({ it.inDegreesPerSecondPerDegree }, { it.degrees.perSecond.perDegree })
     )
   val thetakI =
     LoggedTunableValue(
       "Pathfollow/thetakI",
-      DrivetrainConstants.PID.AUTO_THETA_PID_KI,
       Pair(
         { it.inDegreesPerSecondPerDegreeSeconds }, { it.degrees.perSecond.perDegreeSeconds }
       )
@@ -114,7 +107,6 @@ private constructor(
   val thetakD =
     LoggedTunableValue(
       "Pathfollow/thetakD",
-      DrivetrainConstants.PID.AUTO_THETA_PID_KD,
       Pair(
         { it.inDegreesPerSecondPerDegreePerSecond },
         { it.degrees.perSecond.perDegreePerSecond }
@@ -188,49 +180,19 @@ private constructor(
 
   init {
     addRequirements(drivetrain)
-
-//    if (RobotBase.isSimulation()) {
-//      thetakP.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP)
-//      thetakI.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI)
-//      thetakD.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD)
-//    }
-
-    if (Constants.Tuning.TUNING_MODE) {
-      xPID = PIDController(
-        poskP.get(),
-        poskI.get(),
-        poskD.get()
-      )
-      yPID = PIDController(
-        poskP.get(),
-        poskI.get(),
-        poskD.get()
-      )
-      thetaPID =
-        PIDController(
-          thetakP.get(),
-          thetakI.get(),
-          thetakD.get()
-        )
+    if (RobotBase.isReal()) {
+      thetakP.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KP)
+      thetakI.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KI)
+      thetakD.initDefault(DrivetrainConstants.PID.AUTO_THETA_PID_KD)
+    } else {
+      thetakP.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP)
+      thetakI.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI)
+      thetakD.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD)
     }
-    else {
-      xPID = PIDController(
-        DrivetrainConstants.PID.AUTO_POS_KP,
-        DrivetrainConstants.PID.AUTO_POS_KI,
-        DrivetrainConstants.PID.AUTO_POS_KD
-      )
-      yPID = PIDController(
-        DrivetrainConstants.PID.AUTO_POS_KP,
-        DrivetrainConstants.PID.AUTO_POS_KI,
-        DrivetrainConstants.PID.AUTO_POS_KD
-      )
-      thetaPID =
-        PIDController(
-          DrivetrainConstants.PID.AUTO_THETA_PID_KP,
-          DrivetrainConstants.PID.AUTO_THETA_PID_KI,
-          DrivetrainConstants.PID.AUTO_THETA_PID_KD
-        )
-    }
+
+    xPID = PIDController(poskP.get(), poskI.get(), poskD.get())
+    yPID = PIDController(poskP.get(), poskI.get(), poskD.get())
+    thetaPID = PIDController(thetakP.get(), thetakI.get(), thetakD.get())
 
     thetaPID.enableContinuousInput(-PI.radians, PI.radians)
 

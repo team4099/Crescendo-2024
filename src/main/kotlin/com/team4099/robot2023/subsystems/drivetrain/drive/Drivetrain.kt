@@ -2,7 +2,6 @@ package com.team4099.robot2023.subsystems.drivetrain.drive
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
-import com.team4099.lib.logging.toDoubleArray
 import com.team4099.lib.math.asPose2d
 import com.team4099.lib.math.asTransform2d
 import com.team4099.lib.vision.TimestampedTrigVisionUpdate
@@ -62,7 +61,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     )
   val swerveModules = swerveModuleIOs.getSwerveModules() // FL, FR, BL, BR
 
-  private val gyroInputs = GyroIO.GyroIOInputs()
+  val gyroInputs = GyroIO.GyroIOInputs()
 
   private var gyroYawOffset = 0.0.radians
 

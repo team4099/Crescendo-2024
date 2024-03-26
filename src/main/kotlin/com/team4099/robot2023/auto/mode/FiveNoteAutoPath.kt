@@ -36,7 +36,8 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 180.degrees.inRotation2ds
               )
             )
-          }
+          },
+          keepTrapping = true
         ),
         WaitCommand(0.25).andThen(superstructure.groundIntakeCommand())
       ),
@@ -53,8 +54,7 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 180.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d((2.84.meters + 8.3.meters) / 2, 6.45.meters)
-                  .translation2d,
+                Translation2d((2.84.meters + 8.3.meters) / 2, 6.45.meters).translation2d,
                 null,
                 170.degrees.inRotation2ds
               ), // In order to avoid stage
@@ -64,8 +64,7 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 160.degrees.inRotation2ds
               ), // Second leftmost centerline note
               FieldWaypoint(
-                Translation2d((2.84.meters + 8.3.meters) / 2, 6.55.meters)
-                  .translation2d,
+                Translation2d((2.84.meters + 8.3.meters) / 2, 6.55.meters).translation2d,
                 null,
                 170.degrees.inRotation2ds
               ),
@@ -75,9 +74,12 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 180.degrees.inRotation2ds
               )
             )
-          }
+          },
+          keepTrapping = true
         ),
-        WaitCommand(1.0).andThen(superstructure.groundIntakeCommand()).andThen(superstructure.prepManualSpeakerCommand(-3.degrees))
+        WaitCommand(1.0)
+          .andThen(superstructure.groundIntakeCommand())
+          .andThen(superstructure.prepManualSpeakerCommand(-3.degrees))
       ),
       superstructure.scoreCommand(),
       ParallelCommandGroup(
@@ -101,7 +103,8 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 207.89.degrees.inRotation2ds
               ),
             )
-          }
+          },
+          keepTrapping = true
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
@@ -128,7 +131,8 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 152.degrees.inRotation2ds
               ),
             )
-          }
+          },
+          keepTrapping = true
         ),
         WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),

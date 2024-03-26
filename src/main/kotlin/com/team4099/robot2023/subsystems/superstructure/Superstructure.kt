@@ -1,7 +1,6 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.hal.Clock
-import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.LEDConstants
 import com.team4099.robot2023.config.constants.WristConstants
@@ -367,7 +366,8 @@ class Superstructure(
         }
       }
       SuperstructureStates.GROUND_INTAKE -> {
-        wrist.currentRequest = Request.WristRequest.OpenLoop(Wrist.TunableWristStates.pushDownVoltage.get())
+        wrist.currentRequest =
+          Request.WristRequest.OpenLoop(Wrist.TunableWristStates.pushDownVoltage.get())
         intake.currentRequest =
           Request.IntakeRequest.OpenLoop(
             Intake.TunableIntakeStates.intakeRollerVoltage.get(),

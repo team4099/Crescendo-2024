@@ -1,5 +1,6 @@
 package com.team4099.robot2023
 
+import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.auto.AutonomousSelector
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TargetAngleCommand
@@ -42,10 +43,8 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
-import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
-import com.team4099.lib.logging.LoggedTunableValue
-import com.team4099.robot2023.config.constants.WristConstants
 import org.team4099.lib.units.derived.inDegrees
+import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -63,9 +62,10 @@ object RobotContainer {
   var setClimbAngle = -1337.degrees
   var climbAngle: () -> Angle = { setClimbAngle }
 
-  val podiumAngle =  LoggedTunableValue(
-    "Defense/PodiumShotAngle", 25.0.degrees, Pair({ it.inDegrees }, { it.degrees })
-  )
+  val podiumAngle =
+    LoggedTunableValue(
+      "Defense/PodiumShotAngle", 25.0.degrees, Pair({ it.inDegrees }, { it.degrees })
+    )
 
   init {
     if (RobotBase.isReal()) {
@@ -173,11 +173,13 @@ object RobotContainer {
           { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
           { ControlBoard.slowMode },
           drivetrain,
-          {  if (DriverStation.getAlliance().isPresent &&
-            DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-          )
-            podiumAngle.get()
-          else 180.degrees - podiumAngle.get()},
+          {
+            if (DriverStation.getAlliance().isPresent &&
+              DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+            )
+              podiumAngle.get()
+            else 180.degrees - podiumAngle.get()
+          },
         )
       )
     )

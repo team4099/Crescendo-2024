@@ -1,7 +1,6 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.logging.LoggedTunableValue
-import com.team4099.lib.math.asPose2d
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.SuperstructureConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
@@ -172,11 +171,10 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
           drivetrain.fieldTRobot.relativeTo(
             AllianceFlipUtil.apply(FieldConstants.centerSpeakerOpening)
           )
-        Logger.recordOutput("AutoAim/speakerTransformWithOdometry", speakerTransformWithOdometry.pose2d)
-        hypot(
-          speakerTransformWithOdometry.x.inMeters,
-          speakerTransformWithOdometry.y.inMeters
+        Logger.recordOutput(
+          "AutoAim/speakerTransformWithOdometry", speakerTransformWithOdometry.pose2d
         )
+        hypot(speakerTransformWithOdometry.x.inMeters, speakerTransformWithOdometry.y.inMeters)
           .meters
       } else {
         vision.trustedRobotDistanceToTarget
