@@ -1,6 +1,7 @@
-package com.team4099.robot2023.commands.drivetrain
+package com.team4099.robot2023.auto.mode
 
 import com.team4099.lib.trajectory.FieldWaypoint
+import com.team4099.robot2023.commands.drivetrain.DrivePathCommand
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
@@ -32,7 +33,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
               ),
               FieldWaypoint(
                 startingPose.translation.translation2d +
-                  Translation2d(2.inches, -2.inches).translation2d,
+                        Translation2d(2.inches, -2.inches).translation2d,
                 0.degrees.inRotation2ds,
                 (startingPose.rotation - 47.546.degrees).inRotation2ds
               )
@@ -49,7 +50,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
             listOf(
               FieldWaypoint(
                 startingPose.translation.translation2d +
-                  Translation2d(2.inches, -2.inches).translation2d,
+                        Translation2d(2.inches, -2.inches).translation2d,
                 null,
                 (startingPose.rotation - 47.546.degrees).inRotation2ds
               ),
