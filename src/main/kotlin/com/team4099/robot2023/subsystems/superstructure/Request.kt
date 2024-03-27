@@ -31,7 +31,7 @@ sealed interface Request {
     class ScoreSpeakerMid() : SuperstructureRequest
     class ScoreSpeakerHigh() : SuperstructureRequest
 
-    class ManualScoreSpeakerPrep(val wristAngle: Angle) : SuperstructureRequest
+    class ManualScoreSpeakerPrep(val wristAngle: Angle, val flywheelVelocity: AngularVelocity) : SuperstructureRequest
 
     class AutoAim() : SuperstructureRequest
 

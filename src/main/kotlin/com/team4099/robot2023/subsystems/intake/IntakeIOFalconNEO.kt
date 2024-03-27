@@ -28,8 +28,7 @@ import org.team4099.lib.units.sparkMaxAngularMechanismSensor
 import kotlin.math.absoluteValue
 
 object IntakeIOFalconNEO : IntakeIO {
-  private val rollerFalcon =
-    TalonFX(Constants.Intake.ROLLER_MOTOR_ID, "rio")
+  private val rollerFalcon = TalonFX(Constants.Intake.ROLLER_MOTOR_ID, "rio")
 
   private val rollerSensor =
     ctreAngularMechanismSensor(
@@ -56,7 +55,10 @@ object IntakeIOFalconNEO : IntakeIO {
 
     var rollerFalconConfiguration = TalonFXConfiguration()
 
-    rollerFalconConfiguration.CurrentLimits.StatorCurrentLimit = IntakeConstants.ROLLER_CURRENT_LIMIT.inAmperes
+    rollerFalconConfiguration.CurrentLimits.StatorCurrentLimit =
+      IntakeConstants.ROLLER_CURRENT_LIMIT.inAmperes
+    rollerFalconConfiguration.CurrentLimits.StatorCurrentLimit =
+      IntakeConstants.ROLLER_CURRENT_LIMIT.inAmperes
     rollerFalconConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive
     rollerFalconConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast
 
@@ -113,6 +115,8 @@ object IntakeIOFalconNEO : IntakeIO {
   }
 
   override fun updateInputs(inputs: IntakeIO.IntakeIOInputs) {
+    updateSignals()
+
     inputs.rollerVelocity = rollerSensor.velocity
     inputs.rollerAppliedVoltage = rollerAppliedVoltageSignal.value.volts
     inputs.rollerStatorCurrent = rollerStatorCurrentSignal.value.amps
@@ -139,11 +143,7 @@ object IntakeIOFalconNEO : IntakeIO {
     rollerVoltage: ElectricalPotential,
     centerWheelVoltage: ElectricalPotential
   ) {
-    rollerFalcon.setControl(
-      VoltageOut(
-        rollerVoltage.inVolts
-      )
-    )
+    rollerFalcon.setControl(VoltageOut(rollerVoltage.inVolts))
 
     centerWheelSparkMax.setVoltage(
       clamp(

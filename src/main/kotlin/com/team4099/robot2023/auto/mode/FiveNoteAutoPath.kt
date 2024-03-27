@@ -12,6 +12,8 @@ import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
+import org.team4099.lib.units.derived.rotations
+import org.team4099.lib.units.perMinute
 
 class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstructure) :
   SequentialCommandGroup() {
@@ -19,7 +21,7 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
     addRequirements(drivetrain)
     addCommands(
       superstructure.prepSpeakerLowCommand(),
-      superstructure.scoreCommand(),
+      WaitCommand(0.15),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
@@ -39,10 +41,9 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           },
           useLowerTolerance = true
         ),
-        WaitCommand(0.25).andThen(superstructure.groundIntakeCommand())
+        superstructure.scoreCommand().andThen(WaitCommand(0.1)).andThen(superstructure.groundIntakeCommand())
       ),
-      superstructure.prepManualSpeakerCommand(-3.degrees),
-      superstructure.scoreCommand().withTimeout(0.5),
+      superstructure.prepManualSpeakerCommand(-4.degrees, 3000.rotations.perMinute),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
@@ -74,14 +75,13 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 180.degrees.inRotation2ds
               )
             )
-          },
-          useLowerTolerance = true
+          }
         ),
-        WaitCommand(1.0)
+        superstructure.scoreCommand().withTimeout(0.5)
+          .andThen(WaitCommand(1.0))
           .andThen(superstructure.groundIntakeCommand())
-          .andThen(superstructure.prepManualSpeakerCommand(-3.degrees))
+          .andThen(superstructure.prepManualSpeakerCommand(-3.degrees, 3000.rotations.perMinute))
       ),
-      superstructure.scoreCommand(),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
@@ -98,25 +98,22 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 200.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(2.75.meters, 6.85.meters).translation2d,
+                Translation2d(2.8.meters, (6.85 + 0.1).meters).translation2d,
                 null,
                 207.89.degrees.inRotation2ds
               ),
             )
-          },
-          useLowerTolerance = true
+          }
         ),
-        WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
+        superstructure.scoreCommand().andThen(WaitCommand(0.5)).andThen(superstructure.groundIntakeCommand())
       ),
-      superstructure.prepManualSpeakerCommand(-2.degrees),
-      superstructure.scoreCommand(),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
           {
             listOf(
               FieldWaypoint(
-                Translation2d(2.75.meters, 6.85.meters).translation2d,
+                Translation2d(2.8.meters, (6.85 + 0.1).meters).translation2d,
                 null,
                 207.degrees.inRotation2ds
               ),
@@ -126,17 +123,16 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 160.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(2.65.meters, 4.26.meters).translation2d,
+                Translation2d(2.7.meters, 4.26.meters).translation2d,
                 null,
                 152.degrees.inRotation2ds
               ),
             )
-          },
-          useLowerTolerance = true
+          }
         ),
-        WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
+        superstructure.prepManualSpeakerCommand(-2.25.degrees, 3000.rotations.perMinute).andThen(superstructure.scoreCommand()).andThen(WaitCommand(0.5)).andThen(superstructure.groundIntakeCommand())
       ),
-      superstructure.prepManualSpeakerCommand(-2.degrees),
+      superstructure.prepManualSpeakerCommand(-2.degrees, 3000.rotations.perMinute),
       superstructure.scoreCommand().withTimeout(0.5)
     )
   }

@@ -213,7 +213,7 @@ private constructor(
     if (useLowerTolerance) {
       swerveDriveController.setTolerance(Pose2d(3.inches, 3.inches, 1.5.degrees).pose2d)
     } else {
-      swerveDriveController.setTolerance(Pose2d(6.inches, 6.inches, 3.degrees).pose2d)
+      swerveDriveController.setTolerance(Pose2d(6.inches, 6.inches, 6.degrees).pose2d)
     }
 
     // trajectory generation!

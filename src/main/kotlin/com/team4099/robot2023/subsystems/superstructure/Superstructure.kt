@@ -2,6 +2,7 @@ package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.hal.Clock
 import com.team4099.robot2023.config.constants.FieldConstants
+import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.config.constants.LEDConstants
 import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
@@ -24,6 +25,7 @@ import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Rotation3d
 import org.team4099.lib.geometry.Transform3d
 import org.team4099.lib.geometry.Translation3d
+import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.inSeconds
@@ -33,8 +35,10 @@ import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inVolts
+import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inRotationsPerMinute
+import org.team4099.lib.units.perMinute
 
 class Superstructure(
   private val intake: Intake,
@@ -53,12 +57,14 @@ class Superstructure(
   var aimer = AutoAim(drivetrain, vision)
 
   private var wristAngleToShootAt = 0.0.degrees
+  private var flywheelToShootAt = 0.0.rotations.perMinute
 
   var currentRequest: Request.SuperstructureRequest = Request.SuperstructureRequest.Idle()
     set(value) {
       when (value) {
         is Request.SuperstructureRequest.ManualScoreSpeakerPrep -> {
           wristAngleToShootAt = value.wristAngle
+          flywheelToShootAt = value.flywheelVelocity
         }
       }
       field = value
@@ -594,7 +600,7 @@ class Superstructure(
       SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP -> {
         flywheel.currentRequest =
           Request.FlywheelRequest.TargetingVelocity(
-            Flywheel.TunableFlywheelStates.speakerVelocity.get()
+            flywheelToShootAt
           )
         wrist.currentRequest = Request.WristRequest.TargetingPosition(wristAngleToShootAt)
         if (wrist.isAtTargetedPosition &&
@@ -803,9 +809,9 @@ class Superstructure(
     return returnCommand
   }
 
-  fun prepManualSpeakerCommand(wristAngle: Angle): Command {
+  fun prepManualSpeakerCommand(wristAngle: Angle, flywheelVelocity: AngularVelocity = FlywheelConstants.SPEAKER_VELOCITY): Command {
     val returnCommand =
-      run { currentRequest = Request.SuperstructureRequest.ManualScoreSpeakerPrep(wristAngle) }
+      run { currentRequest = Request.SuperstructureRequest.ManualScoreSpeakerPrep(wristAngle, flywheelVelocity) }
         .until {
           isAtRequestedState && currentState == SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP
         }
