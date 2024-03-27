@@ -20,6 +20,7 @@ import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
+import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inKilogramsMeterSquared
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
@@ -40,6 +41,8 @@ object WristIOSim : WristIO {
       true,
       0.0
     )
+
+  var wristTargetPosition = -35.0.degrees
 
   init {
     MotorChecker.add(
@@ -85,7 +88,7 @@ object WristIOSim : WristIO {
   override fun updateInputs(inputs: WristIO.WristIOInputs) {
     wristSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
 
-    inputs.wristPosition = wristSim.angleRads.radians
+    inputs.wristPosition = wristTargetPosition
     inputs.wristVelocity = wristSim.velocityRadPerSec.radians.perSecond
     inputs.wristSupplyCurrent = 0.amps
     inputs.wristAppliedVoltage = appliedVoltage
@@ -112,6 +115,7 @@ object WristIOSim : WristIO {
     feedforward: ElectricalPotential,
     travelingUp: Boolean
   ) {
+    wristTargetPosition = position
     val feedback = wristController.calculate(wristSim.angleRads.radians, position)
     setWristVoltage(feedback + feedforward)
   }

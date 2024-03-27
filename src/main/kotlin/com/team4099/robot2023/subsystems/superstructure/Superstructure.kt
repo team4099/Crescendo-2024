@@ -742,8 +742,8 @@ class Superstructure(
     if (!(checkAtRequestedStateNextLoopCycle)) {
       isAtRequestedState =
         elevator.isAtTargetedPosition &&
-        flywheel.isAtTargetedVelocity &&
-        wrist.isAtTargetedPosition
+                flywheel.isAtTargetedVelocity &&
+                wrist.isAtTargetedPosition
     } else {
       checkAtRequestedStateNextLoopCycle = false
     }

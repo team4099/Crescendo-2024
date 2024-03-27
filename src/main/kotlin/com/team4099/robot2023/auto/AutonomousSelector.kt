@@ -9,6 +9,7 @@ import com.team4099.robot2023.auto.mode.FourNoteRightCenterLine
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveCenterSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveFromAmpSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveFromSourceSubwooferAutoPath
+import com.team4099.robot2023.auto.mode.SixNoteAutoPath
 import com.team4099.robot2023.auto.mode.TestAutoPath
 import com.team4099.robot2023.auto.mode.ThreeNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromAmpAutoPath
@@ -86,6 +87,15 @@ object AutonomousSelector {
       "Preload + Leave from Center Side of Subwoofer",
       AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER
     )
+
+    autonomousModeChooser.addOption(
+      "Six Note Path",
+      AutonomousMode.SIX_NOTE_AUTO_PATH
+    )
+    autonomousModeChooser.addOption(
+      "Six Note Path with Pickup",
+      AutonomousMode.SIX_NOTE_WITH_PICKUP_PATH
+    )
     autonomousModeChooser.addOption("Test Auto Path", AutonomousMode.TEST_AUTO_PATH)
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
@@ -126,6 +136,15 @@ object AutonomousSelector {
             )
           })
           .andThen(TestAutoPath(drivetrain, superstructure))
+      AutonomousMode.SIX_NOTE_AUTO_PATH ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            drivetrain.tempZeroGyroYaw(TestAutoPath.startingPose.rotation)
+            drivetrain.resetFieldFrameEstimator(
+              AllianceFlipUtil.apply(TestAutoPath.startingPose)
+            )
+          })
+          .andThen(SixNoteAutoPath(drivetrain, superstructure))
       AutonomousMode.FOUR_NOTE_AUTO_PATH ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
@@ -263,6 +282,8 @@ object AutonomousSelector {
     PRELOAD_AND_LEAVE_LEFT_SUBWOOFER,
     PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER,
     PRELOAD_AND_LEAVE_CENTER_SUBWOOFER,
-    FIVE_NOTE_AUTO_PATH
+    FIVE_NOTE_AUTO_PATH,
+    SIX_NOTE_AUTO_PATH,
+    SIX_NOTE_WITH_PICKUP_PATH
   }
 }

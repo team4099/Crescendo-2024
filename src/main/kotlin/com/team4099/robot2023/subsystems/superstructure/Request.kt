@@ -33,6 +33,7 @@ sealed interface Request {
 
     class ManualScoreSpeakerPrep(val wristAngle: Angle, val flywheelVelocity: AngularVelocity) : SuperstructureRequest
 
+
     class AutoAim() : SuperstructureRequest
 
     class PrepTrap() : SuperstructureRequest
