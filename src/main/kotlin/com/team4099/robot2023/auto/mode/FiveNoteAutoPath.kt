@@ -42,8 +42,8 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           useLowerTolerance = true
         ),
         superstructure.scoreCommand().andThen(WaitCommand(0.1)).andThen(superstructure.groundIntakeCommand())
-      ),
-      superstructure.prepManualSpeakerCommand(-4.degrees, 3000.rotations.perMinute),
+     ),
+     superstructure.prepManualSpeakerCommand(-3.75.degrees, 3000.rotations.perMinute),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
@@ -75,13 +75,15 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 180.degrees.inRotation2ds
               )
             )
-          }
+          },
+          useLowerTolerance = true
         ),
         superstructure.scoreCommand().withTimeout(0.5)
           .andThen(WaitCommand(1.0))
           .andThen(superstructure.groundIntakeCommand())
           .andThen(superstructure.prepManualSpeakerCommand(-3.degrees, 3000.rotations.perMinute))
       ),
+      superstructure.scoreCommand(),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
@@ -103,9 +105,10 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 207.89.degrees.inRotation2ds
               ),
             )
-          }
+          },
+          useLowerTolerance = true
         ),
-        superstructure.scoreCommand().andThen(WaitCommand(0.5)).andThen(superstructure.groundIntakeCommand())
+        WaitCommand(0.2).andThen(superstructure.groundIntakeCommand())
       ),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -118,19 +121,20 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 207.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(2.3.meters, 4.6.meters).translation2d,
+                Translation2d(2.25.meters, 4.9.meters).translation2d,
                 null,
-                160.degrees.inRotation2ds
+                158.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(2.7.meters, 4.26.meters).translation2d,
+                Translation2d(2.75.meters, 4.15.meters).translation2d,
                 null,
                 152.degrees.inRotation2ds
               ),
             )
-          }
+          },
+          useLowerTolerance = true
         ),
-        superstructure.prepManualSpeakerCommand(-2.25.degrees, 3000.rotations.perMinute).andThen(superstructure.scoreCommand()).andThen(WaitCommand(0.5)).andThen(superstructure.groundIntakeCommand())
+        superstructure.prepManualSpeakerCommand(-2.25.degrees, 3000.rotations.perMinute).andThen(superstructure.scoreCommand()).andThen(WaitCommand(0.25)).andThen(superstructure.groundIntakeCommand())
       ),
       superstructure.prepManualSpeakerCommand(-2.degrees, 3000.rotations.perMinute),
       superstructure.scoreCommand().withTimeout(0.5)
