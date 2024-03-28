@@ -120,11 +120,6 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 207.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(1.7.meters, 5.50.meters).translation2d,
-                null,
-                180.degrees.inRotation2ds
-              ),
-              FieldWaypoint(
                 Translation2d(2.25.meters, 4.9.meters).translation2d,
                 null,
                 158.degrees.inRotation2ds
