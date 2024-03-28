@@ -13,7 +13,7 @@ import com.team4099.robot2023.auto.mode.TestAutoPath
 import com.team4099.robot2023.auto.mode.ThreeNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromSourceAutoPath
-import com.team4099.robot2023.commands.drivetrain.ThreeNoteAndPickupCenterlineSourceAutoPath
+import com.team4099.robot2023.auto.mode.ThreeNoteAndPickupCenterlineSourceAutoPath
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.util.AllianceFlipUtil
