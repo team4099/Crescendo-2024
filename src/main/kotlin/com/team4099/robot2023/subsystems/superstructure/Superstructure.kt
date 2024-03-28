@@ -609,6 +609,12 @@ class Superstructure(
           nextState = SuperstructureStates.SCORE_SPEAKER
           shootStartTime = Clock.fpgaTime
         }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+        }
       }
       SuperstructureStates.SCORE_TRAP_PREP -> {
         wrist.currentRequest =
@@ -763,8 +769,8 @@ class Superstructure(
 
   fun groundIntakeCommand(): Command {
     val returnCommand =
-      runOnce { currentRequest = Request.SuperstructureRequest.GroundIntake() }.until {
-        currentState == SuperstructureStates.GROUND_INTAKE_PREP
+      run { currentRequest = Request.SuperstructureRequest.GroundIntake() }.until {
+        feeder.hasNote
       }
 
     returnCommand.name = "GroundIntakeCommand"
