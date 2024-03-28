@@ -25,7 +25,7 @@ object LedIOCandle : LedIO {
       ledController.clearAnimation(0)
       ledController.setLEDs(state.r, state.g, state.b)
     } else {
-      ledController.animate(state.animation)
+      ledController.animate(state.animation, 0)
       ledController.setLEDs(state.r, state.g, state.b)
     }
   }

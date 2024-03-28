@@ -433,10 +433,9 @@ class Superstructure(
             nextState = SuperstructureStates.IDLE
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
-            if (wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity) {
-              nextState = SuperstructureStates.SCORE_SPEAKER
-              shootStartTime = Clock.fpgaTime
-            }
+            nextState = SuperstructureStates.SCORE_SPEAKER
+            shootStartTime = Clock.fpgaTime
+
           }
         }
       }

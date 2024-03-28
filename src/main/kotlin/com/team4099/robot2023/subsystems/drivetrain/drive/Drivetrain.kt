@@ -90,7 +90,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   var fieldVelocity = Velocity2d(0.0.meters.perSecond, 0.0.meters.perSecond)
     private set
 
-  private var robotVelocity = Velocity2d(0.0.meters.perSecond, 0.0.meters.perSecond)
+  var robotVelocity = Velocity2d(0.0.meters.perSecond, 0.0.meters.perSecond)
 
   private var omegaVelocity = 0.0.radians.perSecond
 

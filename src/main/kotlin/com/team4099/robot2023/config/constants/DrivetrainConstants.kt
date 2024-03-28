@@ -133,7 +133,7 @@ object DrivetrainConstants {
     val AUTO_THETA_PID_KD =
       (0.2.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
-    val TELEOP_ALIGN_PID_KP = 4.degrees.perSecond / 1.degrees
+    val TELEOP_ALIGN_PID_KP = 3.6.degrees.perSecond / 1.degrees
     val TELEOP_ALIGN_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val TELEOP_ALIGN_PID_KD =
       (0.2.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond

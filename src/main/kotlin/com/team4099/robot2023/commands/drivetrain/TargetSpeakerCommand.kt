@@ -15,6 +15,7 @@ import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.inMeters
+import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -28,6 +29,7 @@ import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.inDegreesPerSecond
 import org.team4099.lib.units.perSecond
 import kotlin.math.PI
+import kotlin.math.absoluteValue
 import kotlin.math.atan2
 
 class TargetSpeakerCommand(
@@ -129,7 +131,7 @@ class TargetSpeakerCommand(
     val odomTSpeaker = drivetrain.odomTSpeaker
     val robotTSpeaker = odomTRobot.inverse().transformBy(odomTSpeaker)
 
-    desiredAngle = atan2(robotTSpeaker.y.inMeters, robotTSpeaker.x.inMeters).radians
+    desiredAngle = atan2(robotTSpeaker.y.inMeters - (drivetrain.robotVelocity.y * robotTSpeaker.translation.magnitude.absoluteValue / 5).value, robotTSpeaker.x.inMeters - (drivetrain.robotVelocity.x * robotTSpeaker.translation.magnitude.absoluteValue / 5).value).radians
     val filteredDesiredAngle = angleMedianFilter.calculate(desiredAngle.inDegrees)
 
     val thetaFeedback =

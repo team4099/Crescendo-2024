@@ -10,6 +10,7 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import org.littletonrobotics.junction.Logger
+import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.Length
@@ -22,9 +23,12 @@ import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
+import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.inRotationsPerMinute
 import org.team4099.lib.units.perMinute
+import kotlin.math.absoluteValue
+import kotlin.math.atan2
 import kotlin.math.hypot
 
 class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
@@ -177,7 +181,8 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
         hypot(speakerTransformWithOdometry.x.inMeters, speakerTransformWithOdometry.y.inMeters)
           .meters
       } else {
-        vision.trustedRobotDistanceToTarget
+        Translation2d(vision.robotTSpeaker.y - (drivetrain.robotVelocity.y * vision.robotTSpeaker.norm.absoluteValue / 5).value.meters, vision.robotTSpeaker.x - (drivetrain.robotVelocity.x * vision.robotTSpeaker.norm.absoluteValue / 5).value.meters).magnitude.meters
+
       }
     Logger.recordOutput("AutoAim/currentDistanceInches", distance.inInches)
     return distance

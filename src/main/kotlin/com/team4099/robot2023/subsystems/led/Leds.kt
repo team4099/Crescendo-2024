@@ -34,7 +34,7 @@ class Leds(val io: LedIO) {
         state = LEDConstants.CandleState.NOTHING
       }
     } else if (hasNote) {
-      if (subsystemsAtPosition) {
+      if (subsystemsAtPosition && !isIdle) {
         state = LEDConstants.CandleState.CAN_SHOOT
       } else {
         state = LEDConstants.CandleState.HAS_NOTE

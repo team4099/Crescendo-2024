@@ -28,6 +28,6 @@ object LEDConstants {
 
     // Green
 
-    CAN_SHOOT(StrobeAnimation(0, 255, 0, 0, 0.25, LED_COUNT), 0, 0, 0)
+    CAN_SHOOT( null, 0, 255, 0)
   }
 }

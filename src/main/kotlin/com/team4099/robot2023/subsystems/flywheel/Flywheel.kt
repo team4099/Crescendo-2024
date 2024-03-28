@@ -199,7 +199,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         )
     }
 
-    io.configPID(kP.get(), kI.get(), kD.get())
+    io.configPID(kP.get(), kI.get(), kD.get(), flywheelkV.get())
   }
   override fun periodic() {
     io.updateInputs(inputs)
@@ -229,8 +229,8 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       Logger.recordOutput("Flywheel/FlywheelLastVoltage", lastRightFlywheelVoltage.inVolts)
     }
 
-    if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
-      io.configPID(kP.get(), kI.get(), kD.get())
+    if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged() || flywheelkV.hasChanged()) {
+      io.configPID(kP.get(), kI.get(), kD.get(), flywheelkV.get())
     }
 
     if (flywheelkA.hasChanged() || flywheelkV.hasChanged() || flywheelkS.hasChanged()) {
@@ -250,7 +250,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         nextState = fromRequestToState(currentRequest)
       }
       Companion.FlywheelStates.TARGETING_VELOCITY -> {
-        setFlywheelVelocity(flywheelRightTargetVelocity)
+        setFlywheelVelocity(flywheelLeftTargetVelocity)
         lastFlywheelRunTime = Clock.fpgaTime
         nextState = fromRequestToState(currentRequest)
       }
