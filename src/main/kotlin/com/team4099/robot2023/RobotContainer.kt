@@ -46,6 +46,7 @@ import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
+import com.team4099.robot2023.commands.drivetrain.TargetNoteCommand
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -61,7 +62,9 @@ object RobotContainer {
   val rumbleState
     get() = feeder.rumbleTrigger
   var setClimbAngle = -1337.degrees
+  var setAmpAngle = 270.0.degrees
   var climbAngle: () -> Angle = { setClimbAngle }
+  var ampAngle: () -> Angle = { setAmpAngle }
 
   val podiumAngle =
     LoggedTunableValue(
@@ -161,7 +164,18 @@ object RobotContainer {
   fun mapTeleopControls() {
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain))
-    ControlBoard.intake.whileTrue(superstructure.groundIntakeCommand())
+    ControlBoard.intake.whileTrue(ParallelCommandGroup(superstructure.groundIntakeCommand(),
+      TargetNoteCommand(
+        driver = Ryan(),
+        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { ControlBoard.slowMode },
+        drivetrain,
+        limelight
+      )
+    ))
+
     ControlBoard.prepAmp.whileTrue(superstructure.prepAmpCommand())
 
     ControlBoard.prepHighProtected.whileTrue(
@@ -195,6 +209,14 @@ object RobotContainer {
     ControlBoard.passingShot.whileTrue(superstructure.passingShotCommand())
 
     ControlBoard.targetAmp.whileTrue(
+      runOnce({
+        val currentRotation = drivetrain.odomTRobot.rotation
+        setAmpAngle = if (currentRotation > 0.0.degrees && currentRotation < 180.degrees ) {
+          90.degrees
+        } else {
+          270.degrees
+        }
+      }).andThen(
       TargetAngleCommand(
         driver = Ryan(),
         { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
@@ -202,8 +224,8 @@ object RobotContainer {
         { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain,
-        { 270.0.degrees }
-      )
+        ampAngle
+      ))
     )
 
     ControlBoard.climbAlignFar.whileTrue(

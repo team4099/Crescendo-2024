@@ -1,12 +1,22 @@
 package com.team4099.robot2023.subsystems.limelight
 
+import com.team4099.lib.hal.Clock
+import com.team4099.lib.logging.LoggedTunableNumber
+import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.lib.logging.TunableNumber
 import com.team4099.lib.vision.TargetCorner
-import com.team4099.lib.vision.TimestampedVisionUpdate
+import com.team4099.robot2023.config.constants.Constants
+import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.VisionConstants
+import com.team4099.robot2023.util.FMSData
 import com.team4099.robot2023.util.LimelightReading
+import com.team4099.robot2023.util.PoseEstimator
+import com.team4099.robot2023.util.closerToInTranslation
+import com.team4099.robot2023.util.findClosestPose
 import com.team4099.robot2023.util.rotateBy
 import com.team4099.robot2023.util.toPose3d
+import com.team4099.robot2023.util.toTransform3d
+import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
@@ -18,29 +28,109 @@ import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.geometry.Translation3d
 import org.team4099.lib.geometry.Translation3dWPILIB
 import org.team4099.lib.units.base.Length
+import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inMeters
+import org.team4099.lib.units.base.inMilliseconds
+import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
+import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
+import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.tan
 import java.util.function.Consumer
 import kotlin.math.hypot
+import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.math.tan
 
 class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
   val inputs = LimelightVisionIO.LimelightVisionIOInputs()
 
-  var poseSupplier: () -> Pose2d = { Pose2d() }
-  var visionConsumer: Consumer<List<TimestampedVisionUpdate>> = Consumer {}
-
   // i think we need this for camera project to irl coordinates
   val vpw = (2.0 * (VisionConstants.Limelight.HORIZONTAL_FOV / 2).tan)
   val vph = (2.0 * (VisionConstants.Limelight.VERITCAL_FOV / 2).tan)
 
-  private val xyStdDevCoefficient = TunableNumber("LimelightVision/xystdev", 0.05)
-  private val thetaStdDev = TunableNumber("LimelightVision/thetaStdDev", 0.75)
+  var limelightState: LimelightStates = LimelightStates.UNINITIALIZED
+
+  var targetGamePiecePose: Pose3d? = null
+
+  var targetGamePieceTx: Angle? = null
+
+  var poseSupplier: () -> Pose2d = { Pose2d() }
+
+  var lastSeen: Time = -1337.seconds
+
+  val visibleGamePieces = mutableListOf<Pose3d>()
+
+  lateinit var visibleGamePiecesTx: List<Angle>
+
+  enum class LimelightStates {
+    UNINITIALIZED,
+    IDLE,
+    TARGETING_GAME_PIECE
+  }
+  init {
+  }
+
+  override fun periodic() {
+    val startTime = Clock.realTimestamp
+    io.updateInputs(inputs)
+    Logger.processInputs("LimelightVision", inputs)
+
+    var currentPose: Pose2d = poseSupplier.invoke()
+
+   if (limelightState == LimelightStates.TARGETING_GAME_PIECE) {
+      if (inputs.validReading) {
+        for (target in inputs.gamePieceTargets) {
+          visibleGamePieces.add(
+            solveTargetPoseFromAngle(
+              currentPose,
+              target,
+              FieldConstants.noteThickness /2
+            )
+          )
+        }
+
+        visibleGamePiecesTx = inputs.gamePieceTargets.map({x -> x.tx})
+        if (!visibleGamePieces.isEmpty()) {
+          targetGamePiecePose = currentPose.toPose3d().findClosestPose(*visibleGamePieces.toTypedArray())
+          targetGamePieceTx = visibleGamePiecesTx[visibleGamePieces.indexOf(targetGamePiecePose)]
+          lastSeen = Clock.fpgaTime
+        } else {
+          targetGamePieceTx = null
+        }
+      }
+    }
+
+    Logger.recordOutput(
+        "LimelightVision/RawLimelightReadingsTx",
+        inputs.gamePieceTargets.map { it.tx.inDegrees }.toDoubleArray()
+      )
+
+    Logger.recordOutput(
+        "LimelightVision/RawLimelightReadingsTy",
+        inputs.gamePieceTargets.map { it.ty.inDegrees }.toDoubleArray()
+      )
+
+    Logger.recordOutput(
+        "LimelightVision/robotVisiblePieces",
+        *visibleGamePieces.map { it.pose3d }.toTypedArray()
+      )
+
+    Logger.recordOutput(
+        "LimelightVision/cameraFieldRelativePose",
+        currentPose.toPose3d().transformBy(VisionConstants.Limelight.LL_TRANSFORM).pose3d
+      )
+
+    Logger.recordOutput(
+        "LoggedRobot/Subsystems/LimelightLoopTimeMS",
+        (Clock.realTimestamp - startTime).inMilliseconds
+      )
+    Logger.recordOutput("LimelightVision/LimeLightState", limelightState.name)
+  }
 
   fun solveTargetPoseFromAngle(
     currentPose: Pose2d,
@@ -60,29 +150,23 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
         distanceToTarget.inMeters,
         Rotation3dWPILIB(0.0, -target.ty.inRadians, -target.tx.inRadians)
       )
-
     Logger.recordOutput("LimelightVision/distanceToTarget", distanceToTarget.inMeters)
 
-    // figure out which way this target is facing using yaw of robot and yaw of camera
     val targetRotation =
       Rotation3d(
         0.0.degrees,
         0.0.degrees,
-        if (currentPose.rotation.rotateBy(VisionConstants.Limelight.LL_TRANSFORM.rotation.z) in
-          0.degrees..180.degrees
-        ) {
-          // we are looking at a red node which is facing towards 180 degrees
-          180.0.degrees
-        } else {
-          // we are looking at a blue node which is facing towards 0 degrees
-          0.degrees
-        }
+        0.0.degrees
       )
 
     return currentPose
       .toPose3d()
       .transformBy(VisionConstants.Limelight.LL_TRANSFORM)
-      .transformBy(Transform3d(Translation3d(targetTranslation), targetRotation))
+      .transformBy(
+        Transform3d(
+          Translation3d(targetTranslation), Rotation3d(0.degrees, 0.degrees, 0.0.degrees)
+        )
+      )
   }
 
   fun xyDistanceFromTarget(target: LimelightReading, targetHeight: Length): Length {
@@ -107,6 +191,11 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
     return targetToCameraHeight / tan(angleToGoal)
   }
 
+  fun angleYawFromTarget(currentPose: Pose2d, targetPose: Pose3d): Angle {
+    val robotToTarget = targetPose.toPose2d().relativeTo(currentPose)
+    return Math.asin((robotToTarget.y.inMeters / robotToTarget.translation.magnitude)).radians
+  }
+
   // based off of angles
   fun solveTargetPositionFromAngularOutput(
     tx: Angle,
@@ -124,6 +213,7 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
 
     val xDistanceFromTargetToCamera =
       (targetHeight - cameraTransform.z) / verticalAngleFromCamera.tan
+
     val yDistanceFromTargetToCamera = xDistanceFromTargetToCamera * horizontalAngleFromCamera.tan
 
     val translationFromTargetToCamera =
@@ -151,7 +241,7 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
 
     return Pose3d(
       currentPose.toPose3d().transformBy(cameraTransform).translation +
-        translationFromTargetToCamera,
+              translationFromTargetToCamera,
       targetRotation
     )
   }
@@ -164,9 +254,9 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
     // right but we want pos x to be right and pos y to be up
     return CoordinatePair(
       1 / (VisionConstants.Limelight.RES_WIDTH / 2) *
-        (pixelCoords.x - VisionConstants.Limelight.RES_WIDTH - 0.5),
+              (pixelCoords.x - VisionConstants.Limelight.RES_WIDTH - 0.5),
       1 / (VisionConstants.Limelight.RES_HEIGHT / 2) *
-        (pixelCoords.x - VisionConstants.Limelight.RES_HEIGHT - 0.5)
+              (pixelCoords.x - VisionConstants.Limelight.RES_HEIGHT - 0.5)
     )
   }
 
@@ -215,11 +305,4 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
     }
   }
 
-  fun setDataInterfaces(
-    poseSupplier: () -> Pose2d,
-    visionConsumer: Consumer<List<TimestampedVisionUpdate>>
-  ) {
-    this.poseSupplier = poseSupplier
-    this.visionConsumer = visionConsumer
-  }
 }

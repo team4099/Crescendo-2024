@@ -182,7 +182,6 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
           .meters
       } else {
         Translation2d(vision.robotTSpeaker.y - (drivetrain.robotVelocity.y * vision.robotTSpeaker.norm.absoluteValue / 5).value.meters, vision.robotTSpeaker.x - (drivetrain.robotVelocity.x * vision.robotTSpeaker.norm.absoluteValue / 5).value.meters).magnitude.meters
-
       }
     Logger.recordOutput("AutoAim/currentDistanceInches", distance.inInches)
     return distance

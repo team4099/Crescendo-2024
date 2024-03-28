@@ -79,6 +79,21 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         WristConstants.AMP_SCORE_ANGLE,
         Pair({ it.inDegrees }, { it.degrees })
       )
+
+    val fastAmpAngle =
+      LoggedTunableValue(
+        "Wrist/fastAmpAngle",
+        WristConstants.FAST_AMP_ANGLE,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
+
+    val fastAmpScoreAngle =
+      LoggedTunableValue(
+        "Wrist/ampScoreAngle",
+        WristConstants.AMP_SCORE_ANGLE,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
+
     val passingShotAngle =
       LoggedTunableValue(
         "Wrist/passingShotAngle",

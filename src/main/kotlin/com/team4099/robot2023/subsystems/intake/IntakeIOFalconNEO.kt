@@ -59,6 +59,8 @@ object IntakeIOFalconNEO : IntakeIO {
       IntakeConstants.ROLLER_CURRENT_LIMIT.inAmperes
     rollerFalconConfiguration.CurrentLimits.StatorCurrentLimit =
       IntakeConstants.ROLLER_CURRENT_LIMIT.inAmperes
+    rollerFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true
+    rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
     rollerFalconConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive
     rollerFalconConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast
 
