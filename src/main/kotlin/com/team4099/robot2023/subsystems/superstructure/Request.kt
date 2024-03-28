@@ -1,5 +1,6 @@
 package com.team4099.robot2023.subsystems.superstructure
 
+import com.team4099.robot2023.config.constants.WristConstants
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearVelocity
@@ -31,7 +32,7 @@ sealed interface Request {
     class ScoreSpeakerMid() : SuperstructureRequest
     class ScoreSpeakerHigh() : SuperstructureRequest
 
-    class ManualScoreSpeakerPrep(val wristAngle: Angle, val flywheelVelocity: AngularVelocity) : SuperstructureRequest
+    class ManualScoreSpeakerPrep(val wristAngle: Angle, val flywheelVelocity: AngularVelocity, val wristTolerance: Angle) : SuperstructureRequest
 
 
     class AutoAim() : SuperstructureRequest
@@ -88,7 +89,7 @@ sealed interface Request {
   }
   sealed interface WristRequest : Request {
     class OpenLoop(val wristVoltage: ElectricalPotential) : WristRequest
-    class TargetingPosition(val wristPosition: Angle) : WristRequest
+    class TargetingPosition(val wristPosition: Angle, val wristTolerance: Angle = WristConstants.WRIST_TOLERANCE) : WristRequest
     class Zero() : WristRequest
   }
   sealed interface FlywheelRequest : Request {

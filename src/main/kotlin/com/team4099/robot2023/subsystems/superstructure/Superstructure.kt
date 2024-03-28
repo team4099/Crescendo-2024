@@ -275,17 +275,10 @@ class Superstructure(
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.idleVoltage.get())
 
-        if (DriverStation.isAutonomous()) {
-          flywheel.currentRequest =
-            Request.FlywheelRequest.TargetingVelocity(
-              Flywheel.TunableFlywheelStates.speakerVelocity.get()
-            )
-        } else {
-          flywheel.currentRequest =
-            Request.FlywheelRequest.TargetingVelocity(
-              Flywheel.TunableFlywheelStates.idleVelocity.get()
-            )
-        }
+        flywheel.currentRequest =
+          Request.FlywheelRequest.TargetingVelocity(
+            Flywheel.TunableFlywheelStates.idleVelocity.get()
+          )
 
         if (DriverStation.isAutonomous()) {
           wrist.currentRequest =
@@ -793,7 +786,7 @@ class Superstructure(
   fun groundIntakeCommand(): Command {
     val returnCommand =
       run { currentRequest = Request.SuperstructureRequest.GroundIntake() }.until {
-        feeder.hasNote
+        currentState == SuperstructureStates.GROUND_INTAKE_PREP
       }
 
     returnCommand.name = "GroundIntakeCommand"
@@ -837,9 +830,13 @@ class Superstructure(
     return returnCommand
   }
 
-  fun prepManualSpeakerCommand(wristAngle: Angle, flywheelVelocity: AngularVelocity = FlywheelConstants.SPEAKER_VELOCITY): Command {
+  fun prepManualSpeakerCommand(
+    wristAngle: Angle,
+    flywheelVelocity: AngularVelocity = FlywheelConstants.SPEAKER_VELOCITY,
+    wristTolerance: Angle = WristConstants.WRIST_TOLERANCE
+  ): Command {
     val returnCommand =
-      run { currentRequest = Request.SuperstructureRequest.ManualScoreSpeakerPrep(wristAngle, flywheelVelocity) }
+      run { currentRequest = Request.SuperstructureRequest.ManualScoreSpeakerPrep(wristAngle, flywheelVelocity, wristTolerance) }
         .until {
           isAtRequestedState && currentState == SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP
         }

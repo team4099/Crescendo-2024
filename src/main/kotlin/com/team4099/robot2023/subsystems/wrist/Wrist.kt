@@ -16,6 +16,7 @@ import org.team4099.lib.controller.TrapezoidProfile
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.seconds
+import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
@@ -171,6 +172,8 @@ class Wrist(val io: WristIO) : SubsystemBase() {
   private val testAngleDown =
     LoggedTunableValue("Wrist/testAngleDown", Pair({ it.inDegrees }, { it.degrees }))
 
+  private var wristToleranceRequested: Angle = WristConstants.WRIST_TOLERANCE
+
   var currentRequest: Request.WristRequest = Request.WristRequest.Zero()
     set(value) {
       when (value) {
@@ -179,6 +182,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         }
         is Request.WristRequest.TargetingPosition -> {
           wristPositionTarget = value.wristPosition
+          wristToleranceRequested = value.wristTolerance
         }
         else -> {}
       }
@@ -403,8 +407,8 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         currentState == WristStates.TARGETING_POSITION &&
           wristProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
           (inputs.wristPosition - wristPositionTarget).absoluteValue <=
-          WristConstants.WRIST_TOLERANCE
-        )
+          wristToleranceRequested
+        ) || inputs.isSimulated
 
   fun setWristVoltage(appliedVoltage: ElectricalPotential) {
     io.setWristVoltage(appliedVoltage)

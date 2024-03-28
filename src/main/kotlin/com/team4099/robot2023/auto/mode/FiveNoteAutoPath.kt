@@ -29,7 +29,7 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           {
             listOf(
               FieldWaypoint(
-                Translation2d(1.37.meters, 5.50.meters).translation2d,
+                Translation2d(1.4.meters, 5.50.meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
               ),
@@ -42,7 +42,7 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           }
         )
       ),
-     superstructure.prepManualSpeakerCommand(-3.degrees, 3000.rotations.perMinute),
+     superstructure.prepManualSpeakerCommand(-3.7.degrees, 3000.rotations.perMinute, 0.7.degrees),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
@@ -79,8 +79,8 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
         superstructure.scoreCommand().withTimeout(0.5)
           .andThen(WaitCommand(0.75))
           .andThen(superstructure.groundIntakeCommand())
-          .andThen(WaitCommand(0.75))
-          .andThen(superstructure.prepManualSpeakerCommand(-4.degrees, 3000.rotations.perMinute))
+          .andThen(WaitCommand(0.25))
+          .andThen(superstructure.prepManualSpeakerCommand(-3.7.degrees, 3000.rotations.perMinute, 0.7.degrees))
       ),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -105,7 +105,9 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
             )
           }
         ),
-        superstructure.scoreCommand().andThen(superstructure.groundIntakeCommand())
+        superstructure.scoreCommand()
+          .andThen(superstructure.groundIntakeCommand())
+          .andThen(superstructure.prepManualSpeakerCommand(-3.degrees, 3000.rotations.perMinute, 0.7.degrees))
       ),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -135,14 +137,14 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
             )
           }
         ),
-        superstructure.prepManualSpeakerCommand(-25.degrees, 3000.rotations.perMinute).andThen(superstructure.scoreCommand()).andThen(WaitCommand(0.25)).andThen(superstructure.groundIntakeCommand())
+        superstructure.scoreCommand().andThen(WaitCommand(0.1)).andThen(superstructure.groundIntakeCommand())
       ),
-      superstructure.prepManualSpeakerCommand(-2.degrees, 3000.rotations.perMinute),
+      superstructure.prepManualSpeakerCommand(-3.degrees, 3000.rotations.perMinute, 0.7.degrees),
       superstructure.scoreCommand().withTimeout(0.5)
     )
   }
 
   companion object {
-    val startingPose = Pose2d(Translation2d(1.37.meters, 5.50.meters), 180.degrees)
+    val startingPose = Pose2d(Translation2d(1.4.meters, 5.50.meters), 180.degrees)
   }
 }
