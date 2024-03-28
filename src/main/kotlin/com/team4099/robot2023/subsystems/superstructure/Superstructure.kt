@@ -1,6 +1,7 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.hal.Clock
+import com.team4099.robot2023.config.constants.FeederConstants
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.config.constants.LEDConstants
@@ -55,6 +56,8 @@ class Superstructure(
   var leds = Leds(LedIOCandle)
 
   var aimer = AutoAim(drivetrain, vision)
+
+  var cleanupStartTime = Clock.fpgaTime
 
   private var wristAngleToShootAt = 0.0.degrees
   private var flywheelToShootAt = 0.0.rotations.perMinute
@@ -262,6 +265,7 @@ class Superstructure(
         noteHoldingID = 0
       }
       SuperstructureStates.IDLE -> {
+
         intake.currentRequest =
           Request.IntakeRequest.OpenLoop(
             Intake.TunableIntakeStates.idleRollerVoltage.get(),
@@ -379,6 +383,12 @@ class Superstructure(
             Intake.TunableIntakeStates.intakeRollerVoltage.get(),
             Intake.TunableIntakeStates.intakeCenterWheelVoltage.get()
           )
+
+        if (DriverStation.isTeleop()) {
+          flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(-6.volts)
+        }
+
+
         if (noteHoldingID == -1) {
           for (note in notes) {
             if (note.canIntake()) {
@@ -389,19 +399,23 @@ class Superstructure(
           }
         }
 
-        if (feeder.hasNote || (!RobotBase.isReal() && noteHoldingID != -1)) {
-          currentRequest = Request.SuperstructureRequest.Idle()
-          nextState = SuperstructureStates.IDLE
-        }
+
 
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(
             if (DriverStation.isAutonomous()) Feeder.TunableFeederStates.autoIntakeVoltage.get()
             else Feeder.TunableFeederStates.intakeVoltage.get()
           )
-        if (feeder.hasNote) {
-          currentRequest = Request.SuperstructureRequest.Idle()
-          nextState = SuperstructureStates.IDLE
+
+        if (feeder.hasNote || (!RobotBase.isReal() && noteHoldingID != -1)) {
+          if (DriverStation.isTeleop()) {
+            cleanupStartTime = Clock.fpgaTime
+            nextState = SuperstructureStates.GROUND_INTAKE_CLEAN_UP
+          } else {
+            currentRequest = Request.SuperstructureRequest.Idle()
+            nextState = SuperstructureStates.IDLE
+          }
+
         }
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
@@ -418,6 +432,15 @@ class Superstructure(
           }
         }
       }
+      SuperstructureStates.GROUND_INTAKE_CLEAN_UP -> {
+        feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(-1.volts)
+
+        if (Clock.fpgaTime - cleanupStartTime > FeederConstants.CLEAN_UP_TIME ) {
+          currentRequest = Request.SuperstructureRequest.Idle()
+          nextState = SuperstructureStates.IDLE
+        }
+      }
+
       SuperstructureStates.AUTO_AIM -> {
         val targetFlywheelSpeed = aimer.calculateFlywheelSpeed()
         val targetWristAngle = aimer.calculateWristAngle()
@@ -471,7 +494,7 @@ class Superstructure(
         flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(-10.volts)
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.outtakeVoltage.get())
-        if (!feeder.hasNote &&
+        if (
           Clock.fpgaTime - shootStartTime > Flywheel.TunableFlywheelStates.ampScoreTime.get()
         ) {
           currentRequest = Request.SuperstructureRequest.Idle()
@@ -988,6 +1011,7 @@ class Superstructure(
       HOME,
       GROUND_INTAKE_PREP,
       GROUND_INTAKE,
+      GROUND_INTAKE_CLEAN_UP,
       SCORE_AMP_PREP,
       SCORE_AMP,
       SCORE_SPEAKER_LOW_PREP,

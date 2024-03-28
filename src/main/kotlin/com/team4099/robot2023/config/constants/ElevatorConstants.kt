@@ -43,7 +43,7 @@ object ElevatorConstants {
 
   val ELEVATOR_KS = 0.0.volts
   val ELEVATOR_KG = 0.28.volts
-  val ELEVATOR_KV = 0.5.volts / 1.inches.perSecond
+  val ELEVATOR_KV = 1.0.volts / 1.inches.perSecond
   val ELEVATOR_KA = 0.075.volts / 1.inches.perSecond.perSecond
   val ELEVATOR_OPEN_LOOP_EXTEND_VOLTAGE = 8.0.volts
   val ELEVATOR_OPEN_LOOP_RETRACT_VOLTAGE = -12.0.volts

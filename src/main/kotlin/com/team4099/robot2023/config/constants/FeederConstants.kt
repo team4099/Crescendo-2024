@@ -11,6 +11,7 @@ import org.team4099.lib.units.perSecond
 
 object FeederConstants {
 
+  val CLEAN_UP_TIME = 0.18.seconds
   val FEEDER_MOTOR_INVERTED = false
   val FEEDER_IDLE_VOLTAGE = 0.0.volts
   val VOLTAGE_COMPENSATION = 12.0.volts
@@ -26,8 +27,8 @@ object FeederConstants {
   var WAIT_BEFORE_DETECT_VELOCITY_DROP = 0.5.seconds
 
   val IDLE_VOLTAGE = 0.volts
-  val INTAKE_NOTE_VOLTAGE = 1.8.volts
-  val AUTO_INTAKE_NOTE_VOLTAGE = 1.8.volts
+  val INTAKE_NOTE_VOLTAGE = 5.0.volts
+  val AUTO_INTAKE_NOTE_VOLTAGE = 1.5.volts
 
   val SHOOT_NOTE_VOLTAGE = 2.volts
 
