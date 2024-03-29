@@ -111,7 +111,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
               PhotonUtils.calculateDistanceToTargetMeters(
                 cameraPoses[instance].translation.z.inMeters,
                 57.125.inches.inMeters,
-                21.25.degrees.inRadians,
+                23.25.degrees.inRadians,
                 tag.pitch.degrees.inRadians
               )
                 .meters

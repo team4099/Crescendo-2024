@@ -47,6 +47,8 @@ import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 import com.team4099.robot2023.commands.drivetrain.TargetNoteCommand
+import com.team4099.robot2023.subsystems.intake.IntakeIO
+import com.team4099.robot2023.subsystems.wrist.WristIO
 
 object RobotContainer {
   private val drivetrain: Drivetrain

@@ -80,7 +80,7 @@ class SwerveModuleIOTalon(
 
   private val potentiometerOutput: Double
     get() {
-      return if (label == Constants.Drivetrain.FRONT_LEFT_MODULE_NAME) {
+      return if (label == Constants.Drivetrain.FRONT_RIGHT_MODULE_NAME) {
         potentiometer.voltage / RobotController.getVoltage5V() * 2.0 * PI
       } else {
         2 * PI - potentiometer.voltage / RobotController.getVoltage5V() * 2.0 * Math.PI
@@ -340,7 +340,7 @@ class SwerveModuleIOTalon(
   override fun zeroSteering() {
     steeringFalcon.setPosition(
       steeringSensor.positionToRawUnits(
-        if (label != Constants.Drivetrain.FRONT_LEFT_MODULE_NAME)
+        if (label != Constants.Drivetrain.FRONT_RIGHT_MODULE_NAME)
           (2 * PI).radians - (potentiometerOutput.radians - zeroOffset)
         else (potentiometerOutput.radians - zeroOffset)
       )

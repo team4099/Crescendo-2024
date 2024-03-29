@@ -132,7 +132,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
           }
         ),
         WaitCommand(1.0)
-          .andThen(superstructure.prepManualSpeakerCommand(8.870702276919971.degrees, 4000.rotations.perMinute))
+          .andThen(superstructure.prepManualSpeakerCommand(2.degrees, 4000.rotations.perMinute))
       ),
       superstructure.scoreCommand().withTimeout(0.5),
       ParallelCommandGroup(
@@ -186,7 +186,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
           }
         ),
         WaitCommand(1.0)
-          .andThen(superstructure.prepManualSpeakerCommand(8.870702276919971.degrees, 4000.rotations.perMinute))
+          .andThen(superstructure.prepManualSpeakerCommand(2.degrees, 4000.rotations.perMinute))
     ), superstructure.scoreCommand())
   }
 
