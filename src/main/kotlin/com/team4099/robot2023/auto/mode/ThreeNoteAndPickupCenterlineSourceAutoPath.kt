@@ -13,6 +13,8 @@ import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
+import org.team4099.lib.units.derived.rotations
+import org.team4099.lib.units.perMinute
 
 class ThreeNoteAndPickupCenterlineSourceAutoPath(
   val drivetrain: Drivetrain,
@@ -40,7 +42,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
             )
           }
         ),
-        superstructure.autoAimCommand()
+        superstructure.prepManualSpeakerCommand(-20.degrees, 3000.rotations.perMinute)
       ),
       superstructure.scoreCommand(),
       ParallelCommandGroup(
@@ -87,7 +89,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
             )
           }
         ),
-        WaitCommand(1.0).andThen(superstructure.autoAimCommand())
+        WaitCommand(1.0).andThen(superstructure.prepManualSpeakerCommand(5.degrees, 4000.rotations.perMinute))
       ),
       superstructure.scoreCommand(),
       ParallelCommandGroup(
@@ -134,7 +136,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
         WaitCommand(1.0)
           .andThen(superstructure.groundIntakeCommand())
           .andThen(WaitCommand(0.5))
-          .andThen(superstructure.autoAimCommand())
+          .andThen(superstructure.prepManualSpeakerCommand(5.degrees, 4000.rotations.perMinute))
       ),
       superstructure.scoreCommand(),
       ParallelCommandGroup(
@@ -166,6 +168,6 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
   }
 
   companion object {
-    val startingPose = Pose2d(1.56.meters, 4.09.meters, 180.degrees)
+    val startingPose = Pose2d(1.40.meters, 4.09.meters, 180.degrees)
   }
 }

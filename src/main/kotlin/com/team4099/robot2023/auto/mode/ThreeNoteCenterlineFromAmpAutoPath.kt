@@ -12,6 +12,9 @@ import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
+import org.team4099.lib.units.derived.rotations
+import org.team4099.lib.units.perMinute
+import kotlin.time.Duration.Companion.seconds
 
 class ThreeNoteCenterlineFromAmpAutoPath(
   val drivetrain: Drivetrain,
@@ -73,7 +76,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
         WaitCommand(1.0)
           .andThen(
             superstructure
-              .prepManualSpeakerCommand(8.870702276919971.degrees)
+              .prepManualSpeakerCommand(8.870702276919971.degrees, 4000.rotations.perMinute)
               .withTimeout(1.0)
           )
       ),
@@ -97,7 +100,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
               FieldWaypoint(
                 Translation2d(8.27.meters, 5.78.meters).translation2d,
                 null,
-                165.degrees.inRotation2ds
+                160.degrees.inRotation2ds
               ),
             )
           }
@@ -129,10 +132,62 @@ class ThreeNoteCenterlineFromAmpAutoPath(
           }
         ),
         WaitCommand(1.0)
-          .andThen(superstructure.prepManualSpeakerCommand(8.870702276919971.degrees))
+          .andThen(superstructure.prepManualSpeakerCommand(8.870702276919971.degrees, 4000.rotations.perMinute))
       ),
-      superstructure.scoreCommand()
-    )
+      superstructure.scoreCommand().withTimeout(0.5),
+      ParallelCommandGroup(
+        DrivePathCommand.createPathInFieldFrame(
+          drivetrain,
+          {
+            listOf(
+              FieldWaypoint(
+                Translation2d(3.9.meters, 6.45.meters).translation2d,
+                null,
+                (180 + 13.856).degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d((3.9 + 8.27).meters / 2, (6.45 + 7.45).meters / 2)
+                  .translation2d,
+                null,
+                ((180 + 13.856 + 165).degrees / 2).inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d(8.27.meters, 4.11.meters).translation2d,
+                null,
+                140.degrees.inRotation2ds
+              ),
+            )
+          }
+        ),
+        WaitCommand(1.0).andThen(superstructure.groundIntakeCommand())
+      ),
+      ParallelCommandGroup(
+        DrivePathCommand.createPathInFieldFrame(
+          drivetrain,
+          {
+            listOf(
+              FieldWaypoint(
+                Translation2d(8.27.meters, 4.11.meters).translation2d,
+                null,
+                140.degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d((3.9 + 8.27).meters / 2, (6.45 + 7.45).meters / 2)
+                  .translation2d,
+                null,
+                ((180 + 13.856 + 160).degrees / 2).inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d(3.9.meters, 6.45.meters).translation2d,
+                null,
+                (180 + 13.856).degrees.inRotation2ds
+              ),
+            )
+          }
+        ),
+        WaitCommand(1.0)
+          .andThen(superstructure.prepManualSpeakerCommand(8.870702276919971.degrees, 4000.rotations.perMinute))
+    ), superstructure.scoreCommand())
   }
 
   companion object {
