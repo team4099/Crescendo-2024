@@ -38,7 +38,9 @@ object WristIONeo : WristIO {
     CANSparkMax(Constants.WRIST.WRIST_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
   private val wristSensor =
     sparkMaxAngularMechanismSensor(
-      wristSparkMax, WristConstants.WRIST_GEAR_RATIO, WristConstants.WRIST_VOLTAGE_COMPENSATION
+      wristSparkMax,
+      WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO,
+      WristConstants.WRIST_VOLTAGE_COMPENSATION
     )
   private val wristPIDController: SparkMaxPIDController = wristSparkMax.pidController
   // private val feederSparkMax = CANSparkMax(Constants.Shooter.FEEDER_MOTOR_ID,
@@ -54,8 +56,8 @@ object WristIONeo : WristIO {
     get() {
       var output =
         (
-          (-throughBoreEncoder.absolutePosition.rotations) *
-            WristConstants.WRIST_ENCODER_GEAR_RATIO
+          (-throughBoreEncoder.absolutePosition.rotations) /
+            WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
           )
 
       if (output in (-55).degrees..0.0.degrees) {
@@ -68,10 +70,7 @@ object WristIONeo : WristIO {
   // uses the absolute encoder position to calculate the arm position
   private val armAbsolutePosition: Angle
     get() {
-      return (encoderAbsolutePosition - WristConstants.ABSOLUTE_ENCODER_OFFSET).inDegrees.IEEErem(
-        360.0
-      )
-        .degrees
+      return (encoderAbsolutePosition).inDegrees.IEEErem(360.0).degrees
     }
 
   init {
@@ -138,7 +137,11 @@ object WristIONeo : WristIO {
     wristPIDController.d = wristSensor.derivativePositionGainToRawUnits(kD)
   }
 
-  override fun setWristPosition(position: Angle, feedforward: ElectricalPotential) {
+  override fun setWristPosition(
+    position: Angle,
+    feedforward: ElectricalPotential,
+    travelingUp: Boolean
+  ) {
     wristPIDController.setReference(
       wristSensor.positionToRawUnits(
         clamp(position, WristConstants.WRIST_MIN_ROTATION, WristConstants.WRIST_MAX_ROTATION)
@@ -168,7 +171,7 @@ object WristIONeo : WristIO {
     }
   }
 
-  override fun zeroEncoder(encoderOffset: Angle) {
+  override fun zeroEncoder() {
     wristSparkMax.encoder.position = wristSensor.positionToRawUnits(armAbsolutePosition)
   }
 }

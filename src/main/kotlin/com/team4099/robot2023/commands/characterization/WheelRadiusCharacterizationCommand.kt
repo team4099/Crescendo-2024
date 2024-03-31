@@ -9,20 +9,20 @@ import com.team4099.lib.logging.LoggedTunableNumber
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.util.DebugLogger
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.Command
-import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.inInches
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Angle
-import org.team4099.lib.units.derived.angle
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.radians
-import kotlin.math.abs
+import org.team4099.lib.units.derived.rotations
 import kotlin.math.hypot
+import kotlin.time.times
 
 class WheelRadiusCharacterizationCommand(
   val drivetrain: Drivetrain,
@@ -50,7 +50,10 @@ class WheelRadiusCharacterizationCommand(
   override fun initialize() {
     lastGyroYawRads = gyroYawSupplier()
     accumGyroYawRads = 0.0.radians
-    startWheelPositions = drivetrain.swerveModules.map { it.modulePosition.angle.angle }
+    startWheelPositions =
+      drivetrain.swerveModules.map {
+        (it.inputs.drivePosition / (DrivetrainConstants.WHEEL_DIAMETER * Math.PI)).rotations
+      }
     omegaLimiter.reset(0.0)
   }
 
@@ -69,20 +72,28 @@ class WheelRadiusCharacterizationCommand(
     accumGyroYawRads +=
       MathUtil.angleModulus((gyroYawSupplier() - lastGyroYawRads).inRadians).radians
     lastGyroYawRads = gyroYawSupplier()
-    var averageWheelPosition = 0.0
-    val wheelPositions = drivetrain.swerveModules.map { it.modulePosition.angle.angle }
+    var averageWheelPositionDelta = 0.0.radians
+    val wheelPositions =
+      drivetrain.swerveModules.map {
+        (it.inputs.drivePosition / (DrivetrainConstants.WHEEL_DIAMETER * Math.PI)).rotations
+      }
     for (i in 0 until 4) {
-      averageWheelPosition += abs((wheelPositions[i] - startWheelPositions[i]).inRadians)
+      averageWheelPositionDelta += ((wheelPositions[i] - startWheelPositions[i])).absoluteValue
     }
 
-    averageWheelPosition /= 4.0
+    averageWheelPositionDelta /= 4.0
     currentEffectiveWheelRadius =
-      (accumGyroYawRads.inRadians * driveRadius / averageWheelPosition).meters
-    Logger.recordOutput("Drivetrain/RadiusCharacterization/DrivePosition", averageWheelPosition)
-    Logger.recordOutput(
+      (accumGyroYawRads * driveRadius / averageWheelPositionDelta).meters
+    DebugLogger.recordDebugOutput(
+      "Drivetrain/RadiusCharacterization/DrivePosition", averageWheelPositionDelta.inRadians
+    )
+    DebugLogger.recordDebugOutput(
       "Drivetrain/RadiusCharacterization/AccumGyroYawRads", accumGyroYawRads.inRadians
     )
-    Logger.recordOutput(
+    DebugLogger.recordDebugOutput(
+      "Drivetrain/RadiusCharacterization/LastGyroYawRads", lastGyroYawRads.inRadians
+    )
+    DebugLogger.recordDebugOutput(
       "Drivetrain/RadiusCharacterization/CurrentWheelRadiusInches",
       currentEffectiveWheelRadius.inInches
     )
@@ -90,10 +101,19 @@ class WheelRadiusCharacterizationCommand(
 
   override fun end(interrupted: Boolean) {
     if (accumGyroYawRads <= (Math.PI * 2.0).radians) {
-      println("Not enough data for characterization")
+      DebugLogger.recordDebugOutput(
+        "Drivetrain/radiansOffFromWheelRadius",
+        ((Math.PI * 2.0).radians - accumGyroYawRads).inRadians
+      )
     } else {
-      println("Effective Wheel Radius: ${currentEffectiveWheelRadius.inInches} inches")
+      DebugLogger.recordDebugOutput(
+        "Drivetrain/effectiveWheelRadius", currentEffectiveWheelRadius.inInches
+      )
     }
+  }
+
+  override fun isFinished(): Boolean {
+    return false
   }
 
   companion object {

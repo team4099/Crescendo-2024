@@ -5,6 +5,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.util.DebugLogger
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
@@ -82,6 +83,12 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         FlywheelConstants.AMP_VELOCITY,
         Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
       )
+    val passingShotVelocity =
+      LoggedTunableValue(
+        "Flywheel/passingShotVelocity",
+        FlywheelConstants.PASSING_SHOT_VELOCITY,
+        Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+      )
   }
 
   private val kP =
@@ -138,7 +145,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         currentState == FlywheelStates.TARGETING_VELOCITY &&
           (inputs.leftFlywheelVelocity - flywheelLeftTargetVelocity).absoluteValue <=
           FlywheelConstants.FLYWHEEL_TOLERANCE
-        )
+        ) || inputs.isSimulated
 
   var currentState = Companion.FlywheelStates.UNINITIALIZED
 
@@ -153,7 +160,6 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
           // left needs to be half of the right one
           flywheelLeftTargetVelocity = value.flywheelVelocity
         }
-        else -> {}
       }
       field = value
     }
@@ -193,13 +199,13 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         )
     }
 
-    io.configPID(kP.get(), kI.get(), kD.get())
+    io.configPID(kP.get(), kI.get(), kD.get(), flywheelkV.get())
   }
   override fun periodic() {
     io.updateInputs(inputs)
 
     Logger.processInputs("Flywheel", inputs)
-    Logger.recordOutput(
+    DebugLogger.recordDebugOutput(
       "Flywheel/targetDifference",
       (inputs.leftFlywheelVelocity - flywheelLeftTargetVelocity)
         .absoluteValue
@@ -223,8 +229,8 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       Logger.recordOutput("Flywheel/FlywheelLastVoltage", lastRightFlywheelVoltage.inVolts)
     }
 
-    if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged()) {
-      io.configPID(kP.get(), kI.get(), kD.get())
+    if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged() || flywheelkV.hasChanged()) {
+      io.configPID(kP.get(), kI.get(), kD.get(), flywheelkV.get())
     }
 
     if (flywheelkA.hasChanged() || flywheelkV.hasChanged() || flywheelkS.hasChanged()) {
@@ -244,7 +250,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         nextState = fromRequestToState(currentRequest)
       }
       Companion.FlywheelStates.TARGETING_VELOCITY -> {
-        setFlywheelVelocity(flywheelRightTargetVelocity)
+        setFlywheelVelocity(flywheelLeftTargetVelocity)
         lastFlywheelRunTime = Clock.fpgaTime
         nextState = fromRequestToState(currentRequest)
       }

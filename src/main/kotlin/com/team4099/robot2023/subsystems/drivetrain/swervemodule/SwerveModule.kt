@@ -13,6 +13,7 @@ import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.Angle
+import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.angle
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -53,6 +54,19 @@ class SwerveModule(val io: SwerveModuleIO) {
   private var lastDrivePosition = 0.meters
 
   private var shouldInvert = false
+
+  private val driveKV =
+    LoggedTunableValue(
+      "Drivetrain/kV",
+      DrivetrainConstants.PID.DRIVE_KV,
+      Pair({ it.inVoltsPerMetersPerSecond }, { it.volts.perMeterPerSecond })
+    )
+  private val driveKA =
+    LoggedTunableValue(
+      "Drivetrain/kA",
+      DrivetrainConstants.PID.DRIVE_KA,
+      Pair({ it.inVoltsPerMetersPerSecondPerSecond }, { it.volts.perMeterPerSecondPerSecond })
+    )
 
   private val steeringkP =
     LoggedTunableValue(
@@ -114,6 +128,9 @@ class SwerveModule(val io: SwerveModuleIO) {
       drivekI.initDefault(DrivetrainConstants.PID.SIM_DRIVE_KI)
       drivekD.initDefault(DrivetrainConstants.PID.SIM_DRIVE_KD)
     }
+
+    driveKV.initDefault(DrivetrainConstants.PID.DRIVE_KV)
+    driveKA.initDefault(DrivetrainConstants.PID.DRIVE_KA)
   }
 
   fun updateInputs() {
@@ -161,8 +178,15 @@ class SwerveModule(val io: SwerveModuleIO) {
       io.configureSteeringMotionMagic(steeringMaxVel.get(), steeringMaxAccel.get())
     }
 
-    if (drivekP.hasChanged() || drivekI.hasChanged() || drivekD.hasChanged()) {
-      io.configureDrivePID(drivekP.get(), drivekI.get(), drivekD.get())
+    if (drivekP.hasChanged() ||
+      drivekI.hasChanged() ||
+      drivekD.hasChanged() ||
+      driveKV.hasChanged() ||
+      driveKA.hasChanged()
+    ) {
+      io.configureDrivePID(
+        drivekP.get(), drivekI.get(), drivekD.get(), driveKV.get(), driveKA.get()
+      )
     }
 
     Logger.processInputs(io.label, inputs)
@@ -351,5 +375,9 @@ class SwerveModule(val io: SwerveModuleIO) {
 
   fun setSteeringBrakeMode(brake: Boolean) {
     io.setSteeringBrakeMode(brake)
+  }
+
+  fun runCharacterization(input: ElectricalPotential) {
+    io.runCharacterization(input)
   }
 }

@@ -134,8 +134,8 @@ object ElevatorIOKraken : ElevatorIO {
     pidConfiguration.kP = leaderSensor.proportionalPositionGainToRawUnits(kP)
     pidConfiguration.kI = leaderSensor.integralPositionGainToRawUnits(kI)
     pidConfiguration.kD = leaderSensor.derivativePositionGainToRawUnits(kD)
+
     elevatorLeaderKraken.configurator.apply(pidConfiguration)
-    elevatorFollowerKraken.configurator.apply(pidConfiguration)
   }
 
   override fun updateInputs(inputs: ElevatorIO.ElevatorInputs) {

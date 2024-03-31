@@ -11,6 +11,7 @@ import org.team4099.lib.geometry.Translation3d
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
+import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
 
 // Copyright (c) 2024 FRC 6328
@@ -47,11 +48,130 @@ object FieldConstants {
   var wingX = 229.201.inches
   var podiumX = 126.75.inches
   var startingLineX = 74.111.inches
+  var subwooferX = 28.inches
+  val edgeOfBumperToCenter = 12.75.inches + 3.5.inches
 
   val fieldAprilTags: List<AprilTag> =
     listOf(
-      AprilTag(4, Pose3d()),
-      AprilTag(3, Pose3d(Translation3d(0.meters, 0.5.meters, 0.meters), Rotation3d()))
+      AprilTag(
+        0,
+        Pose3d(
+          Translation3d(1.meters, 57.25.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        1,
+        Pose3d(
+          Translation3d(1.meters, 57.25.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        2,
+        Pose3d(
+          Translation3d(1.meters, 57.25.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        3,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches - 22.25.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        4,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        5,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        6,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        7,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        8,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        9,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        10,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        11,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        12,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        13,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        14,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        15,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      ),
+      AprilTag(
+        16,
+        Pose3d(
+          Translation3d(652.755.inches, 218.416.inches, 57.125.inches),
+          Rotation3d(0.degrees, 0.degrees, 180.degrees)
+        )
+      )
     )
 
   val tags = AprilTagFields.k2024Crescendo
@@ -61,6 +181,14 @@ object FieldConstants {
   var aprilTagWidth = 6.50.inches
 
   var noteThickness = 2.inches
+
+  val bottomRightSpeaker = Pose2d(0.0.inches, 238.815.inches, 0.degrees)
+  val bottomLeftSpeaker = Pose2d(0.0.inches, 197.765.inches, 0.degrees)
+  val topRightSpeaker = Pose2d(18.055.inches, 238.815.inches, 0.degrees)
+  val topLeftSpeaker = Pose2d(18.055.inches, 197.765.inches, 0.degrees)
+
+  // Center of the speaker opening for the blue alliance
+  val centerSpeakerOpening = bottomLeftSpeaker.interpolate(topRightSpeaker, 0.5.seconds)
 
   /** Staging locations for each note */
   object StagingLocations {

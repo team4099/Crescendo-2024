@@ -1,6 +1,7 @@
 package com.team4099.robot2023.config
 
 import com.team4099.robot2023.config.constants.Constants
+import com.team4099.robot2023.config.constants.DrivetrainConstants
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import org.team4099.lib.joystick.XboxOneGamepad
@@ -27,7 +28,7 @@ object ControlBoard {
     get() = -driver.leftYAxis
 
   val turn: Double
-    get() = driver.rightXAxis
+    get() = driver.rightXAxis * DrivetrainConstants.TELEOP_TURNING_SPEED_PERCENT
 
   val slowMode: Boolean
     get() = driver.leftShoulderButton
@@ -52,6 +53,7 @@ object ControlBoard {
   val prepLow = Trigger { operator.xButton }
   val prepHighProtected = Trigger { operator.bButton }
   val prepHigh = Trigger { operator.yButton }
+  val passingShot = Trigger { operator.leftShoulderButton }
 
   val extendClimb = Trigger { operator.dPadUp }
   val retractClimb = Trigger { operator.dPadDown }
@@ -63,8 +65,12 @@ object ControlBoard {
 
   val characterizeWrist = Trigger { driver.rightShoulderButton }
 
-  val climbAlignFar = Trigger { driver.yButton }
-  val climbAlignLeft = Trigger { driver.xButton }
-  val climbAlignRight = Trigger { driver.bButton }
+  val climbAlignFar = Trigger { driver.dPadUp }
+  val climbAlignLeft = Trigger { driver.dPadLeft }
+  val climbAlignRight = Trigger { driver.dPadRight }
+
+  val targetSpeaker = Trigger { driver.xButton } // TODO: switch back to climbAlignLeft
+  val climbAutoAlign = Trigger { driver.bButton }
+
   // week0 controls
 }

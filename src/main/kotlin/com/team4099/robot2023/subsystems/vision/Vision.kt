@@ -2,31 +2,41 @@ package com.team4099.robot2023.subsystems.vision
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.TunableNumber
+import com.team4099.lib.logging.toDoubleArray
+import com.team4099.lib.vision.TimestampedTrigVisionUpdate
 import com.team4099.lib.vision.TimestampedVisionUpdate
-import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.vision.camera.CameraIO
-import edu.wpi.first.math.VecBuilder
+import com.team4099.robot2023.util.FMSData
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
+import org.photonvision.PhotonUtils
 import org.team4099.lib.geometry.Pose2d
-import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Pose3d
-import org.team4099.lib.geometry.Pose3dWPILIB
+import org.team4099.lib.geometry.Transform2d
+import org.team4099.lib.geometry.Translation2d
+import org.team4099.lib.geometry.Translation3d
+import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inMilliseconds
+import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.inRadians
 import java.util.function.Consumer
 import java.util.function.Supplier
-import kotlin.math.pow
 
 class Vision(vararg cameras: CameraIO) : SubsystemBase() {
   val io: List<CameraIO> = cameras.toList()
   val inputs = List(io.size) { CameraIO.CameraInputs() }
+
+  var drivetrainOdometry: () -> Pose2d = { Pose2d() }
+  var robotTSpeaker: Translation3d = Translation3d()
+  var trustedRobotDistanceToTarget: Length = 0.meters
 
   companion object {
     val ambiguityThreshold = 0.7
@@ -43,6 +53,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
   private var fieldFramePoseSupplier = Supplier<Pose2d> { Pose2d() }
   private var visionConsumer: Consumer<List<TimestampedVisionUpdate>> = Consumer {}
+  private var speakerVisionConsumer: Consumer<TimestampedTrigVisionUpdate> = Consumer {}
   private val lastFrameTimes = mutableMapOf<Int, Time>()
   private val lastTagDetectionTimes = mutableMapOf<Int, Time>()
 
@@ -54,22 +65,15 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
   fun setDataInterfaces(
     fieldFramePoseSupplier: Supplier<Pose2d>,
-    visionConsumer: Consumer<List<TimestampedVisionUpdate>>
+    visionConsumer: Consumer<List<TimestampedVisionUpdate>>,
+    speakerVisionMeasurementConsumer: Consumer<TimestampedTrigVisionUpdate>
   ) {
     this.fieldFramePoseSupplier = fieldFramePoseSupplier
     this.visionConsumer = visionConsumer
+    this.speakerVisionConsumer = speakerVisionMeasurementConsumer
   }
 
   override fun periodic() {
-    //    val tuningPosition = Pose3d(Pose3d(
-    //      (43.125).inches,
-    //      (108.375).inches,
-    //      (18.22).inches,
-    //      Rotation3d(0.0.radians, 0.0.radians, 0.0.radians)
-    //    ).translation  + (Translation3d(45.625.inches, 1.3125.inches, 0.0.inches)),
-    // Rotation3d()).toPose2d()
-    //
-    //    Logger.recordOutput("Vision/tuningPosition", tuningPosition.pose2d)
 
     val startTime = Clock.realTimestamp
 
@@ -78,8 +82,8 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       Logger.processInputs("Vision/${VisionConstants.CAMERA_NAMES[instance]}", inputs[instance])
     }
 
-    var fieldTCurrentRobotEstimate: Pose2d = fieldFramePoseSupplier.get()
-    val robotPoses = mutableListOf<Pose2d>()
+    val robotPoses = mutableListOf<Pose2d?>()
+    val robotDistancesToTarget = mutableListOf<Length?>()
     val visionUpdates = mutableListOf<TimestampedVisionUpdate>()
 
     for (instance in io.indices) {
@@ -89,7 +93,68 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       val values = inputs[instance].frame
 
       var cameraPose: Pose3d? = inputs[instance].frame
-      var robotPose: Pose2d? = cameraPose?.transformBy(cameraPoses[instance])?.toPose2d()
+      var robotPose: Pose2d? = null
+      var robotDistanceToTarget: Length? = null
+      var tagTargets = inputs[instance].cameraTargets
+
+      println(tagTargets.size)
+
+      val cornerData = mutableListOf<Double>()
+
+      for (tag in tagTargets) {
+        if (DriverStation.getAlliance().isPresent) {
+          if ((tag.fiducialId in intArrayOf(4) && !FMSData.isBlue) ||
+            (tag.fiducialId in intArrayOf(7) && FMSData.isBlue)
+          ) { // i made the tag IDS up
+
+            robotDistanceToTarget =
+              PhotonUtils.calculateDistanceToTargetMeters(
+                cameraPoses[instance].translation.z.inMeters,
+                57.125.inches.inMeters,
+                23.25.degrees.inRadians,
+                tag.pitch.degrees.inRadians
+              )
+                .meters
+
+            Logger.recordOutput(
+              "Vision/${VisionConstants.CAMERA_NAMES[instance]}/robotDistanceToTarget",
+              robotDistanceToTarget.inMeters
+            )
+
+            var cameraTspeaker2d =
+              Translation2d(
+                PhotonUtils.estimateCameraToTargetTranslation(
+                  robotDistanceToTarget.inMeters, Rotation2d(-tag.yaw.degrees.inRadians)
+                )
+              )
+
+            robotTSpeaker =
+              Translation3d(cameraTspeaker2d.x + 4.inches, cameraTspeaker2d.y, 0.meters)
+
+            val timestampedTrigVisionUpdate =
+              TimestampedTrigVisionUpdate(
+                inputs[instance].timestamp,
+                Transform2d(Translation2d(robotTSpeaker.x, robotTSpeaker.y), 0.0.degrees)
+              )
+            speakerVisionConsumer.accept(timestampedTrigVisionUpdate)
+
+            Logger.recordOutput(
+              "Vision/${VisionConstants.CAMERA_NAMES[instance]}/robotTspeaker",
+              robotTSpeaker.translation3d
+            )
+
+            for (corner in tag.detectedCorners) {
+              cornerData.add(corner.x)
+              cornerData.add(corner.y)
+            }
+          }
+        }
+      }
+
+      Logger.recordOutput("Vision/cornerDetections/$instance}", cornerData.toDoubleArray())
+
+      robotPoses.add(robotPose)
+      robotDistancesToTarget.add(robotDistanceToTarget)
 
       if (cameraPose == null || robotPose == null) {
         continue
@@ -100,75 +165,26 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       ) {
         continue
       }
-
-      // Find all detected tag poses
-      val tagPoses = inputs[instance].usedTargets.map { FieldConstants.fieldAprilTags[it].pose }
-
-      // Calculate average distance to tag
-      var totalDistance = 0.0.meters
-      for (tagPose in tagPoses) {
-        totalDistance += tagPose.translation.getDistance(cameraPose.translation)
-      }
-      val averageDistance = totalDistance / tagPoses.size
-
-      // Add to vision updates
-      val xyStdDev = xyStdDevCoefficient.get() * averageDistance.inMeters.pow(2) / tagPoses.size
-      val thetaStdDev = thetaStdDev.get() * averageDistance.inMeters.pow(2) / tagPoses.size
-
-      visionUpdates.add(
-        TimestampedVisionUpdate(
-          timestamp, robotPose, VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev)
-        )
-      )
-      robotPoses.add(robotPose)
-
-      Logger.recordOutput(
-        "Vision/${VisionConstants.CAMERA_NAMES[instance]}/latencyMS",
-        (Clock.fpgaTime - timestamp).inMilliseconds
-      )
-
-      Logger.recordOutput(
-        "Vision/${VisionConstants.CAMERA_NAMES[instance]}/estimatedRobotPose", robotPose.pose2d
-      )
-
-      Logger.recordOutput(
-        "Vision/${VisionConstants.CAMERA_NAMES[instance]}/tagPoses",
-        *tagPoses.map { it.pose3d }.toTypedArray()
-      )
-
-      if (inputs[instance].timestamp == 0.0.seconds) { // prolly wrong lol
-        Logger.recordOutput(
-          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/estimatedRobotPose",
-          Pose2dWPILIB.struct,
-          Pose2d().pose2d
-        )
-      }
-
-      if (Clock.fpgaTime - lastFrameTimes[instance]!! > targetLogTime) {
-        Logger.recordOutput(
-          "Vision/${VisionConstants.CAMERA_NAMES[instance]}/tagPoses",
-          Pose3dWPILIB.struct,
-          *arrayOf<Pose3dWPILIB>()
-        )
-      }
-
-      val allTagPoses = mutableListOf<Pose3d>()
-      //    for (detectionEntry in lastTagDetectionTimes.entries) {
-      //      if (Clock.fpgaTime - detectionEntry.value < targetLogTime) {
-      //        FieldConstants.getTagPose(detectionEntry.key)?.let { allTagPoses.add(it) }
-      //      }
-      //    }
-
-      Logger.recordOutput(
-        "Vision/allTagPoses", Pose3dWPILIB.struct, *allTagPoses.map { it.pose3d }.toTypedArray()
-      )
-
-      visionConsumer.accept(visionUpdates)
-
-      Logger.recordOutput(
-        "LoggedRobot/Subsystems/VisionLoopTimeMS",
-        (Clock.realTimestamp - startTime).inMilliseconds
-      )
     }
+
+    var trustedRobotPose: Pose2d? = Pose2d()
+
+    for (cameraInstance in VisionConstants.TRUSTED_CAMERA_ORDER) {
+      if (cameraInstance in io.indices && robotPoses[cameraInstance] != null) {
+        trustedRobotPose = robotPoses[cameraInstance]
+        break
+      }
+    }
+
+    for (cameraInstance in VisionConstants.TRUSTED_CAMERA_ORDER) {
+      if (cameraInstance in io.indices && robotDistancesToTarget[cameraInstance] != null) {
+        trustedRobotDistanceToTarget = robotDistancesToTarget[cameraInstance]!!
+        break
+      }
+    }
+
+    Logger.recordOutput(
+      "LoggedRobot/VisionLoopTimeMS", (Clock.realTimestamp - startTime).inMilliseconds
+    )
   }
 }

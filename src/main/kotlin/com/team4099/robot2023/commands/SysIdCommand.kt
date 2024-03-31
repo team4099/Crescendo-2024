@@ -1,10 +1,10 @@
 package com.team4099.robot2023.commands
 
+import com.team4099.robot2023.util.DebugLogger
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Subsystem
-import org.littletonrobotics.junction.Logger
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 import java.util.function.Supplier
@@ -108,7 +108,7 @@ class SysIdCommand : Command {
       data += (subsystemData.velRadPerSec / (2 * Math.PI)).toString() + ","
     }
 
-    Logger.recordOutput("ActiveCommands/SysIdCommand", true)
+    DebugLogger.recordDebugOutput("ActiveCommands/SysIdCommand", true)
   }
 
   // Called once the command ends or is interrupted.

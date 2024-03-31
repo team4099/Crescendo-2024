@@ -12,7 +12,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage
 import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.signals.InvertedValue
 import com.ctre.phoenix6.signals.NeutralModeValue
-import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
@@ -24,8 +23,10 @@ import edu.wpi.first.wpilibj.RobotController
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.AngularAcceleration
 import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.Fraction
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
+import org.team4099.lib.units.Value
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
@@ -37,14 +38,16 @@ import org.team4099.lib.units.ctreAngularMechanismSensor
 import org.team4099.lib.units.ctreLinearMechanismSensor
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.DerivativeGain
+import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
+import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.inVoltsPerMetersPerSecond
-import org.team4099.lib.units.derived.perMeterPerSecond
+import org.team4099.lib.units.derived.inVoltsPerMetersPerSecondPerSecond
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
@@ -77,19 +80,12 @@ class SwerveModuleIOTalon(
 
   private val potentiometerOutput: Double
     get() {
-      return if (label == Constants.Drivetrain.FRONT_LEFT_MODULE_NAME) {
+      return if (label == Constants.Drivetrain.FRONT_RIGHT_MODULE_NAME) {
         potentiometer.voltage / RobotController.getVoltage5V() * 2.0 * PI
       } else {
         2 * PI - potentiometer.voltage / RobotController.getVoltage5V() * 2.0 * Math.PI
       }
     }
-
-  private val driveKV =
-    LoggedTunableValue(
-      "Drivetrain/kV",
-      DrivetrainConstants.PID.DRIVE_KV,
-      Pair({ it.inVoltsPerMetersPerSecond }, { it.volts.perMeterPerSecond })
-    )
 
   val driveStatorCurrentSignal: StatusSignal<Double>
   val driveSupplyCurrentSignal: StatusSignal<Double>
@@ -140,7 +136,9 @@ class SwerveModuleIOTalon(
       driveSensor.integralVelocityGainToRawUnits(DrivetrainConstants.PID.DRIVE_KI)
     driveConfiguration.Slot0.kD =
       driveSensor.derivativeVelocityGainToRawUnits(DrivetrainConstants.PID.DRIVE_KD)
-    driveConfiguration.Slot0.kV = driveKV.get().inVoltsPerMetersPerSecond
+    driveConfiguration.Slot0.kV = DrivetrainConstants.PID.DRIVE_KV.inVoltsPerMetersPerSecond
+    driveConfiguration.Slot0.kA =
+      DrivetrainConstants.PID.DRIVE_KA.inVoltsPerMetersPerSecondPerSecond
     //      driveSensor.velocityFeedforwardToRawUnits(DrivetrainConstants.PID.DRIVE_KFF)
     driveConfiguration.CurrentLimits.SupplyCurrentLimit =
       DrivetrainConstants.DRIVE_SUPPLY_CURRENT_LIMIT.inAmperes
@@ -279,6 +277,7 @@ class SwerveModuleIOTalon(
   }
 
   override fun setSteeringSetpoint(angle: Angle) {
+    Logger.recordOutput("$label/steeringSetpointDegrees", angle.inDegrees)
     steeringFalcon.setControl(
       PositionDutyCycle(
         steeringSensor.positionToRawUnits(angle),
@@ -316,7 +315,7 @@ class SwerveModuleIOTalon(
   }
 
   /**
-   * Open Loop Control using PercentO`utput control on a Falcon
+   * Open Loop Control using PercentOutput control on a Falcon
    *
    * @param steering: Desired angle
    * @param speed: Desired speed
@@ -341,7 +340,7 @@ class SwerveModuleIOTalon(
   override fun zeroSteering() {
     steeringFalcon.setPosition(
       steeringSensor.positionToRawUnits(
-        if (label != Constants.Drivetrain.FRONT_LEFT_MODULE_NAME)
+        if (label != Constants.Drivetrain.FRONT_RIGHT_MODULE_NAME)
           (2 * PI).radians - (potentiometerOutput.radians - zeroOffset)
         else (potentiometerOutput.radians - zeroOffset)
       )
@@ -362,14 +361,17 @@ class SwerveModuleIOTalon(
   override fun configureDrivePID(
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
-    kD: DerivativeGain<Velocity<Meter>, Volt>
+    kD: DerivativeGain<Velocity<Meter>, Volt>,
+    kV: Value<Fraction<Volt, Velocity<Meter>>>,
+    kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
   ) {
     val PIDConfig = Slot0Configs()
 
     PIDConfig.kP = driveSensor.proportionalVelocityGainToRawUnits(kP)
     PIDConfig.kI = driveSensor.integralVelocityGainToRawUnits(kI)
     PIDConfig.kD = driveSensor.derivativeVelocityGainToRawUnits(kD)
-    PIDConfig.kV = driveKV.get().inVoltsPerMetersPerSecond
+    PIDConfig.kV = kV.inVoltsPerMetersPerSecond
+    PIDConfig.kA = kA.inVoltsPerMetersPerSecondPerSecond
 
     driveFalcon.configurator.apply(PIDConfig)
   }
@@ -425,5 +427,13 @@ class SwerveModuleIOTalon(
     steeringFalcon.configurator.apply(motorOutputConfig)
     // motor output configs might overwrite invert?
     steeringFalcon.inverted = true
+  }
+
+  override fun runCharacterization(input: ElectricalPotential) {
+    if (label == Constants.Drivetrain.FRONT_LEFT_MODULE_NAME) {
+      driveFalcon.setControl(DutyCycleOut(-input.inVolts / 12.0))
+    } else {
+      driveFalcon.setControl(DutyCycleOut(input.inVolts / 12.0))
+    }
   }
 }

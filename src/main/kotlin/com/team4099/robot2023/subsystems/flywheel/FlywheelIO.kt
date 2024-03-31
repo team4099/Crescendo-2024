@@ -13,6 +13,7 @@ import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
+import org.team4099.lib.units.derived.VelocityFeedforward
 import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.inNewtons
 import org.team4099.lib.units.derived.inVolts
@@ -40,7 +41,7 @@ interface FlywheelIO {
     var leftFlywheelDutyCycle = 0.0.volts
     var leftFlywheelTorque = 0.0.newtons
 
-    var isSimulated = false
+    var isSimulated = true
 
     override fun toLog(table: LogTable) {
       table.put("flywheelRightVelocityRPM", rightFlywheelVelocity.inRotationsPerMinute)
@@ -121,5 +122,6 @@ interface FlywheelIO {
     kP: ProportionalGain<Velocity<Radian>, Volt>,
     kI: IntegralGain<Velocity<Radian>, Volt>,
     kD: DerivativeGain<Velocity<Radian>, Volt>,
+    kV: VelocityFeedforward<Radian, Volt>
   ) {}
 }

@@ -94,8 +94,8 @@ object ElevatorIONEO : ElevatorIO {
         ),
         ElevatorConstants.LEADER_STATOR_CURRENT_LIMIT,
         30.celsius,
-        ElevatorConstants.LEADER_STATOR_CURRENT_LIMIT - 30.amps,
-        90.celsius
+        ElevatorConstants.LEADER_STATOR_CURRENT_LIMIT - 10.amps,
+        80.celsius
       ),
     )
   }
@@ -189,8 +189,5 @@ object ElevatorIONEO : ElevatorIO {
     leaderPIDController.p = leaderSensor.proportionalPositionGainToRawUnits(kP)
     leaderPIDController.i = leaderSensor.integralPositionGainToRawUnits(kI)
     leaderPIDController.d = leaderSensor.derivativePositionGainToRawUnits(kD)
-    followerPIDController.p = followerSensor.proportionalPositionGainToRawUnits(kP)
-    followerPIDController.i = followerSensor.integralPositionGainToRawUnits(kI)
-    followerPIDController.d = followerSensor.derivativePositionGainToRawUnits(kD)
   }
 }

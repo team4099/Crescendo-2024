@@ -110,14 +110,14 @@ class NoteSimulation(
   var flywheelAngularVelocitySupplier: () -> AngularVelocity = { 0.0.rotations.perMinute }
 
   fun periodic() {
-    Logger.recordOutput("NoteData/$id/inclinationAngle", inclinationAngleTheta.inDegrees)
-    Logger.recordOutput("NoteData/$id/azimuthalAngle", azimuthalAnglePhi.inDegrees)
-    Logger.recordOutput(
+    DebugLogger.recordDebugOutput("NoteData/$id/inclinationAngle", inclinationAngleTheta.inDegrees)
+    DebugLogger.recordDebugOutput("NoteData/$id/azimuthalAngle", azimuthalAnglePhi.inDegrees)
+    DebugLogger.recordDebugOutput(
       "NoteData/$id/launchVelocityMetersPerSecond", launchVelocity.inMetersPerSecond
     )
-    Logger.recordOutput("NoteData/$id/startPose", launchStartPose.pose3d)
-    Logger.recordOutput("NoteData/$id/state", currentState.name)
-    Logger.recordOutput(
+    DebugLogger.recordDebugOutput("NoteData/$id/startPose", launchStartPose.pose3d)
+    DebugLogger.recordDebugOutput("NoteData/$id/state", currentState.name)
+    DebugLogger.recordDebugOutput(
       "NoteSimulation/IntakePose",
       poseSupplier().transformBy(IntakeConstants.INTAKE_TRANSFORM).pose2d
     )

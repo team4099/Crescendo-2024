@@ -5,6 +5,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.util.DebugLogger
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
@@ -15,6 +16,7 @@ import org.team4099.lib.controller.TrapezoidProfile
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.seconds
+import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
@@ -38,11 +40,27 @@ import org.team4099.lib.units.perSecond
 class Wrist(val io: WristIO) : SubsystemBase() {
   val inputs = WristIO.WristIOInputs()
 
+  val arbitraryFeedforward =
+    LoggedTunableValue("Wrist/arbitraryFeedforward", Pair({ it.inVolts }, { it.volts }))
+
   object TunableWristStates {
     val idleAngle =
       LoggedTunableValue(
         "Wrist/idleAngle", WristConstants.IDLE_ANGLE, Pair({ it.inDegrees }, { it.degrees })
       )
+
+    val ejectAngle =
+      LoggedTunableValue(
+        "Wrist/ejectAngle", WristConstants.EJECT_ANGLE, Pair({ it.inDegrees }, { it.degrees })
+      )
+
+    val pushDownVoltage =
+      LoggedTunableValue(
+        "Wrist/pushDownVoltage",
+        WristConstants.PUSH_DOWN_VOLTAGE,
+        Pair({ it.inVolts }, { it.volts })
+      )
+
     val idleAngleHasGamepiece =
       LoggedTunableValue(
         "Wrist/idleAngleHasGamepiece",
@@ -59,6 +77,27 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       LoggedTunableValue(
         "Wrist/ampScoreAngle",
         WristConstants.AMP_SCORE_ANGLE,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
+
+    val fastAmpAngle =
+      LoggedTunableValue(
+        "Wrist/fastAmpAngle",
+        WristConstants.FAST_AMP_ANGLE,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
+
+    val fastAmpScoreAngle =
+      LoggedTunableValue(
+        "Wrist/ampScoreAngle",
+        WristConstants.AMP_SCORE_ANGLE,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
+
+    val passingShotAngle =
+      LoggedTunableValue(
+        "Wrist/passingShotAngle",
+        WristConstants.PASSING_SHOT_ANGLE,
         Pair({ it.inDegrees }, { it.degrees })
       )
     val subwooferSpeakerShotAngleLow =
@@ -121,10 +160,34 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       "Wrist/kD", Pair({ it.inVoltsPerDegreePerSecond }, { it.volts.perDegreePerSecond })
     )
 
+  private val wristSlot1kP =
+    LoggedTunableValue("Wrist/slot1kP", Pair({ it.inVoltsPerDegree }, { it.volts.perDegree }))
+  private val wristSlot1kI =
+    LoggedTunableValue(
+      "Wrist/slot1KI", Pair({ it.inVoltsPerDegreeSeconds }, { it.volts.perDegreeSeconds })
+    )
+  private val wristSlot1kD =
+    LoggedTunableValue(
+      "Wrist/slot1kD", Pair({ it.inVoltsPerDegreePerSecond }, { it.volts.perDegreePerSecond })
+    )
+
+  private val wristSlot2kP =
+    LoggedTunableValue("Wrist/slot2kP", Pair({ it.inVoltsPerDegree }, { it.volts.perDegree }))
+  private val wristSlot2kI =
+    LoggedTunableValue(
+      "Wrist/slot2kI", Pair({ it.inVoltsPerDegreeSeconds }, { it.volts.perDegreeSeconds })
+    )
+  private val wristSlot2kD =
+    LoggedTunableValue(
+      "Wrist/slot2kD", Pair({ it.inVoltsPerDegreePerSecond }, { it.volts.perDegreePerSecond })
+    )
+
   private val testAngleUp =
     LoggedTunableValue("Wrist/testAngleUp", Pair({ it.inDegrees }, { it.degrees }))
   private val testAngleDown =
     LoggedTunableValue("Wrist/testAngleDown", Pair({ it.inDegrees }, { it.degrees }))
+
+  private var wristToleranceRequested: Angle = WristConstants.WRIST_TOLERANCE
 
   var currentRequest: Request.WristRequest = Request.WristRequest.Zero()
     set(value) {
@@ -134,6 +197,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         }
         is Request.WristRequest.TargetingPosition -> {
           wristPositionTarget = value.wristPosition
+          wristToleranceRequested = value.wristTolerance
         }
         else -> {}
       }
@@ -143,6 +207,8 @@ class Wrist(val io: WristIO) : SubsystemBase() {
   var currentState: WristStates = WristStates.UNINITIALIZED
 
   var isZeroed = false
+
+  var travelingUp: Boolean = false
 
   var wristTargetVoltage: ElectricalPotential = 0.0.volts
 
@@ -176,10 +242,20 @@ class Wrist(val io: WristIO) : SubsystemBase() {
   }
 
   init {
+    arbitraryFeedforward.initDefault(WristConstants.PID.ARBITRARY_FEEDFORWARD)
+
     if (RobotBase.isReal()) {
       wristkP.initDefault(WristConstants.PID.REAL_KP)
       wristkI.initDefault(WristConstants.PID.REAL_KI)
       wristkD.initDefault(WristConstants.PID.REAL_KD)
+
+      wristSlot1kP.initDefault(WristConstants.PID.FIRST_STAGE_KP)
+      wristSlot1kI.initDefault(WristConstants.PID.FIRST_STAGE_KI)
+      wristSlot1kD.initDefault(WristConstants.PID.FIRST_STAGE_KD)
+
+      wristSlot2kP.initDefault(WristConstants.PID.SECOND_STAGE_KP)
+      wristSlot2kI.initDefault(WristConstants.PID.SECOND_STAGE_KI)
+      wristSlot2kD.initDefault(WristConstants.PID.SECOND_STAGE_KD)
 
       wristkS.initDefault(WristConstants.PID.REAL_WRIST_KS)
       wristkG.initDefault(WristConstants.PID.REAL_WRIST_KG)
@@ -221,6 +297,15 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     if (wristkP.hasChanged() || wristkI.hasChanged() || wristkD.hasChanged()) {
       io.configPID(wristkP.get(), wristkI.get(), wristkD.get())
     }
+
+    if (wristSlot1kP.hasChanged() || wristSlot1kI.hasChanged() || wristSlot1kD.hasChanged()) {
+      io.configPIDSlot1(wristSlot1kP.get(), wristSlot1kI.get(), wristSlot1kD.get())
+    }
+
+    if (wristSlot2kP.hasChanged() || wristSlot2kI.hasChanged() || wristSlot2kD.hasChanged()) {
+      io.configPIDSlot2(wristSlot2kP.get(), wristSlot2kI.get(), wristSlot2kD.get())
+    }
+
     if (wristkA.hasChanged() ||
       wristkV.hasChanged() ||
       wristkG.hasChanged() ||
@@ -248,7 +333,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         nextState = fromRequestToState(currentRequest)
       }
       WristStates.ZERO -> {
-        io.zeroEncoder(-36.25.degrees)
+        io.zeroEncoder()
         currentRequest = Request.WristRequest.OpenLoop(0.volts)
         isZeroed = true
         nextState = fromRequestToState(currentRequest)
@@ -259,9 +344,14 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         nextState = fromRequestToState(currentRequest)
       }
       WristStates.TARGETING_POSITION -> {
-        Logger.recordOutput("Wrist/RequestedPosition", wristPositionTarget.inDegrees)
-
-        if (wristPositionTarget != lastWristPositionTarget) {
+        if ((wristPositionTarget - lastWristPositionTarget).absoluteValue < 5.degrees) {
+          wristProfile =
+            TrapezoidProfile(
+              wristConstraints,
+              TrapezoidProfile.State(wristPositionTarget, 0.0.radians.perSecond),
+              wristProfile.initial
+            )
+        } else {
           val preProfileGenerate = Clock.fpgaTime
           wristProfile =
             TrapezoidProfile(
@@ -269,12 +359,13 @@ class Wrist(val io: WristIO) : SubsystemBase() {
               TrapezoidProfile.State(wristPositionTarget, 0.0.radians.perSecond),
               TrapezoidProfile.State(inputs.wristPosition, inputs.wristVelocity)
             )
-
           val postProfileGenerate = Clock.fpgaTime
           Logger.recordOutput(
             "/Wrist/ProfileGenerationMS",
             postProfileGenerate.inSeconds - preProfileGenerate.inSeconds
           )
+
+          travelingUp = wristPositionTarget > inputs.wristPosition
 
           timeProfileGeneratedAt = Clock.fpgaTime
           lastWristPositionTarget = wristPositionTarget
@@ -283,6 +374,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         val setPoint: TrapezoidProfile.State<Radian> = wristProfile.calculate(timeElapsed)
         setWristPosition(setPoint)
         Logger.recordOutput("Wrist/completedMotionProfile", wristProfile.isFinished(timeElapsed))
+        Logger.recordOutput("Wrist/travelingUp", travelingUp)
         nextState = fromRequestToState(currentRequest)
         // if we're transitioning out of targeting position, we want to make sure the next time we
         // enter targeting position, we regenerate profile (even if the arm setpoint is the same as
@@ -309,26 +401,29 @@ class Wrist(val io: WristIO) : SubsystemBase() {
     if (isOutOfBounds(setPoint.velocity)) {
       io.setWristVoltage(wristFeedForward.calculate(inputs.wristPosition, 0.degrees.perSecond))
     } else {
-      io.setWristPosition(setPoint.position, feedforward)
+      if (inputs.wristPosition > 0.5.degrees && travelingUp) {
+        io.setWristPosition(
+          setPoint.position, feedforward + arbitraryFeedforward.get(), travelingUp
+        )
+      } else {
+        io.setWristPosition(setPoint.position, feedforward, travelingUp)
+      }
     }
 
-    Logger.recordOutput("Wrist/profileIsOutOfBounds", isOutOfBounds(setPoint.velocity))
+    DebugLogger.recordDebugOutput("Wrist/profileIsOutOfBounds", isOutOfBounds(setPoint.velocity))
     Logger.recordOutput("Wrist/armFeedForward", feedforward.inVolts)
     Logger.recordOutput("Wrist/armTargetPosition", setPoint.position.inDegrees)
     Logger.recordOutput("Wrist/armTargetVelocity", setPoint.velocity.inDegreesPerSecond)
   }
 
   val isAtTargetedPosition: Boolean
-    get() = true
-  /*
-  (
-    currentState == WristStates.TARGETING_POSITION &&
-      wristProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
-      (inputs.wristPosition - wristPositionTarget).absoluteValue <=
-      WristConstants.WRIST_TOLERANCE
-    )
-
-   */
+    get() =
+      (
+        currentState == WristStates.TARGETING_POSITION &&
+          wristProfile.isFinished(Clock.fpgaTime - timeProfileGeneratedAt) &&
+          (inputs.wristPosition - wristPositionTarget).absoluteValue <=
+          wristToleranceRequested
+        ) || inputs.isSimulated
 
   fun setWristVoltage(appliedVoltage: ElectricalPotential) {
     io.setWristVoltage(appliedVoltage)

@@ -55,7 +55,7 @@ object Constants {
   object Tuning {
 
     const val TUNING_MODE = false
-    const val DEBUGING_MODE = true
+    const val DEBUGING_MODE = false
     const val SIMULATE_DRIFT = false
     const val DRIFT_CONSTANT = 0.001
 
@@ -142,8 +142,7 @@ object Constants {
     const val FEEDER_MOTOR_ID = 61
   }
 
-  object Led {
-    const val LED_CANDLE_ID = 61
-    const val LED_BLINKEN_ID = 1
+  object LED {
+    const val LED_CANDLE_ID = 1
   }
 }

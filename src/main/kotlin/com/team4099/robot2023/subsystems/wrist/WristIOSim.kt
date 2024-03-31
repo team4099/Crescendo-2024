@@ -20,6 +20,7 @@ import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
+import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inKilogramsMeterSquared
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
@@ -32,7 +33,7 @@ object WristIOSim : WristIO {
   val wristSim =
     SingleJointedArmSim(
       DCMotor.getNEO(1),
-      1 / WristConstants.WRIST_GEAR_RATIO,
+      1 / WristConstants.ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO,
       WristConstants.WRIST_INERTIA.inKilogramsMeterSquared,
       WristConstants.WRIST_LENGTH.inMeters,
       WristConstants.WRIST_MIN_ROTATION.inRadians,
@@ -40,6 +41,8 @@ object WristIOSim : WristIO {
       true,
       0.0
     )
+
+  var wristTargetPosition = -35.0.degrees
 
   init {
     MotorChecker.add(
@@ -85,7 +88,7 @@ object WristIOSim : WristIO {
   override fun updateInputs(inputs: WristIO.WristIOInputs) {
     wristSim.update(Constants.Universal.LOOP_PERIOD_TIME.inSeconds)
 
-    inputs.wristPosition = wristSim.angleRads.radians
+    inputs.wristPosition = wristTargetPosition
     inputs.wristVelocity = wristSim.velocityRadPerSec.radians.perSecond
     inputs.wristSupplyCurrent = 0.amps
     inputs.wristAppliedVoltage = appliedVoltage
@@ -107,7 +110,12 @@ object WristIOSim : WristIO {
     appliedVoltage = clampedVoltage
   }
 
-  override fun setWristPosition(position: Angle, feedforward: ElectricalPotential) {
+  override fun setWristPosition(
+    position: Angle,
+    feedforward: ElectricalPotential,
+    travelingUp: Boolean
+  ) {
+    wristTargetPosition = position
     val feedback = wristController.calculate(wristSim.angleRads.radians, position)
     setWristVoltage(feedback + feedforward)
   }
@@ -129,5 +137,5 @@ object WristIOSim : WristIO {
   }
 
   /** recalculates the current position of the neo encoder using value from the absolute encoder */
-  override fun zeroEncoder(encoderOffet: Angle) {}
+  override fun zeroEncoder() {}
 }

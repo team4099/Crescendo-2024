@@ -54,9 +54,9 @@ object IntakeIONEO : IntakeIO {
       MotorCollection(
         mutableListOf(Neo(rollerSparkMax, "Roller Motor")),
         IntakeConstants.ROLLER_CURRENT_LIMIT,
-        70.celsius,
-        30.amps,
-        90.celsius
+        60.celsius,
+        50.amps,
+        120.celsius
       ),
     )
 
@@ -77,9 +77,9 @@ object IntakeIONEO : IntakeIO {
       MotorCollection(
         mutableListOf(Neo(rollerSparkMax, "Center Wheel Motor")),
         IntakeConstants.ROLLER_CURRENT_LIMIT,
-        70.celsius,
-        30.amps,
-        90.celsius
+        60.celsius,
+        50.amps,
+        120.celsius
       ),
     )
   }

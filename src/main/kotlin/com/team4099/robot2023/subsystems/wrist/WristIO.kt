@@ -15,6 +15,7 @@ import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
+import org.team4099.lib.units.derived.inRotations
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inDegreesPerSecond
@@ -25,6 +26,7 @@ interface WristIO {
   class WristIOInputs : LoggableInputs {
 
     var wristPosition = 0.0.degrees
+    var wristAbsoluteEncoderPosition = 0.0.degrees
     var wristVelocity = 0.0.degrees.perSecond
     var wristAppliedVoltage = 0.0.volts
     var wristDutyCycle = 0.0.volts
@@ -38,7 +40,10 @@ interface WristIO {
     var isSimulated = false
 
     override fun toLog(table: LogTable) {
-      table.put("wristPostion", wristPosition.inDegrees)
+      table.put("wristPosition", wristPosition.inDegrees)
+      table.put("wristAbsoluteEncoderRotations", wristAbsoluteEncoderPosition.inRotations)
+      table.put("wristPositionRotations", wristPosition.inRotations)
+      table.put("wristAbosluteEncoderPosition", wristAbsoluteEncoderPosition.inDegrees)
       table.put("wristVelocity", wristVelocity.inDegreesPerSecond)
       table.put("wristAppliedVoltage", wristAppliedVoltage.inVolts)
       table.put("wristStatorCurrent", wristStatorCurrent.inAmperes)
@@ -51,6 +56,9 @@ interface WristIO {
 
       // wrist logs
       table.get("wristPostion", wristPosition.inDegrees).let { wristPosition = it.degrees }
+      table.get("wristPostion", wristAbsoluteEncoderPosition.inDegrees).let {
+        wristAbsoluteEncoderPosition = it.degrees
+      }
       table.get("wristVelocity", wristVelocity.inDegreesPerSecond).let {
         wristVelocity = it.degrees.perSecond
       }
@@ -82,7 +90,7 @@ interface WristIO {
   // fun setFeederVoltage (voltage: ElectricalPotential){
 
   //    }
-  fun setWristPosition(position: Angle, feedforward: ElectricalPotential) {}
+  fun setWristPosition(position: Angle, feedforward: ElectricalPotential, travelingUp: Boolean) {}
 
   // fun setRollerBrakeMode (brake: Boolean){
 
@@ -98,5 +106,17 @@ interface WristIO {
     kD: DerivativeGain<Radian, Volt>
   ) {}
 
-  fun zeroEncoder(encoderOffset: Angle) {}
+  fun configPIDSlot1(
+    kP: ProportionalGain<Radian, Volt>,
+    kI: IntegralGain<Radian, Volt>,
+    kD: DerivativeGain<Radian, Volt>
+  ) {}
+
+  fun configPIDSlot2(
+    kP: ProportionalGain<Radian, Volt>,
+    kI: IntegralGain<Radian, Volt>,
+    kD: DerivativeGain<Radian, Volt>
+  ) {}
+
+  fun zeroEncoder() {}
 }

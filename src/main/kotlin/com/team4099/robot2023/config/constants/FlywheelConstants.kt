@@ -41,7 +41,7 @@ object FlywheelConstants {
   val LEFT_flywheel_TRIGGER_THRESHOLD_TIME = 10.0.seconds
   val LEFT_FLYWHEEL_STATOR_CURRENT_LIMIT = 50.0.amps
 
-  val FLYWHEEL_TOLERANCE = 300.0.rotations.perMinute
+  val FLYWHEEL_TOLERANCE = 150.0.rotations.perMinute
   object PID {
     val REAL_KP: ProportionalGain<Velocity<Radian>, Volt> = 0.00.volts / 1.0.rotations.perMinute
     val REAL_KI: IntegralGain<Velocity<Radian>, Volt> =
@@ -56,20 +56,22 @@ object FlywheelConstants {
       0.0.volts / (1.0.rotations.perMinute.perSecond)
 
     val REAL_FLYWHEEL_KS = 0.0.volts
-    val REAL_FLYWHEEL_KV = 0.011.volts / 1.radians.perSecond
-    val REAL_FLYWHEEL_KA = 0.09.volts / 1.radians.perSecond.perSecond
+    val REAL_FLYWHEEL_KV = 0.245.volts / 1.radians.perSecond
+    val REAL_FLYWHEEL_KA = 1.2.volts / 1.radians.perSecond.perSecond
 
     val SIM_FLYWHEEL_KS = 0.0.volts
-    val SIM_FLYWHEEL_KV = 0.011.volts / 1.radians.perSecond
-    val SIM_FLYWHEEL_KA = 0.09.volts / 1.radians.perSecond.perSecond
+    val SIM_FLYWHEEL_KV = 0.1.volts / 1.radians.perSecond
+    val SIM_FLYWHEEL_KA = 0.1.volts / 1.radians.perSecond.perSecond
   }
 
   val IDLE_VELOCITY = 0.0.rotations.perMinute
-  val SPEAKER_VELOCITY = 3000.rotations.perMinute
-  val AMP_VELOCITY = 5_000.rotations.perMinute
-  val TRAP_VELOCITY = 5_000.rotations.perMinute
+  val SPEAKER_VELOCITY = 2500.rotations.perMinute
+  val PASSING_SHOT_VELOCITY = 2_000.rotations.perMinute
 
-  val AMP_SCORE_TIME = 0.5.seconds
-  val SPEAKER_SCORE_TIME = 0.4.seconds
+  val AMP_VELOCITY = 1_000.rotations.perMinute
+  val TRAP_VELOCITY = 3_000.rotations.perMinute
+
+  val AMP_SCORE_TIME = 0.1.seconds
+  val SPEAKER_SCORE_TIME = 0.1.seconds
   val EJECT_VELOCITY = 3_000.rotations.perMinute
 }

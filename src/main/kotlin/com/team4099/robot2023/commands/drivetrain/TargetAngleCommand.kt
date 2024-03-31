@@ -4,6 +4,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.util.DebugLogger
 import com.team4099.robot2023.util.driver.DriverProfile
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
@@ -32,8 +33,9 @@ class TargetAngleCommand(
   val turn: () -> Double,
   val slowMode: () -> Boolean,
   val drivetrain: Drivetrain,
-  val targetAngle: Angle
+  val targetAngle: () -> Angle
 ) : Command() {
+
   private var thetaPID: PIDController<Radian, Velocity<Radian>>
   val thetakP =
     LoggedTunableValue(
@@ -107,14 +109,14 @@ class TargetAngleCommand(
   override fun execute() {
 
     drivetrain.defaultCommand.end(true)
-    Logger.recordOutput("ActiveCommands/TargetAngleCommand", true)
+    DebugLogger.recordDebugOutput("ActiveCommands/TargetAngleCommand", true)
     Logger.recordOutput(
       "Testing/CurrentDrivetrainRotation", drivetrain.odomTRobot.rotation.inDegrees
     )
 
-    val thetaFeedback = thetaPID.calculate(drivetrain.odomTRobot.rotation, targetAngle)
-    Logger.recordOutput("Testing/error", thetaPID.error.inDegrees)
-    Logger.recordOutput("Testing/thetaFeedback", thetaFeedback.inDegreesPerSecond)
+    val thetaFeedback = thetaPID.calculate(drivetrain.odomTRobot.rotation, targetAngle())
+    DebugLogger.recordDebugOutput("Testing/error", thetaPID.error.inDegrees)
+    DebugLogger.recordDebugOutput("Testing/thetaFeedback", thetaFeedback.inDegreesPerSecond)
 
     drivetrain.currentRequest =
       Request.DrivetrainRequest.OpenLoop(
@@ -129,7 +131,7 @@ class TargetAngleCommand(
   }
 
   override fun end(interrupted: Boolean) {
-    Logger.recordOutput("ActiveCommands/TargetAngleCommand", false)
+    DebugLogger.recordDebugOutput("ActiveCommands/TargetAngleCommand", false)
     drivetrain.currentRequest =
       Request.DrivetrainRequest.OpenLoop(
         driver.rotationSpeedClampedSupplier(turn, slowMode),
