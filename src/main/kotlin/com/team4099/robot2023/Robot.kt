@@ -158,14 +158,6 @@ object Robot : LoggedRobot() {
   override fun disabledPeriodic() {
     FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
     autonomousCommand = RobotContainer.getAutonomousCommand()
-    //    val currentAlliance =
-    //      try {
-    //        DriverStation.getAlliance().get().toString()
-    //      } catch (_: NoSuchElementException) {
-    //        "No alliance"
-    //      }
-    //
-    //    allianceSelected.set(NetworkTableValue.makeString(currentAlliance))
   }
 
   override fun disabledInit() {
