@@ -1,6 +1,7 @@
 package com.team4099.lib.trajectory
 
 import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -21,7 +22,7 @@ import org.team4099.lib.units.derived.radians
 class CustomHolonomicDriveController(
   private val m_xController: PIDController,
   private val m_yController: PIDController,
-  private val m_thetaController: PIDController
+  private val m_thetaController: ProfiledPIDController
 ) {
   private var m_poseError = Pose2d()
   private var m_rotationError = Rotation2d()
