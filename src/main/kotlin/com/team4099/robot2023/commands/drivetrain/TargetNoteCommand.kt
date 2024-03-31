@@ -9,7 +9,8 @@ import com.team4099.robot2023.util.DebugLogger
 import com.team4099.robot2023.util.driver.DriverProfile
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
-import org.team4099.lib.controller.PIDController
+import org.team4099.lib.controller.ProfiledPIDController
+import org.team4099.lib.controller.TrapezoidProfile
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
@@ -35,7 +36,7 @@ class TargetNoteCommand(
   val limelight: LimelightVision
 ) : Command() {
 
-  private var thetaPID: PIDController<Radian, Velocity<Radian>>
+  private var thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
   val thetakP =
     LoggedTunableValue(
       "NoteAlignment/noteThetakP",
@@ -61,10 +62,13 @@ class TargetNoteCommand(
     addRequirements(drivetrain)
 
     thetaPID =
-      PIDController(
+      ProfiledPIDController(
         thetakP.get(),
         thetakI.get(),
         thetakD.get(),
+        TrapezoidProfile.Constraints(
+          DrivetrainConstants.STEERING_VEL_MAX, DrivetrainConstants.STEERING_ACCEL_MAX
+        )
       )
 
     if (!(RobotBase.isSimulation())) {
@@ -74,10 +78,13 @@ class TargetNoteCommand(
       thetakD.initDefault(DrivetrainConstants.PID.LIMELIGHT_THETA_KD)
 
       thetaPID =
-        PIDController(
+        ProfiledPIDController(
           DrivetrainConstants.PID.LIMELIGHT_THETA_KP,
           DrivetrainConstants.PID.LIMELIGHT_THETA_KI,
-          DrivetrainConstants.PID.LIMELIGHT_THETA_KD
+          DrivetrainConstants.PID.LIMELIGHT_THETA_KD,
+          TrapezoidProfile.Constraints(
+            DrivetrainConstants.STEERING_VEL_MAX, DrivetrainConstants.STEERING_ACCEL_MAX
+          )
         )
     } else {
       thetakP.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP)
@@ -85,10 +92,13 @@ class TargetNoteCommand(
       thetakD.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD)
 
       thetaPID =
-        PIDController(
+        ProfiledPIDController(
           DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP,
           DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI,
-          DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD
+          DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD,
+          TrapezoidProfile.Constraints(
+            DrivetrainConstants.STEERING_VEL_MAX, DrivetrainConstants.STEERING_ACCEL_MAX
+          )
         )
     }
 
@@ -96,10 +106,18 @@ class TargetNoteCommand(
   }
 
   override fun initialize() {
-    thetaPID.reset()
+    thetaPID.reset(0.degrees)
 
     if (thetakP.hasChanged() || thetakI.hasChanged() || thetakD.hasChanged()) {
-      thetaPID = PIDController(thetakP.get(), thetakI.get(), thetakD.get())
+      thetaPID =
+        ProfiledPIDController(
+          thetakP.get(),
+          thetakI.get(),
+          thetakD.get(),
+          TrapezoidProfile.Constraints(
+            DrivetrainConstants.STEERING_VEL_MAX, DrivetrainConstants.STEERING_ACCEL_MAX
+          )
+        )
     }
   }
 
