@@ -36,9 +36,9 @@ object LimelightVisionIOReal : LimelightVisionIO {
   override fun updateInputs(inputs: LimelightVisionIO.LimelightVisionIOInputs) {
     val totalLatency =
       (
-              latencyEntry.getDouble(0.0).milli.seconds +
-                      captureLatencyEntry.getDouble(0.0).milli.seconds
-              )
+        latencyEntry.getDouble(0.0).milli.seconds +
+          captureLatencyEntry.getDouble(0.0).milli.seconds
+        )
 
     inputs.timestamp = Clock.realTimestamp - totalLatency
     inputs.xAngle = xAngleEntry.getDouble(0.0).degrees

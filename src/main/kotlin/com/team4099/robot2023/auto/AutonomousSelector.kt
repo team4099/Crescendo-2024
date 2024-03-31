@@ -11,10 +11,10 @@ import com.team4099.robot2023.auto.mode.PreloadAndLeaveFromAmpSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.PreloadAndLeaveFromSourceSubwooferAutoPath
 import com.team4099.robot2023.auto.mode.SixNoteAutoPath
 import com.team4099.robot2023.auto.mode.TestAutoPath
+import com.team4099.robot2023.auto.mode.ThreeNoteAndPickupCenterlineSourceAutoPath
 import com.team4099.robot2023.auto.mode.ThreeNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromSourceAutoPath
-import com.team4099.robot2023.auto.mode.ThreeNoteAndPickupCenterlineSourceAutoPath
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.util.AllianceFlipUtil
@@ -88,13 +88,9 @@ object AutonomousSelector {
       AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER
     )
 
+    autonomousModeChooser.addOption("Six Note Path", AutonomousMode.SIX_NOTE_AUTO_PATH)
     autonomousModeChooser.addOption(
-      "Six Note Path",
-      AutonomousMode.SIX_NOTE_AUTO_PATH
-    )
-    autonomousModeChooser.addOption(
-      "Six Note Path with Pickup",
-      AutonomousMode.SIX_NOTE_WITH_PICKUP_PATH
+      "Six Note Path with Pickup", AutonomousMode.SIX_NOTE_WITH_PICKUP_PATH
     )
     autonomousModeChooser.addOption("Test Auto Path", AutonomousMode.TEST_AUTO_PATH)
     // autonomousModeChooser.addOption("Characterize Elevator",

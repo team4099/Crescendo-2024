@@ -1,14 +1,10 @@
 package com.team4099.robot2023.subsystems.limelight
 
 import com.team4099.lib.hal.Clock
-import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.util.LimelightReading
 import com.team4099.robot2023.util.rotateBy
-import com.team4099.robot2023.util.toPose3d
-import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
-import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Rotation3d
 import org.team4099.lib.geometry.Translation3d
 import org.team4099.lib.units.base.inMeters
@@ -24,7 +20,6 @@ object LimelightVisionIOSim : LimelightVisionIO {
 
   var poseSupplier: () -> Pose2d = { Pose2d() }
 
-
   override fun updateInputs(inputs: LimelightVisionIO.LimelightVisionIOInputs) {
     inputs.timestamp = Clock.realTimestamp
     inputs.xAngle = 0.0.radians
@@ -35,15 +30,7 @@ object LimelightVisionIOSim : LimelightVisionIO {
 
     inputs.gamePieceTargets =
       listOf(
-        LimelightReading(
-          "cone",
-          0.0.percent,
-          0.0.degrees,
-          0.0.degrees,
-          0.0,
-          0.0,
-          0.0.percent
-        )
+        LimelightReading("cone", 0.0.percent, 0.0.degrees, 0.0.degrees, 0.0, 0.0, 0.0.percent)
       )
   }
 

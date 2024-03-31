@@ -32,8 +32,11 @@ sealed interface Request {
     class ScoreSpeakerMid() : SuperstructureRequest
     class ScoreSpeakerHigh() : SuperstructureRequest
 
-    class ManualScoreSpeakerPrep(val wristAngle: Angle, val flywheelVelocity: AngularVelocity, val wristTolerance: Angle) : SuperstructureRequest
-
+    class ManualScoreSpeakerPrep(
+      val wristAngle: Angle,
+      val flywheelVelocity: AngularVelocity,
+      val wristTolerance: Angle
+    ) : SuperstructureRequest
 
     class AutoAim() : SuperstructureRequest
 
@@ -89,7 +92,10 @@ sealed interface Request {
   }
   sealed interface WristRequest : Request {
     class OpenLoop(val wristVoltage: ElectricalPotential) : WristRequest
-    class TargetingPosition(val wristPosition: Angle, val wristTolerance: Angle = WristConstants.WRIST_TOLERANCE) : WristRequest
+    class TargetingPosition(
+      val wristPosition: Angle,
+      val wristTolerance: Angle = WristConstants.WRIST_TOLERANCE
+    ) : WristRequest
     class Zero() : WristRequest
   }
   sealed interface FlywheelRequest : Request {

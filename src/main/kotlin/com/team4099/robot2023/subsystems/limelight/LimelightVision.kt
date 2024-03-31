@@ -1,22 +1,13 @@
 package com.team4099.robot2023.subsystems.limelight
 
 import com.team4099.lib.hal.Clock
-import com.team4099.lib.logging.LoggedTunableNumber
-import com.team4099.lib.logging.LoggedTunableValue
-import com.team4099.lib.logging.TunableNumber
 import com.team4099.lib.vision.TargetCorner
-import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.VisionConstants
-import com.team4099.robot2023.util.FMSData
 import com.team4099.robot2023.util.LimelightReading
-import com.team4099.robot2023.util.PoseEstimator
-import com.team4099.robot2023.util.closerToInTranslation
 import com.team4099.robot2023.util.findClosestPose
 import com.team4099.robot2023.util.rotateBy
 import com.team4099.robot2023.util.toPose3d
-import com.team4099.robot2023.util.toTransform3d
-import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose2d
@@ -31,7 +22,6 @@ import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inMilliseconds
-import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.Angle
@@ -40,9 +30,7 @@ import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.tan
-import java.util.function.Consumer
 import kotlin.math.hypot
-import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.math.tan
 
@@ -72,8 +60,7 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
     IDLE,
     TARGETING_GAME_PIECE
   }
-  init {
-  }
+  init {}
 
   override fun periodic() {
     val startTime = Clock.realTimestamp
@@ -82,21 +69,18 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
 
     var currentPose: Pose2d = poseSupplier.invoke()
 
-   if (limelightState == LimelightStates.TARGETING_GAME_PIECE) {
+    if (limelightState == LimelightStates.TARGETING_GAME_PIECE) {
       if (inputs.validReading) {
         for (target in inputs.gamePieceTargets) {
           visibleGamePieces.add(
-            solveTargetPoseFromAngle(
-              currentPose,
-              target,
-              FieldConstants.noteThickness /2
-            )
+            solveTargetPoseFromAngle(currentPose, target, FieldConstants.noteThickness / 2)
           )
         }
 
-        visibleGamePiecesTx = inputs.gamePieceTargets.map({x -> x.tx})
+        visibleGamePiecesTx = inputs.gamePieceTargets.map({ x -> x.tx })
         if (!visibleGamePieces.isEmpty()) {
-          targetGamePiecePose = currentPose.toPose3d().findClosestPose(*visibleGamePieces.toTypedArray())
+          targetGamePiecePose =
+            currentPose.toPose3d().findClosestPose(*visibleGamePieces.toTypedArray())
           targetGamePieceTx = visibleGamePiecesTx[visibleGamePieces.indexOf(targetGamePiecePose)]
           lastSeen = Clock.fpgaTime
         } else {
@@ -106,29 +90,28 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
     }
 
     Logger.recordOutput(
-        "LimelightVision/RawLimelightReadingsTx",
-        inputs.gamePieceTargets.map { it.tx.inDegrees }.toDoubleArray()
-      )
+      "LimelightVision/RawLimelightReadingsTx",
+      inputs.gamePieceTargets.map { it.tx.inDegrees }.toDoubleArray()
+    )
 
     Logger.recordOutput(
-        "LimelightVision/RawLimelightReadingsTy",
-        inputs.gamePieceTargets.map { it.ty.inDegrees }.toDoubleArray()
-      )
+      "LimelightVision/RawLimelightReadingsTy",
+      inputs.gamePieceTargets.map { it.ty.inDegrees }.toDoubleArray()
+    )
 
     Logger.recordOutput(
-        "LimelightVision/robotVisiblePieces",
-        *visibleGamePieces.map { it.pose3d }.toTypedArray()
-      )
+      "LimelightVision/robotVisiblePieces", *visibleGamePieces.map { it.pose3d }.toTypedArray()
+    )
 
     Logger.recordOutput(
-        "LimelightVision/cameraFieldRelativePose",
-        currentPose.toPose3d().transformBy(VisionConstants.Limelight.LL_TRANSFORM).pose3d
-      )
+      "LimelightVision/cameraFieldRelativePose",
+      currentPose.toPose3d().transformBy(VisionConstants.Limelight.LL_TRANSFORM).pose3d
+    )
 
     Logger.recordOutput(
-        "LoggedRobot/Subsystems/LimelightLoopTimeMS",
-        (Clock.realTimestamp - startTime).inMilliseconds
-      )
+      "LoggedRobot/Subsystems/LimelightLoopTimeMS",
+      (Clock.realTimestamp - startTime).inMilliseconds
+    )
     Logger.recordOutput("LimelightVision/LimeLightState", limelightState.name)
   }
 
@@ -152,12 +135,7 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
       )
     Logger.recordOutput("LimelightVision/distanceToTarget", distanceToTarget.inMeters)
 
-    val targetRotation =
-      Rotation3d(
-        0.0.degrees,
-        0.0.degrees,
-        0.0.degrees
-      )
+    val targetRotation = Rotation3d(0.0.degrees, 0.0.degrees, 0.0.degrees)
 
     return currentPose
       .toPose3d()
@@ -241,7 +219,7 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
 
     return Pose3d(
       currentPose.toPose3d().transformBy(cameraTransform).translation +
-              translationFromTargetToCamera,
+        translationFromTargetToCamera,
       targetRotation
     )
   }
@@ -254,9 +232,9 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
     // right but we want pos x to be right and pos y to be up
     return CoordinatePair(
       1 / (VisionConstants.Limelight.RES_WIDTH / 2) *
-              (pixelCoords.x - VisionConstants.Limelight.RES_WIDTH - 0.5),
+        (pixelCoords.x - VisionConstants.Limelight.RES_WIDTH - 0.5),
       1 / (VisionConstants.Limelight.RES_HEIGHT / 2) *
-              (pixelCoords.x - VisionConstants.Limelight.RES_HEIGHT - 0.5)
+        (pixelCoords.x - VisionConstants.Limelight.RES_HEIGHT - 0.5)
     )
   }
 
@@ -304,5 +282,4 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
       null
     }
   }
-
 }

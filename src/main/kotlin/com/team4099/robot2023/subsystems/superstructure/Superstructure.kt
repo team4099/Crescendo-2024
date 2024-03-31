@@ -1,7 +1,6 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.hal.Clock
-import com.team4099.robot2023.RobotContainer
 import com.team4099.robot2023.config.constants.FeederConstants
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.FlywheelConstants
@@ -313,12 +312,11 @@ class Superstructure(
           }
           is Request.SuperstructureRequest.PrepScoreAmp -> {
             val currentRotation = drivetrain.odomTRobot.rotation
-            if ((currentRotation > 0.0.degrees && currentRotation < 180.degrees ) ) {
+            if ((currentRotation > 0.0.degrees && currentRotation < 180.degrees)) {
               nextState = SuperstructureStates.ELEVATOR_AMP_PREP
             } else {
               nextState = SuperstructureStates.WRIST_AMP_PREP
             }
-
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
             if (feeder.hasNote) {
@@ -385,7 +383,6 @@ class Superstructure(
           flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(-6.volts)
         }
 
-
         if (noteHoldingID == -1) {
           for (note in notes) {
             if (note.canIntake()) {
@@ -395,8 +392,6 @@ class Superstructure(
             }
           }
         }
-
-
 
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(
@@ -412,7 +407,6 @@ class Superstructure(
             currentRequest = Request.SuperstructureRequest.Idle()
             nextState = SuperstructureStates.IDLE
           }
-
         }
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
@@ -432,12 +426,11 @@ class Superstructure(
       SuperstructureStates.GROUND_INTAKE_CLEAN_UP -> {
         feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(-1.volts)
 
-        if (Clock.fpgaTime - cleanupStartTime > FeederConstants.CLEAN_UP_TIME ) {
+        if (Clock.fpgaTime - cleanupStartTime > FeederConstants.CLEAN_UP_TIME) {
           currentRequest = Request.SuperstructureRequest.Idle()
           nextState = SuperstructureStates.IDLE
         }
       }
-
       SuperstructureStates.AUTO_AIM -> {
         val targetFlywheelSpeed = aimer.calculateFlywheelSpeed()
         val targetWristAngle = aimer.calculateWristAngle()
@@ -455,11 +448,10 @@ class Superstructure(
           is Request.SuperstructureRequest.ScoreSpeaker -> {
             nextState = SuperstructureStates.SCORE_SPEAKER
             shootStartTime = Clock.fpgaTime
-
           }
         }
       }
-    SuperstructureStates.ELEVATOR_AMP_PREP -> {
+      SuperstructureStates.ELEVATOR_AMP_PREP -> {
         elevator.currentRequest =
           Request.ElevatorRequest.TargetingPosition(
             Elevator.TunableElevatorHeights.shootAmpPosition.get()
@@ -481,12 +473,13 @@ class Superstructure(
           }
         }
       }
-
       SuperstructureStates.WRIST_AMP_PREP -> {
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.fastAmpAngle.get())
         flywheel.currentRequest =
-          Request.FlywheelRequest.TargetingVelocity(Flywheel.TunableFlywheelStates.ampVelocity.get())
+          Request.FlywheelRequest.TargetingVelocity(
+            Flywheel.TunableFlywheelStates.ampVelocity.get()
+          )
         when (currentRequest) {
           is Request.SuperstructureRequest.ScoreAmp -> {
             nextState = SuperstructureStates.SCORE_SPEAKER
@@ -503,9 +496,7 @@ class Superstructure(
         flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(-10.volts)
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopShoot(Feeder.TunableFeederStates.outtakeVoltage.get())
-        if (
-          Clock.fpgaTime - shootStartTime > Flywheel.TunableFlywheelStates.ampScoreTime.get()
-        ) {
+        if (Clock.fpgaTime - shootStartTime > Flywheel.TunableFlywheelStates.ampScoreTime.get()) {
           currentRequest = Request.SuperstructureRequest.Idle()
         }
 
@@ -629,10 +620,7 @@ class Superstructure(
         }
       }
       SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP -> {
-        flywheel.currentRequest =
-          Request.FlywheelRequest.TargetingVelocity(
-            flywheelToShootAt
-          )
+        flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(flywheelToShootAt)
         wrist.currentRequest = Request.WristRequest.TargetingPosition(wristAngleToShootAt)
         if (wrist.isAtTargetedPosition &&
           flywheel.isAtTargetedVelocity &&
@@ -774,8 +762,8 @@ class Superstructure(
     if (!(checkAtRequestedStateNextLoopCycle)) {
       isAtRequestedState =
         elevator.isAtTargetedPosition &&
-                flywheel.isAtTargetedVelocity &&
-                wrist.isAtTargetedPosition
+        flywheel.isAtTargetedVelocity &&
+        wrist.isAtTargetedPosition
     } else {
       checkAtRequestedStateNextLoopCycle = false
     }
@@ -802,7 +790,8 @@ class Superstructure(
   fun groundIntakeCommand(): Command {
     val returnCommand =
       run { currentRequest = Request.SuperstructureRequest.GroundIntake() }.until {
-        currentState == SuperstructureStates.GROUND_INTAKE_PREP || currentState == SuperstructureStates.GROUND_INTAKE
+        currentState == SuperstructureStates.GROUND_INTAKE_PREP ||
+          currentState == SuperstructureStates.GROUND_INTAKE
       }
 
     returnCommand.name = "GroundIntakeCommand"
@@ -831,7 +820,11 @@ class Superstructure(
   fun prepAmpCommand(): Command {
     val returnCommand =
       runOnce { currentRequest = Request.SuperstructureRequest.PrepScoreAmp() }.until {
-        isAtRequestedState && (currentState == SuperstructureStates.ELEVATOR_AMP_PREP || currentState == SuperstructureStates.WRIST_AMP_PREP)
+        isAtRequestedState &&
+          (
+            currentState == SuperstructureStates.ELEVATOR_AMP_PREP ||
+              currentState == SuperstructureStates.WRIST_AMP_PREP
+            )
       }
     returnCommand.name = "PrepAmpCommand"
     return returnCommand
@@ -852,7 +845,12 @@ class Superstructure(
     wristTolerance: Angle = WristConstants.WRIST_TOLERANCE
   ): Command {
     val returnCommand =
-      run { currentRequest = Request.SuperstructureRequest.ManualScoreSpeakerPrep(wristAngle, flywheelVelocity, wristTolerance) }
+      run {
+        currentRequest =
+          Request.SuperstructureRequest.ManualScoreSpeakerPrep(
+            wristAngle, flywheelVelocity, wristTolerance
+          )
+      }
         .until {
           isAtRequestedState && currentState == SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP
         }
@@ -863,7 +861,9 @@ class Superstructure(
   fun scoreCommand(): Command {
     val returnCommand =
       run {
-        if (currentState == SuperstructureStates.ELEVATOR_AMP_PREP || currentState == SuperstructureStates.WRIST_AMP_PREP) {
+        if (currentState == SuperstructureStates.ELEVATOR_AMP_PREP ||
+          currentState == SuperstructureStates.WRIST_AMP_PREP
+        ) {
           currentRequest = Request.SuperstructureRequest.ScoreAmp()
         } else if (currentState == SuperstructureStates.SCORE_TRAP_PREP) {
           currentRequest = Request.SuperstructureRequest.ScoreTrap()

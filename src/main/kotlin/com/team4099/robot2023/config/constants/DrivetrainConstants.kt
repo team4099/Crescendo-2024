@@ -130,7 +130,8 @@ object DrivetrainConstants {
 
     val LIMELIGHT_THETA_KP = 0.0.degrees.perSecond / 1.degrees
     val LIMELIGHT_THETA_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
-    val LIMELIGHT_THETA_KD = (0.0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+    val LIMELIGHT_THETA_KD =
+      (0.0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val AUTO_THETA_ALLOWED_ERROR = 3.degrees
     val AUTO_THETA_PID_KP = (1.05.radians.perSecond / 1.radians)

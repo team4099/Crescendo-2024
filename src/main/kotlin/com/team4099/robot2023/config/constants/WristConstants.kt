@@ -35,8 +35,12 @@ object WristConstants {
 
   val VOLTAGE_COMPENSATION = 12.0.volts
   val ABSOLUTE_ENCODER_OFFSET =
-    (97.72227856659904.degrees - 35.degrees + 1.3.degrees - 0.33.degrees - 1.degrees - 0.5.degrees) *
-      ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
+    (
+      97.72227856659904.degrees - 35.degrees + 1.3.degrees -
+        0.33.degrees -
+        1.degrees -
+        0.5.degrees
+      ) * ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
   val WRIST_LENGTH = 18.6.inches
   val WRIST_INERTIA = 0.7181257183.kilo.grams * 1.0.meters.squared
 

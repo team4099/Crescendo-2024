@@ -35,7 +35,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
               ),
               FieldWaypoint(
                 startingPose.translation.translation2d +
-                        Translation2d(2.inches, -2.inches).translation2d,
+                  Translation2d(2.inches, -2.inches).translation2d,
                 0.degrees.inRotation2ds,
                 (startingPose.rotation - 47.546.degrees).inRotation2ds
               )
@@ -52,7 +52,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
             listOf(
               FieldWaypoint(
                 startingPose.translation.translation2d +
-                        Translation2d(2.inches, -2.inches).translation2d,
+                  Translation2d(2.inches, -2.inches).translation2d,
                 null,
                 (startingPose.rotation - 47.546.degrees).inRotation2ds
               ),
@@ -89,7 +89,10 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
             )
           }
         ),
-        WaitCommand(1.0).andThen(superstructure.prepManualSpeakerCommand(5.degrees, 4000.rotations.perMinute))
+        WaitCommand(1.0)
+          .andThen(
+            superstructure.prepManualSpeakerCommand(5.degrees, 4000.rotations.perMinute)
+          )
       ),
       superstructure.scoreCommand(),
       ParallelCommandGroup(
@@ -136,7 +139,9 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
         WaitCommand(1.0)
           .andThen(superstructure.groundIntakeCommand())
           .andThen(WaitCommand(0.5))
-          .andThen(superstructure.prepManualSpeakerCommand(5.degrees, 4000.rotations.perMinute))
+          .andThen(
+            superstructure.prepManualSpeakerCommand(5.degrees, 4000.rotations.perMinute)
+          )
       ),
       superstructure.scoreCommand(),
       ParallelCommandGroup(

@@ -14,7 +14,6 @@ import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.perMinute
-import kotlin.time.Duration.Companion.seconds
 
 class ThreeNoteCenterlineFromAmpAutoPath(
   val drivetrain: Drivetrain,
@@ -76,7 +75,9 @@ class ThreeNoteCenterlineFromAmpAutoPath(
         WaitCommand(1.0)
           .andThen(
             superstructure
-              .prepManualSpeakerCommand(8.870702276919971.degrees, 4000.rotations.perMinute)
+              .prepManualSpeakerCommand(
+                8.870702276919971.degrees, 4000.rotations.perMinute
+              )
               .withTimeout(1.0)
           )
       ),
@@ -132,7 +133,9 @@ class ThreeNoteCenterlineFromAmpAutoPath(
           }
         ),
         WaitCommand(1.0)
-          .andThen(superstructure.prepManualSpeakerCommand(2.degrees, 4000.rotations.perMinute))
+          .andThen(
+            superstructure.prepManualSpeakerCommand(2.degrees, 4000.rotations.perMinute)
+          )
       ),
       superstructure.scoreCommand().withTimeout(0.5),
       ParallelCommandGroup(
@@ -186,8 +189,12 @@ class ThreeNoteCenterlineFromAmpAutoPath(
           }
         ),
         WaitCommand(1.0)
-          .andThen(superstructure.prepManualSpeakerCommand(2.degrees, 4000.rotations.perMinute))
-    ), superstructure.scoreCommand())
+          .andThen(
+            superstructure.prepManualSpeakerCommand(2.degrees, 4000.rotations.perMinute)
+          )
+      ),
+      superstructure.scoreCommand()
+    )
   }
 
   companion object {

@@ -194,12 +194,13 @@ private constructor(
 
     xPID = PIDController(poskP.get(), poskI.get(), poskD.get())
     yPID = PIDController(poskP.get(), poskI.get(), poskD.get())
-    thetaPID = ProfiledPIDController(
-      thetakP.get(),
-      thetakI.get(),
-      thetakD.get(),
-      TrapezoidProfile.Constraints(thetaMaxVel.get(), thetaMaxAccel.get())
-    )
+    thetaPID =
+      ProfiledPIDController(
+        thetakP.get(),
+        thetakI.get(),
+        thetakD.get(),
+        TrapezoidProfile.Constraints(thetaMaxVel.get(), thetaMaxAccel.get())
+      )
 
     thetaPID.enableContinuousInput(-PI.radians, PI.radians)
 

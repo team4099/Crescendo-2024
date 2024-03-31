@@ -25,8 +25,6 @@ import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
-import org.team4099.lib.units.base.inAmperes
-import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.ctreAngularMechanismSensor
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.ElectricalPotential
@@ -41,7 +39,6 @@ import org.team4099.lib.units.derived.newtons
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inRotationsPerMinute
-import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 
 object FlywheelIOTalon : FlywheelIO {
@@ -105,29 +102,29 @@ object FlywheelIOTalon : FlywheelIO {
     //
     // flywheelSensor.velocityFeedforwardToRawUnits(FlywheelConstantsConstants.PID.flywheel_KFF)
 
-//    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimit =
-//      FlywheelConstants.LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT.inAmperes
-//    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentThreshold =
-//      FlywheelConstants.LEFT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT.inAmperes
-//    flywheelLeftConfiguration.CurrentLimits.SupplyTimeThreshold =
-//      FlywheelConstants.LEFT_flywheel_TRIGGER_THRESHOLD_TIME.inSeconds
-//    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
-//    flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimit =
-//      FlywheelConstants.LEFT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
-//    flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
+    //    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimit =
+    //      FlywheelConstants.LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT.inAmperes
+    //    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentThreshold =
+    //      FlywheelConstants.LEFT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT.inAmperes
+    //    flywheelLeftConfiguration.CurrentLimits.SupplyTimeThreshold =
+    //      FlywheelConstants.LEFT_flywheel_TRIGGER_THRESHOLD_TIME.inSeconds
+    //    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
+    //    flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimit =
+    //      FlywheelConstants.LEFT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
+    //    flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
 
     flywheelLeftConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive
 
-//    flywheelRightConfiguration.CurrentLimits.SupplyCurrentLimit =
-//      FlywheelConstants.RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT.inAmperes
-//    flywheelRightConfiguration.CurrentLimits.SupplyCurrentThreshold =
-//      FlywheelConstants.RIGHT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT.inAmperes
-//    flywheelRightConfiguration.CurrentLimits.SupplyTimeThreshold =
-//      FlywheelConstants.RIGHT_flywheel_TRIGGER_THRESHOLD_TIME.inSeconds
-//    flywheelRightConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
-//    flywheelRightConfiguration.CurrentLimits.StatorCurrentLimit =
-//      FlywheelConstants.RIGHT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
-//    flywheelRightConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
+    //    flywheelRightConfiguration.CurrentLimits.SupplyCurrentLimit =
+    //      FlywheelConstants.RIGHT_FLYWHEEL_SUPPLY_CURRENT_LIMIT.inAmperes
+    //    flywheelRightConfiguration.CurrentLimits.SupplyCurrentThreshold =
+    //      FlywheelConstants.RIGHT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT.inAmperes
+    //    flywheelRightConfiguration.CurrentLimits.SupplyTimeThreshold =
+    //      FlywheelConstants.RIGHT_flywheel_TRIGGER_THRESHOLD_TIME.inSeconds
+    //    flywheelRightConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
+    //    flywheelRightConfiguration.CurrentLimits.StatorCurrentLimit =
+    //      FlywheelConstants.RIGHT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
+    //    flywheelRightConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
 
     flywheelLeftConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast
     flywheelRightConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast
@@ -200,8 +197,12 @@ object FlywheelIOTalon : FlywheelIO {
   override fun setFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {
     val error = velocity - flywheelLeftSensor.velocity
 
-    DebugLogger.recordDebugOutput("Flywheel/premotionTargetedVelocity", velocity.inRotationsPerMinute)
-    DebugLogger.recordDebugOutput("Flywheel/motionTargetedVelocity", flywheelLeftSensor.velocityToRawUnits(velocity))
+    DebugLogger.recordDebugOutput(
+      "Flywheel/premotionTargetedVelocity", velocity.inRotationsPerMinute
+    )
+    DebugLogger.recordDebugOutput(
+      "Flywheel/motionTargetedVelocity", flywheelLeftSensor.velocityToRawUnits(velocity)
+    )
     //    flywheelRightTalon.setControl(
     //      VelocityVoltage(
     //        flywheelRightSensor.velocityToRawUnits(velocity),
@@ -214,8 +215,6 @@ object FlywheelIOTalon : FlywheelIO {
     //        false
     //      )
     //    )
-
-
 
     flywheelLeftTalon.setControl(
       MotionMagicVelocityVoltage(

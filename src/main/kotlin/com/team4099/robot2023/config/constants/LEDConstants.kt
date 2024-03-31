@@ -1,7 +1,6 @@
 package com.team4099.robot2023.config.constants
 
 import com.ctre.phoenix.led.Animation
-import com.ctre.phoenix.led.StrobeAnimation
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.derived.volts
 
@@ -28,6 +27,6 @@ object LEDConstants {
 
     // Green
 
-    CAN_SHOOT( null, 0, 255, 0)
+    CAN_SHOOT(null, 0, 255, 0)
   }
 }
