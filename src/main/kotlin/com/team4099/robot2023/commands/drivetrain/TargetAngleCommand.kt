@@ -9,7 +9,8 @@ import com.team4099.robot2023.util.driver.DriverProfile
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
-import org.team4099.lib.controller.PIDController
+import org.team4099.lib.controller.ProfiledPIDController
+import org.team4099.lib.controller.TrapezoidProfile
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.Radian
@@ -36,7 +37,7 @@ class TargetAngleCommand(
   val targetAngle: () -> Angle
 ) : Command() {
 
-  private var thetaPID: PIDController<Radian, Velocity<Radian>>
+  private var thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
   val thetakP =
     LoggedTunableValue(
       "Pathfollow/thetaAmpkP",
@@ -62,10 +63,13 @@ class TargetAngleCommand(
     addRequirements(drivetrain)
 
     thetaPID =
-      PIDController(
+      ProfiledPIDController(
         thetakP.get(),
         thetakI.get(),
         thetakD.get(),
+        TrapezoidProfile.Constraints(
+          DrivetrainConstants.STEERING_VEL_MAX, DrivetrainConstants.STEERING_ACCEL_MAX
+        )
       )
 
     if (!(RobotBase.isSimulation())) {
@@ -75,10 +79,13 @@ class TargetAngleCommand(
       thetakD.initDefault(DrivetrainConstants.PID.TELEOP_ALIGN_PID_KD)
 
       thetaPID =
-        PIDController(
+        ProfiledPIDController(
           DrivetrainConstants.PID.TELEOP_ALIGN_PID_KP,
           DrivetrainConstants.PID.TELEOP_ALIGN_PID_KI,
-          DrivetrainConstants.PID.TELEOP_ALIGN_PID_KD
+          DrivetrainConstants.PID.TELEOP_ALIGN_PID_KD,
+          TrapezoidProfile.Constraints(
+            DrivetrainConstants.STEERING_VEL_MAX, DrivetrainConstants.STEERING_ACCEL_MAX
+          )
         )
     } else {
       thetakP.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP)
@@ -86,10 +93,13 @@ class TargetAngleCommand(
       thetakD.initDefault(DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD)
 
       thetaPID =
-        PIDController(
+        ProfiledPIDController(
           DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KP,
           DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KI,
-          DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD
+          DrivetrainConstants.PID.SIM_AUTO_THETA_PID_KD,
+          TrapezoidProfile.Constraints(
+            DrivetrainConstants.STEERING_VEL_MAX, DrivetrainConstants.STEERING_ACCEL_MAX
+          )
         )
     }
 
@@ -97,7 +107,7 @@ class TargetAngleCommand(
   }
 
   override fun initialize() {
-    thetaPID.reset() // maybe do first for x?
+    thetaPID.reset(0.degrees) // maybe do first for x?
     /*
     if (thetakP.hasChanged() || thetakI.hasChanged() || thetakD.hasChanged()) {
       thetaPID = PIDController(thetakP.get(), thetakI.get(), thetakD.get())
