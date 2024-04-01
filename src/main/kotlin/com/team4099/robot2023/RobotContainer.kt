@@ -164,6 +164,7 @@ object RobotContainer {
   }
 
   fun mapTeleopControls() {
+    limelight.limelightState = LimelightVision.LimelightStates.TARGETING_GAME_PIECE
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain))
     ControlBoard.intake.whileTrue(

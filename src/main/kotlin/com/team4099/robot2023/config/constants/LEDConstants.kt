@@ -15,9 +15,10 @@ object LEDConstants {
     NO_NOTE(null, 0, 0, 0),
     NOTHING(null, 0, 0, 0),
     RED(null, 255, 0, 0),
+    LIGHT_RED(null, 255, 67, 36),
     BLUE(null, 0, 0, 255),
+    PURPLE(null, 67, 36, 255),
     GREEN(null, 0, 255, 0),
-    PURPLE(null, 160, 32, 240),
     MAGENTA(null, 255, 0, 255),
 
     // Blue

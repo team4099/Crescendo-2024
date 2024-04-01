@@ -63,7 +63,9 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
   init {}
 
   override fun periodic() {
-    io.setPipeline(0)
+    visibleGamePieces.clear()
+    targetGamePieceTx = null
+
     val startTime = Clock.realTimestamp
     io.updateInputs(inputs)
     Logger.processInputs("LimelightVision", inputs)

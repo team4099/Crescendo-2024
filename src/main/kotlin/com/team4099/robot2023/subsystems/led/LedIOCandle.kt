@@ -7,6 +7,7 @@ import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.volts
+import kotlin.math.absoluteValue
 
 object LedIOCandle : LedIO {
 
@@ -107,20 +108,38 @@ object LedIOCandle : LedIO {
   private fun fadeBetweenColors(
     state: LEDConstants.CandleState,
     otherState: LEDConstants.CandleState,
-    loopCyclesToConverge: Int = 5
+    loopCyclesToConverge: Int = 10
   ) {
-    for ((ledIdx, numberOfLoopCycles) in (loopCyclesToConverge..loopCyclesToConverge + LEDConstants.LED_COUNT).withIndex()) {
+    val stepUpInLoopCycles = 2
+    var reachedStartColor = true
+    var reachedEndColor = true
+
+    for ((ledIdx, numberOfLoopCycles) in (loopCyclesToConverge..loopCyclesToConverge + LEDConstants.LED_COUNT * stepUpInLoopCycles step stepUpInLoopCycles).withIndex()) {
       val calculatedR = (state.r + (otherState.r - state.r) * (if (loopCycles > numberOfLoopCycles) 1.0 else (loopCycles / numberOfLoopCycles.toDouble()))).toInt()
       val calculatedG = (state.g + (otherState.g - state.g) * (if (loopCycles > numberOfLoopCycles) 1.0 else (loopCycles / numberOfLoopCycles.toDouble()))).toInt()
       val calculatedB = (state.b + (otherState.b - state.b) * (if (loopCycles > numberOfLoopCycles) 1.0 else (loopCycles / numberOfLoopCycles.toDouble()))).toInt()
+
+      reachedStartColor = (calculatedR == state.r && calculatedG == state.g && calculatedB == state.b)
+      reachedEndColor = ((calculatedR - otherState.r).absoluteValue < 10 && (calculatedG - otherState.g).absoluteValue < 10 && (calculatedB - otherState.b).absoluteValue < 10)
+
       ledController.setLEDs(
         calculatedR,
-        calculatedB,
         calculatedG,
+        calculatedB,
         0,
         ledIdx,
         1
       )
+    }
+
+    loopCycles += if (finishedFade) -1 else 1
+
+    if (reachedStartColor) {
+      finishedFade = false
+    }
+
+    if (reachedEndColor) { // All LEDs are at the end color
+      finishedFade = true
     }
   }
 
@@ -134,8 +153,11 @@ object LedIOCandle : LedIO {
     }
     else if (state == LEDConstants.CandleState.BLUE) {
       ledController.clearAnimation(0)
-      val otherState = LEDConstants.CandleState.MAGENTA
-      fadeBetweenColors(state, otherState)
+      fadeBetweenColors(state, LEDConstants.CandleState.MAGENTA, loopCyclesToConverge = 2)
+    }
+    else if (state == LEDConstants.CandleState.RED) {
+      ledController.clearAnimation(0)
+      fadeBetweenColors(state, LEDConstants.CandleState.LIGHT_RED, loopCyclesToConverge = 2)
     }
     else if (state.animation == null) {
       ledController.clearAnimation(0)
