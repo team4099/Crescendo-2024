@@ -29,6 +29,7 @@ import com.team4099.robot2023.subsystems.intake.IntakeIOFalconNEO
 import com.team4099.robot2023.subsystems.intake.IntakeIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
+import com.team4099.robot2023.subsystems.limelight.LimelightVisionIOReal
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.subsystems.vision.Vision
@@ -79,7 +80,7 @@ object RobotContainer {
 
       drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
       vision = Vision(object : CameraIO {}, CameraIOPhotonvision("parakeet_2"))
-      limelight = LimelightVision(object : LimelightVisionIO {})
+      limelight = LimelightVision(LimelightVisionIOReal)
       intake = Intake(IntakeIOFalconNEO)
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(object : ElevatorIO {})
