@@ -398,13 +398,7 @@ class Superstructure(
           )
 
         if (feeder.hasNote || (!RobotBase.isReal() && noteHoldingID != -1)) {
-          if (DriverStation.isTeleop()) {
-            cleanupStartTime = Clock.fpgaTime
-            nextState = SuperstructureStates.GROUND_INTAKE_CLEAN_UP
-          } else {
-            currentRequest = Request.SuperstructureRequest.Idle()
-            nextState = SuperstructureStates.IDLE
-          }
+            nextState = SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_BACK
         }
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
@@ -421,13 +415,31 @@ class Superstructure(
           }
         }
       }
-      SuperstructureStates.GROUND_INTAKE_CLEAN_UP -> {
-        feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(-1.volts)
+      SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_BACK -> {
+        feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(-1.0.volts)
+        if (!feeder.hasNote) {
+          nextState = SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_FORWARD
+        }
 
-        if (Clock.fpgaTime - cleanupStartTime > FeederConstants.CLEAN_UP_TIME) {
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+        }
+      }
+      SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_FORWARD -> {
+        feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(1.volts)
+        if (feeder.hasNote) {
           currentRequest = Request.SuperstructureRequest.Idle()
           nextState = SuperstructureStates.IDLE
         }
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+        }
+
+
       }
       SuperstructureStates.AUTO_AIM -> {
         val targetFlywheelSpeed = aimer.calculateFlywheelSpeed()
@@ -1022,7 +1034,8 @@ class Superstructure(
       HOME,
       GROUND_INTAKE_PREP,
       GROUND_INTAKE,
-      GROUND_INTAKE_CLEAN_UP,
+      GROUND_INTAKE_CLEAN_UP_PUSH_BACK,
+      GROUND_INTAKE_CLEAN_UP_PUSH_FORWARD,
       ELEVATOR_AMP_PREP,
       WRIST_AMP_PREP,
       SCORE_ELEVATOR_AMP,

@@ -169,7 +169,6 @@ object RobotContainer {
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain))
     ControlBoard.intake.whileTrue(
       ParallelCommandGroup(
-        superstructure.groundIntakeCommand(),
         TargetNoteCommand(
           driver = Ryan(),
           { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
