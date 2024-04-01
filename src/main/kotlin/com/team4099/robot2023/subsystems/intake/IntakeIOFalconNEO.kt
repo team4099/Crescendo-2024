@@ -20,6 +20,7 @@ import com.team4099.robot2023.subsystems.falconspin.Neo
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
+import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.ctreAngularMechanismSensor
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.inVolts
@@ -56,11 +57,13 @@ object IntakeIOFalconNEO : IntakeIO {
     var rollerFalconConfiguration = TalonFXConfiguration()
 
     rollerFalconConfiguration.CurrentLimits.StatorCurrentLimit =
-      IntakeConstants.ROLLER_CURRENT_LIMIT.inAmperes
-    rollerFalconConfiguration.CurrentLimits.StatorCurrentLimit =
-      IntakeConstants.ROLLER_CURRENT_LIMIT.inAmperes
+      IntakeConstants.ROLLER_STATOR_CURRENT_LIMIT.inAmperes
+    rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimit =
+      IntakeConstants.ROLLER_SUPPLY_CURRENT_LIMIT.inAmperes
+//    rollerFalconConfiguration.CurrentLimits.SupplyTimeThreshold = IntakeConstants.ROLLER_CURRENT_TIME_THRESHOLD.inSeconds
+//    rollerFalconConfiguration.CurrentLimits.SupplyCurrentThreshold = IntakeConstants.ROLLER_SUPPLY_TRIGGER_THRESHOLD.inAmperes
     rollerFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true
-    rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = false
+    rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
     rollerFalconConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive
     rollerFalconConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast
 
@@ -76,7 +79,7 @@ object IntakeIOFalconNEO : IntakeIO {
       "Roller",
       MotorCollection(
         mutableListOf(Falcon500(rollerFalcon, "Roller Motor")),
-        IntakeConstants.ROLLER_CURRENT_LIMIT,
+        IntakeConstants.ROLLER_STATOR_CURRENT_LIMIT,
         60.celsius,
         50.amps,
         120.celsius
@@ -87,7 +90,7 @@ object IntakeIOFalconNEO : IntakeIO {
     centerWheelSparkMax.clearFaults()
 
     centerWheelSparkMax.enableVoltageCompensation(IntakeConstants.VOLTAGE_COMPENSATION.inVolts)
-    centerWheelSparkMax.setSmartCurrentLimit(IntakeConstants.ROLLER_CURRENT_LIMIT.inAmperes.toInt())
+    // centerWheelSparkMax.setSmartCurrentLimit(IntakeConstants.ROLLER_CURRENT_LIMIT.inAmperes.toInt())
     centerWheelSparkMax.inverted = IntakeConstants.ROLLER_MOTOR_INVERTED
 
     centerWheelSparkMax.idleMode = CANSparkMax.IdleMode.kCoast
@@ -99,7 +102,7 @@ object IntakeIOFalconNEO : IntakeIO {
       "Center Wheel",
       MotorCollection(
         mutableListOf(Neo(centerWheelSparkMax, "Center Wheel Motor")),
-        IntakeConstants.ROLLER_CURRENT_LIMIT,
+        IntakeConstants.ROLLER_STATOR_CURRENT_LIMIT,
         60.celsius,
         50.amps,
         120.celsius

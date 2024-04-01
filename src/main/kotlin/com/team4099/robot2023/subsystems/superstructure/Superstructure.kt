@@ -143,8 +143,6 @@ class Superstructure(
     leds.isIdle = currentState == SuperstructureStates.IDLE
     leds.subsystemsAtPosition =
       wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity && elevator.isAtTargetedPosition
-    leds.batteryIsLow =
-      RobotController.getBatteryVoltage() < LEDConstants.BATTERY_WARNING_THRESHOLD.inVolts
 
     val ledLoopStartTime = Clock.realTimestamp
     leds.periodic()
