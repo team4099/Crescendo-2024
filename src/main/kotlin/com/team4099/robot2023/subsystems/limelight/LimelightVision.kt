@@ -64,7 +64,6 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
 
   override fun periodic() {
 
-
     visibleGamePieces.clear()
     targetGamePieceTx = null
 
@@ -94,7 +93,10 @@ class LimelightVision(val io: LimelightVisionIO) : SubsystemBase() {
       }
     }
 
-    Logger.recordOutput("Limelight/poseRelativeToRobot", ((targetGamePiecePose?.toPose2d() ?: Pose2d()) - poseSupplier.invoke()).transform2d)
+    Logger.recordOutput(
+      "Limelight/poseRelativeToRobot",
+      ((targetGamePiecePose?.toPose2d() ?: Pose2d()) - poseSupplier.invoke()).transform2d
+    )
 
     Logger.recordOutput(
       "LimelightVision/RawLimelightReadingsTx",

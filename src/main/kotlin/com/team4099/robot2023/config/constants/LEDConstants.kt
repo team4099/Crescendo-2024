@@ -11,7 +11,13 @@ object LEDConstants {
   val BATTERY_FULL_THRESHOLD = 12.5.volts
   val LED_COUNT = 50
 
-  enum class CandleState(val animation: Animation?, val r: Int, val g: Int, val b: Int, var attachedValue: Any? = null) {
+  enum class CandleState(
+    val animation: Animation?,
+    val r: Int,
+    val g: Int,
+    val b: Int,
+    var attachedValue: Any? = null
+  ) {
     // Gold
     NO_NOTE(null, 0, 0, 0),
     NOTHING(null, 0, 0, 0),

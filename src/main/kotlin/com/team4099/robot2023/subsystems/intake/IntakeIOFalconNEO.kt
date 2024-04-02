@@ -20,7 +20,6 @@ import com.team4099.robot2023.subsystems.falconspin.Neo
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
-import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.ctreAngularMechanismSensor
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.inVolts
@@ -60,8 +59,10 @@ object IntakeIOFalconNEO : IntakeIO {
       IntakeConstants.ROLLER_STATOR_CURRENT_LIMIT.inAmperes
     rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimit =
       IntakeConstants.ROLLER_SUPPLY_CURRENT_LIMIT.inAmperes
-//    rollerFalconConfiguration.CurrentLimits.SupplyTimeThreshold = IntakeConstants.ROLLER_CURRENT_TIME_THRESHOLD.inSeconds
-//    rollerFalconConfiguration.CurrentLimits.SupplyCurrentThreshold = IntakeConstants.ROLLER_SUPPLY_TRIGGER_THRESHOLD.inAmperes
+    //    rollerFalconConfiguration.CurrentLimits.SupplyTimeThreshold =
+    // IntakeConstants.ROLLER_CURRENT_TIME_THRESHOLD.inSeconds
+    //    rollerFalconConfiguration.CurrentLimits.SupplyCurrentThreshold =
+    // IntakeConstants.ROLLER_SUPPLY_TRIGGER_THRESHOLD.inAmperes
     rollerFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true
     rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
     rollerFalconConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive

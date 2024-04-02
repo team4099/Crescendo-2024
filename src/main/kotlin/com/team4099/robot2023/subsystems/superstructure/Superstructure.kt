@@ -1,10 +1,8 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.hal.Clock
-import com.team4099.robot2023.config.constants.FeederConstants
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.FlywheelConstants
-import com.team4099.robot2023.config.constants.LEDConstants
 import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.elevator.Elevator
@@ -19,7 +17,6 @@ import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.util.NoteSimulation
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
-import edu.wpi.first.wpilibj.RobotController
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
@@ -36,7 +33,6 @@ import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
-import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inRotationsPerMinute
@@ -143,7 +139,9 @@ class Superstructure(
   override fun periodic() {
     leds.hasNote = feeder.hasNote
     leds.isAutoAiming = currentState == SuperstructureStates.AUTO_AIM
-    leds.isAmping = (currentState == SuperstructureStates.WRIST_AMP_PREP) || (currentState == SuperstructureStates.ELEVATOR_AMP_PREP)
+    leds.isAmping =
+      (currentState == SuperstructureStates.WRIST_AMP_PREP) ||
+      (currentState == SuperstructureStates.ELEVATOR_AMP_PREP)
     leds.subsystemsAtPosition =
       wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity && elevator.isAtTargetedPosition
     leds.seesGamePiece = limelight.inputs.gamePieceTargets.size > 0
@@ -402,7 +400,7 @@ class Superstructure(
           )
 
         if (feeder.hasNote || (!RobotBase.isReal() && noteHoldingID != -1)) {
-            nextState = SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_BACK
+          nextState = SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_BACK
         }
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
@@ -442,8 +440,6 @@ class Superstructure(
             nextState = SuperstructureStates.IDLE
           }
         }
-
-
       }
       SuperstructureStates.AUTO_AIM -> {
         val targetFlywheelSpeed = aimer.calculateFlywheelSpeed()

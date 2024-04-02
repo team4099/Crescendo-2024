@@ -1,13 +1,11 @@
 package com.team4099.robot2023.subsystems.led
 
-import com.team4099.robot2023.RobotContainer
 import com.team4099.robot2023.config.constants.LEDConstants
 import com.team4099.robot2023.util.FMSData
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotController
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.derived.volts
-import java.sql.Driver
 
 class Leds(val io: LedIO) {
   var inputs = LedIO.LedIOInputs()
@@ -57,13 +55,13 @@ class Leds(val io: LedIO) {
           state = LEDConstants.CandleState.HAS_NOTE
         }
       }
-    }else if (seesGamePiece) {
+    } else if (seesGamePiece) {
       state = LEDConstants.CandleState.SEES_NOTE
     } else {
       state = LEDConstants.CandleState.NO_NOTE
     }
 
-      Logger.processInputs("LED", inputs)
-      Logger.recordOutput("LED/state", state.name)
-    }
+    Logger.processInputs("LED", inputs)
+    Logger.recordOutput("LED/state", state.name)
+  }
 }

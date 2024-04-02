@@ -122,7 +122,12 @@ class TargetNoteCommand(
     drivetrain.currentRequest =
       Request.DrivetrainRequest.OpenLoop(
         thetaFeedback,
-        Pair(-hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond).meters.perSecond, 0.0.meters.perSecond),
+        Pair(
+          -hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
+            .meters
+            .perSecond,
+          0.0.meters.perSecond
+        ),
         fieldOriented = false
       )
   }
