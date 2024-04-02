@@ -77,7 +77,7 @@ object VisionConstants {
   }
 
   object Limelight {
-    val LIMELIGHT_NAME = "limelight-zapdos"
+    val LIMELIGHT_NAME = "limelight-owl"
     val HORIZONTAL_FOV = 59.6.degrees
     val VERITCAL_FOV = 45.7.degrees
     val HIGH_TAPE_HEIGHT = 43.875.inches + 1.inches

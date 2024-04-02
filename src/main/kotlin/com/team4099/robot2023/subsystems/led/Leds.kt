@@ -3,7 +3,9 @@ package com.team4099.robot2023.subsystems.led
 import com.team4099.robot2023.config.constants.LEDConstants
 import com.team4099.robot2023.util.FMSData
 import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.RobotController
 import org.littletonrobotics.junction.Logger
+import org.team4099.lib.units.derived.volts
 
 class Leds(val io: LedIO) {
   var inputs = LedIO.LedIOInputs()
@@ -11,7 +13,6 @@ class Leds(val io: LedIO) {
   var hasNote = false
   var subsystemsAtPosition = false
   var isIdle = true
-  var batteryIsLow = false
 
   var state = LEDConstants.CandleState.NO_NOTE
     set(value) {
@@ -21,17 +22,14 @@ class Leds(val io: LedIO) {
 
   fun periodic() {
     io.updateInputs(inputs)
-    if (batteryIsLow && DriverStation.isDisabled()) {
-      state = LEDConstants.CandleState.LOW_BATTERY
-    } else if (DriverStation.isDisabled()) {
-      if (DriverStation.getAlliance().isPresent) {
-        if (FMSData.isBlue) {
-          state = LEDConstants.CandleState.BLUE
-        } else {
-          state = LEDConstants.CandleState.RED
-        }
+    if (DriverStation.getAlliance().isEmpty) {
+      io.batteryVoltage = RobotController.getBatteryVoltage().volts
+      state = LEDConstants.CandleState.BATTERY_DISPLAY
+    } else if (DriverStation.isDisabled() && DriverStation.getAlliance().isPresent) {
+      if (FMSData.isBlue) {
+        state = LEDConstants.CandleState.BLUE
       } else {
-        state = LEDConstants.CandleState.NOTHING
+        state = LEDConstants.CandleState.RED
       }
     } else if (hasNote) {
       if (subsystemsAtPosition && !isIdle) {

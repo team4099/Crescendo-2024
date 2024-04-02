@@ -47,6 +47,7 @@ import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inRotation2ds
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
+import org.team4099.lib.units.inDegreesPerSecond
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.perSecond
 import java.util.concurrent.locks.Lock
@@ -469,6 +470,10 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
           angularVelocity,
         )
     }
+
+    Logger.recordOutput(
+      "Drivetrain/omegaDegreesPerSecond", desiredChassisSpeeds.omega.inDegreesPerSecond
+    )
 
     if (DrivetrainConstants.MINIMIZE_SKEW) {
       val velocityTransform =

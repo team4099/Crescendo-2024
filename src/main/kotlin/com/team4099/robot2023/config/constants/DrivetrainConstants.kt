@@ -33,7 +33,7 @@ object DrivetrainConstants {
   const val FOC_ENABLED = true
   const val MINIMIZE_SKEW = false
 
-  const val TELEOP_TURNING_SPEED_PERCENT = 0.75
+  const val TELEOP_TURNING_SPEED_PERCENT = 1
 
   const val OMOMETRY_UPDATE_FREQUENCY = 250.0
 
@@ -61,7 +61,7 @@ object DrivetrainConstants {
   val SLOW_AUTO_VEL = 2.meters.perSecond
   val SLOW_AUTO_ACCEL = 2.0.meters.perSecond.perSecond
 
-  val MAX_AUTO_VEL = 4.0.meters.perSecond // 4
+  val MAX_AUTO_VEL = 3.5.meters.perSecond // 4
   val MAX_AUTO_ACCEL = 3.25.meters.perSecond.perSecond // 3
 
   val MAX_AUTO_BRAKE_VEL = 0.5.meters.perSecond // 4
@@ -76,11 +76,14 @@ object DrivetrainConstants {
   val ALLOWED_STEERING_ANGLE_ERROR = 1.degrees
 
   val STEERING_SUPPLY_CURRENT_LIMIT = 20.0.amps
-  val DRIVE_SUPPLY_CURRENT_LIMIT = 70.0.amps
-  val DRIVE_THRESHOLD_CURRENT_LIMIT = 70.0.amps
+  val AUTO_DRIVE_SUPPLY_CURRENT_LIMIT = 90.0.amps
+  val AUTO_DRIVE_THRESHOLD_CURRENT_LIMIT = 90.0.amps
+  val TELEOP_DRIVE_SUPPLY_CURRENT_LIMIT = 70.0.amps
+  val TELEOP_DRIVE_THRESHOLD_CURRENT_LIMIT = 70.0.amps
   val DRIVE_TRIGGER_THRESHOLD_TIME = 0.1.seconds
 
-  val DRIVE_STATOR_CURRENT_LIMIT = 80.0.amps
+  val AUTO_DRIVE_STATOR_CURRENT_LIMIT = 100.amps
+  val TELEOP_DRIVE_STATOR_CURRENT_LIMIT = 80.0.amps
   val DRIVE_STATOR_THRESHOLD_CURRENT_LIMIT = 80.0.amps
   val DRIVE_STATOR_TRIGGER_THRESHOLD_TIME = 1.0.seconds
 
@@ -144,10 +147,10 @@ object DrivetrainConstants {
     val TELEOP_ALIGN_PID_KD =
       (0.2.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
-    val SIM_AUTO_THETA_PID_KP = 10.degrees.perSecond / 1.degrees
+    val SIM_AUTO_THETA_PID_KP = 0.degrees.perSecond / 1.degrees
     val SIM_AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val SIM_AUTO_THETA_PID_KD =
-      (1.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val MAX_AUTO_ANGULAR_VEL = 270.0.degrees.perSecond
     val MAX_AUTO_ANGULAR_ACCEL = 600.0.degrees.perSecond.perSecond

@@ -21,6 +21,7 @@ import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.Value
 import org.team4099.lib.units.Velocity
+import org.team4099.lib.units.base.Current
 import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps

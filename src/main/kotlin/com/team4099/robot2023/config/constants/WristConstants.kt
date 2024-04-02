@@ -31,7 +31,7 @@ object WristConstants {
 
   val ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO = 1.06488 / 1.0
   val MOTOR_TO_ABSOLUTE_ENCODER_GEAR_RATIO =
-    5.0 / 1.0 * 4.0 / 1.0 * 3.0 / 1.0 * 46.0 / 42.0 * 90.0 / 33.0 * 1.0 / 1.06488
+    5.0 / 1.0 * 4.0 / 1.0 * 54.0 / 34.0 * 90.0 / 33.0 * 1.0 / 1.06488
 
   val VOLTAGE_COMPENSATION = 12.0.volts
   val ABSOLUTE_ENCODER_OFFSET =
@@ -39,7 +39,8 @@ object WristConstants {
       97.72227856659904.degrees - 35.degrees + 1.3.degrees -
         0.33.degrees -
         1.degrees -
-        0.5.degrees
+        0.5.degrees -
+        1.degrees
       ) * ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
   val WRIST_LENGTH = 18.6.inches
   val WRIST_INERTIA = 0.7181257183.kilo.grams * 1.0.meters.squared
@@ -58,7 +59,7 @@ object WristConstants {
   val WRIST_ZERO_SIM_OFFSET = 27.5.degrees
 
   val MAX_WRIST_VELOCITY = 300.degrees.perSecond
-  val MAX_WRIST_ACCELERATION = 1000.degrees.perSecond.perSecond
+  val MAX_WRIST_ACCELERATION = 1500.degrees.perSecond.perSecond
 
   val HARDSTOP_OFFSET = 47.degrees
   object PID {

@@ -28,6 +28,7 @@ import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.Value
 import org.team4099.lib.units.Velocity
+import org.team4099.lib.units.base.Current
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
@@ -140,16 +141,15 @@ class SwerveModuleIOTalon(
     driveConfiguration.Slot0.kA =
       DrivetrainConstants.PID.DRIVE_KA.inVoltsPerMetersPerSecondPerSecond
     //      driveSensor.velocityFeedforwardToRawUnits(DrivetrainConstants.PID.DRIVE_KFF)
-    driveConfiguration.CurrentLimits.SupplyCurrentLimit =
-      DrivetrainConstants.DRIVE_SUPPLY_CURRENT_LIMIT.inAmperes
-    driveConfiguration.CurrentLimits.SupplyCurrentThreshold =
-      DrivetrainConstants.DRIVE_THRESHOLD_CURRENT_LIMIT.inAmperes
+
+    driveConfiguration.CurrentLimits.SupplyCurrentLimit = DrivetrainConstants.TELEOP_DRIVE_SUPPLY_CURRENT_LIMIT.inAmperes
+    driveConfiguration.CurrentLimits.SupplyCurrentThreshold = DrivetrainConstants.TELEOP_DRIVE_THRESHOLD_CURRENT_LIMIT.inAmperes
     driveConfiguration.CurrentLimits.SupplyTimeThreshold =
       DrivetrainConstants.DRIVE_TRIGGER_THRESHOLD_TIME.inSeconds
     driveConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
-    driveConfiguration.CurrentLimits.StatorCurrentLimit =
-      DrivetrainConstants.DRIVE_STATOR_CURRENT_LIMIT.inAmperes
+    driveConfiguration.CurrentLimits.StatorCurrentLimit = DrivetrainConstants.TELEOP_DRIVE_STATOR_CURRENT_LIMIT.inAmperes
     driveConfiguration.CurrentLimits.StatorCurrentLimitEnable = true // TODO tune
+    driveFalcon.configurator.apply(driveConfiguration)
 
     driveConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast
     driveFalcon.configurator.apply(driveConfiguration)
@@ -173,9 +173,9 @@ class SwerveModuleIOTalon(
       "Drive",
       MotorCollection(
         mutableListOf(Falcon500(driveFalcon, "$label Drive Motor")),
-        DrivetrainConstants.DRIVE_SUPPLY_CURRENT_LIMIT,
+        DrivetrainConstants.TELEOP_DRIVE_SUPPLY_CURRENT_LIMIT,
         90.celsius,
-        DrivetrainConstants.DRIVE_SUPPLY_CURRENT_LIMIT - 30.amps,
+        DrivetrainConstants.TELEOP_DRIVE_SUPPLY_CURRENT_LIMIT - 30.amps,
         110.celsius
       )
     )

@@ -7,23 +7,28 @@ import org.team4099.lib.units.derived.volts
 object LEDConstants {
   val INTAKE_CURRENT_THRESHOLD = 15.amps
   val OUTAKE_CURRENT_THRESHOLD = 20.amps
+  val BATTERY_FULL_THRESHOLD = 12.5.volts
   val LED_COUNT = 50
-
-  val BATTERY_WARNING_THRESHOLD = 12.3.volts
 
   enum class CandleState(val animation: Animation?, val r: Int, val g: Int, val b: Int) {
     // Gold
     NO_NOTE(null, 0, 0, 0),
     NOTHING(null, 0, 0, 0),
     RED(null, 255, 0, 0),
+    LIGHT_RED(null, 255, 67, 36),
+    ORANGE(null, 255, 105, 0),
     BLUE(null, 0, 0, 255),
+    PURPLE(null, 67, 36, 255),
+    GREEN(null, 0, 255, 0),
+    MAGENTA(null, 255, 0, 255),
 
     // Blue
 
     HAS_NOTE(null, 0, 0, 255),
 
-    // Red
-    LOW_BATTERY(null, 255, 105, 0),
+    // Yellow
+    BATTERY_DISPLAY(null, 255, 105, 0),
+    WHITE(null, 255, 255, 255),
 
     // Green
 
