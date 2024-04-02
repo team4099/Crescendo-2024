@@ -137,10 +137,10 @@ object DrivetrainConstants {
       (0.0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val AUTO_THETA_ALLOWED_ERROR = 3.degrees
-    val AUTO_THETA_PID_KP = (0.radians.perSecond / 1.radians)
+    val AUTO_THETA_PID_KP = (1.05.radians.perSecond / 1.radians)
     val AUTO_THETA_PID_KI = (0.0.radians.perSecond / (1.radians * 1.seconds))
     val AUTO_THETA_PID_KD =
-      (0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (0.2.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val TELEOP_ALIGN_PID_KP = 3.6.degrees.perSecond / 1.degrees
     val TELEOP_ALIGN_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
