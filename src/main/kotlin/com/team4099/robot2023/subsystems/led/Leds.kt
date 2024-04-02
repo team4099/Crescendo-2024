@@ -1,6 +1,7 @@
 package com.team4099.robot2023.subsystems.led
 
 import com.team4099.robot2023.config.constants.LEDConstants
+import com.team4099.robot2023.util.DebugLogger
 import com.team4099.robot2023.util.FMSData
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotController
@@ -27,11 +28,11 @@ class Leds(val io: LedIO) {
     io.updateInputs(inputs)
     if (DriverStation.getAlliance().isEmpty) {
       io.batteryVoltage = RobotController.getBatteryVoltage().volts
-      state = LEDConstants.CandleState.GOLD
-      if (io.batteryVoltage < 12.3.volts) {
-        state = LEDConstants.CandleState.LOW_BATTERY_WARNING
+
+      state = if (io.batteryVoltage < 12.3.volts) {
+        LEDConstants.CandleState.LOW_BATTERY_WARNING
       } else {
-        state = LEDConstants.CandleState.GOLD
+        LEDConstants.CandleState.GOLD
       }
     } else if (DriverStation.isDisabled() && DriverStation.getAlliance().isPresent) {
       if (FMSData.isBlue) {
@@ -62,6 +63,6 @@ class Leds(val io: LedIO) {
     }
 
     Logger.processInputs("LED", inputs)
-    Logger.recordOutput("LED/state", state.name)
+    DebugLogger.recordDebugOutput("LED/state", state.name)
   }
 }
