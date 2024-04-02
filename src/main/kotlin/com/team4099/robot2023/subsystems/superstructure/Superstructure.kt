@@ -13,6 +13,7 @@ import com.team4099.robot2023.subsystems.flywheel.Flywheel
 import com.team4099.robot2023.subsystems.intake.Intake
 import com.team4099.robot2023.subsystems.led.LedIOCandle
 import com.team4099.robot2023.subsystems.led.Leds
+import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.util.NoteSimulation
@@ -48,7 +49,8 @@ class Superstructure(
   private val wrist: Wrist,
   private val flywheel: Flywheel,
   private val drivetrain: Drivetrain,
-  private val vision: Vision
+  private val vision: Vision,
+  private val limelight: LimelightVision
 ) : SubsystemBase() {
 
   var wristPushDownVoltage = Wrist.TunableWristStates
@@ -140,9 +142,11 @@ class Superstructure(
 
   override fun periodic() {
     leds.hasNote = feeder.hasNote
-    leds.isIdle = currentState == SuperstructureStates.IDLE
+    leds.isAutoAiming = currentState == SuperstructureStates.AUTO_AIM
+    leds.isAmping = (currentState == SuperstructureStates.WRIST_AMP_PREP) || (currentState == SuperstructureStates.ELEVATOR_AMP_PREP)
     leds.subsystemsAtPosition =
       wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity && elevator.isAtTargetedPosition
+    leds.seesGamePiece = limelight.inputs.gamePieceTargets.size > 0
 
     val ledLoopStartTime = Clock.realTimestamp
     leds.periodic()
