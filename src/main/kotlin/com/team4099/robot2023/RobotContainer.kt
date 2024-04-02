@@ -47,6 +47,7 @@ import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
+import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
 
 object RobotContainer {
   private val drivetrain: Drivetrain
@@ -81,7 +82,7 @@ object RobotContainer {
       limelight = LimelightVision(LimelightVisionIOReal)
       intake = Intake(IntakeIOFalconNEO)
       feeder = Feeder(FeederIONeo)
-      elevator = Elevator(object : ElevatorIO {})
+      elevator = Elevator(ElevatorIONEO)
       flywheel = Flywheel(FlywheelIOTalon)
       wrist = Wrist(WristIOTalon)
     } else {
