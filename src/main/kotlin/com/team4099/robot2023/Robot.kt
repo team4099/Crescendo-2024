@@ -151,7 +151,6 @@ object Robot : LoggedRobot() {
   }
 
   override fun autonomousInit() {
-    RobotContainer.setDriveCurrentLimits(isInAutonomous = true)
     val autonCommandWithWait = WaitCommand(0.001).andThen(autonomousCommand)
     autonCommandWithWait?.schedule()
   }
@@ -217,7 +216,6 @@ object Robot : LoggedRobot() {
     RobotContainer.zeroSensors(isInAutonomous = false)
     RobotContainer.mapTeleopControls()
     RobotContainer.getAutonomousCommand().cancel()
-    RobotContainer.setDriveCurrentLimits(isInAutonomous = false)
     RobotContainer.setDriveBrakeMode()
     RobotContainer.setSteeringCoastMode()
     if (Constants.Tuning.TUNING_MODE) {

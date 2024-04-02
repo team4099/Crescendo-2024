@@ -162,9 +162,4 @@ interface SwerveModuleIO {
     kD: DerivativeGain<Radian, Volt>
   ) {}
   fun configureSteeringMotionMagic(maxVel: AngularVelocity, maxAccel: AngularAcceleration) {}
-  fun setCurrentLimits(
-    statorCurrentLimit: Current,
-    supplyCurrentLimit: Current,
-    thresholdCurrentLimit: Current
-  )
 }

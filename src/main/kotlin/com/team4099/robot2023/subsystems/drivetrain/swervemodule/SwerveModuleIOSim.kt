@@ -284,14 +284,6 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     println("Can't configure motion magic in simulation")
   }
 
-  override fun setCurrentLimits(
-    statorCurrentLimit: Current,
-    supplyCurrentLimit: Current,
-    thresholdCurrentLimit: Current
-  ) {
-    println("Can't set current limits in simulation")
-  }
-
   override fun runCharacterization(input: ElectricalPotential) {
     val appliedVolts = MathUtil.clamp(input.inVolts, -12.0, 12.0)
     driveMotorSim.setInputVoltage(appliedVolts)

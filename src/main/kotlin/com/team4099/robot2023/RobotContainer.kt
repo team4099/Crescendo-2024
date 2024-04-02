@@ -362,25 +362,5 @@ object RobotContainer {
 
   fun getAutonomousLoadingCommand() = AutonomousSelector.getLoadingCommand(drivetrain)
 
-  fun setDriveCurrentLimits(isInAutonomous: Boolean) {
-    if (isInAutonomous) {
-      drivetrain.swerveModules.forEach {
-        it.setCurrentLimits(
-          DrivetrainConstants.AUTO_DRIVE_STATOR_CURRENT_LIMIT,
-          DrivetrainConstants.AUTO_DRIVE_SUPPLY_CURRENT_LIMIT,
-          DrivetrainConstants.AUTO_DRIVE_THRESHOLD_CURRENT_LIMIT
-        )
-      }
-    } else {
-      drivetrain.swerveModules.forEach {
-        it.setCurrentLimits(
-          DrivetrainConstants.TELEOP_DRIVE_STATOR_CURRENT_LIMIT,
-          DrivetrainConstants.TELEOP_DRIVE_SUPPLY_CURRENT_LIMIT,
-          DrivetrainConstants.TELEOP_DRIVE_THRESHOLD_CURRENT_LIMIT
-        )
-      }
-    }
-  }
-
   fun mapTunableCommands() {}
 }

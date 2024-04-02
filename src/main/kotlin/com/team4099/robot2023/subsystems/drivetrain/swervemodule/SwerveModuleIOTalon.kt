@@ -142,6 +142,15 @@ class SwerveModuleIOTalon(
       DrivetrainConstants.PID.DRIVE_KA.inVoltsPerMetersPerSecondPerSecond
     //      driveSensor.velocityFeedforwardToRawUnits(DrivetrainConstants.PID.DRIVE_KFF)
 
+    driveConfiguration.CurrentLimits.SupplyCurrentLimit = DrivetrainConstants.TELEOP_DRIVE_SUPPLY_CURRENT_LIMIT.inAmperes
+    driveConfiguration.CurrentLimits.SupplyCurrentThreshold = DrivetrainConstants.TELEOP_DRIVE_THRESHOLD_CURRENT_LIMIT.inAmperes
+    driveConfiguration.CurrentLimits.SupplyTimeThreshold =
+      DrivetrainConstants.DRIVE_TRIGGER_THRESHOLD_TIME.inSeconds
+    driveConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
+    driveConfiguration.CurrentLimits.StatorCurrentLimit = DrivetrainConstants.TELEOP_DRIVE_STATOR_CURRENT_LIMIT.inAmperes
+    driveConfiguration.CurrentLimits.StatorCurrentLimitEnable = true // TODO tune
+    driveFalcon.configurator.apply(driveConfiguration)
+
     driveConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast
     driveFalcon.configurator.apply(driveConfiguration)
 
@@ -347,21 +356,6 @@ class SwerveModuleIOTalon(
     driveFalcon.setPosition(0.0)
     drivePositionQueue.clear()
     steeringPositionQueue.clear()
-  }
-
-  override fun setCurrentLimits(
-    statorCurrentLimit: Current,
-    supplyCurrentLimit: Current,
-    thresholdCurrentLimit: Current
-  ) {
-    driveConfiguration.CurrentLimits.SupplyCurrentLimit = supplyCurrentLimit.inAmperes
-    driveConfiguration.CurrentLimits.SupplyCurrentThreshold = thresholdCurrentLimit.inAmperes
-    driveConfiguration.CurrentLimits.SupplyTimeThreshold =
-      DrivetrainConstants.DRIVE_TRIGGER_THRESHOLD_TIME.inSeconds
-    driveConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
-    driveConfiguration.CurrentLimits.StatorCurrentLimit = statorCurrentLimit.inAmperes
-    driveConfiguration.CurrentLimits.StatorCurrentLimitEnable = true // TODO tune
-    driveFalcon.configurator.apply(driveConfiguration)
   }
 
   override fun configureDrivePID(
