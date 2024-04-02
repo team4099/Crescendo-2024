@@ -27,21 +27,21 @@ class TestAutoPath(val drivetrain: Drivetrain, val superstructure: Superstructur
               startingPose.rotation.inRotation2ds
             ),
             FieldWaypoint(
-              Translation2d(startingPose.x + 2.meters, startingPose.y + 0.02.meters)
+              Translation2d(startingPose.x + 1.5.meters, startingPose.y + 0.02.meters)
                 .translation2d,
               null,
-              (startingPose.rotation + (45 / 2.0).degrees).inRotation2ds
+              (startingPose.rotation + 15.degrees).inRotation2ds
             ),
             FieldWaypoint(
-              Translation2d(startingPose.x + 4.meters, startingPose.y).translation2d,
+              Translation2d(startingPose.x + 3.meters, startingPose.y).translation2d,
               null,
-              (startingPose.rotation + 45.degrees).inRotation2ds
+              (startingPose.rotation + 30.degrees).inRotation2ds
             ),
             FieldWaypoint(
-              Translation2d(startingPose.x + 2.meters, startingPose.y - 0.02.meters)
+              Translation2d(startingPose.x + 1.5.meters, startingPose.y - 0.02.meters)
                 .translation2d,
               null,
-              (startingPose.rotation + (45 / 2.0).degrees).inRotation2ds
+              (startingPose.rotation + 15.degrees).inRotation2ds
             ),
             FieldWaypoint(
               Translation2d(startingPose.x, startingPose.y).translation2d,
@@ -50,7 +50,7 @@ class TestAutoPath(val drivetrain: Drivetrain, val superstructure: Superstructur
             )
           )
         },
-        useLowerTolerance = false
+        useLowerTolerance = true
       )
     )
   }

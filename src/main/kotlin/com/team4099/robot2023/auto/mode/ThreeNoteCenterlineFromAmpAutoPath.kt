@@ -23,7 +23,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
     addRequirements(drivetrain)
     addCommands(
       superstructure.prepSpeakerLowCommand(),
-      superstructure.scoreCommand(),
+      superstructure.scoreCommand().withTimeout(0.75),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,

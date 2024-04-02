@@ -1,13 +1,11 @@
 package com.team4099.robot2023.subsystems.led
 
-import com.team4099.robot2023.RobotContainer
 import com.team4099.robot2023.config.constants.LEDConstants
 import com.team4099.robot2023.util.FMSData
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotController
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.derived.volts
-import java.sql.Driver
 
 class Leds(val io: LedIO) {
   var inputs = LedIO.LedIOInputs()
@@ -27,11 +25,10 @@ class Leds(val io: LedIO) {
     if (DriverStation.getAlliance().isEmpty) {
       io.batteryVoltage = RobotController.getBatteryVoltage().volts
       state = LEDConstants.CandleState.BATTERY_DISPLAY
-    }
-    else if (DriverStation.isDisabled() && DriverStation.getAlliance().isPresent) {
+    } else if (DriverStation.isDisabled() && DriverStation.getAlliance().isPresent) {
       if (FMSData.isBlue) {
         state = LEDConstants.CandleState.BLUE
-      } else  {
+      } else {
         state = LEDConstants.CandleState.RED
       }
     } else if (hasNote) {

@@ -32,44 +32,24 @@ object LedIOCandle : LedIO {
   private fun wave(
     state: LEDConstants.CandleState,
     defaultState: LEDConstants.CandleState,
-    lengthOfWave: Int = 10,
-    lengthOfGradient: Double = 5.0,
+    lengthOfWave: Int = 10
   ) {
     ledController.setLEDs(state.r, state.g, state.b, 0, waveRuns, lengthOfWave)
 
     // Set outer colors
-    ledController.setLEDs(defaultState.r, defaultState.g, defaultState.b, 0, 0, waveRuns - lengthOfGradient.toInt())
-    ledController.setLEDs(defaultState.r, defaultState.g, defaultState.b, 0, waveRuns + lengthOfWave + lengthOfGradient.toInt(), LEDConstants.LED_COUNT - waveRuns - lengthOfWave)
-
-    // Set gradient colors
-    if (lengthOfGradient > 0.0) {
-      for ((step, ledIdx) in ((waveRuns - lengthOfGradient.toInt())..waveRuns).withIndex()) {
-        ledController.setLEDs(
-          (defaultState.r + (state.r - defaultState.r) * ((step + 1) / lengthOfGradient)).toInt(),
-          (defaultState.g + (state.g - defaultState.g) * ((step + 1) / lengthOfGradient)).toInt(),
-          (defaultState.b + (state.b - defaultState.b) * ((step + 1) / lengthOfGradient)).toInt(),
-          0,
-          ledIdx,
-          1
-        )
-      }
-
-      for ((step, ledIdx) in (waveRuns..(waveRuns + lengthOfGradient).toInt()).withIndex()) {
-        ledController.setLEDs(
-          (defaultState.r + (state.r - defaultState.r) * ((lengthOfGradient - (step + 1)) / lengthOfGradient)).toInt(),
-          (defaultState.g + (state.g - defaultState.g) * ((lengthOfGradient - (step + 1)) / lengthOfGradient)).toInt(),
-          (defaultState.b + (state.b - defaultState.b) * ((lengthOfGradient - (step + 1)) / lengthOfGradient)).toInt(),
-          0,
-          ledIdx,
-          1
-        )
-      }
-    }
+    ledController.setLEDs(defaultState.r, defaultState.g, defaultState.b, 0, 0, waveRuns)
+    ledController.setLEDs(
+      defaultState.r,
+      defaultState.g,
+      defaultState.b,
+      0,
+      waveRuns + lengthOfWave,
+      LEDConstants.LED_COUNT - waveRuns - lengthOfWave
+    )
 
     if (waveRuns >= LEDConstants.LED_COUNT - lengthOfWave) {
       reverseLEDS = true
-    }
-    else if (waveRuns < lengthOfWave){
+    } else if (waveRuns < lengthOfWave) {
       reverseLEDS = false
     }
 
@@ -82,13 +62,38 @@ object LedIOCandle : LedIO {
     lengthOfSolidEnds: Int = 10
   ) {
     ledController.setLEDs(state.r, state.g, state.b, 0, 0, lengthOfSolidEnds)
-    ledController.setLEDs(otherState.r, otherState.g, otherState.b, 0, LEDConstants.LED_COUNT - lengthOfSolidEnds, lengthOfSolidEnds)
+    ledController.setLEDs(
+      otherState.r,
+      otherState.g,
+      otherState.b,
+      0,
+      LEDConstants.LED_COUNT - lengthOfSolidEnds,
+      lengthOfSolidEnds
+    )
 
-    for ((step, ledIdx) in (lengthOfSolidEnds until(LEDConstants.LED_COUNT - lengthOfSolidEnds)).withIndex()) {
+    for (
+      (step, ledIdx) in
+      (lengthOfSolidEnds until (LEDConstants.LED_COUNT - lengthOfSolidEnds)).withIndex()
+    ) {
       ledController.setLEDs(
-        (state.r + (otherState.r - state.r) * ((step + 1) / (LEDConstants.LED_COUNT - lengthOfSolidEnds * 2.0))).toInt(),
-        (state.g + (otherState.g - state.g) * ((step + 1) / (LEDConstants.LED_COUNT - lengthOfSolidEnds * 2.0))).toInt(),
-        (state.b + (otherState.b - state.b) * ((step + 1) / (LEDConstants.LED_COUNT - lengthOfSolidEnds * 2.0))).toInt(),
+        (
+          state.r +
+            (otherState.r - state.r) *
+            ((step + 1) / (LEDConstants.LED_COUNT - lengthOfSolidEnds * 2.0))
+          )
+          .toInt(),
+        (
+          state.g +
+            (otherState.g - state.g) *
+            ((step + 1) / (LEDConstants.LED_COUNT - lengthOfSolidEnds * 2.0))
+          )
+          .toInt(),
+        (
+          state.b +
+            (otherState.b - state.b) *
+            ((step + 1) / (LEDConstants.LED_COUNT - lengthOfSolidEnds * 2.0))
+          )
+          .toInt(),
         0,
         ledIdx,
         1
@@ -101,8 +106,17 @@ object LedIOCandle : LedIO {
     defaultState: LEDConstants.CandleState,
     percent: Double
   ) {
-    ledController.setLEDs(state.r, state.g, state.b, 0, 0, (percent * LEDConstants.LED_COUNT).toInt())
-    ledController.setLEDs(defaultState.r, defaultState.g, defaultState.b, 0, (percent * LEDConstants.LED_COUNT).toInt(), LEDConstants.LED_COUNT)
+    ledController.setLEDs(
+      state.r, state.g, state.b, 0, 0, (percent * LEDConstants.LED_COUNT).toInt()
+    )
+    ledController.setLEDs(
+      defaultState.r,
+      defaultState.g,
+      defaultState.b,
+      0,
+      (percent * LEDConstants.LED_COUNT).toInt(),
+      LEDConstants.LED_COUNT
+    )
   }
 
   private fun fadeBetweenColors(
@@ -114,22 +128,55 @@ object LedIOCandle : LedIO {
     var reachedStartColor = true
     var reachedEndColor = true
 
-    for ((ledIdx, numberOfLoopCycles) in (loopCyclesToConverge..loopCyclesToConverge + LEDConstants.LED_COUNT * stepUpInLoopCycles step stepUpInLoopCycles).withIndex()) {
-      val calculatedR = (state.r + (otherState.r - state.r) * (if (loopCycles > numberOfLoopCycles) 1.0 else (loopCycles / numberOfLoopCycles.toDouble()))).toInt()
-      val calculatedG = (state.g + (otherState.g - state.g) * (if (loopCycles > numberOfLoopCycles) 1.0 else (loopCycles / numberOfLoopCycles.toDouble()))).toInt()
-      val calculatedB = (state.b + (otherState.b - state.b) * (if (loopCycles > numberOfLoopCycles) 1.0 else (loopCycles / numberOfLoopCycles.toDouble()))).toInt()
+    for (
+      (ledIdx, numberOfLoopCycles) in
+      (
+        loopCyclesToConverge..loopCyclesToConverge +
+          LEDConstants.LED_COUNT * stepUpInLoopCycles step stepUpInLoopCycles
+        )
+        .withIndex()
+    ) {
+      val calculatedR =
+        (
+          state.r +
+            (otherState.r - state.r) *
+            (
+              if (loopCycles > numberOfLoopCycles) 1.0
+              else (loopCycles / numberOfLoopCycles.toDouble())
+              )
+          )
+          .toInt()
+      val calculatedG =
+        (
+          state.g +
+            (otherState.g - state.g) *
+            (
+              if (loopCycles > numberOfLoopCycles) 1.0
+              else (loopCycles / numberOfLoopCycles.toDouble())
+              )
+          )
+          .toInt()
+      val calculatedB =
+        (
+          state.b +
+            (otherState.b - state.b) *
+            (
+              if (loopCycles > numberOfLoopCycles) 1.0
+              else (loopCycles / numberOfLoopCycles.toDouble())
+              )
+          )
+          .toInt()
 
-      reachedStartColor = (calculatedR == state.r && calculatedG == state.g && calculatedB == state.b)
-      reachedEndColor = ((calculatedR - otherState.r).absoluteValue < 10 && (calculatedG - otherState.g).absoluteValue < 10 && (calculatedB - otherState.b).absoluteValue < 10)
+      reachedStartColor =
+        (calculatedR == state.r && calculatedG == state.g && calculatedB == state.b)
+      reachedEndColor =
+        (
+          (calculatedR - otherState.r).absoluteValue < 5 &&
+            (calculatedG - otherState.g).absoluteValue < 5 &&
+            (calculatedB - otherState.b).absoluteValue < 5
+          )
 
-      ledController.setLEDs(
-        calculatedR,
-        calculatedG,
-        calculatedB,
-        0,
-        ledIdx,
-        1
-      )
+      ledController.setLEDs(calculatedR, calculatedG, calculatedB, 0, ledIdx, 1)
     }
 
     loopCycles += if (finishedFade) -1 else 1
@@ -150,16 +197,13 @@ object LedIOCandle : LedIO {
         LEDConstants.CandleState.NOTHING,
         (batteryVoltage.inVolts - 11.5) / (LEDConstants.BATTERY_FULL_THRESHOLD.inVolts - 11.5)
       )
-    }
-    else if (state == LEDConstants.CandleState.BLUE) {
+    } else if (state == LEDConstants.CandleState.BLUE) {
       ledController.clearAnimation(0)
-      fadeBetweenColors(state, LEDConstants.CandleState.MAGENTA, loopCyclesToConverge = 2)
-    }
-    else if (state == LEDConstants.CandleState.RED) {
+      fadeBetweenColors(LEDConstants.CandleState.MAGENTA, state, loopCyclesToConverge = 2)
+    } else if (state == LEDConstants.CandleState.RED) {
       ledController.clearAnimation(0)
-      fadeBetweenColors(state, LEDConstants.CandleState.LIGHT_RED, loopCyclesToConverge = 2)
-    }
-    else if (state.animation == null) {
+      fadeBetweenColors(LEDConstants.CandleState.ORANGE, state, loopCyclesToConverge = 2)
+    } else if (state.animation == null) {
       ledController.clearAnimation(0)
       ledController.setLEDs(state.r, state.g, state.b)
     } else {
