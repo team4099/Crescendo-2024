@@ -144,10 +144,10 @@ object DrivetrainConstants {
     val TELEOP_ALIGN_PID_KD =
       (0.2.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
-    val SIM_AUTO_THETA_PID_KP = 10.degrees.perSecond / 1.degrees
+    val SIM_AUTO_THETA_PID_KP = 0.degrees.perSecond / 1.degrees
     val SIM_AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val SIM_AUTO_THETA_PID_KD =
-      (1.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val MAX_AUTO_ANGULAR_VEL = 270.0.degrees.perSecond
     val MAX_AUTO_ANGULAR_ACCEL = 600.0.degrees.perSecond.perSecond
