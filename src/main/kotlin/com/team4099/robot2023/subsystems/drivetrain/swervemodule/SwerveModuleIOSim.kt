@@ -250,7 +250,7 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     println("Zero drive do anything meaningful in sim")
   }
 
-  override fun zeroSteering() {
+  override fun zeroSteering(isInAutonomous: Boolean) {
     turnAbsolutePosition = 0.0.radians
   }
 

@@ -3,6 +3,7 @@ package com.team4099.robot2023
 import com.team4099.lib.hal.Clock
 import com.team4099.robot2023.auto.AutonomousSelector
 import com.team4099.robot2023.auto.PathStore
+import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.simulation.DriverStationSim
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.ejml.EjmlVersion.BUILD_DATE
 import org.ejml.EjmlVersion.DIRTY
@@ -146,12 +148,12 @@ object Robot : LoggedRobot() {
         .withPosition(0, 1)
         .withWidget(BuiltInWidgets.kTextView)
         .entry
-
-    RobotContainer.zeroSensors(isInAutonomous = true)
   }
 
   override fun autonomousInit() {
-    val autonCommandWithWait = WaitCommand(0.001).andThen(autonomousCommand)
+    val autonCommandWithWait = RobotContainer.resetGyroYawCommand()
+      .andThen(runOnce({ RobotContainer.zeroSensors(isInAutonomous = true) }))
+      .andThen(autonomousCommand)
     autonCommandWithWait?.schedule()
   }
 

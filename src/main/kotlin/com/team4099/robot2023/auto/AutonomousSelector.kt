@@ -114,7 +114,7 @@ object AutonomousSelector {
   }
 
   val waitTime: Time
-    get() = waitBeforeCommandSlider.getDouble(0.0).seconds
+    get() = 0.0.seconds
 
   val secondaryWaitTime: Time
     get() = secondaryWaitInAuto.getDouble(0.0).seconds

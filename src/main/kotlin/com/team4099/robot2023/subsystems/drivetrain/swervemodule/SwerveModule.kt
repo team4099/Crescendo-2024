@@ -360,8 +360,8 @@ class SwerveModule(val io: SwerveModuleIO) {
   }
 
   /** Zeros the steering motor */
-  fun zeroSteering() {
-    io.zeroSteering()
+  fun zeroSteering(isInAutonomous: Boolean = false) {
+    io.zeroSteering(isInAutonomous)
   }
 
   /** Zeros the drive motor */

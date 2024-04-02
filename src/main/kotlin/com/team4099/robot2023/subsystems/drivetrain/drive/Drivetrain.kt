@@ -662,7 +662,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   fun zeroSensors(isInAutonomous: Boolean) {
     zeroGyroPitch()
     zeroGyroRoll()
-    zeroSteering()
+    zeroSteering(isInAutonomous)
 
     if (!isInAutonomous) {
       zeroDrive()
@@ -729,8 +729,8 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   }
 
   /** Zeros the steering motors for each swerve module. */
-  fun zeroSteering() {
-    swerveModules.forEach { it.zeroSteering() }
+  fun zeroSteering(isInAutonomous: Boolean = false) {
+    swerveModules.forEach { it.zeroSteering(isInAutonomous) }
   }
 
   /** Zeros the drive motors for each swerve module. */

@@ -23,6 +23,8 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
   init {
     addRequirements(drivetrain)
     addCommands(
+      superstructure.prepSpeakerLowCommand(),
+      superstructure.scoreCommand().withTimeout(0.75),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
@@ -30,31 +32,8 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
             listOf(
               FieldWaypoint(
                 startingPose.translation.translation2d,
-                0.degrees.inRotation2ds,
-                startingPose.rotation.inRotation2ds
-              ),
-              FieldWaypoint(
-                startingPose.translation.translation2d +
-                  Translation2d(2.inches, -2.inches).translation2d,
-                0.degrees.inRotation2ds,
-                (startingPose.rotation - 47.546.degrees).inRotation2ds
-              )
-            )
-          }
-        ),
-        superstructure.prepManualSpeakerCommand(-20.degrees, 3000.rotations.perMinute)
-      ),
-      superstructure.scoreCommand(),
-      ParallelCommandGroup(
-        DrivePathCommand.createPathInFieldFrame(
-          drivetrain,
-          {
-            listOf(
-              FieldWaypoint(
-                startingPose.translation.translation2d +
-                  Translation2d(2.inches, -2.inches).translation2d,
                 null,
-                (startingPose.rotation - 47.546.degrees).inRotation2ds
+                startingPose.rotation.inRotation2ds
               ),
               FieldWaypoint(
                 Translation2d(4.33.meters, 1.67.meters).translation2d,
@@ -69,7 +48,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
             )
           }
         ),
-        WaitCommand(2.0).andThen(superstructure.groundIntakeCommand())
+        WaitCommand(1.5).andThen(superstructure.groundIntakeCommand())
       ),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -173,6 +152,6 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
   }
 
   companion object {
-    val startingPose = Pose2d(1.40.meters, 4.09.meters, 180.degrees)
+    val startingPose = Pose2d(0.63.meters, 4.44.meters, 120.degrees)
   }
 }

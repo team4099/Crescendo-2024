@@ -54,7 +54,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           }
         )
           .withTimeout(3.235 + 0.5),
-        WaitCommand(0.75).andThen(superstructure.groundIntakeCommand())
+        WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
       superstructure.prepSpeakerLowCommand(),
       superstructure

@@ -83,7 +83,7 @@ private constructor(
   private val xPID: PIDController<Meter, Velocity<Meter>>
   private val yPID: PIDController<Meter, Velocity<Meter>>
 
-  private val thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
+  private val thetaPID: PIDController<Radian, Velocity<Radian>>
 
   private val swerveDriveController: CustomHolonomicDriveController
 
@@ -195,11 +195,10 @@ private constructor(
     xPID = PIDController(poskP.get(), poskI.get(), poskD.get())
     yPID = PIDController(poskP.get(), poskI.get(), poskD.get())
     thetaPID =
-      ProfiledPIDController(
+      PIDController(
         thetakP.get(),
         thetakI.get(),
-        thetakD.get(),
-        TrapezoidProfile.Constraints(thetaMaxVel.get(), thetaMaxAccel.get())
+        thetakD.get()
       )
 
     thetaPID.enableContinuousInput(-PI.radians, PI.radians)
@@ -246,7 +245,7 @@ private constructor(
     //      drivetrain.odometryPose = AllianceFlipUtil.apply(Pose2d(trajectory.initialPose))
     //    }
     trajStartTime = Clock.fpgaTime + trajectory.states[0].timeSeconds.seconds
-    thetaPID.reset(0.degrees)
+    thetaPID.reset()
     xPID.reset()
     yPID.reset()
   }

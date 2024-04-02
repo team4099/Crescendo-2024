@@ -98,42 +98,44 @@ class Superstructure(
   }
 
   init {
-    notes.add(NoteSimulation(0, Pose3d()))
-    notes[0].currentState = NoteSimulation.NoteStates.IN_ROBOT
+    if (!RobotBase.isReal()) {
+      notes.add(NoteSimulation(0, Pose3d()))
+      notes[0].currentState = NoteSimulation.NoteStates.IN_ROBOT
 
-    FieldConstants.StagingLocations.spikeTranslations.forEach {
-      notes.add(
-        NoteSimulation(
-          notes.size,
-          Pose3d(
-            it?.x ?: 0.0.inches,
-            it?.y ?: 0.0.inches,
-            FieldConstants.noteThickness / 2.0,
-            Rotation3d()
+      FieldConstants.StagingLocations.spikeTranslations.forEach {
+        notes.add(
+          NoteSimulation(
+            notes.size,
+            Pose3d(
+              it?.x ?: 0.0.inches,
+              it?.y ?: 0.0.inches,
+              FieldConstants.noteThickness / 2.0,
+              Rotation3d()
+            )
           )
         )
-      )
-    }
+      }
 
-    FieldConstants.StagingLocations.centerlineTranslations.forEach {
-      notes.add(
-        NoteSimulation(
-          notes.size,
-          Pose3d(
-            it?.x ?: 0.0.inches,
-            it?.y ?: 0.0.inches,
-            FieldConstants.noteThickness / 2.0,
-            Rotation3d()
+      FieldConstants.StagingLocations.centerlineTranslations.forEach {
+        notes.add(
+          NoteSimulation(
+            notes.size,
+            Pose3d(
+              it?.x ?: 0.0.inches,
+              it?.y ?: 0.0.inches,
+              FieldConstants.noteThickness / 2.0,
+              Rotation3d()
+            )
           )
         )
-      )
-    }
+      }
 
-    notes.forEach { it.poseSupplier = { drivetrain.fieldTRobot } }
-    notes.forEach { it.wristAngleSupplier = { wrist.inputs.wristPosition } }
-    notes.forEach { it.elevatorHeightSupplier = { elevator.inputs.elevatorPosition } }
-    notes.forEach { it.flywheelAngularVelocitySupplier = { flywheel.inputs.rightFlywheelVelocity } }
-    notes[0].currentState = NoteSimulation.NoteStates.IN_ROBOT
+      notes.forEach { it.poseSupplier = { drivetrain.fieldTRobot } }
+      notes.forEach { it.wristAngleSupplier = { wrist.inputs.wristPosition } }
+      notes.forEach { it.elevatorHeightSupplier = { elevator.inputs.elevatorPosition } }
+      notes.forEach { it.flywheelAngularVelocitySupplier = { flywheel.inputs.rightFlywheelVelocity } }
+      notes[0].currentState = NoteSimulation.NoteStates.IN_ROBOT
+    }
   }
 
   override fun periodic() {
@@ -378,10 +380,7 @@ class Superstructure(
             Intake.TunableIntakeStates.intakeRollerVoltage.get(),
             Intake.TunableIntakeStates.intakeCenterWheelVoltage.get()
           )
-
-        if (DriverStation.isTeleop()) {
-          flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(-6.volts)
-        }
+        flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(-6.volts)
 
         if (noteHoldingID == -1) {
           for (note in notes) {
@@ -548,7 +547,7 @@ class Superstructure(
         }
       }
       SuperstructureStates.SCORE_SPEAKER -> {
-        if (noteHoldingID != -1) {
+        if (noteHoldingID != -1 && !RobotBase.isReal()) {
           notes[noteHoldingID].currentState = NoteSimulation.NoteStates.IN_FLIGHT
           noteHoldingID = -1
         }
