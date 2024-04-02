@@ -9,6 +9,7 @@ import com.team4099.robot2023.commands.drivetrain.TargetSpeakerCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
+import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOReal
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
@@ -43,6 +44,7 @@ import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import org.team4099.lib.smoothDeadband
+import org.team4099.lib.units.base.Current
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -360,6 +362,27 @@ object RobotContainer {
   fun getAutonomousCommand() = AutonomousSelector.getCommand(drivetrain, superstructure)
 
   fun getAutonomousLoadingCommand() = AutonomousSelector.getLoadingCommand(drivetrain)
+
+  fun setDriveCurrentLimits(isInAutonomous: Boolean) {
+    if (isInAutonomous) {
+      drivetrain.swerveModules.forEach {
+        it.setCurrentLimits(
+          DrivetrainConstants.AUTO_DRIVE_STATOR_CURRENT_LIMIT,
+          DrivetrainConstants.AUTO_DRIVE_SUPPLY_CURRENT_LIMIT,
+          DrivetrainConstants.AUTO_DRIVE_THRESHOLD_CURRENT_LIMIT
+        )
+      }
+    }
+    else {
+      drivetrain.swerveModules.forEach {
+        it.setCurrentLimits(
+          DrivetrainConstants.TELEOP_DRIVE_STATOR_CURRENT_LIMIT,
+          DrivetrainConstants.TELEOP_DRIVE_SUPPLY_CURRENT_LIMIT,
+          DrivetrainConstants.TELEOP_DRIVE_THRESHOLD_CURRENT_LIMIT
+        )
+      }
+    }
+  }
 
   fun mapTunableCommands() {}
 }

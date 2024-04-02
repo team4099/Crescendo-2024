@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.RobotBase.isReal
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
+import org.team4099.lib.units.base.Current
 import org.team4099.lib.units.base.feet
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
@@ -379,5 +380,9 @@ class SwerveModule(val io: SwerveModuleIO) {
 
   fun runCharacterization(input: ElectricalPotential) {
     io.runCharacterization(input)
+  }
+
+  fun setCurrentLimits(statorCurrentLimit: Current, supplyCurrentLimit: Current, thresholdCurrentLimit: Current) {
+    io.setCurrentLimits(statorCurrentLimit, supplyCurrentLimit, thresholdCurrentLimit)
   }
 }
