@@ -107,12 +107,12 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
             robotDistanceToTarget =
               PhotonUtils.calculateDistanceToTargetMeters(
-                cameraPoses[instance].translation.z.inMeters,
-                57.125.inches.inMeters,
-                21.136.degrees.inRadians,
-                tag.pitch.degrees.inRadians
-              )
-                .meters + 4.inches
+              cameraPoses[instance].translation.z.inMeters,
+              57.125.inches.inMeters,
+              21.136.degrees.inRadians,
+              tag.pitch.degrees.inRadians
+            )
+              .meters + 4.inches
 
             Logger.recordOutput(
               "Vision/${VisionConstants.CAMERA_NAMES[instance]}/robotDistanceToTarget",
@@ -126,8 +126,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
                 )
               )
 
-            robotTSpeaker =
-              Translation3d(cameraTspeaker2d.x, cameraTspeaker2d.y, 0.meters)
+            robotTSpeaker = Translation3d(cameraTspeaker2d.x, cameraTspeaker2d.y, 0.meters)
 
             val timestampedTrigVisionUpdate =
               TimestampedTrigVisionUpdate(

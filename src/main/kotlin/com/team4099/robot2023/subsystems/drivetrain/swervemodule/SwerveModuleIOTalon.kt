@@ -28,7 +28,6 @@ import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.Value
 import org.team4099.lib.units.Velocity
-import org.team4099.lib.units.base.Ampere
 import org.team4099.lib.units.base.Current
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
@@ -350,16 +349,17 @@ class SwerveModuleIOTalon(
     steeringPositionQueue.clear()
   }
 
-  override fun setCurrentLimits(statorCurrentLimit: Current, supplyCurrentLimit: Current, thresholdCurrentLimit: Current) {
-    driveConfiguration.CurrentLimits.SupplyCurrentLimit =
-      supplyCurrentLimit.inAmperes
-    driveConfiguration.CurrentLimits.SupplyCurrentThreshold =
-      thresholdCurrentLimit.inAmperes
+  override fun setCurrentLimits(
+    statorCurrentLimit: Current,
+    supplyCurrentLimit: Current,
+    thresholdCurrentLimit: Current
+  ) {
+    driveConfiguration.CurrentLimits.SupplyCurrentLimit = supplyCurrentLimit.inAmperes
+    driveConfiguration.CurrentLimits.SupplyCurrentThreshold = thresholdCurrentLimit.inAmperes
     driveConfiguration.CurrentLimits.SupplyTimeThreshold =
       DrivetrainConstants.DRIVE_TRIGGER_THRESHOLD_TIME.inSeconds
     driveConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
-    driveConfiguration.CurrentLimits.StatorCurrentLimit =
-      statorCurrentLimit.inAmperes
+    driveConfiguration.CurrentLimits.StatorCurrentLimit = statorCurrentLimit.inAmperes
     driveConfiguration.CurrentLimits.StatorCurrentLimitEnable = true // TODO tune
     driveFalcon.configurator.apply(driveConfiguration)
   }

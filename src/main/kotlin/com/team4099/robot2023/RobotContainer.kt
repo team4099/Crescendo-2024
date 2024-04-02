@@ -44,7 +44,6 @@ import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import org.team4099.lib.smoothDeadband
-import org.team4099.lib.units.base.Current
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -372,8 +371,7 @@ object RobotContainer {
           DrivetrainConstants.AUTO_DRIVE_THRESHOLD_CURRENT_LIMIT
         )
       }
-    }
-    else {
+    } else {
       drivetrain.swerveModules.forEach {
         it.setCurrentLimits(
           DrivetrainConstants.TELEOP_DRIVE_STATOR_CURRENT_LIMIT,

@@ -382,7 +382,11 @@ class SwerveModule(val io: SwerveModuleIO) {
     io.runCharacterization(input)
   }
 
-  fun setCurrentLimits(statorCurrentLimit: Current, supplyCurrentLimit: Current, thresholdCurrentLimit: Current) {
+  fun setCurrentLimits(
+    statorCurrentLimit: Current,
+    supplyCurrentLimit: Current,
+    thresholdCurrentLimit: Current
+  ) {
     io.setCurrentLimits(statorCurrentLimit, supplyCurrentLimit, thresholdCurrentLimit)
   }
 }
