@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.Velocity
+import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -22,8 +23,10 @@ import org.team4099.lib.units.derived.perDegreePerSecond
 import org.team4099.lib.units.derived.perDegreeSeconds
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.inDegreesPerSecond
+import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.perSecond
 import kotlin.math.PI
+import kotlin.math.hypot
 
 class TargetNoteCommand(
   val driver: DriverProfile,
@@ -98,9 +101,12 @@ class TargetNoteCommand(
   override fun initialize() {
     thetaPID.reset()
 
+    /*
     if (thetakP.hasChanged() || thetakI.hasChanged() || thetakD.hasChanged()) {
       thetaPID = PIDController(thetakP.get(), thetakI.get(), thetakD.get())
     }
+
+     */
   }
 
   override fun execute() {
@@ -112,10 +118,16 @@ class TargetNoteCommand(
     DebugLogger.recordDebugOutput("NoteAlignment/error", thetaPID.error.inDegrees)
     DebugLogger.recordDebugOutput("NoteAlignment/thetaFeedback", thetaFeedback.inDegreesPerSecond)
 
+    val driveVector = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)
     drivetrain.currentRequest =
       Request.DrivetrainRequest.OpenLoop(
         thetaFeedback,
-        driver.driveSpeedClampedSupplier(driveX, driveY, slowMode),
+        Pair(
+          -hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
+            .meters
+            .perSecond,
+          0.0.meters.perSecond
+        ),
         fieldOriented = false
       )
   }

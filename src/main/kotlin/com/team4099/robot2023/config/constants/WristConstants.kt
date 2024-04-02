@@ -31,7 +31,7 @@ object WristConstants {
 
   val ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO = 1.06488 / 1.0
   val MOTOR_TO_ABSOLUTE_ENCODER_GEAR_RATIO =
-    5.0 / 1.0 * 4.0 / 1.0 * 3.0 / 1.0 * 46.0 / 42.0 * 90.0 / 33.0 * 1.0 / 1.06488
+    5.0 / 1.0 * 4.0 / 1.0 * 54.0 / 34.0 * 90.0 / 33.0 * 1.0 / 1.06488
 
   val VOLTAGE_COMPENSATION = 12.0.volts
   val ABSOLUTE_ENCODER_OFFSET =
