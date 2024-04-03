@@ -217,16 +217,6 @@ object RobotContainer {
     ControlBoard.passingShot.whileTrue(superstructure.passingShotCommand())
 
     ControlBoard.targetAmp.whileTrue(
-      runOnce({
-        val currentRotation = drivetrain.odomTRobot.rotation
-        setAmpAngle =
-          if (currentRotation > 0.0.degrees && currentRotation < 180.degrees) {
-            90.degrees
-          } else {
-            270.degrees
-          }
-      })
-        .andThen(
           TargetAngleCommand(
             driver = Ryan(),
             { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
@@ -236,7 +226,6 @@ object RobotContainer {
             drivetrain,
             ampAngle
           )
-        )
     )
 
     ControlBoard.climbAlignFar.whileTrue(

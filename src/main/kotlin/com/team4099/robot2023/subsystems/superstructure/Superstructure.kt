@@ -315,12 +315,7 @@ class Superstructure(
             nextState = SuperstructureStates.EJECT_GAME_PIECE_PREP
           }
           is Request.SuperstructureRequest.PrepScoreAmp -> {
-            val currentRotation = drivetrain.odomTRobot.rotation
-            if ((currentRotation > 0.0.degrees && currentRotation < 180.degrees)) {
-              nextState = SuperstructureStates.WRIST_AMP_PREP
-            } else {
               nextState = SuperstructureStates.ELEVATOR_AMP_PREP
-            }
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
             if (feeder.hasNote) {
@@ -443,6 +438,30 @@ class Superstructure(
         }
       }
       SuperstructureStates.AUTO_AIM -> {
+        val targetFlywheelSpeed = aimer.calculateHighFlywheelSpeed()
+        val targetWristAngle = aimer.calculateHighWristAngle()
+
+        Logger.recordOutput("AutoAim/FlywheelSpeed", targetFlywheelSpeed.inRotationsPerMinute)
+        Logger.recordOutput("AutoAim/WristAngle", targetWristAngle.inDegrees)
+
+        flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(targetFlywheelSpeed)
+        wrist.currentRequest = Request.WristRequest.TargetingPosition(targetWristAngle)
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+          is Request.SuperstructureRequest.ScoreSpeaker -> {
+            nextState = SuperstructureStates.SCORE_SPEAKER
+            shootStartTime = Clock.fpgaTime
+          }
+          is Request.SuperstructureRequest.PrepScoreSpeakerHigh -> {
+            nextState = SuperstructureStates.SCORE_SPEAKER_HIGH_PREP
+          }
+        }
+      }
+
+      SuperstructureStates.HIGH_AIM -> {
         val targetFlywheelSpeed = aimer.calculateFlywheelSpeed()
         val targetWristAngle = aimer.calculateWristAngle()
 
@@ -640,6 +659,8 @@ class Superstructure(
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
             nextState = SuperstructureStates.IDLE
+          } is Request.SuperstructureRequest.AutoAim -> {
+            nextState = SuperstructureStates.HIGH_AIM
           }
         }
       }
@@ -956,7 +977,8 @@ class Superstructure(
 
   fun autoAimCommand(): Command {
     val returnCommand =
-      runOnce { currentRequest = Request.SuperstructureRequest.AutoAim() }.until {
+      runOnce {
+        currentRequest = Request.SuperstructureRequest.AutoAim() }.until {
         isAtRequestedState && currentState == SuperstructureStates.AUTO_AIM
       }
     returnCommand.name = "AutoAim"
@@ -1066,7 +1088,8 @@ class Superstructure(
       EJECT_GAME_PIECE_PREP,
       PASSING_SHOT_PREP,
       PASSING_SHOT,
-      AUTO_AIM
+      AUTO_AIM,
+      HIGH_AIM
     }
   }
 }

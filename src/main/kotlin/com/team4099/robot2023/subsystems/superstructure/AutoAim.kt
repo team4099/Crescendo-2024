@@ -33,6 +33,9 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
   val flywheelSpeedRPMInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
   val wristAngleDegreesInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
 
+  val highFlywheelSpeedRPMInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
+  val highWristAngleDegreesInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
+
   val tunableFlywheelInterpolationTable:
     List<Pair<LoggedTunableValue<Meter>, LoggedTunableValue<Velocity<Radian>>>>
 
@@ -108,6 +111,14 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
             )
           )
         }
+
+      SuperstructureConstants.highDistanceFlywheelSpeedTableReal.forEach {
+        highWristAngleDegreesInterpolationTable.put(it.first.inMeters, it.second.inRotationsPerMinute)
+      }
+      SuperstructureConstants.highDistanceWristAngleTableReal.forEach {
+        highWristAngleDegreesInterpolationTable.put(it.first.inMeters, it.second.inDegrees)
+      }
+
     }
 
     updateFlywheelInterpolationTable()
@@ -149,6 +160,17 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
   fun calculateWristAngle(): Angle {
     return wristAngleDegreesInterpolationTable.get(calculateDistanceFromSpeaker().inMeters).degrees
   }
+
+  fun calculateHighFlywheelSpeed(): AngularVelocity {
+    return highFlywheelSpeedRPMInterpolationTable.get(calculateDistanceFromSpeaker().inMeters)
+      .rotations
+      .perMinute
+  }
+
+  fun calculateHighWristAngle(): Angle {
+    return highWristAngleDegreesInterpolationTable.get(calculateDistanceFromSpeaker().inMeters).degrees
+  }
+
 
   fun updateFlywheelInterpolationTable() {
     flywheelSpeedRPMInterpolationTable.clear()
