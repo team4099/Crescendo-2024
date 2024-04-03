@@ -70,7 +70,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
         ),
         WaitCommand(1.0)
           .andThen(
-            superstructure.prepManualSpeakerCommand(5.degrees, 4000.rotations.perMinute)
+            superstructure.prepManualSpeakerCommand(-6.degrees, 4000.rotations.perMinute)
           )
       ),
       superstructure.scoreCommand(),
@@ -119,7 +119,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
           .andThen(superstructure.groundIntakeCommand())
           .andThen(WaitCommand(0.5))
           .andThen(
-            superstructure.prepManualSpeakerCommand(5.degrees, 4000.rotations.perMinute)
+            superstructure.prepManualSpeakerCommand(-4.5.degrees, 4000.rotations.perMinute)
           )
       ),
       superstructure.scoreCommand(),

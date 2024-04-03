@@ -33,7 +33,7 @@ object DrivetrainConstants {
   const val FOC_ENABLED = true
   const val MINIMIZE_SKEW = false
 
-  const val TELEOP_TURNING_SPEED_PERCENT = 1
+  const val TELEOP_TURNING_SPEED_PERCENT = 0.7
 
   const val OMOMETRY_UPDATE_FREQUENCY = 250.0
 
@@ -84,10 +84,10 @@ object DrivetrainConstants {
   val DRIVE_STATOR_THRESHOLD_CURRENT_LIMIT = 80.0.amps
   val DRIVE_STATOR_TRIGGER_THRESHOLD_TIME = 1.0.seconds
 
-  val FRONT_LEFT_MODULE_ZERO = 3.28.radians + PI.radians // good
-  val FRONT_RIGHT_MODULE_ZERO = 2.9.radians + PI.radians // good
-  val BACK_LEFT_MODULE_ZERO = 5.65.radians + PI.radians // good
-  val BACK_RIGHT_MODULE_ZERO = 3.48.radians + PI.radians // good
+  val FRONT_LEFT_MODULE_ZERO = 3.285.radians + PI.radians // good
+  val FRONT_RIGHT_MODULE_ZERO = 2.91.radians + PI.radians // good
+  val BACK_LEFT_MODULE_ZERO = 5.665.radians + PI.radians// good
+  val BACK_RIGHT_MODULE_ZERO = 3.50.radians + PI.radians// good
 
   val STEERING_COMPENSATION_VOLTAGE = 10.volts
   val DRIVE_COMPENSATION_VOLTAGE = 12.volts

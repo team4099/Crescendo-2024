@@ -40,7 +40,7 @@ object WristConstants {
         0.33.degrees -
         1.degrees -
         0.5.degrees -
-        1.degrees - 96.4.degrees
+        1.degrees - 96.3.degrees
       ) * ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
   val WRIST_LENGTH = 18.6.inches
   val WRIST_INERTIA = 0.7181257183.kilo.grams * 1.0.meters.squared

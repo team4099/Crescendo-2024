@@ -309,7 +309,9 @@ class Superstructure(
             nextState = SuperstructureStates.HOME_PREP
           }
           is Request.SuperstructureRequest.GroundIntake -> {
-            nextState = SuperstructureStates.GROUND_INTAKE_PREP
+            if (!feeder.hasNote) {
+              nextState = SuperstructureStates.GROUND_INTAKE_PREP
+            }
           }
           is Request.SuperstructureRequest.EjectGamePiece -> {
             nextState = SuperstructureStates.EJECT_GAME_PIECE_PREP
@@ -438,8 +440,8 @@ class Superstructure(
         }
       }
       SuperstructureStates.AUTO_AIM -> {
-        val targetFlywheelSpeed = aimer.calculateHighFlywheelSpeed()
-        val targetWristAngle = aimer.calculateHighWristAngle()
+        val targetFlywheelSpeed = aimer.calculateFlywheelSpeed()
+        val targetWristAngle = aimer.calculateWristAngle()
 
         Logger.recordOutput("AutoAim/FlywheelSpeed", targetFlywheelSpeed.inRotationsPerMinute)
         Logger.recordOutput("AutoAim/WristAngle", targetWristAngle.inDegrees)
@@ -462,8 +464,9 @@ class Superstructure(
       }
 
       SuperstructureStates.HIGH_AIM -> {
-        val targetFlywheelSpeed = aimer.calculateFlywheelSpeed()
-        val targetWristAngle = aimer.calculateWristAngle()
+
+        val targetFlywheelSpeed = aimer.calculateHighFlywheelSpeed()
+        val targetWristAngle = aimer.calculateHighWristAngle()
 
         Logger.recordOutput("AutoAim/FlywheelSpeed", targetFlywheelSpeed.inRotationsPerMinute)
         Logger.recordOutput("AutoAim/WristAngle", targetWristAngle.inDegrees)

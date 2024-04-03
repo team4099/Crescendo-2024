@@ -151,6 +151,7 @@ class SwerveModuleIOTalon(
       DrivetrainConstants.DRIVE_STATOR_CURRENT_LIMIT.inAmperes
     driveConfiguration.CurrentLimits.StatorCurrentLimitEnable = true // TODO tune
 
+    driveConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive
     driveConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast
     driveFalcon.configurator.apply(driveConfiguration)
 

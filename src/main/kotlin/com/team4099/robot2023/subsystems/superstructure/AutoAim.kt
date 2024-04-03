@@ -42,6 +42,13 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
   val tunableWristInterpolationTable:
     List<Pair<LoggedTunableValue<Meter>, LoggedTunableValue<Radian>>>
 
+  val tunableHighFlywheelInterpolationTable:
+          List<Pair<LoggedTunableValue<Meter>, LoggedTunableValue<Velocity<Radian>>>>
+
+  val tunableHighWristInterpolationTable:
+          List<Pair<LoggedTunableValue<Meter>, LoggedTunableValue<Radian>>>
+
+
   val interpolationTestDistance =
     LoggedTunableValue("AutoAim/TestDistance", 0.0.meters, Pair({ it.inInches }, { it.inches }))
 
@@ -79,6 +86,9 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
             )
           )
         }
+
+
+
     } else {
       tunableFlywheelInterpolationTable =
         SuperstructureConstants.distanceFlywheelSpeedTableSim.mapIndexed { i, it ->
@@ -112,17 +122,47 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
           )
         }
 
-      SuperstructureConstants.highDistanceFlywheelSpeedTableReal.forEach {
-        highWristAngleDegreesInterpolationTable.put(it.first.inMeters, it.second.inRotationsPerMinute)
-      }
-      SuperstructureConstants.highDistanceWristAngleTableReal.forEach {
-        highWristAngleDegreesInterpolationTable.put(it.first.inMeters, it.second.inDegrees)
-      }
+
 
     }
 
+    tunableHighFlywheelInterpolationTable =
+      SuperstructureConstants.highDistanceFlywheelSpeedTableReal.mapIndexed { i, it ->
+        Pair(
+          LoggedTunableValue(
+            "AutoAim/HighFlywheelInterpolation/$i/Distance",
+            it.first,
+            Pair({ it.inInches }, { it.inches })
+          ),
+          LoggedTunableValue(
+            "AutoAim/HighFlywheelInterpolation/$i/SpeedRPM",
+            it.second,
+            Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+          )
+        )
+      }
+
+    tunableHighWristInterpolationTable =
+      SuperstructureConstants.highDistanceWristAngleTableReal.mapIndexed { i, it ->
+        Pair(
+          LoggedTunableValue(
+            "AutoAim/HighWristInterpolation/$i/Distance",
+            it.first,
+            Pair({ it.inInches }, { it.inches })
+          ),
+          LoggedTunableValue(
+            "AutoAim/HighWristInterpolation/$i/AngleDegrees",
+            it.second,
+            Pair({ it.inDegrees }, { it.degrees })
+          )
+        )
+      }
+
     updateFlywheelInterpolationTable()
     updateWristInterpolationTable()
+
+    updateHighFlywheelInterpolationTable()
+    updateHighWristInterpolationTable()
   }
 
   fun periodic() {
@@ -181,10 +221,26 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
     }
   }
 
+  fun updateHighFlywheelInterpolationTable() {
+    highFlywheelSpeedRPMInterpolationTable.clear()
+    tunableHighFlywheelInterpolationTable.forEach {
+      highFlywheelSpeedRPMInterpolationTable.put(
+        it.first.get().inMeters, it.second.get().inRotationsPerMinute
+      )
+    }
+  }
+
   fun updateWristInterpolationTable() {
     wristAngleDegreesInterpolationTable.clear()
     tunableWristInterpolationTable.forEach {
       wristAngleDegreesInterpolationTable.put(it.first.get().inMeters, it.second.get().inDegrees)
+    }
+  }
+
+  fun updateHighWristInterpolationTable() {
+    highWristAngleDegreesInterpolationTable.clear()
+    tunableHighWristInterpolationTable.forEach {
+      highWristAngleDegreesInterpolationTable.put(it.first.get().inMeters, it.second.get().inDegrees)
     }
   }
 

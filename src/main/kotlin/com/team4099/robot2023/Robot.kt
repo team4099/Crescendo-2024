@@ -151,8 +151,9 @@ object Robot : LoggedRobot() {
   }
 
   override fun autonomousInit() {
-    val autonCommandWithWait = RobotContainer.resetGyroYawCommand()
-      .andThen(runOnce({ RobotContainer.zeroSensors(isInAutonomous = true) }))
+    RobotContainer.setSteeringCoastMode()
+
+    val autonCommandWithWait = runOnce({ RobotContainer.zeroSensors(isInAutonomous = true)})
       .andThen(autonomousCommand)
     autonCommandWithWait?.schedule()
   }
