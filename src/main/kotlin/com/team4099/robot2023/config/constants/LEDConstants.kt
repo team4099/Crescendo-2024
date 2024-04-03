@@ -18,7 +18,7 @@ object LEDConstants {
     GOLD(null, 255, 105, 0),
     RED(null, 255, 0, 0),
     LIGHT_RED(null, 255, 67, 36),
-    ORANGE(null, 255, 105, 0),
+    ORANGE(null, 255, 60, 0),
     BLUE(null, 0, 0, 255),
     PURPLE(null, 67, 36, 255),
     GREEN(null, 0, 255, 0),
@@ -29,7 +29,7 @@ object LEDConstants {
     HAS_NOTE(null, 0, 0, 255),
     NO_TAG(null, 255, 0, 0),
     SEES_TAG(null, 255, 105, 0),
-    SEES_NOTE(null, 255, 87, 51),
+    SEES_NOTE(null, 255, 60, 0),
 
     // Yellow
     BATTERY_DISPLAY(null, 255, 105, 0),

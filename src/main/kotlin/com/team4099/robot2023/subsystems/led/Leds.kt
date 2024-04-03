@@ -55,6 +55,8 @@ class Leds(val io: LedIO) {
         } else {
           state = LEDConstants.CandleState.HAS_NOTE
         }
+      } else {
+        state = LEDConstants.CandleState.HAS_NOTE
       }
     } else if (seesGamePiece) {
       state = LEDConstants.CandleState.SEES_NOTE

@@ -128,12 +128,20 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
         ElevatorConstants.SHOOT_SPEAKER_HIGH_POSITION,
         Pair({ it.inInches }, { it.inches })
       )
-    val shootAmpPosition =
+    val shootAmpFeederPosition =
       LoggedTunableValue(
-        "Elevator/shootAmpPosition",
-        ElevatorConstants.SHOOT_AMP_POSITION,
+        "Elevator/shootAmpFeederPosition",
+        ElevatorConstants.SHOOT_AMP_FEEDER_SIDE_POSITION,
         Pair({ it.inInches }, { it.inches })
       )
+
+    val shootAmpShooterPosition =
+      LoggedTunableValue(
+        "Elevator/shootAmpShooterPosition",
+        ElevatorConstants.SHOOT_AMP_SHOOTER_SIDE_POSITION,
+        Pair({ it.inInches }, { it.inches })
+      )
+
     val sourceNoteOffset =
       LoggedTunableValue(
         "Elevator/sourceNoteOffset",

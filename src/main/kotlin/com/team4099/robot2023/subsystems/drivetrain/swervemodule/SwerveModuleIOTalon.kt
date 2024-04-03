@@ -338,13 +338,11 @@ class SwerveModuleIOTalon(
   }
 
   override fun zeroSteering(isInAutonomous: Boolean) {
-    val zeroOffsetWithAutonomous = if (isInAutonomous) zeroOffset - PI.radians else zeroOffset
-
     steeringFalcon.setPosition(
       steeringSensor.positionToRawUnits(
         if (label != Constants.Drivetrain.FRONT_RIGHT_MODULE_NAME)
-          (2 * PI).radians - (potentiometerOutput.radians - zeroOffsetWithAutonomous)
-        else (potentiometerOutput.radians - zeroOffsetWithAutonomous)
+          (2 * PI).radians - (potentiometerOutput.radians - zeroOffset)
+        else (potentiometerOutput.radians - zeroOffset)
       )
     )
 

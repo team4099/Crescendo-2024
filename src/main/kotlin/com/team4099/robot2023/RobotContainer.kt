@@ -15,11 +15,7 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
 import com.team4099.robot2023.subsystems.elevator.Elevator
-<<<<<<< HEAD
 import com.team4099.robot2023.subsystems.elevator.ElevatorIO
-=======
-import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
->>>>>>> 2ed8d8d (Wrist tuning and vision constants)
 import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
 import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.feeder.FeederIONeo
@@ -182,7 +178,8 @@ object RobotContainer {
           { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
           { ControlBoard.slowMode },
           drivetrain,
-          limelight
+          limelight,
+          feeder
         )
       )
     )

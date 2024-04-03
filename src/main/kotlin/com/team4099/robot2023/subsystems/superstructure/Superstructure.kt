@@ -1,6 +1,7 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.hal.Clock
+import com.team4099.robot2023.config.constants.ElevatorConstants
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.config.constants.WristConstants
@@ -135,6 +136,7 @@ class Superstructure(
       notes.forEach { it.elevatorHeightSupplier = { elevator.inputs.elevatorPosition } }
       notes.forEach { it.flywheelAngularVelocitySupplier = { flywheel.inputs.rightFlywheelVelocity } }
       notes[0].currentState = NoteSimulation.NoteStates.IN_ROBOT
+      noteHoldingID = 0
     }
   }
 
@@ -264,7 +266,7 @@ class Superstructure(
         if (elevator.isHomed) {
           nextState = SuperstructureStates.IDLE
         }
-        noteHoldingID = 0
+
       }
       SuperstructureStates.IDLE -> {
 
@@ -315,9 +317,9 @@ class Superstructure(
           is Request.SuperstructureRequest.PrepScoreAmp -> {
             val currentRotation = drivetrain.odomTRobot.rotation
             if ((currentRotation > 0.0.degrees && currentRotation < 180.degrees)) {
-              nextState = SuperstructureStates.ELEVATOR_AMP_PREP
-            } else {
               nextState = SuperstructureStates.WRIST_AMP_PREP
+            } else {
+              nextState = SuperstructureStates.ELEVATOR_AMP_PREP
             }
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
@@ -463,7 +465,7 @@ class Superstructure(
       SuperstructureStates.ELEVATOR_AMP_PREP -> {
         elevator.currentRequest =
           Request.ElevatorRequest.TargetingPosition(
-            Elevator.TunableElevatorHeights.shootAmpPosition.get()
+            Elevator.TunableElevatorHeights.shootAmpFeederPosition.get()
           )
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.ampScoreAngle.get())
@@ -483,15 +485,28 @@ class Superstructure(
         }
       }
       SuperstructureStates.WRIST_AMP_PREP -> {
+        elevator.currentRequest =
+          Request.ElevatorRequest.TargetingPosition(
+            Elevator.TunableElevatorHeights.shootAmpShooterPosition.get()
+          )
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.fastAmpAngle.get())
         flywheel.currentRequest =
           Request.FlywheelRequest.TargetingVelocity(
             Flywheel.TunableFlywheelStates.ampVelocity.get()
           )
+
+        if (elevator.isAtTargetedPosition &&
+          wrist.isAtTargetedPosition &&
+          currentRequest is Request.SuperstructureRequest.ScoreAmp
+        ) {
+          nextState = SuperstructureStates.SCORE_SPEAKER
+          shootStartTime = Clock.fpgaTime
+        }
+
         when (currentRequest) {
-          is Request.SuperstructureRequest.ScoreAmp -> {
-            nextState = SuperstructureStates.SCORE_SPEAKER
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
           }
         }
       }

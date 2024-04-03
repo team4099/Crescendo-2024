@@ -1,8 +1,10 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.lib.logging.LoggedTunableValue
+import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.DebugLogger
@@ -35,7 +37,8 @@ class TargetNoteCommand(
   val turn: () -> Double,
   val slowMode: () -> Boolean,
   val drivetrain: Drivetrain,
-  val limelight: LimelightVision
+  val limelight: LimelightVision,
+  val feeder: Feeder
 ) : Command() {
 
   private var thetaPID: PIDController<Radian, Velocity<Radian>>
@@ -118,18 +121,26 @@ class TargetNoteCommand(
     DebugLogger.recordDebugOutput("NoteAlignment/error", thetaPID.error.inDegrees)
     DebugLogger.recordDebugOutput("NoteAlignment/thetaFeedback", thetaFeedback.inDegreesPerSecond)
 
-    val driveVector = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)
-    drivetrain.currentRequest =
-      Request.DrivetrainRequest.OpenLoop(
-        thetaFeedback,
-        Pair(
-          -hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
-            .meters
-            .perSecond,
-          0.0.meters.perSecond
-        ),
-        fieldOriented = false
-      )
+    if (!feeder.hasNote && limelight.inputs.gamePieceTargets.size > 0) {
+      val driveVector = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)
+      drivetrain.currentRequest =
+        Request.DrivetrainRequest.OpenLoop(
+          thetaFeedback,
+          Pair(
+            hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
+              .meters
+              .perSecond,
+            0.0.meters.perSecond
+          ),
+          fieldOriented = false
+        )
+    } else {
+      val speed = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)
+      val rotation = driver.rotationSpeedClampedSupplier(turn, slowMode)
+
+      drivetrain.currentRequest = Request.DrivetrainRequest.OpenLoop(rotation, speed)
+    }
+
   }
 
   override fun isFinished(): Boolean {
