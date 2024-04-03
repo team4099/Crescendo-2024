@@ -28,6 +28,8 @@ import com.team4099.robot2023.subsystems.falconspin.MotorCollection
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
+import org.team4099.lib.units.base.inAmperes
+import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.ctreAngularMechanismSensor
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.DerivativeGain
@@ -146,16 +148,16 @@ object WristIOTalon : WristIO {
     wristConfiguration.Slot2.kD =
       wristSensor.derivativePositionGainToRawUnits(WristConstants.PID.SECOND_STAGE_KD)
 
-    //    wristConfiguration.CurrentLimits.SupplyCurrentLimit =
-    //      WristConstants.WRIST_SUPPLY_CURRENT_LIMIT.inAmperes
-    //    wristConfiguration.CurrentLimits.SupplyCurrentThreshold =
-    //      WristConstants.WRIST_THRESHOLD_CURRENT_LIMIT.inAmperes
-    //    wristConfiguration.CurrentLimits.SupplyTimeThreshold =
-    //      WristConstants.WRIST_TRIGGER_THRESHOLD_TIME.inSeconds
-    //    wristConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
-    //    wristConfiguration.CurrentLimits.StatorCurrentLimit =
-    //      WristConstants.WRIST_STATOR_CURRENT_LIMIT.inAmperes
-    //    wristConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
+    wristConfiguration.CurrentLimits.SupplyCurrentLimit =
+      WristConstants.WRIST_SUPPLY_CURRENT_LIMIT.inAmperes
+    wristConfiguration.CurrentLimits.SupplyCurrentThreshold =
+      WristConstants.WRIST_THRESHOLD_CURRENT_LIMIT.inAmperes
+    wristConfiguration.CurrentLimits.SupplyTimeThreshold =
+      WristConstants.WRIST_TRIGGER_THRESHOLD_TIME.inSeconds
+    wristConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
+    wristConfiguration.CurrentLimits.StatorCurrentLimit =
+      WristConstants.WRIST_STATOR_CURRENT_LIMIT.inAmperes
+    wristConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
 
     wristConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake
     wristConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive
@@ -242,8 +244,7 @@ object WristIOTalon : WristIO {
     var slot = if (travelingUp) 0 else 1
 
     if (curError.absoluteValue <= secondStagePosErrSwitchThreshold.get() &&
-      curVel.absoluteValue <= secondStageVelocitySwitchThreshold.get() &&
-      curVel.sign < 0
+      curVel.absoluteValue <= secondStageVelocitySwitchThreshold.get()
     ) {
       slot = 2
     }

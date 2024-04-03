@@ -20,14 +20,13 @@ object SuperstructureConstants {
       Pair(92.6.inches, 2500.rotations.perMinute),
       Pair(103.7.inches, 2500.rotations.perMinute),
       Pair(113.2.inches, 2500.rotations.perMinute),
-      Pair(122.1.inches, 3500.rotations.perMinute),
-      Pair(128.5.inches, 3500.rotations.perMinute),
-      Pair(134.inches, 3500.rotations.perMinute),
-      Pair(146.9.inches, 4000.rotations.perMinute),
-      Pair(159.0.inches, 4000.rotations.perMinute),
-      Pair(173.9.inches, 4500.rotations.perMinute),
-      Pair(183.9.inches, 4500.rotations.perMinute),
-      Pair(194.6.inches, 4500.rotations.perMinute)
+      Pair(122.1.inches, 3000.rotations.perMinute),
+      Pair(134.inches, 3000.rotations.perMinute),
+      Pair(144.8.inches, 3000.rotations.perMinute),
+      Pair(156.8.inches, 3500.rotations.perMinute),
+      Pair(172.2.inches, 3500.rotations.perMinute),
+      Pair(185.6.inches, 4000.rotations.perMinute),
+      Pair(198.15.inches, 4000.rotations.perMinute)
     )
 
   val distanceWristAngleTableReal =
@@ -41,12 +40,13 @@ object SuperstructureConstants {
       Pair(103.7.inches, -13.degrees),
       Pair(113.23.inches, -11.degrees),
       Pair(122.0.inches, -10.5.degrees),
-      Pair(134.inches, 6.degrees),
-      Pair(146.9.inches, 8.75.degrees),
-      Pair(159.0.inches, 9.5.degrees),
-      Pair(173.9.inches, 12.25.degrees),
-      Pair(183.9.inches, 12.5.degrees),
-      Pair(194.6.inches, 13.5.degrees)
+      Pair(134.inches, -9.degrees),
+      Pair(143.8.inches, -6.75.degrees),
+      Pair(156.8.inches, -5.5.degrees),
+      Pair(166.9.inches, -4.5.degrees),
+      Pair(172.2.inches, -4.375.degrees),
+      Pair(185.6.inches, -2.95.degrees),
+      Pair(198.15.inches, -2.2.degrees)
     )
 
   val distanceFlywheelSpeedTableSim =

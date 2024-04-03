@@ -26,6 +26,7 @@ import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.ctreAngularMechanismSensor
+import org.team4099.lib.units.derived.AccelerationFeedforward
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.IntegralGain
@@ -39,6 +40,7 @@ import org.team4099.lib.units.derived.newtons
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inRotationsPerMinute
+import org.team4099.lib.units.perMinute
 import org.team4099.lib.units.perSecond
 
 object FlywheelIOTalon : FlywheelIO {
@@ -90,8 +92,7 @@ object FlywheelIOTalon : FlywheelIO {
     flywheelLeftTalon.clearStickyFaults()
     flywheelRightTalon.clearStickyFaults()
 
-    flywheelLeftConfiguration.Slot0.kP =
-      flywheelLeftSensor.proportionalVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KP)
+    flywheelLeftConfiguration.Slot0.kP = 0.04
     flywheelLeftConfiguration.Slot0.kI =
       flywheelLeftSensor.integralVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KI)
     flywheelLeftConfiguration.Slot0.kD =
@@ -185,6 +186,7 @@ object FlywheelIOTalon : FlywheelIO {
     PIDLeftConfig.kI = flywheelLeftSensor.integralVelocityGainToRawUnits(kI)
     PIDLeftConfig.kD = flywheelLeftSensor.derivativeVelocityGainToRawUnits(kD)
     PIDLeftConfig.kV = flywheelLeftSensor.velocityFeedforwardToRawUnits(kV)
+
     PIDLeftConfig.kA = FlywheelConstants.PID.REAL_FLYWHEEL_KA.value
 
     flywheelLeftTalon.configurator.apply(PIDLeftConfig)
@@ -216,10 +218,16 @@ object FlywheelIOTalon : FlywheelIO {
     //      )
     //    )
 
+    var acceleration = flywheelLeftSensor.accelerationToRawUnits(5000.rotations.perSecond.perSecond)
+
+    if (velocity < 50.rotations.perMinute){
+      acceleration = flywheelLeftSensor.accelerationToRawUnits(2000.rotations.perSecond.perSecond)
+    }
+
     flywheelLeftTalon.setControl(
       MotionMagicVelocityVoltage(
         flywheelLeftSensor.velocityToRawUnits(velocity),
-        flywheelLeftSensor.accelerationToRawUnits(5000.rotations.perSecond.perSecond),
+        acceleration,
         false,
         0.0.volts.inVolts,
         0,
