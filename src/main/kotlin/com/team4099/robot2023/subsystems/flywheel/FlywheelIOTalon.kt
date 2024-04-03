@@ -25,6 +25,8 @@ import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
+import org.team4099.lib.units.base.inAmperes
+import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.ctreAngularMechanismSensor
 import org.team4099.lib.units.derived.AccelerationFeedforward
 import org.team4099.lib.units.derived.DerivativeGain
@@ -92,7 +94,7 @@ object FlywheelIOTalon : FlywheelIO {
     flywheelLeftTalon.clearStickyFaults()
     flywheelRightTalon.clearStickyFaults()
 
-    flywheelLeftConfiguration.Slot0.kP = 0.04
+    flywheelLeftConfiguration.Slot0.kP = 0.4
     flywheelLeftConfiguration.Slot0.kI =
       flywheelLeftSensor.integralVelocityGainToRawUnits(FlywheelConstants.PID.REAL_KI)
     flywheelLeftConfiguration.Slot0.kD =
@@ -103,16 +105,16 @@ object FlywheelIOTalon : FlywheelIO {
     //
     // flywheelSensor.velocityFeedforwardToRawUnits(FlywheelConstantsConstants.PID.flywheel_KFF)
 
-    //    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimit =
-    //      FlywheelConstants.LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT.inAmperes
-    //    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentThreshold =
-    //      FlywheelConstants.LEFT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT.inAmperes
-    //    flywheelLeftConfiguration.CurrentLimits.SupplyTimeThreshold =
-    //      FlywheelConstants.LEFT_flywheel_TRIGGER_THRESHOLD_TIME.inSeconds
-    //    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
-    //    flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimit =
-    //      FlywheelConstants.LEFT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
-    //    flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
+        flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimit =
+          FlywheelConstants.LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT.inAmperes
+        flywheelLeftConfiguration.CurrentLimits.SupplyCurrentThreshold =
+          FlywheelConstants.LEFT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT.inAmperes
+        flywheelLeftConfiguration.CurrentLimits.SupplyTimeThreshold =
+          FlywheelConstants.LEFT_flywheel_TRIGGER_THRESHOLD_TIME.inSeconds
+        flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
+        flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimit =
+          FlywheelConstants.LEFT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
+        flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
 
     flywheelLeftConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive
 
@@ -182,7 +184,7 @@ object FlywheelIOTalon : FlywheelIO {
     kV: VelocityFeedforward<Radian, Volt>
   ) {
     val PIDLeftConfig = Slot0Configs()
-    PIDLeftConfig.kP = flywheelLeftSensor.proportionalVelocityGainToRawUnits(kP)
+    PIDLeftConfig.kP = 0.4
     PIDLeftConfig.kI = flywheelLeftSensor.integralVelocityGainToRawUnits(kI)
     PIDLeftConfig.kD = flywheelLeftSensor.derivativeVelocityGainToRawUnits(kD)
     PIDLeftConfig.kV = flywheelLeftSensor.velocityFeedforwardToRawUnits(kV)
@@ -218,24 +220,29 @@ object FlywheelIOTalon : FlywheelIO {
     //      )
     //    )
 
-    var acceleration = flywheelLeftSensor.accelerationToRawUnits(5000.rotations.perSecond.perSecond)
+    var acceleration = flywheelLeftSensor.accelerationToRawUnits(20000.rotations.perSecond.perSecond)
 
-    if (velocity < 50.rotations.perMinute){
-      acceleration = flywheelLeftSensor.accelerationToRawUnits(2000.rotations.perSecond.perSecond)
-    }
-
-    flywheelLeftTalon.setControl(
-      MotionMagicVelocityVoltage(
-        flywheelLeftSensor.velocityToRawUnits(velocity),
-        acceleration,
-        false,
-        0.0.volts.inVolts,
-        0,
-        true,
-        false,
-        false
+    if (velocity.absoluteValue < 50.rotations.perMinute){
+      flywheelLeftTalon.setControl(
+        VoltageOut(
+          0.0.volts.inVolts
+        )
       )
-    )
+    }
+    else {
+      flywheelLeftTalon.setControl(
+        MotionMagicVelocityVoltage(
+          flywheelLeftSensor.velocityToRawUnits(velocity),
+          acceleration,
+          false,
+          0.0.volts.inVolts,
+          0,
+          true,
+          false,
+          false
+        )
+      )
+    }
   }
 
   private fun updateSignals() {
