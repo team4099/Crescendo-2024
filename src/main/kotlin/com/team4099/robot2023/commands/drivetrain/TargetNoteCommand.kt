@@ -9,6 +9,7 @@ import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.DebugLogger
 import com.team4099.robot2023.util.driver.DriverProfile
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.team4099.lib.controller.PIDController
@@ -123,11 +124,16 @@ class TargetNoteCommand(
 
     if (!feeder.hasNote && limelight.inputs.gamePieceTargets.size > 0) {
       val driveVector = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)
+      var autoDriveVector = hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
+      if (DriverStation.getAlliance().isPresent &&
+        DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+        autoDriveVector =-hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
+      }
       drivetrain.currentRequest =
         Request.DrivetrainRequest.OpenLoop(
           thetaFeedback,
           Pair(
-            hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
+            autoDriveVector
               .meters
               .perSecond,
             0.0.meters.perSecond

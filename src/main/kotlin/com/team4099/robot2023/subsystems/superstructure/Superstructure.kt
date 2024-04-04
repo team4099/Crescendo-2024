@@ -149,6 +149,7 @@ class Superstructure(
     leds.subsystemsAtPosition =
       wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity && elevator.isAtTargetedPosition
     leds.seesGamePiece = limelight.inputs.gamePieceTargets.size > 0
+    leds.seesTag = vision.getShotConfidence()
 
     val ledLoopStartTime = Clock.realTimestamp
     leds.periodic()

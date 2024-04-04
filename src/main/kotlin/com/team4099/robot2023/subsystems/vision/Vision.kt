@@ -55,7 +55,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
   private var visionConsumer: Consumer<List<TimestampedVisionUpdate>> = Consumer {}
   private var speakerVisionConsumer: Consumer<TimestampedTrigVisionUpdate> = Consumer {}
   private val lastFrameTimes = mutableMapOf<Int, Time>()
-  private val lastTagDetectionTimes = mutableMapOf<Int, Time>()
+  private var lastDetectionTime = 0.0.seconds
 
   init {
     for (i in io.indices) {
@@ -71,6 +71,11 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
     this.fieldFramePoseSupplier = fieldFramePoseSupplier
     this.visionConsumer = visionConsumer
     this.speakerVisionConsumer = speakerVisionMeasurementConsumer
+  }
+
+  fun getShotConfidence(): Boolean{
+    return Clock.realTimestamp - lastDetectionTime < 3.seconds &&
+      trustedRobotDistanceToTarget < 170.inches
   }
 
   override fun periodic() {
@@ -113,6 +118,8 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
                 tag.pitch.degrees.inRadians
               )
                 .meters + 4.inches
+
+            lastDetectionTime = Clock.realTimestamp
 
             Logger.recordOutput(
               "Vision/${VisionConstants.CAMERA_NAMES[instance]}/robotDistanceToTarget",

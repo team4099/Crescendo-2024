@@ -52,7 +52,7 @@ object ControlBoard {
   val prepAmp = Trigger { operator.aButton }
   val prepLow = Trigger { operator.xButton }
   val prepHighProtected = Trigger { operator.bButton }
-  val prepHigh = Trigger { driver.yButton }
+  val prepHigh = Trigger { operator.yButton }
   val passingShot = Trigger { operator.leftShoulderButton }
 
   val extendClimb = Trigger { operator.dPadUp }

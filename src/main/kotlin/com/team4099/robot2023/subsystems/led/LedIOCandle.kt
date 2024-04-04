@@ -191,12 +191,8 @@ object LedIOCandle : LedIO {
   }
 
   private fun setCANdleState(state: LEDConstants.CandleState) {
-    if (state == LEDConstants.CandleState.BATTERY_DISPLAY) {
-      progressBar(
-        LEDConstants.CandleState.BATTERY_DISPLAY,
-        LEDConstants.CandleState.NOTHING,
-        (batteryVoltage.inVolts - 11.5) / (LEDConstants.BATTERY_FULL_THRESHOLD.inVolts - 11.5)
-      )
+    if (state == LEDConstants.CandleState.LOW_BATTERY_WARNING) {
+      wave(state, LEDConstants.CandleState.NOTHING)
     } else if (state == LEDConstants.CandleState.BLUE) {
       ledController.clearAnimation(0)
       fadeBetweenColors(state, LEDConstants.CandleState.MAGENTA, loopCyclesToConverge = 2)

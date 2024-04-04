@@ -33,7 +33,7 @@ object LEDConstants {
 
     // Yellow
     BATTERY_DISPLAY(null, 255, 105, 0),
-    LOW_BATTERY_WARNING(StrobeAnimation(67, 36, 255), 0, 0, 0),
+    LOW_BATTERY_WARNING(null, 67, 36, 255),
     WHITE(null, 255, 255, 255),
 
     // Green
