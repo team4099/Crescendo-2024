@@ -246,7 +246,7 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
 
   fun calculateDistanceFromSpeaker(): Length {
     val distance =
-      if (DriverStation.isAutonomous()) {
+      if (DriverStation.isAutonomous() || RobotBase.isSimulation()) {
         val speakerTransformWithOdometry =
           drivetrain.fieldTRobot.relativeTo(
             AllianceFlipUtil.apply(FieldConstants.centerSpeakerOpening)

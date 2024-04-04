@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import java.awt.Robot
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Rotation3d
@@ -138,6 +139,7 @@ class Superstructure(
       notes[0].currentState = NoteSimulation.NoteStates.IN_ROBOT
       noteHoldingID = 0
     }
+
   }
 
   override fun periodic() {
@@ -150,6 +152,7 @@ class Superstructure(
       wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity && elevator.isAtTargetedPosition
     leds.seesGamePiece = limelight.inputs.gamePieceTargets.size > 0
     leds.seesTag = vision.getShotConfidence()
+    Logger.recordOutput("Superstructure/visionConfidence", vision.getShotConfidence())
 
     val ledLoopStartTime = Clock.realTimestamp
     leds.periodic()
@@ -347,7 +350,7 @@ class Superstructure(
             nextState = SuperstructureStates.TUNING
           }
           is Request.SuperstructureRequest.AutoAim -> {
-            if (feeder.hasNote) {
+            if (feeder.hasNote || noteHoldingID != -1) {
               nextState = SuperstructureStates.AUTO_AIM
             }
           }
@@ -430,7 +433,7 @@ class Superstructure(
       }
       SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_FORWARD -> {
         feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(1.volts)
-        if (feeder.hasNote) {
+        if (feeder.hasNote || RobotBase.isSimulation()) {
           currentRequest = Request.SuperstructureRequest.Idle()
           nextState = SuperstructureStates.IDLE
         }
@@ -820,7 +823,7 @@ class Superstructure(
 
   fun requestIdleCommand(): Command {
     val returnCommand =
-      runOnce { currentRequest = Request.SuperstructureRequest.Idle() }.until {
+      run { currentRequest = Request.SuperstructureRequest.Idle() }.until {
         isAtRequestedState && currentState == SuperstructureStates.IDLE
       }
     returnCommand.name = "RequestIdleCommand"
@@ -922,6 +925,15 @@ class Superstructure(
       }
         .until { isAtRequestedState && currentState == SuperstructureStates.SCORE_SPEAKER }
     returnCommand.name = "ScoreSpeakerCommand"
+    return returnCommand
+  }
+
+  fun noNoteDeadlineCommand() : Command {
+    val returnCommand =
+      run {
+
+      }.until {!feeder.hasNote}
+    returnCommand.name = "noNoteDeadlineCommand"
     return returnCommand
   }
 
