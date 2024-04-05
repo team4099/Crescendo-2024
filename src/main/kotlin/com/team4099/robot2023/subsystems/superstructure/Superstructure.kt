@@ -414,6 +414,11 @@ class Superstructure(
           is Request.SuperstructureRequest.ScoreSpeaker -> {
             nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
           }
+          is Request.SuperstructureRequest.ManualScoreSpeakerPrep -> {
+            if (DriverStation.isAutonomous()) {
+              nextState = SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP
+            }
+          }
           is Request.SuperstructureRequest.AutoAim -> {
             if (DriverStation.isAutonomous()) {
               nextState = SuperstructureStates.AUTO_AIM
@@ -462,8 +467,8 @@ class Superstructure(
             nextState = SuperstructureStates.IDLE
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
-            nextState = SuperstructureStates.SCORE_SPEAKER
-            shootStartTime = Clock.fpgaTime
+              nextState = SuperstructureStates.SCORE_SPEAKER
+              shootStartTime = Clock.fpgaTime
           }
           is Request.SuperstructureRequest.PrepScoreSpeakerHigh -> {
             nextState = SuperstructureStates.SCORE_SPEAKER_HIGH_PREP
@@ -487,9 +492,10 @@ class Superstructure(
             nextState = SuperstructureStates.IDLE
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
-            nextState = SuperstructureStates.SCORE_SPEAKER
-            shootStartTime = Clock.fpgaTime
+              nextState = SuperstructureStates.SCORE_SPEAKER
+              shootStartTime = Clock.fpgaTime
           }
+
         }
       }
       SuperstructureStates.ELEVATOR_AMP_PREP -> {
@@ -498,7 +504,7 @@ class Superstructure(
             Elevator.TunableElevatorHeights.shootAmpFeederPosition.get()
           )
         wrist.currentRequest =
-          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.ampScoreAngle.get(), 1.0.degrees)
+          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.ampScoreAngle.get(), 2.0.degrees)
 
         if (elevator.isAtTargetedPosition &&
           wrist.isAtTargetedPosition &&
@@ -768,7 +774,7 @@ class Superstructure(
       }
       SuperstructureStates.EJECT_GAME_PIECE_PREP -> {
         wrist.currentRequest =
-          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.ejectAngle.get())
+          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.ejectAngle.get(), 2.0.degrees)
 
         if (wrist.isAtTargetedPosition) {
           nextState = SuperstructureStates.EJECT_GAME_PIECE
@@ -782,7 +788,7 @@ class Superstructure(
       }
       SuperstructureStates.PASSING_SHOT_PREP -> {
         wrist.currentRequest =
-          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.passingShotAngle.get())
+          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.passingShotAngle.get(), 2.0.degrees)
         flywheel.currentRequest =
           Request.FlywheelRequest.TargetingVelocity(
             Flywheel.TunableFlywheelStates.passingShotVelocity.get()

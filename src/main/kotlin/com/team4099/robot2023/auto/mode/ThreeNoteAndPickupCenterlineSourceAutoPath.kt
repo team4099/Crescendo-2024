@@ -41,7 +41,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
                 180.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(8.29.meters, 0.78.meters).translation2d,
+                Translation2d(8.32.meters, 0.78.meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
               )
@@ -55,7 +55,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
         {
           listOf(
             FieldWaypoint(
-              Translation2d(8.29.meters, 0.78.meters).translation2d,
+              Translation2d(8.32.meters, 0.78.meters).translation2d,
               null,
               180.degrees.inRotation2ds
             ),
@@ -67,7 +67,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
           )
         }
       ),
-      superstructure.autoAimCommand(),
+      superstructure.prepManualSpeakerCommand(-2.2.degrees, 4000.rotations.perMinute),
       superstructure.scoreCommand(),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -81,7 +81,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
               ),
               FieldWaypoint(
                 Translation2d(
-                  (4.33.meters + 8.29.meters) / 2,
+                  (4.33.meters + 8.32.meters) / 2,
                   (2.44 + 0.78).meters / 2 - 0.1.meters
                 )
                   .translation2d,
@@ -89,13 +89,13 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
                 ((180 - 43.3758 + 210) / 2 + 10).degrees.inRotation2ds,
               ),
               FieldWaypoint(
-                Translation2d(8.29.meters, 2.44.meters).translation2d,
+                Translation2d(8.32.meters, 2.44.meters).translation2d,
                 null,
                 210.degrees.inRotation2ds
               ),
               FieldWaypoint(
                 Translation2d(
-                  (4.33.meters + 8.29.meters) / 2,
+                  (4.33.meters + 8.32.meters) / 2,
                   (2.44 + 0.78).meters / 2 + 0.1.meters
                 )
                   .translation2d,
@@ -113,7 +113,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
         WaitCommand(1.0)
           .andThen(superstructure.groundIntakeCommand())
       ),
-      superstructure.autoAimCommand(),
+      superstructure.prepManualSpeakerCommand(-2.2.degrees, 4000.rotations.perMinute),
       superstructure.scoreCommand(),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -131,7 +131,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
                 180.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(8.29.meters, 4.12.meters).translation2d,
+                Translation2d(8.32.meters, 4.12.meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
               )

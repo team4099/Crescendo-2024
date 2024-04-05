@@ -54,12 +54,13 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           }
         )
           .withTimeout(3.235 + 0.5),
-        WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
+        WaitCommand(0.5)
+          .andThen(superstructure.groundIntakeCommand())
       ),
       superstructure.prepSpeakerLowCommand(),
       superstructure
         .scoreCommand()
-        .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.3),
+        .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.5),
       WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -90,12 +91,13 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           }
         )
           .withTimeout(3.235 + 0.5),
-        WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
+        WaitCommand(0.5)
+          .andThen(superstructure.groundIntakeCommand())
       ),
       superstructure.prepSpeakerLowCommand(),
       superstructure
         .scoreCommand()
-        .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.3),
+        .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.5),
       WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -142,12 +144,13 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           }
         )
           .withTimeout(3.235 + 0.5),
-        WaitCommand(0.3).andThen(superstructure.groundIntakeCommand())
+        WaitCommand(0.3)
+          .andThen(superstructure.groundIntakeCommand())
       ),
       superstructure.prepSpeakerLowCommand(),
       superstructure
         .scoreCommand()
-        .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.3)
+        .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.5)
     )
   }
 

@@ -246,17 +246,6 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
 
   fun calculateDistanceFromSpeaker(): Length {
     val distance =
-      if (DriverStation.isAutonomous() || RobotBase.isSimulation()) {
-        val speakerTransformWithOdometry =
-          drivetrain.fieldTRobot.relativeTo(
-            AllianceFlipUtil.apply(FieldConstants.centerSpeakerOpening)
-          )
-        Logger.recordOutput(
-          "AutoAim/speakerTransformWithOdometry", speakerTransformWithOdometry.pose2d
-        )
-        hypot(speakerTransformWithOdometry.x.inMeters, speakerTransformWithOdometry.y.inMeters)
-          .meters
-      } else {
         Translation2d(
           vision.robotTSpeaker.y -
             (drivetrain.robotVelocity.y * vision.robotTSpeaker.norm.absoluteValue / 5)
@@ -269,7 +258,6 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
         )
           .magnitude
           .meters
-      }
     Logger.recordOutput("AutoAim/currentDistanceInches", distance.inInches)
     return distance
   }

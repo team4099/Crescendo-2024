@@ -217,9 +217,10 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
 
     Logger.recordOutput("Flywheel/isAtTargetedVelocity", isAtTargetedVelocity)
 
+    Logger.recordOutput("Flywheel/FlywheelRightTargetVoltage", flywheelTargetVoltage.inVolts)
+    Logger.recordOutput("Flywheel/FlywheelLeftTargetVoltage", flywheelTargetVoltage.inVolts)
+
     if (Constants.Tuning.DEBUGING_MODE) {
-      Logger.recordOutput("Flywheel/FlywheelRightTargetVoltage", flywheelTargetVoltage.inVolts)
-      Logger.recordOutput("Flywheel/FlywheelLeftTargetVoltage", flywheelTargetVoltage.inVolts)
       Logger.recordOutput(
         "Flywheel/FlywheelRightTargetVelocity", flywheelRightTargetVelocity.inRotationsPerMinute
       )

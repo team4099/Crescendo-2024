@@ -75,7 +75,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
   fun getShotConfidence(): Boolean{
     return Clock.realTimestamp - lastDetectionTime < 4.seconds &&
-      trustedRobotDistanceToTarget < 205.inches
+      trustedRobotDistanceToTarget < 210.inches
   }
 
   override fun periodic() {

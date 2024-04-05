@@ -197,9 +197,9 @@ object RobotContainer {
         if (DriverStation.getAlliance().isPresent &&
           DriverStation.getAlliance().get() == DriverStation.Alliance.Red
         )
-        154.45.degrees + 180.degrees
+        206.degrees + 180.degrees
         else
-        154.45.degrees
+        154.degrees
       },
     ))
 

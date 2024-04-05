@@ -67,7 +67,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
           {
             listOf(
               FieldWaypoint(
-                Translation2d(8.27.meters + 1.feet, 7.45.meters).translation2d,
+                Translation2d(8.27.meters + 2.feet, 7.45.meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
               ),
@@ -79,7 +79,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
             )
           }
         ),
-        WaitCommand(1.0)
+        WaitCommand(1.3)
           .andThen(
             superstructure
               .prepManualSpeakerCommand(
@@ -100,13 +100,13 @@ class ThreeNoteCenterlineFromAmpAutoPath(
                 (180 + 13.856).degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(((3.9 + 8.27).meters + 1.feet) / 2, (6.45 + 7.45).meters / 2)
+                Translation2d(((3.9 + 8.27).meters + 2.feet) / 2, (6.45 + 7.45).meters / 2)
                   .translation2d,
                 null,
                 ((180 + 13.856 + 160).degrees / 2).inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(8.27.meters + 1.feet, 5.78.meters).translation2d,
+                Translation2d(8.27.meters + 2.feet, 5.78.meters).translation2d,
                 null,
                 160.degrees.inRotation2ds
               ),
@@ -122,12 +122,12 @@ class ThreeNoteCenterlineFromAmpAutoPath(
           {
             listOf(
               FieldWaypoint(
-                Translation2d(8.27.meters + 1.feet, 5.78.meters).translation2d,
+                Translation2d(8.27.meters + 2.feet, 5.78.meters).translation2d,
                 null,
                 160.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(((3.9 + 8.27).meters + 1.feet) / 2, (6.45 + 7.45).meters / 2)
+                Translation2d(((3.9 + 8.27).meters + 2.feet) / 2, (6.45 + 7.45).meters / 2)
                   .translation2d,
                 null,
                 ((180 + 13.856 + 160).degrees / 2).inRotation2ds
@@ -140,7 +140,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
             )
           }
         ),
-        WaitCommand(1.0)
+        WaitCommand(1.3)
           .andThen(
             superstructure.prepManualSpeakerCommand(-7.degrees, 4000.rotations.perMinute)
           )
@@ -157,13 +157,13 @@ class ThreeNoteCenterlineFromAmpAutoPath(
                 (180 + 13.856).degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(((3.9 + 8.27).meters + 1.feet) / 2, (6.45 + 7.45).meters / 2)
+                Translation2d(((3.9 + 8.27).meters + 2.feet) / 2, (6.45 + 7.45).meters / 2)
                   .translation2d,
                 null,
                 ((180 + 13.856 + 140).degrees / 2).inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(8.27.meters + 1.feet, 4.11.meters).translation2d,
+                Translation2d(8.27.meters + 2.feet, 4.11.meters).translation2d,
                 null,
                 140.degrees.inRotation2ds
               ),
@@ -178,12 +178,12 @@ class ThreeNoteCenterlineFromAmpAutoPath(
           {
             listOf(
               FieldWaypoint(
-                Translation2d(8.27.meters + 1.feet, 4.11.meters).translation2d,
+                Translation2d(8.27.meters + 2.feet, 4.11.meters).translation2d,
                 null,
                 140.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(((3.9 + 8.27).meters + 1.feet) / 2, (6.45 + 7.45).meters / 2)
+                Translation2d(((3.9 + 8.27).meters + 2.feet) / 2, (6.45 + 7.45).meters / 2)
                   .translation2d,
                 null,
                 ((180 + 13.856 + 140).degrees / 2).inRotation2ds
@@ -196,7 +196,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
             )
           }
         ),
-        WaitCommand(1.0)
+        WaitCommand(1.3)
           .andThen(
             superstructure.prepManualSpeakerCommand(-5.5.degrees, 4000.rotations.perMinute)
           )
