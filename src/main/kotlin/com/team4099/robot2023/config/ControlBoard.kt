@@ -54,6 +54,7 @@ object ControlBoard {
   val prepHighProtected = Trigger { operator.bButton }
   val prepHigh = Trigger { operator.yButton }
   val passingShot = Trigger { operator.leftShoulderButton }
+  val passingShotAlignment = Trigger { driver.yButton }
 
   val extendClimb = Trigger { operator.dPadUp }
   val retractClimb = Trigger { operator.dPadDown }

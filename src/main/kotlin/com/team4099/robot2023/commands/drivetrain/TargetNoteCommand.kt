@@ -12,6 +12,7 @@ import com.team4099.robot2023.util.driver.DriverProfile
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
+import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.meters
@@ -116,7 +117,7 @@ class TargetNoteCommand(
   override fun execute() {
 
     drivetrain.defaultCommand.end(true)
-    DebugLogger.recordDebugOutput("ActiveCommands/TargetNoteCommand", true)
+    Logger.recordOutput("ActiveCommands/TargetNoteCommand", true)
 
     val thetaFeedback = thetaPID.calculate(limelight.targetGamePieceTx ?: 0.0.degrees, 0.0.degrees)
     DebugLogger.recordDebugOutput("NoteAlignment/error", thetaPID.error.inDegrees)
@@ -154,7 +155,7 @@ class TargetNoteCommand(
   }
 
   override fun end(interrupted: Boolean) {
-    DebugLogger.recordDebugOutput("ActiveCommands/TargetAngleCommand", false)
+    Logger.recordOutput("ActiveCommands/TargetAngleCommand", false)
     drivetrain.currentRequest =
       Request.DrivetrainRequest.OpenLoop(
         driver.rotationSpeedClampedSupplier(turn, slowMode),

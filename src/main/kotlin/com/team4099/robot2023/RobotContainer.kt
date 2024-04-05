@@ -89,7 +89,7 @@ object RobotContainer {
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
-      vision = Vision(object : CameraIO {}, CameraIOPhotonvision("parakeet_2"))
+      vision = Vision(object : CameraIO {})
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIOSim)
       feeder = Feeder(FeederIOSim)
@@ -186,6 +186,24 @@ object RobotContainer {
 
     ControlBoard.prepAmp.whileTrue(superstructure.prepAmpCommand())
 
+    ControlBoard.passingShotAlignment.whileTrue(TargetAngleCommand(
+      driver = Ryan(),
+      { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+      { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+      { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+      { ControlBoard.slowMode },
+      drivetrain,
+      {
+        if (DriverStation.getAlliance().isPresent &&
+          DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+        )
+        154.45.degrees + 180.degrees
+        else
+        154.45.degrees
+      },
+    ))
+
+
     ControlBoard.prepHighProtected.whileTrue(
       ParallelCommandGroup(
         superstructure.prepSpeakerMidCommand(),
@@ -215,6 +233,7 @@ object RobotContainer {
     ControlBoard.prepTrap.whileTrue(superstructure.prepTrapCommand())
     ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
     ControlBoard.passingShot.whileTrue(superstructure.passingShotCommand())
+
 
     ControlBoard.targetAmp.whileTrue(
           TargetAngleCommand(

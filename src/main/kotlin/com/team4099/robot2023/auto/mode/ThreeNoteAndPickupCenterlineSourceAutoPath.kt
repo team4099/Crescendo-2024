@@ -50,29 +50,24 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
         ),
         WaitCommand(1.5).andThen(superstructure.groundIntakeCommand())
       ),
-      ParallelCommandGroup(
-        DrivePathCommand.createPathInFieldFrame(
-          drivetrain,
-          {
-            listOf(
-              FieldWaypoint(
-                Translation2d(8.29.meters, 0.78.meters).translation2d,
-                null,
-                180.degrees.inRotation2ds
-              ),
-              FieldWaypoint(
-                Translation2d(4.33.meters, 1.67.meters).translation2d,
-                null,
-                (180 - 43.37583640633171).degrees.inRotation2ds
-              ),
-            )
-          }
-        ),
-        WaitCommand(1.0)
-          .andThen(
-            superstructure.prepManualSpeakerCommand(-6.degrees, 4000.rotations.perMinute)
+      DrivePathCommand.createPathInFieldFrame(
+        drivetrain,
+        {
+          listOf(
+            FieldWaypoint(
+              Translation2d(8.29.meters, 0.78.meters).translation2d,
+              null,
+              180.degrees.inRotation2ds
+            ),
+            FieldWaypoint(
+              Translation2d(4.33.meters, 1.67.meters).translation2d,
+              null,
+              (180 - 43.37583640633171).degrees.inRotation2ds
+            ),
           )
+        }
       ),
+      superstructure.autoAimCommand(),
       superstructure.scoreCommand(),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -117,11 +112,8 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
         ),
         WaitCommand(1.0)
           .andThen(superstructure.groundIntakeCommand())
-          .andThen(WaitCommand(0.5))
-          .andThen(
-            superstructure.prepManualSpeakerCommand(-4.5.degrees, 4000.rotations.perMinute)
-          )
       ),
+      superstructure.autoAimCommand(),
       superstructure.scoreCommand(),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(

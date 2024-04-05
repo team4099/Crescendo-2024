@@ -383,7 +383,7 @@ class Superstructure(
             Intake.TunableIntakeStates.intakeRollerVoltage.get(),
             Intake.TunableIntakeStates.intakeCenterWheelVoltage.get()
           )
-        flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(-6.volts)
+        flywheel.currentRequest = Request.FlywheelRequest.OpenLoop(-2.volts)
 
         if (noteHoldingID == -1) {
           for (note in notes) {
@@ -415,12 +415,15 @@ class Superstructure(
             nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
           }
           is Request.SuperstructureRequest.AutoAim -> {
-            nextState = SuperstructureStates.AUTO_AIM
+            if (DriverStation.isAutonomous()) {
+              nextState = SuperstructureStates.AUTO_AIM
+            }
           }
         }
       }
       SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_BACK -> {
         feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(-1.0.volts)
+        intake.currentRequest = Request.IntakeRequest.OpenLoop(0.0.volts, 0.0.volts)
         if (!feeder.hasNote) {
           nextState = SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_FORWARD
         }
@@ -432,7 +435,8 @@ class Superstructure(
         }
       }
       SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_FORWARD -> {
-        feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(1.volts)
+        feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(1.0.volts)
+        intake.currentRequest = Request.IntakeRequest.OpenLoop(0.0.volts, 0.0.volts)
         if (feeder.hasNote || RobotBase.isSimulation()) {
           currentRequest = Request.SuperstructureRequest.Idle()
           nextState = SuperstructureStates.IDLE
@@ -494,7 +498,7 @@ class Superstructure(
             Elevator.TunableElevatorHeights.shootAmpFeederPosition.get()
           )
         wrist.currentRequest =
-          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.ampScoreAngle.get())
+          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.ampScoreAngle.get(), 1.0.degrees)
 
         if (elevator.isAtTargetedPosition &&
           wrist.isAtTargetedPosition &&
@@ -914,7 +918,7 @@ class Superstructure(
     val returnCommand =
       run {
         if (currentState == SuperstructureStates.ELEVATOR_AMP_PREP ||
-          currentState == SuperstructureStates.WRIST_AMP_PREP
+          currentState == SuperstructureStates.WRIST_AMP_PREP || currentState == SuperstructureStates.SCORE_ELEVATOR_AMP
         ) {
           currentRequest = Request.SuperstructureRequest.ScoreAmp()
         } else if (currentState == SuperstructureStates.SCORE_TRAP_PREP) {

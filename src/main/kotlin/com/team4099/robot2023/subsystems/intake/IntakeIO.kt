@@ -28,7 +28,7 @@ interface IntakeIO {
     var centerWheelStatorCurrent = 0.0.amps
     var centerWheelTemp = 0.0.celsius
 
-    var isSimulated = false
+    var isSimulated = true
 
     override fun toLog(table: LogTable?) {
       table?.put("rollerVelocityRPM", rollerVelocity.inRotationsPerMinute)
