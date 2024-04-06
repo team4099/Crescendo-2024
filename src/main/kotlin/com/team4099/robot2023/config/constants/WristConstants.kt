@@ -20,7 +20,7 @@ object WristConstants {
   // val ROLLER_GEAR_RATIO = 0.0
   // val ROLLER_VOLTAGE_COMPENSATION = 0.0.volts
   // val ROLLER_STATOR_CURRENT_LIMIT = 0.0.amps
-
+  val UNDER_STAGE_SHOT = -33.5.degrees
   val PUSH_DOWN_VOLTAGE = -0.5.volts
 
   val EJECT_ANGLE = -15.degrees
@@ -107,7 +107,7 @@ object WristConstants {
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = -33.5.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = 8.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH = -2.degrees
-  val CLIMB_ANGLE = -3.0.degrees
+  val CLIMB_ANGLE = 0.0.degrees
 
   val TRAP_ANGLE = 35.degrees
   val INTAKE_ANGLE = (-33.5).degrees

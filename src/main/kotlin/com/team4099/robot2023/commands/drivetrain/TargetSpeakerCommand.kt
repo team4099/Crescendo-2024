@@ -135,13 +135,13 @@ class TargetSpeakerCommand(
         robotTSpeaker.y.inMeters -
           (
             drivetrain.robotVelocity.y *
-              robotTSpeaker.translation.magnitude.absoluteValue / 5
+              robotTSpeaker.translation.magnitude.absoluteValue / 7
             )
             .value,
         robotTSpeaker.x.inMeters -
           (
             drivetrain.robotVelocity.x *
-              robotTSpeaker.translation.magnitude.absoluteValue / 5
+              robotTSpeaker.translation.magnitude.absoluteValue / 7
             )
             .value
       )

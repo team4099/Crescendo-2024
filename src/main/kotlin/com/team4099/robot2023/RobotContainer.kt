@@ -230,9 +230,9 @@ object RobotContainer {
     ControlBoard.retractClimb.whileTrue(superstructure.climbRetractCommand())
     ControlBoard.forceIdle.whileTrue(superstructure.requestIdleCommand())
     ControlBoard.prepLow.whileTrue(superstructure.prepSpeakerLowCommand())
-    ControlBoard.prepTrap.whileTrue(superstructure.prepTrapCommand())
     ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
     ControlBoard.passingShot.whileTrue(superstructure.passingShotCommand())
+    ControlBoard.underStagePassingShot.whileTrue(superstructure.underStageCommand())
 
 
     ControlBoard.targetAmp.whileTrue(

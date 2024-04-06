@@ -248,11 +248,11 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
     val distance =
         Translation2d(
           vision.robotTSpeaker.y -
-            (drivetrain.robotVelocity.y * vision.robotTSpeaker.norm.absoluteValue / 5)
+            (drivetrain.robotVelocity.y * vision.robotTSpeaker.norm.absoluteValue / 7)
               .value
               .meters,
           vision.robotTSpeaker.x -
-            (drivetrain.robotVelocity.x * vision.robotTSpeaker.norm.absoluteValue / 5)
+            (drivetrain.robotVelocity.x * vision.robotTSpeaker.norm.absoluteValue / 7)
               .value
               .meters
         )

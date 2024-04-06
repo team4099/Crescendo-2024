@@ -89,6 +89,13 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
         FlywheelConstants.PASSING_SHOT_VELOCITY,
         Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
       )
+
+    val underStageShotVelocity =
+      LoggedTunableValue(
+        "Flywheel/underStageShotVelocity",
+        FlywheelConstants.UNDER_STAGE_SHOT_VELOCITY,
+        Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+      )
   }
 
   private val kP =

@@ -364,7 +364,7 @@ class Superstructure(
       }
       SuperstructureStates.GROUND_INTAKE_PREP -> {
         wrist.currentRequest =
-          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.intakeAngle.get())
+          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.intakeAngle.get(), 2.0.degrees)
         if (wrist.isAtTargetedPosition) {
           nextState = SuperstructureStates.GROUND_INTAKE
         }
@@ -467,8 +467,10 @@ class Superstructure(
             nextState = SuperstructureStates.IDLE
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
+            if (flywheel.isAtTargetedVelocity) {
               nextState = SuperstructureStates.SCORE_SPEAKER
               shootStartTime = Clock.fpgaTime
+            }
           }
           is Request.SuperstructureRequest.PrepScoreSpeakerHigh -> {
             nextState = SuperstructureStates.SCORE_SPEAKER_HIGH_PREP
@@ -492,8 +494,10 @@ class Superstructure(
             nextState = SuperstructureStates.IDLE
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
+            if (flywheel.isAtTargetedVelocity) {
               nextState = SuperstructureStates.SCORE_SPEAKER
               shootStartTime = Clock.fpgaTime
+            }
           }
 
         }
@@ -683,7 +687,7 @@ class Superstructure(
       }
       SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP -> {
         flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(flywheelToShootAt)
-        wrist.currentRequest = Request.WristRequest.TargetingPosition(wristAngleToShootAt)
+        wrist.currentRequest = Request.WristRequest.TargetingPosition(wristAngleToShootAt, 1.5.degrees)
         if (wrist.isAtTargetedPosition &&
           flywheel.isAtTargetedVelocity &&
           currentRequest is Request.SuperstructureRequest.ScoreSpeaker
@@ -808,6 +812,29 @@ class Superstructure(
           }
         }
       }
+
+      SuperstructureStates.UNDER_STAGE_SHOT_PREP -> {
+        wrist.currentRequest =
+          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.underStageShotAngle.get(), 2.0.degrees)
+        flywheel.currentRequest =
+          Request.FlywheelRequest.TargetingVelocity(
+            Flywheel.TunableFlywheelStates.underStageShotVelocity.get()
+          )
+
+        shootStartTime = Clock.fpgaTime
+
+        if (flywheel.isAtTargetedVelocity && wrist.isAtTargetedPosition &&
+          currentRequest is Request.SuperstructureRequest.ScoreSpeaker
+        ) {
+          nextState = SuperstructureStates.SCORE_SPEAKER
+        }
+
+        when (currentRequest) {
+          is Request.SuperstructureRequest.Idle -> {
+            nextState = SuperstructureStates.IDLE
+          }
+        }
+      }
       SuperstructureStates.TUNING -> {
         if (currentRequest is Request.SuperstructureRequest.Idle) {
           nextState = SuperstructureStates.IDLE
@@ -867,6 +894,16 @@ class Superstructure(
       }
 
     returnCommand.name = "PassingShotCommand"
+    return returnCommand
+  }
+
+  fun underStageCommand(): Command {
+    val returnCommand =
+      run { currentRequest = Request.SuperstructureRequest.UnderStageShot() }.until {
+        currentState == SuperstructureStates.PASSING_SHOT_PREP
+      }
+
+    returnCommand.name = "UnderStageShotCommand"
     return returnCommand
   }
 
@@ -1113,7 +1150,7 @@ class Superstructure(
       EJECT_GAME_PIECE,
       EJECT_GAME_PIECE_PREP,
       PASSING_SHOT_PREP,
-      PASSING_SHOT,
+      UNDER_STAGE_SHOT_PREP,
       AUTO_AIM,
       HIGH_AIM
     }

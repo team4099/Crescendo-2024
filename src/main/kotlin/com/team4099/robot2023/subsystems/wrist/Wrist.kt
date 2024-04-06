@@ -96,8 +96,15 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
     val passingShotAngle =
       LoggedTunableValue(
-        "Wrist/passingShotAngle",
-        WristConstants.PASSING_SHOT_ANGLE,
+        "Wrist/underStageShotAngle",
+        WristConstants.UNDER_STAGE_SHOT,
+        Pair({ it.inDegrees }, { it.degrees })
+      )
+
+    val underStageShotAngle =
+      LoggedTunableValue(
+        "Wrist/underStageShotAngle",
+        WristConstants.UNDER_STAGE_SHOT,
         Pair({ it.inDegrees }, { it.degrees })
       )
     val subwooferSpeakerShotAngleLow =
