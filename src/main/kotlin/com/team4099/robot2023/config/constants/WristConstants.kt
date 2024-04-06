@@ -110,7 +110,7 @@ object WristConstants {
   val CLIMB_ANGLE = 0.0.degrees
 
   val TRAP_ANGLE = 35.degrees
-  val INTAKE_ANGLE = (-33.5).degrees
+  val INTAKE_ANGLE = (-33.75).degrees
   val IDLE_ANGLE_HAS_GAMEPEICE = -34.degrees
   val PASSING_SHOT_ANGLE = -20.degrees
 }

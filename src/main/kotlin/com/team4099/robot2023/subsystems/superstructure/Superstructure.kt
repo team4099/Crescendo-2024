@@ -364,7 +364,7 @@ class Superstructure(
       }
       SuperstructureStates.GROUND_INTAKE_PREP -> {
         wrist.currentRequest =
-          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.intakeAngle.get(), 2.0.degrees)
+          Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.intakeAngle.get(), 1.0.degrees)
         if (wrist.isAtTargetedPosition) {
           nextState = SuperstructureStates.GROUND_INTAKE
         }
