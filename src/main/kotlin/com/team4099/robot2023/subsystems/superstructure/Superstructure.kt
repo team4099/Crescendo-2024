@@ -412,10 +412,14 @@ class Superstructure(
             nextState = SuperstructureStates.IDLE
           }
           is Request.SuperstructureRequest.PrepScoreSpeakerLow -> {
-            nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
+            if (DriverStation.isAutonomous()) {
+              nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
+            }
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
-            nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
+            if (DriverStation.isAutonomous()) {
+              nextState = SuperstructureStates.SCORE_SPEAKER_LOW_PREP
+            }
           }
           is Request.SuperstructureRequest.ManualScoreSpeakerPrep -> {
             if (DriverStation.isAutonomous()) {
