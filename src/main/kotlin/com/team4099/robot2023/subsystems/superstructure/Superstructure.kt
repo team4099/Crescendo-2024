@@ -360,6 +360,9 @@ class Superstructure(
           is Request.SuperstructureRequest.PassingShot -> {
             nextState = SuperstructureStates.PASSING_SHOT_PREP
           }
+          is Request.SuperstructureRequest.UnderStageShot -> {
+            nextState = SuperstructureStates.UNDER_STAGE_SHOT_PREP
+          }
         }
       }
       SuperstructureStates.GROUND_INTAKE_PREP -> {
@@ -900,7 +903,7 @@ class Superstructure(
   fun underStageCommand(): Command {
     val returnCommand =
       run { currentRequest = Request.SuperstructureRequest.UnderStageShot() }.until {
-        currentState == SuperstructureStates.PASSING_SHOT_PREP
+        currentState == SuperstructureStates.UNDER_STAGE_SHOT_PREP
       }
 
     returnCommand.name = "UnderStageShotCommand"

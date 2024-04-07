@@ -96,8 +96,8 @@ class Wrist(val io: WristIO) : SubsystemBase() {
 
     val passingShotAngle =
       LoggedTunableValue(
-        "Wrist/underStageShotAngle",
-        WristConstants.UNDER_STAGE_SHOT,
+        "Wrist/passingShotAngle",
+        WristConstants.PASSING_SHOT_ANGLE,
         Pair({ it.inDegrees }, { it.degrees })
       )
 

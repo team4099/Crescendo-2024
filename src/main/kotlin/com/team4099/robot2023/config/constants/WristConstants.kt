@@ -20,7 +20,7 @@ object WristConstants {
   // val ROLLER_GEAR_RATIO = 0.0
   // val ROLLER_VOLTAGE_COMPENSATION = 0.0.volts
   // val ROLLER_STATOR_CURRENT_LIMIT = 0.0.amps
-  val UNDER_STAGE_SHOT = -33.5.degrees
+  val UNDER_STAGE_SHOT = 25.5.degrees
   val PUSH_DOWN_VOLTAGE = -0.5.volts
 
   val EJECT_ANGLE = -15.degrees
@@ -36,9 +36,9 @@ object WristConstants {
   val VOLTAGE_COMPENSATION = 12.0.volts
   val ABSOLUTE_ENCODER_OFFSET =
     (
-      97.72227856659904.degrees - 35.degrees + 1.65.degrees -
+      97.72227856659904.degrees - 35.degrees + 1.90.degrees -
         0.5.degrees -
-        1.8.degrees -
+        2.2.degrees - // add to drop angle
         1.degrees - 96.3.degrees
       ) * ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
   val WRIST_LENGTH = 18.6.inches

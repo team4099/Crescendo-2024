@@ -37,18 +37,13 @@ class ThreeNoteCenterlineFromAmpAutoPath(
                 startingPose.rotation.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(2.24.meters, 7.68.meters).translation2d,
-                0.degrees.inRotation2ds,
-                180.degrees.inRotation2ds
-              ),
-              FieldWaypoint(
-                Translation2d(5.0.meters, 7.68.meters).translation2d,
+                Translation2d(1.90.meters, 6.76.meters).translation2d,
                 null,
-                180.degrees.inRotation2ds
+                210.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(6.0.meters, 7.45.meters).translation2d,
-                0.degrees.inRotation2ds,
+                Translation2d(2.87.meters, 6.27.meters).translation2d,
+                null,
                 180.degrees.inRotation2ds
               ),
               FieldWaypoint(
@@ -59,7 +54,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
             )
           }
         ),
-        WaitCommand(2.0).andThen(superstructure.groundIntakeCommand())
+        WaitCommand(2.25).andThen(superstructure.groundIntakeCommand())
       ),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -79,7 +74,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
             )
           }
         ),
-        WaitCommand(1.3)
+        WaitCommand(1.0)
           .andThen(
             superstructure
               .prepManualSpeakerCommand(
@@ -100,10 +95,10 @@ class ThreeNoteCenterlineFromAmpAutoPath(
                 (180 + 13.856).degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(((3.9 + 8.27).meters) / 2, (6.45 + 7.45).meters / 2)
+                Translation2d((3.9 + 8.27).meters / 2, (6.45 + 7.45).meters / 2)
                   .translation2d,
                 null,
-                ((180 + 13.856 + 160).degrees / 2).inRotation2ds
+                ((180 + 13.856 + 165).degrees / 2).inRotation2ds
               ),
               FieldWaypoint(
                 Translation2d(8.27.meters, 5.78.meters).translation2d,
@@ -127,7 +122,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
                 160.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(((3.9 + 8.27).meters) / 2, (6.45 + 7.45).meters / 2)
+                Translation2d((3.9 + 8.27).meters / 2, (6.45 + 7.45).meters / 2)
                   .translation2d,
                 null,
                 ((180 + 13.856 + 160).degrees / 2).inRotation2ds
@@ -140,7 +135,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
             )
           }
         ),
-        WaitCommand(1.3)
+        WaitCommand(1.0)
           .andThen(
             superstructure.prepManualSpeakerCommand(-7.degrees, 4000.rotations.perMinute)
           )
@@ -157,10 +152,10 @@ class ThreeNoteCenterlineFromAmpAutoPath(
                 (180 + 13.856).degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(((3.9 + 8.27).meters) / 2, (6.45 + 7.45).meters / 2)
+                Translation2d((3.9 + 8.27).meters / 2, (6.45 + 7.45).meters / 2)
                   .translation2d,
                 null,
-                ((180 + 13.856 + 140).degrees / 2).inRotation2ds
+                ((180 + 13.856 + 165).degrees / 2).inRotation2ds
               ),
               FieldWaypoint(
                 Translation2d(8.27.meters, 4.11.meters).translation2d,
@@ -183,10 +178,10 @@ class ThreeNoteCenterlineFromAmpAutoPath(
                 140.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(((3.9 + 8.27).meters) / 2, (6.45 + 7.45).meters / 2)
+                Translation2d((3.9 + 8.27).meters / 2, (6.45 + 7.45).meters / 2)
                   .translation2d,
                 null,
-                ((180 + 13.856 + 140).degrees / 2).inRotation2ds
+                ((180 + 13.856 + 160).degrees / 2).inRotation2ds
               ),
               FieldWaypoint(
                 Translation2d(3.9.meters, 6.45.meters).translation2d,
@@ -196,7 +191,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
             )
           }
         ),
-        WaitCommand(1.3)
+        WaitCommand(1.0)
           .andThen(
             superstructure.prepManualSpeakerCommand(-5.5.degrees, 4000.rotations.perMinute)
           )
