@@ -38,7 +38,7 @@ object WristConstants {
     (
       97.72227856659904.degrees - 35.degrees + 1.90.degrees -
         0.5.degrees -
-        2.2.degrees - // add to drop angle
+        1.1.degrees - // add to drop angle
         1.degrees - 96.3.degrees
       ) * ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
   val WRIST_LENGTH = 18.6.inches
@@ -65,21 +65,21 @@ object WristConstants {
 
     val ARBITRARY_FEEDFORWARD = 0.03.volts
 
-    val REAL_KP: ProportionalGain<Radian, Volt> = 0.53.volts / 1.0.degrees
+    val REAL_KP: ProportionalGain<Radian, Volt> = 0.72.volts / 1.0.degrees
     val REAL_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val REAL_KD: DerivativeGain<Radian, Volt> = 0.0.volts / 1.0.degrees.perSecond
 
     val FIRST_STAGE_POS_SWITCH_THRESHOLD = 3.0.degrees
     val FIRST_STAGE_VEL_SWITCH_THRESHOLD = 3.0.degrees.perSecond
 
-    val FIRST_STAGE_KP: ProportionalGain<Radian, Volt> = 0.46.volts / 1.0.degrees
+    val FIRST_STAGE_KP: ProportionalGain<Radian, Volt> = 0.69.volts / 1.0.degrees
     val FIRST_STAGE_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val FIRST_STAGE_KD: DerivativeGain<Radian, Volt> = 0.0.volts / 1.0.degrees.perSecond
 
     val SECOND_STAGE_POS_SWITCH_THRESHOLD = 1.0.degrees
     val SECOND_STAGE_VEL_SWITCH_THRESHOLD = 5.0.degrees.perSecond
 
-    val SECOND_STAGE_KP: ProportionalGain<Radian, Volt> = 1.5.volts / 1.0.degrees
+    val SECOND_STAGE_KP: ProportionalGain<Radian, Volt> = 3.volts / 1.0.degrees
     val SECOND_STAGE_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val SECOND_STAGE_KD: DerivativeGain<Radian, Volt> = 0.0.volts / 1.0.degrees.perSecond
 
