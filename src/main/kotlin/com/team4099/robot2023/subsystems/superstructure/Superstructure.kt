@@ -474,7 +474,7 @@ class Superstructure(
             nextState = SuperstructureStates.IDLE
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
-            if (flywheel.isAtTargetedVelocity) {
+            if (flywheel.isAtTargetedVelocity && wrist.isAtTargetedPosition) {
               nextState = SuperstructureStates.SCORE_SPEAKER
               shootStartTime = Clock.fpgaTime
             }
@@ -501,7 +501,7 @@ class Superstructure(
             nextState = SuperstructureStates.IDLE
           }
           is Request.SuperstructureRequest.ScoreSpeaker -> {
-            if (flywheel.isAtTargetedVelocity) {
+            if (flywheel.isAtTargetedVelocity && wrist.isAtTargetedPosition) {
               nextState = SuperstructureStates.SCORE_SPEAKER
               shootStartTime = Clock.fpgaTime
             }
@@ -1047,7 +1047,7 @@ class Superstructure(
 
   fun autoAimCommand(): Command {
     val returnCommand =
-      runOnce {
+      run {
         currentRequest = Request.SuperstructureRequest.AutoAim() }.until {
         isAtRequestedState && currentState == SuperstructureStates.AUTO_AIM
       }

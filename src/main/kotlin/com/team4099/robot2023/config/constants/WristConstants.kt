@@ -98,7 +98,7 @@ object WristConstants {
     val SIM_WRIST_KS = 0.15.volts
   }
 
-  val WRIST_TOLERANCE = 0.3.degrees
+  val WRIST_TOLERANCE = 0.2.degrees
 
   val IDLE_ANGLE = (-33.5).degrees
 

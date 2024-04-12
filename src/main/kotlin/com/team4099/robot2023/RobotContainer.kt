@@ -81,7 +81,7 @@ object RobotContainer {
 
       drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
       vision = Vision(object : CameraIO {}, CameraIOPhotonvision("parakeet_2"))
-      limelight = LimelightVision(object : LimelightVisionIO {})
+      limelight = LimelightVision(LimelightVisionIOReal)
       intake = Intake(IntakeIOFalconNEO)
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
@@ -169,8 +169,16 @@ object RobotContainer {
     limelight.limelightState = LimelightVision.LimelightStates.TARGETING_GAME_PIECE
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain))
-    ControlBoard.intake.whileTrue(
-        superstructure.groundIntakeCommand()
+    ControlBoard.intake.whileTrue(ParallelCommandGroup(
+        superstructure.groundIntakeCommand(),
+      TargetNoteCommand(
+        driver = Ryan(),
+        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+        { ControlBoard.slowMode },
+        drivetrain, limelight, feeder)
+    )
     )
 
     ControlBoard.prepAmp.whileTrue(superstructure.prepAmpCommand())

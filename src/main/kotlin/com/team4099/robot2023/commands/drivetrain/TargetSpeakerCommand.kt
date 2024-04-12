@@ -3,6 +3,7 @@ package com.team4099.robot2023.commands.drivetrain
 import com.team4099.lib.logging.LoggedTunableNumber
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
+import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.subsystems.vision.Vision
@@ -15,6 +16,7 @@ import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.inMeters
+import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -130,6 +132,7 @@ class TargetSpeakerCommand(
     val odomTSpeaker = drivetrain.odomTSpeaker
     val robotTSpeaker = odomTRobot.inverse().transformBy(odomTSpeaker)
 
+
     desiredAngle =
       atan2(
         robotTSpeaker.y.inMeters -
@@ -138,7 +141,7 @@ class TargetSpeakerCommand(
               robotTSpeaker.translation.magnitude.absoluteValue / 7
             )
             .value,
-        robotTSpeaker.x.inMeters -
+        robotTSpeaker.x.inMeters - 10.inches.inMeters -
           (
             drivetrain.robotVelocity.x *
               robotTSpeaker.translation.magnitude.absoluteValue / 7

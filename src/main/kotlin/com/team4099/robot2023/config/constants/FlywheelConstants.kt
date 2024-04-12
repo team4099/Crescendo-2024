@@ -41,7 +41,7 @@ object FlywheelConstants {
   val LEFT_flywheel_TRIGGER_THRESHOLD_TIME = 10.0.seconds
   val LEFT_FLYWHEEL_STATOR_CURRENT_LIMIT = 50.0.amps
 
-  val FLYWHEEL_TOLERANCE =100.0.rotations.perMinute
+  val FLYWHEEL_TOLERANCE = 75.0.rotations.perMinute
   object PID {
     val REAL_KP: ProportionalGain<Velocity<Radian>, Volt> = 0.00.volts / 1.0.rotations.perMinute
     val REAL_KI: IntegralGain<Velocity<Radian>, Volt> =
@@ -74,6 +74,6 @@ object FlywheelConstants {
   val TRAP_VELOCITY = 3_000.rotations.perMinute
 
   val AMP_SCORE_TIME = 0.2.seconds
-  val SPEAKER_SCORE_TIME = 0.1.seconds
+  val SPEAKER_SCORE_TIME = 0.2.seconds
   val EJECT_VELOCITY = 3_000.rotations.perMinute
 }
