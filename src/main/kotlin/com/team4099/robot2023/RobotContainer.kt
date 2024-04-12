@@ -122,6 +122,8 @@ object RobotContainer {
         drivetrain
       )
 
+    superstructure.defaultCommand = superstructure.forceIdleIfAutoAimCommand()
+
     /*
     module steeing tuning
 
@@ -332,6 +334,7 @@ object RobotContainer {
           { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
           { ControlBoard.slowMode },
           drivetrain,
+          superstructure,
           vision
         ),
         superstructure.autoAimCommand()

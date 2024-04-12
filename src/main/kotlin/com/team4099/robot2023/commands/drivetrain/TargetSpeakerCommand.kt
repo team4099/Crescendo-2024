@@ -6,6 +6,7 @@ import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.util.driver.DriverProfile
 import com.team4099.robot2023.util.inverse
@@ -40,6 +41,7 @@ class TargetSpeakerCommand(
   val turn: () -> Double,
   val slowMode: () -> Boolean,
   val drivetrain: Drivetrain,
+  val superstructure: Superstructure,
   val vision: Vision
 ) : Command() {
   private var thetaPID: PIDController<Radian, Velocity<Radian>>
@@ -123,6 +125,7 @@ class TargetSpeakerCommand(
     }
 
     drivetrain.defaultCommand.end(true)
+    superstructure.defaultCommand.end(true)
     Logger.recordOutput("ActiveCommands/TargetAngleCommand", true)
     Logger.recordOutput(
       "Testing/CurrentDrivetrainRotation", drivetrain.odomTRobot.rotation.inDegrees

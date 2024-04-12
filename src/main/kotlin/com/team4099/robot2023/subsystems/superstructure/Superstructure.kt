@@ -874,6 +874,17 @@ class Superstructure(
     return returnCommand
   }
 
+  fun forceIdleIfAutoAimCommand() : Command {
+    val returnCommand =
+      run {
+        if (currentState == SuperstructureStates.AUTO_AIM) {
+          currentRequest = Request.SuperstructureRequest.Idle()
+        }
+      }
+    returnCommand.name = "forceIdleIfAutoAim"
+    return returnCommand
+  }
+
   fun ejectGamePieceCommand(): Command {
     val returnCommand =
       runOnce { currentRequest = Request.SuperstructureRequest.EjectGamePiece() }.until {
@@ -1026,6 +1037,8 @@ class Superstructure(
     returnCommand.name = "ScoreTrapCommand"
     return returnCommand
   }
+
+
 
   fun climbExtendCommand(): Command {
     val returnCommand =
