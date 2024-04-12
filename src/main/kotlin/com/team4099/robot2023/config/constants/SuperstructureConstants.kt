@@ -26,7 +26,7 @@ object SuperstructureConstants {
       Pair(156.8.inches, 3500.rotations.perMinute),
       Pair(172.2.inches, 3500.rotations.perMinute),
       Pair(185.6.inches, 4000.rotations.perMinute),
-      Pair(198.15.inches, 4200.rotations.perMinute),
+      Pair(198.15.inches, 4000.rotations.perMinute),
       Pair(220.1.inches, 4400.rotations.perMinute)
     )
 
