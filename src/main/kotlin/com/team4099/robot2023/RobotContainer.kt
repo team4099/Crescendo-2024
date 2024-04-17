@@ -2,7 +2,7 @@ package com.team4099.robot2023
 
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.auto.AutonomousSelector
-import com.team4099.robot2023.commands.drivetrain.LockDrivetrainCommand
+import com.team4099.robot2023.commands.drivetrain.LockDriveCommand
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TargetAngleCommand
 import com.team4099.robot2023.commands.drivetrain.TargetNoteCommand
@@ -343,7 +343,7 @@ object RobotContainer {
       )
     )
 
-    ControlBoard.lockWheels.whileTrue(LockDrivetrainCommand(drivetrain))
+    ControlBoard.lockWheels.whileTrue(LockDriveCommand(drivetrain))
 
     //    ControlBoard.characterizeSubsystem.whileTrue(
     //      WheelRadiusCharacterizationCommand(
