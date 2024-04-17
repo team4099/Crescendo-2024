@@ -343,7 +343,8 @@ object RobotContainer {
       )
     )
 
-    ControlBoard.lockWheels.whileTrue(LockDriveCommand(drivetrain))
+
+    //ControlBoard.lockWheels.whileTrue(LockDriveCommand(drivetrain))
 
     //    ControlBoard.characterizeSubsystem.whileTrue(
     //      WheelRadiusCharacterizationCommand(

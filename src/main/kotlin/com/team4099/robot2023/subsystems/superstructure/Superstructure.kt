@@ -286,8 +286,6 @@ class Superstructure(
       }
       SuperstructureStates.IDLE -> {
 
-        intake.currentRequest = Request.IntakeRequest.OpenLoop(0.0.volts, 0.0.volts)
-
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.idleVoltage.get())
 
@@ -313,6 +311,9 @@ class Superstructure(
               Intake.TunableIntakeStates.idleCenterWheelVoltage.get()
             )
         } else {
+
+          intake.currentRequest = Request.IntakeRequest.OpenLoop(0.0.volts, 0.0.volts)
+
           wrist.currentRequest =
             Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.idleAngle.get())
         }

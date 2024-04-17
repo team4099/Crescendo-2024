@@ -34,5 +34,5 @@ object FeederConstants {
 
   val OUTTAKE_NOTE_VOLTAGE = (-6).volts
 
-  val beamBreakFilterTime = 0.01.seconds
+  val beamBreakFilterTime = 0.05.seconds
 }
