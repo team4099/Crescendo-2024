@@ -43,7 +43,7 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
         )
       ),
       superstructure.prepManualSpeakerCommand(
-        -3.7.degrees, 3000.rotations.perMinute, 0.7.degrees
+        -4.5.degrees, 3000.rotations.perMinute, 0.6.degrees
       ),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -86,10 +86,11 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           .andThen(WaitCommand(0.25))
           .andThen(
             superstructure.prepManualSpeakerCommand(
-              -3.7.degrees, 3000.rotations.perMinute, 0.7.degrees
+              -4.5.degrees, 3000.rotations.perMinute, 0.6.degrees
             )
           )
       ),
+      superstructure.scoreCommand(),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
@@ -114,8 +115,7 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           }
         ),
         superstructure
-          .scoreCommand()
-          .andThen(superstructure.groundIntakeCommand())
+          .groundIntakeCommand()
           .andThen(
             superstructure.prepManualSpeakerCommand(
               -3.degrees, 3000.rotations.perMinute, 0.7.degrees
@@ -150,7 +150,7 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           .andThen(WaitCommand(0.1))
           .andThen(superstructure.groundIntakeCommand())
       ),
-      superstructure.prepManualSpeakerCommand(-3.degrees, 3000.rotations.perMinute, 0.7.degrees),
+      superstructure.prepManualSpeakerCommand(-3.degrees, 3000.rotations.perMinute),
       superstructure.scoreCommand().withTimeout(0.5)
     )
   }

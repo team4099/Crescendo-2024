@@ -33,7 +33,7 @@ object DrivetrainConstants {
   const val FOC_ENABLED = true
   const val MINIMIZE_SKEW = false
 
-  const val TELEOP_TURNING_SPEED_PERCENT = 0.75
+  const val TELEOP_TURNING_SPEED_PERCENT = 0.7
 
   const val OMOMETRY_UPDATE_FREQUENCY = 250.0
 
@@ -61,8 +61,8 @@ object DrivetrainConstants {
   val SLOW_AUTO_VEL = 2.meters.perSecond
   val SLOW_AUTO_ACCEL = 2.0.meters.perSecond.perSecond
 
-  val MAX_AUTO_VEL = 4.0.meters.perSecond // 4
-  val MAX_AUTO_ACCEL = 3.25.meters.perSecond.perSecond // 3
+  val MAX_AUTO_VEL = 3.5.meters.perSecond // 4
+  val MAX_AUTO_ACCEL = 3.5.meters.perSecond.perSecond // 3
 
   val MAX_AUTO_BRAKE_VEL = 0.5.meters.perSecond // 4
   val MAX_AUTO_BRAKE_ACCEL = 0.5.meters.perSecond.perSecond // 3
@@ -84,10 +84,10 @@ object DrivetrainConstants {
   val DRIVE_STATOR_THRESHOLD_CURRENT_LIMIT = 80.0.amps
   val DRIVE_STATOR_TRIGGER_THRESHOLD_TIME = 1.0.seconds
 
-  val FRONT_LEFT_MODULE_ZERO = 3.28.radians + PI.radians // good
-  val FRONT_RIGHT_MODULE_ZERO = 2.9.radians + PI.radians // good
-  val BACK_LEFT_MODULE_ZERO = 5.65.radians + PI.radians // good
-  val BACK_RIGHT_MODULE_ZERO = 3.48.radians + PI.radians // good
+  val FRONT_LEFT_MODULE_ZERO = 3.285.radians + PI.radians // good
+  val FRONT_RIGHT_MODULE_ZERO = 2.91.radians + PI.radians // good
+  val BACK_LEFT_MODULE_ZERO = 5.665.radians + PI.radians // good
+  val BACK_RIGHT_MODULE_ZERO = 3.50.radians + PI.radians // good
 
   val STEERING_COMPENSATION_VOLTAGE = 10.volts
   val DRIVE_COMPENSATION_VOLTAGE = 12.volts
@@ -128,26 +128,26 @@ object DrivetrainConstants {
         }
       }
 
-    val LIMELIGHT_THETA_KP = 0.0.degrees.perSecond / 1.degrees
+    val LIMELIGHT_THETA_KP = 4.0.degrees.perSecond / 1.degrees
     val LIMELIGHT_THETA_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val LIMELIGHT_THETA_KD =
-      (0.0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (0.1.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val AUTO_THETA_ALLOWED_ERROR = 3.degrees
-    val AUTO_THETA_PID_KP = (1.05.radians.perSecond / 1.radians)
+    val AUTO_THETA_PID_KP = (3.8.radians.perSecond / 1.radians)
     val AUTO_THETA_PID_KI = (0.0.radians.perSecond / (1.radians * 1.seconds))
     val AUTO_THETA_PID_KD =
-      (0.2.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (0.3.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
-    val TELEOP_ALIGN_PID_KP = 3.6.degrees.perSecond / 1.degrees
+    val TELEOP_ALIGN_PID_KP = 3.8.degrees.perSecond / 1.degrees
     val TELEOP_ALIGN_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val TELEOP_ALIGN_PID_KD =
-      (0.2.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (0.3.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
-    val SIM_AUTO_THETA_PID_KP = 10.degrees.perSecond / 1.degrees
+    val SIM_AUTO_THETA_PID_KP = 4.0.degrees.perSecond / 1.degrees
     val SIM_AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val SIM_AUTO_THETA_PID_KD =
-      (1.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
+      (0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
     val MAX_AUTO_ANGULAR_VEL = 270.0.degrees.perSecond
     val MAX_AUTO_ANGULAR_ACCEL = 600.0.degrees.perSecond.perSecond
@@ -158,14 +158,14 @@ object DrivetrainConstants {
 
     val STEERING_KFF = 0.0.volts / 1.0.radians.perSecond // 0.0375
 
-    val DRIVE_KP = 1.45.volts / 1.meters.perSecond
+    val DRIVE_KP = 1.52.volts / 1.meters.perSecond
     val DRIVE_KI = 0.0.volts / (1.meters.perSecond * 1.seconds)
     val DRIVE_KD = 0.1.volts / 1.meters.perSecond.perSecond
 
     val DRIVE_KFF = 12.0.volts / 4.1675.meters.perSecond
 
     val DRIVE_KS = 0.177.volts
-    val DRIVE_KV = 0.12.volts / 1.0.meters.perSecond
+    val DRIVE_KV = 0.137.volts / 1.0.meters.perSecond
     val DRIVE_KA = 0.0.volts / 1.0.meters.perSecond.perSecond
 
     //    val DRIVE_KS = 0.23677.volts

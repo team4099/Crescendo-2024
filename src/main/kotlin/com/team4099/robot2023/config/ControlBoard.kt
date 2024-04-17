@@ -54,11 +54,12 @@ object ControlBoard {
   val prepHighProtected = Trigger { operator.bButton }
   val prepHigh = Trigger { operator.yButton }
   val passingShot = Trigger { operator.leftShoulderButton }
+  val passingShotAlignment = Trigger { driver.yButton }
+  val underStagePassingShot = Trigger { operator.rightShoulderButton }
 
   val extendClimb = Trigger { operator.dPadUp }
   val retractClimb = Trigger { operator.dPadDown }
 
-  val prepTrap = Trigger { operator.rightShoulderButton }
   val ejectGamePiece = Trigger { driver.rightTriggerAxis > 0.5 }
 
   val testWrist = Trigger { driver.aButton }
@@ -71,6 +72,8 @@ object ControlBoard {
 
   val targetSpeaker = Trigger { driver.xButton } // TODO: switch back to climbAlignLeft
   val climbAutoAlign = Trigger { driver.bButton }
+
+  val lockWheels = Trigger { driver.selectButton }
 
   // week0 controls
 }

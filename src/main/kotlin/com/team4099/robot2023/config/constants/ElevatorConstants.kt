@@ -67,7 +67,8 @@ object ElevatorConstants {
 
   // week 1 amp amgle
   // val SHOOT_AMP_POSITION = 17.0.degrees
-  val SHOOT_AMP_POSITION = 15.0.inches
+  val SHOOT_AMP_SHOOTER_SIDE_POSITION = 12.inches
+  val SHOOT_AMP_FEEDER_SIDE_POSITION = 15.0.inches
   val SOURCE_NOTE_OFFSET = 0.0.inches
   val ELEVATOR_THETA_POS = 0.0.degrees
   val HOMING_STATOR_CURRENT = 3.0.amps

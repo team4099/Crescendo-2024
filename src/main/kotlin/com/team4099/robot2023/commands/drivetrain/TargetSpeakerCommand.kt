@@ -5,6 +5,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
+import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.util.driver.DriverProfile
 import com.team4099.robot2023.util.inverse
@@ -15,6 +16,7 @@ import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.inMeters
+import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -38,6 +40,7 @@ class TargetSpeakerCommand(
   val turn: () -> Double,
   val slowMode: () -> Boolean,
   val drivetrain: Drivetrain,
+  val superstructure: Superstructure,
   val vision: Vision
 ) : Command() {
   private var thetaPID: PIDController<Radian, Velocity<Radian>>
@@ -121,6 +124,7 @@ class TargetSpeakerCommand(
     }
 
     drivetrain.defaultCommand.end(true)
+    superstructure.defaultCommand.end(true)
     Logger.recordOutput("ActiveCommands/TargetAngleCommand", true)
     Logger.recordOutput(
       "Testing/CurrentDrivetrainRotation", drivetrain.odomTRobot.rotation.inDegrees
@@ -135,13 +139,14 @@ class TargetSpeakerCommand(
         robotTSpeaker.y.inMeters -
           (
             drivetrain.robotVelocity.y *
-              robotTSpeaker.translation.magnitude.absoluteValue / 5
+              robotTSpeaker.translation.magnitude.absoluteValue / 7
             )
             .value,
         robotTSpeaker.x.inMeters -
+          10.inches.inMeters -
           (
             drivetrain.robotVelocity.x *
-              robotTSpeaker.translation.magnitude.absoluteValue / 5
+              robotTSpeaker.translation.magnitude.absoluteValue / 7
             )
             .value
       )

@@ -1,13 +1,10 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.logging.LoggedTunableValue
-import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.SuperstructureConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.vision.Vision
-import com.team4099.robot2023.util.AllianceFlipUtil
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
-import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Translation2d
@@ -27,16 +24,26 @@ import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.inRotationsPerMinute
 import org.team4099.lib.units.perMinute
 import kotlin.math.absoluteValue
-import kotlin.math.hypot
 
 class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
   val flywheelSpeedRPMInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
   val wristAngleDegreesInterpolationTable: InterpolatingDoubleTreeMap = InterpolatingDoubleTreeMap()
 
+  val highFlywheelSpeedRPMInterpolationTable: InterpolatingDoubleTreeMap =
+    InterpolatingDoubleTreeMap()
+  val highWristAngleDegreesInterpolationTable: InterpolatingDoubleTreeMap =
+    InterpolatingDoubleTreeMap()
+
   val tunableFlywheelInterpolationTable:
     List<Pair<LoggedTunableValue<Meter>, LoggedTunableValue<Velocity<Radian>>>>
 
   val tunableWristInterpolationTable:
+    List<Pair<LoggedTunableValue<Meter>, LoggedTunableValue<Radian>>>
+
+  val tunableHighFlywheelInterpolationTable:
+    List<Pair<LoggedTunableValue<Meter>, LoggedTunableValue<Velocity<Radian>>>>
+
+  val tunableHighWristInterpolationTable:
     List<Pair<LoggedTunableValue<Meter>, LoggedTunableValue<Radian>>>
 
   val interpolationTestDistance =
@@ -110,8 +117,43 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
         }
     }
 
+    tunableHighFlywheelInterpolationTable =
+      SuperstructureConstants.highDistanceFlywheelSpeedTableReal.mapIndexed { i, it ->
+        Pair(
+          LoggedTunableValue(
+            "AutoAim/HighFlywheelInterpolation/$i/Distance",
+            it.first,
+            Pair({ it.inInches }, { it.inches })
+          ),
+          LoggedTunableValue(
+            "AutoAim/HighFlywheelInterpolation/$i/SpeedRPM",
+            it.second,
+            Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+          )
+        )
+      }
+
+    tunableHighWristInterpolationTable =
+      SuperstructureConstants.highDistanceWristAngleTableReal.mapIndexed { i, it ->
+        Pair(
+          LoggedTunableValue(
+            "AutoAim/HighWristInterpolation/$i/Distance",
+            it.first,
+            Pair({ it.inInches }, { it.inches })
+          ),
+          LoggedTunableValue(
+            "AutoAim/HighWristInterpolation/$i/AngleDegrees",
+            it.second,
+            Pair({ it.inDegrees }, { it.degrees })
+          )
+        )
+      }
+
     updateFlywheelInterpolationTable()
     updateWristInterpolationTable()
+
+    updateHighFlywheelInterpolationTable()
+    updateHighWristInterpolationTable()
   }
 
   fun periodic() {
@@ -150,10 +192,30 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
     return wristAngleDegreesInterpolationTable.get(calculateDistanceFromSpeaker().inMeters).degrees
   }
 
+  fun calculateHighFlywheelSpeed(): AngularVelocity {
+    return highFlywheelSpeedRPMInterpolationTable.get(calculateDistanceFromSpeaker().inMeters)
+      .rotations
+      .perMinute
+  }
+
+  fun calculateHighWristAngle(): Angle {
+    return highWristAngleDegreesInterpolationTable.get(calculateDistanceFromSpeaker().inMeters)
+      .degrees
+  }
+
   fun updateFlywheelInterpolationTable() {
     flywheelSpeedRPMInterpolationTable.clear()
     tunableFlywheelInterpolationTable.forEach {
       flywheelSpeedRPMInterpolationTable.put(
+        it.first.get().inMeters, it.second.get().inRotationsPerMinute
+      )
+    }
+  }
+
+  fun updateHighFlywheelInterpolationTable() {
+    highFlywheelSpeedRPMInterpolationTable.clear()
+    tunableHighFlywheelInterpolationTable.forEach {
+      highFlywheelSpeedRPMInterpolationTable.put(
         it.first.get().inMeters, it.second.get().inRotationsPerMinute
       )
     }
@@ -166,32 +228,29 @@ class AutoAim(val drivetrain: Drivetrain, val vision: Vision) {
     }
   }
 
+  fun updateHighWristInterpolationTable() {
+    highWristAngleDegreesInterpolationTable.clear()
+    tunableHighWristInterpolationTable.forEach {
+      highWristAngleDegreesInterpolationTable.put(
+        it.first.get().inMeters, it.second.get().inDegrees
+      )
+    }
+  }
+
   fun calculateDistanceFromSpeaker(): Length {
     val distance =
-      if (DriverStation.isAutonomous()) {
-        val speakerTransformWithOdometry =
-          drivetrain.fieldTRobot.relativeTo(
-            AllianceFlipUtil.apply(FieldConstants.centerSpeakerOpening)
-          )
-        Logger.recordOutput(
-          "AutoAim/speakerTransformWithOdometry", speakerTransformWithOdometry.pose2d
-        )
-        hypot(speakerTransformWithOdometry.x.inMeters, speakerTransformWithOdometry.y.inMeters)
-          .meters
-      } else {
-        Translation2d(
-          vision.robotTSpeaker.y -
-            (drivetrain.robotVelocity.y * vision.robotTSpeaker.norm.absoluteValue / 5)
-              .value
-              .meters,
-          vision.robotTSpeaker.x -
-            (drivetrain.robotVelocity.x * vision.robotTSpeaker.norm.absoluteValue / 5)
-              .value
-              .meters
-        )
-          .magnitude
-          .meters
-      }
+      Translation2d(
+        vision.robotTSpeaker.y -
+          (drivetrain.robotVelocity.y * vision.robotTSpeaker.norm.absoluteValue / 7)
+            .value
+            .meters,
+        vision.robotTSpeaker.x -
+          (drivetrain.robotVelocity.x * vision.robotTSpeaker.norm.absoluteValue / 7)
+            .value
+            .meters
+      )
+        .magnitude
+        .meters
     Logger.recordOutput("AutoAim/currentDistanceInches", distance.inInches)
     return distance
   }

@@ -47,7 +47,7 @@ object IntakeIOSim : IntakeIO {
     inputs.centerWheelStatorCurrent = centerWheelSim.currentDrawAmps.amps
     inputs.centerWheelTemp = 0.celsius
 
-    inputs.isSimulated = true
+    inputs.isSimulated = false
   }
 
   override fun setVoltage(

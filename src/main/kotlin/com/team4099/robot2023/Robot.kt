@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.simulation.DriverStationSim
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
-import edu.wpi.first.wpilibj2.command.WaitCommand
+import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import org.ejml.EjmlVersion.BUILD_DATE
 import org.ejml.EjmlVersion.DIRTY
 import org.ejml.EjmlVersion.GIT_BRANCH
@@ -128,15 +128,15 @@ object Robot : LoggedRobot() {
 
     // Set the scheduler to log events for command initialize, interrupt, finish
     CommandScheduler.getInstance().onCommandInitialize { command: Command ->
-      DebugLogger.recordDebugOutput("/ActiveCommands/${command.name}", true)
+      Logger.recordOutput("/ActiveCommands/${command.name}", true)
     }
 
     CommandScheduler.getInstance().onCommandFinish { command: Command ->
-      DebugLogger.recordDebugOutput("/ActiveCommands/${command.name}", false)
+      Logger.recordOutput("/ActiveCommands/${command.name}", false)
     }
 
     CommandScheduler.getInstance().onCommandInterrupt { command: Command ->
-      DebugLogger.recordDebugOutput("/ActiveCommands/${command.name}", false)
+      Logger.recordOutput("/ActiveCommands/${command.name}", false)
     }
 
     val autoTab = Shuffleboard.getTab("Pre-match")
@@ -146,12 +146,13 @@ object Robot : LoggedRobot() {
         .withPosition(0, 1)
         .withWidget(BuiltInWidgets.kTextView)
         .entry
-
-    RobotContainer.zeroSensors(isInAutonomous = true)
   }
 
   override fun autonomousInit() {
-    val autonCommandWithWait = WaitCommand(0.001).andThen(autonomousCommand)
+    RobotContainer.setSteeringCoastMode()
+
+    val autonCommandWithWait =
+      runOnce({ RobotContainer.zeroSensors(isInAutonomous = true) }).andThen(autonomousCommand)
     autonCommandWithWait?.schedule()
   }
 

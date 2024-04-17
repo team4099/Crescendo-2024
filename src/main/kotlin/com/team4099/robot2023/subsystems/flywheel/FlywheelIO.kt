@@ -41,7 +41,7 @@ interface FlywheelIO {
     var leftFlywheelDutyCycle = 0.0.volts
     var leftFlywheelTorque = 0.0.newtons
 
-    var isSimulated = true
+    var isSimulated = false
 
     override fun toLog(table: LogTable) {
       table.put("flywheelRightVelocityRPM", rightFlywheelVelocity.inRotationsPerMinute)

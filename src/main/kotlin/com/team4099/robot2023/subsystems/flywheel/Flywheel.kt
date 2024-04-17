@@ -5,7 +5,6 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
-import com.team4099.robot2023.util.DebugLogger
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
@@ -87,6 +86,13 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
       LoggedTunableValue(
         "Flywheel/passingShotVelocity",
         FlywheelConstants.PASSING_SHOT_VELOCITY,
+        Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
+      )
+
+    val underStageShotVelocity =
+      LoggedTunableValue(
+        "Flywheel/underStageShotVelocity",
+        FlywheelConstants.UNDER_STAGE_SHOT_VELOCITY,
         Pair({ it.inRotationsPerMinute }, { it.rotations.perMinute })
       )
   }
@@ -205,7 +211,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     io.updateInputs(inputs)
 
     Logger.processInputs("Flywheel", inputs)
-    DebugLogger.recordDebugOutput(
+    Logger.recordOutput(
       "Flywheel/targetDifference",
       (inputs.leftFlywheelVelocity - flywheelLeftTargetVelocity)
         .absoluteValue
@@ -217,15 +223,17 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
 
     Logger.recordOutput("Flywheel/isAtTargetedVelocity", isAtTargetedVelocity)
 
+    Logger.recordOutput("Flywheel/FlywheelRightTargetVoltage", flywheelTargetVoltage.inVolts)
+    Logger.recordOutput("Flywheel/FlywheelLeftTargetVoltage", flywheelTargetVoltage.inVolts)
+
+    Logger.recordOutput(
+      "Flywheel/FlywheelRightTargetVelocity", flywheelRightTargetVelocity.inRotationsPerMinute
+    )
+    Logger.recordOutput(
+      "Flywheel/FlywheelLeftTargetVelocity", flywheelLeftTargetVelocity.inRotationsPerMinute
+    )
     if (Constants.Tuning.DEBUGING_MODE) {
-      Logger.recordOutput("Flywheel/FlywheelRightTargetVoltage", flywheelTargetVoltage.inVolts)
-      Logger.recordOutput("Flywheel/FlywheelLeftTargetVoltage", flywheelTargetVoltage.inVolts)
-      Logger.recordOutput(
-        "Flywheel/FlywheelRightTargetVelocity", flywheelRightTargetVelocity.inRotationsPerMinute
-      )
-      Logger.recordOutput(
-        "Flywheel/FlywheelLeftTargetVelocity", flywheelLeftTargetVelocity.inRotationsPerMinute
-      )
+
       Logger.recordOutput("Flywheel/FlywheelLastVoltage", lastRightFlywheelVoltage.inVolts)
     }
 

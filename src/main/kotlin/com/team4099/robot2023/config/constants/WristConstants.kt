@@ -20,7 +20,7 @@ object WristConstants {
   // val ROLLER_GEAR_RATIO = 0.0
   // val ROLLER_VOLTAGE_COMPENSATION = 0.0.volts
   // val ROLLER_STATOR_CURRENT_LIMIT = 0.0.amps
-
+  val UNDER_STAGE_SHOT = 25.5.degrees
   val PUSH_DOWN_VOLTAGE = -0.5.volts
 
   val EJECT_ANGLE = -15.degrees
@@ -29,17 +29,18 @@ object WristConstants {
 
   val NOTE_ANGLE_SIM_OFFSET = -24.degrees
 
-  val ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO = 1.06488 / 1.0
+  val ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO = 69.0 / 20.0
   val MOTOR_TO_ABSOLUTE_ENCODER_GEAR_RATIO =
-    5.0 / 1.0 * 4.0 / 1.0 * 3.0 / 1.0 * 46.0 / 42.0 * 90.0 / 33.0 * 1.0 / 1.06488
+    5.0 / 1.0 * 4.0 / 1.0 * 54.0 / 34.0 * 90.0 / 33.0 * 1.0 / (69.0 / 20.0)
 
   val VOLTAGE_COMPENSATION = 12.0.volts
   val ABSOLUTE_ENCODER_OFFSET =
     (
-      97.72227856659904.degrees - 35.degrees + 1.3.degrees -
-        0.33.degrees -
+      97.72227856659904.degrees - 35.degrees + 1.90.degrees -
+        0.5.degrees -
+        1.1.degrees - // add to drop angle
         1.degrees -
-        0.5.degrees
+        96.3.degrees
       ) * ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
   val WRIST_LENGTH = 18.6.inches
   val WRIST_INERTIA = 0.7181257183.kilo.grams * 1.0.meters.squared
@@ -58,28 +59,28 @@ object WristConstants {
   val WRIST_ZERO_SIM_OFFSET = 27.5.degrees
 
   val MAX_WRIST_VELOCITY = 300.degrees.perSecond
-  val MAX_WRIST_ACCELERATION = 1000.degrees.perSecond.perSecond
+  val MAX_WRIST_ACCELERATION = 1500.degrees.perSecond.perSecond
 
   val HARDSTOP_OFFSET = 47.degrees
   object PID {
 
     val ARBITRARY_FEEDFORWARD = 0.03.volts
 
-    val REAL_KP: ProportionalGain<Radian, Volt> = 0.45.volts / 1.0.degrees
+    val REAL_KP: ProportionalGain<Radian, Volt> = 0.72.volts / 1.0.degrees
     val REAL_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val REAL_KD: DerivativeGain<Radian, Volt> = 0.0.volts / 1.0.degrees.perSecond
 
     val FIRST_STAGE_POS_SWITCH_THRESHOLD = 3.0.degrees
-    val FIRST_STAGE_VEL_SWITCH_THRESHOLD = 5.0.degrees.perSecond
+    val FIRST_STAGE_VEL_SWITCH_THRESHOLD = 3.0.degrees.perSecond
 
-    val FIRST_STAGE_KP: ProportionalGain<Radian, Volt> = 0.35.volts / 1.0.degrees
+    val FIRST_STAGE_KP: ProportionalGain<Radian, Volt> = 0.69.volts / 1.0.degrees
     val FIRST_STAGE_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val FIRST_STAGE_KD: DerivativeGain<Radian, Volt> = 0.0.volts / 1.0.degrees.perSecond
 
     val SECOND_STAGE_POS_SWITCH_THRESHOLD = 1.0.degrees
     val SECOND_STAGE_VEL_SWITCH_THRESHOLD = 5.0.degrees.perSecond
 
-    val SECOND_STAGE_KP: ProportionalGain<Radian, Volt> = 1.5.volts / 1.0.degrees
+    val SECOND_STAGE_KP: ProportionalGain<Radian, Volt> = 3.volts / 1.0.degrees
     val SECOND_STAGE_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
     val SECOND_STAGE_KD: DerivativeGain<Radian, Volt> = 0.0.volts / 1.0.degrees.perSecond
 
@@ -98,19 +99,19 @@ object WristConstants {
     val SIM_WRIST_KS = 0.15.volts
   }
 
-  val WRIST_TOLERANCE = 0.3.degrees
+  val WRIST_TOLERANCE = 0.25.degrees
 
-  val IDLE_ANGLE = (-34).degrees
+  val IDLE_ANGLE = (-33.5).degrees
 
-  val AMP_SCORE_ANGLE = -8.0.degrees
-  val FAST_AMP_ANGLE = 35.degrees
-  val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = -34.degrees
+  val AMP_SCORE_ANGLE = -12.0.degrees
+  val FAST_AMP_ANGLE = 27.degrees
+  val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = -33.5.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = 8.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH = -2.degrees
-  val CLIMB_ANGLE = 10.0.degrees
+  val CLIMB_ANGLE = 0.0.degrees
 
   val TRAP_ANGLE = 35.degrees
-  val INTAKE_ANGLE = (-34).degrees
+  val INTAKE_ANGLE = (-33.75).degrees
   val IDLE_ANGLE_HAS_GAMEPEICE = -34.degrees
-  val PASSING_SHOT_ANGLE = -20.degrees
+  val PASSING_SHOT_ANGLE = -34.degrees
 }

@@ -3,14 +3,18 @@ package com.team4099.robot2023.commands.drivetrain
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.DebugLogger
 import com.team4099.robot2023.util.driver.DriverProfile
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
+import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
 import org.team4099.lib.units.Velocity
+import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -22,8 +26,10 @@ import org.team4099.lib.units.derived.perDegreePerSecond
 import org.team4099.lib.units.derived.perDegreeSeconds
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.inDegreesPerSecond
+import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.perSecond
 import kotlin.math.PI
+import kotlin.math.hypot
 
 class TargetNoteCommand(
   val driver: DriverProfile,
@@ -32,7 +38,8 @@ class TargetNoteCommand(
   val turn: () -> Double,
   val slowMode: () -> Boolean,
   val drivetrain: Drivetrain,
-  val limelight: LimelightVision
+  val limelight: LimelightVision,
+  val feeder: Feeder
 ) : Command() {
 
   private var thetaPID: PIDController<Radian, Velocity<Radian>>
@@ -98,26 +105,45 @@ class TargetNoteCommand(
   override fun initialize() {
     thetaPID.reset()
 
+    /*
     if (thetakP.hasChanged() || thetakI.hasChanged() || thetakD.hasChanged()) {
       thetaPID = PIDController(thetakP.get(), thetakI.get(), thetakD.get())
     }
+
+     */
   }
 
   override fun execute() {
 
     drivetrain.defaultCommand.end(true)
-    DebugLogger.recordDebugOutput("ActiveCommands/TargetNoteCommand", true)
+    Logger.recordOutput("ActiveCommands/TargetNoteCommand", true)
 
     val thetaFeedback = thetaPID.calculate(limelight.targetGamePieceTx ?: 0.0.degrees, 0.0.degrees)
     DebugLogger.recordDebugOutput("NoteAlignment/error", thetaPID.error.inDegrees)
     DebugLogger.recordDebugOutput("NoteAlignment/thetaFeedback", thetaFeedback.inDegreesPerSecond)
 
-    drivetrain.currentRequest =
-      Request.DrivetrainRequest.OpenLoop(
-        thetaFeedback,
-        driver.driveSpeedClampedSupplier(driveX, driveY, slowMode),
-        fieldOriented = false
-      )
+    if (!feeder.hasNote && limelight.inputs.gamePieceTargets.size > 0) {
+      val driveVector = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)
+      var autoDriveVector =
+        hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
+      if (DriverStation.getAlliance().isPresent &&
+        DriverStation.getAlliance().get() == DriverStation.Alliance.Blue
+      ) {
+        autoDriveVector =
+          -hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
+      }
+      drivetrain.currentRequest =
+        Request.DrivetrainRequest.OpenLoop(
+          thetaFeedback,
+          Pair(autoDriveVector.meters.perSecond, 0.0.meters.perSecond),
+          fieldOriented = false
+        )
+    } else {
+      val speed = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)
+      val rotation = driver.rotationSpeedClampedSupplier(turn, slowMode)
+
+      drivetrain.currentRequest = Request.DrivetrainRequest.OpenLoop(rotation, speed)
+    }
   }
 
   override fun isFinished(): Boolean {
@@ -125,7 +151,7 @@ class TargetNoteCommand(
   }
 
   override fun end(interrupted: Boolean) {
-    DebugLogger.recordDebugOutput("ActiveCommands/TargetAngleCommand", false)
+    Logger.recordOutput("ActiveCommands/TargetAngleCommand", false)
     drivetrain.currentRequest =
       Request.DrivetrainRequest.OpenLoop(
         driver.rotationSpeedClampedSupplier(turn, slowMode),

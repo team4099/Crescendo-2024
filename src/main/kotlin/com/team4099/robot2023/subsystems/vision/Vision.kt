@@ -55,7 +55,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
   private var visionConsumer: Consumer<List<TimestampedVisionUpdate>> = Consumer {}
   private var speakerVisionConsumer: Consumer<TimestampedTrigVisionUpdate> = Consumer {}
   private val lastFrameTimes = mutableMapOf<Int, Time>()
-  private val lastTagDetectionTimes = mutableMapOf<Int, Time>()
+  private var lastDetectionTime = 0.0.seconds
 
   init {
     for (i in io.indices) {
@@ -71,6 +71,11 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
     this.fieldFramePoseSupplier = fieldFramePoseSupplier
     this.visionConsumer = visionConsumer
     this.speakerVisionConsumer = speakerVisionMeasurementConsumer
+  }
+
+  fun getShotConfidence(): Boolean {
+    return Clock.realTimestamp - lastDetectionTime < 4.seconds &&
+      trustedRobotDistanceToTarget < 210.inches
   }
 
   override fun periodic() {
@@ -97,8 +102,6 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
       var robotDistanceToTarget: Length? = null
       var tagTargets = inputs[instance].cameraTargets
 
-      println(tagTargets.size)
-
       val cornerData = mutableListOf<Double>()
 
       for (tag in tagTargets) {
@@ -109,12 +112,14 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
             robotDistanceToTarget =
               PhotonUtils.calculateDistanceToTargetMeters(
-                cameraPoses[instance].translation.z.inMeters,
-                57.125.inches.inMeters,
-                23.25.degrees.inRadians,
-                tag.pitch.degrees.inRadians
-              )
-                .meters
+              cameraPoses[instance].translation.z.inMeters,
+              57.125.inches.inMeters,
+              22.42.degrees.inRadians,
+              tag.pitch.degrees.inRadians
+            )
+              .meters + 4.inches
+
+            lastDetectionTime = Clock.realTimestamp
 
             Logger.recordOutput(
               "Vision/${VisionConstants.CAMERA_NAMES[instance]}/robotDistanceToTarget",
@@ -128,8 +133,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
                 )
               )
 
-            robotTSpeaker =
-              Translation3d(cameraTspeaker2d.x + 4.inches, cameraTspeaker2d.y, 0.meters)
+            robotTSpeaker = Translation3d(cameraTspeaker2d.x, cameraTspeaker2d.y, 0.meters)
 
             val timestampedTrigVisionUpdate =
               TimestampedTrigVisionUpdate(

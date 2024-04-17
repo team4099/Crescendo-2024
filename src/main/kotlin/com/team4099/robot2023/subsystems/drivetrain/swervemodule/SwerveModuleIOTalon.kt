@@ -151,6 +151,7 @@ class SwerveModuleIOTalon(
       DrivetrainConstants.DRIVE_STATOR_CURRENT_LIMIT.inAmperes
     driveConfiguration.CurrentLimits.StatorCurrentLimitEnable = true // TODO tune
 
+    driveConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive
     driveConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast
     driveFalcon.configurator.apply(driveConfiguration)
 
@@ -337,7 +338,7 @@ class SwerveModuleIOTalon(
     println("Absolute Potentiometer Value $label ($potentiometerOutput")
   }
 
-  override fun zeroSteering() {
+  override fun zeroSteering(isInAutonomous: Boolean) {
     steeringFalcon.setPosition(
       steeringSensor.positionToRawUnits(
         if (label != Constants.Drivetrain.FRONT_RIGHT_MODULE_NAME)

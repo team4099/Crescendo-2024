@@ -141,7 +141,7 @@ interface SwerveModuleIO {
   fun runCharacterization(input: ElectricalPotential) {}
 
   fun resetModuleZero() {}
-  fun zeroSteering() {}
+  fun zeroSteering(isInAutonomous: Boolean = false) {}
   fun zeroDrive() {}
 
   fun setDriveBrakeMode(brake: Boolean) {}

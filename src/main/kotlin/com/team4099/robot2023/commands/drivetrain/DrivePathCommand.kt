@@ -24,8 +24,6 @@ import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
-import org.team4099.lib.controller.ProfiledPIDController
-import org.team4099.lib.controller.TrapezoidProfile
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Transform2d
@@ -83,7 +81,7 @@ private constructor(
   private val xPID: PIDController<Meter, Velocity<Meter>>
   private val yPID: PIDController<Meter, Velocity<Meter>>
 
-  private val thetaPID: ProfiledPIDController<Radian, Velocity<Radian>>
+  private val thetaPID: PIDController<Radian, Velocity<Radian>>
 
   private val swerveDriveController: CustomHolonomicDriveController
 
@@ -194,13 +192,7 @@ private constructor(
 
     xPID = PIDController(poskP.get(), poskI.get(), poskD.get())
     yPID = PIDController(poskP.get(), poskI.get(), poskD.get())
-    thetaPID =
-      ProfiledPIDController(
-        thetakP.get(),
-        thetakI.get(),
-        thetakD.get(),
-        TrapezoidProfile.Constraints(thetaMaxVel.get(), thetaMaxAccel.get())
-      )
+    thetaPID = PIDController(thetakP.get(), thetakI.get(), thetakD.get())
 
     thetaPID.enableContinuousInput(-PI.radians, PI.radians)
 
@@ -246,7 +238,7 @@ private constructor(
     //      drivetrain.odometryPose = AllianceFlipUtil.apply(Pose2d(trajectory.initialPose))
     //    }
     trajStartTime = Clock.fpgaTime + trajectory.states[0].timeSeconds.seconds
-    thetaPID.reset(0.degrees)
+    thetaPID.reset()
     xPID.reset()
     yPID.reset()
   }
