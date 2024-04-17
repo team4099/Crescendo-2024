@@ -28,7 +28,6 @@ import org.team4099.lib.units.base.celsius
 import org.team4099.lib.units.base.inAmperes
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.ctreAngularMechanismSensor
-import org.team4099.lib.units.derived.AccelerationFeedforward
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.IntegralGain
@@ -105,16 +104,16 @@ object FlywheelIOTalon : FlywheelIO {
     //
     // flywheelSensor.velocityFeedforwardToRawUnits(FlywheelConstantsConstants.PID.flywheel_KFF)
 
-        flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimit =
-          FlywheelConstants.LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT.inAmperes
-        flywheelLeftConfiguration.CurrentLimits.SupplyCurrentThreshold =
-          FlywheelConstants.LEFT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT.inAmperes
-        flywheelLeftConfiguration.CurrentLimits.SupplyTimeThreshold =
-          FlywheelConstants.LEFT_flywheel_TRIGGER_THRESHOLD_TIME.inSeconds
-        flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
-        flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimit =
-          FlywheelConstants.LEFT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
-        flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
+    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimit =
+      FlywheelConstants.LEFT_FLYWHEEL_SUPPLY_CURRENT_LIMIT.inAmperes
+    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentThreshold =
+      FlywheelConstants.LEFT_FLYWHEEL_THRESHOLD_CURRENT_LIMIT.inAmperes
+    flywheelLeftConfiguration.CurrentLimits.SupplyTimeThreshold =
+      FlywheelConstants.LEFT_flywheel_TRIGGER_THRESHOLD_TIME.inSeconds
+    flywheelLeftConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true
+    flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimit =
+      FlywheelConstants.LEFT_FLYWHEEL_STATOR_CURRENT_LIMIT.inAmperes
+    flywheelLeftConfiguration.CurrentLimits.StatorCurrentLimitEnable = false
 
     flywheelLeftConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive
 
@@ -220,16 +219,12 @@ object FlywheelIOTalon : FlywheelIO {
     //      )
     //    )
 
-    var acceleration = flywheelLeftSensor.accelerationToRawUnits(20000.rotations.perSecond.perSecond)
+    var acceleration =
+      flywheelLeftSensor.accelerationToRawUnits(20000.rotations.perSecond.perSecond)
 
-    if (velocity.absoluteValue < 50.rotations.perMinute){
-      flywheelLeftTalon.setControl(
-        VoltageOut(
-          0.0.volts.inVolts
-        )
-      )
-    }
-    else {
+    if (velocity.absoluteValue < 50.rotations.perMinute) {
+      flywheelLeftTalon.setControl(VoltageOut(0.0.volts.inVolts))
+    } else {
       flywheelLeftTalon.setControl(
         MotionMagicVelocityVoltage(
           flywheelLeftSensor.velocityToRawUnits(velocity),

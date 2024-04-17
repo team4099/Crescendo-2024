@@ -114,7 +114,8 @@ class FiveNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
             )
           }
         ),
-        superstructure.groundIntakeCommand()
+        superstructure
+          .groundIntakeCommand()
           .andThen(
             superstructure.prepManualSpeakerCommand(
               -3.degrees, 3000.rotations.perMinute, 0.7.degrees

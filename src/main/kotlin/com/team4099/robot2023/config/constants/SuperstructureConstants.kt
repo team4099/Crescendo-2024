@@ -51,7 +51,6 @@ object SuperstructureConstants {
       Pair(220.1.inches, -2.degrees)
     )
 
-
   val highDistanceFlywheelSpeedTableReal =
     listOf(
       Pair(71.2.inches, 2500.rotations.perMinute),

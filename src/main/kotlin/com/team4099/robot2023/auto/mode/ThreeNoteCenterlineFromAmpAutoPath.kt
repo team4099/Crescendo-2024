@@ -4,8 +4,8 @@ import com.team4099.lib.trajectory.FieldWaypoint
 import com.team4099.robot2023.commands.drivetrain.DrivePathCommand
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
+import edu.wpi.first.wpilibj2.command.ConditionalCommand
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.team4099.lib.geometry.Pose2d
@@ -19,8 +19,9 @@ import org.team4099.lib.units.perMinute
 
 class ThreeNoteCenterlineFromAmpAutoPath(
   val drivetrain: Drivetrain,
-  val superstructure: Superstructure
+  val superstructure: Superstructure,
 ) : SequentialCommandGroup() {
+
   init {
     addRequirements(drivetrain)
     addCommands(
@@ -50,153 +51,222 @@ class ThreeNoteCenterlineFromAmpAutoPath(
                 Translation2d(8.27.meters + 2.feet, 7.45.meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
+              ),
+              FieldWaypoint(
+                Translation2d(7.0.meters, 6.65.meters).translation2d,
+                null,
+                180.degrees.inRotation2ds
               )
             )
           }
         ),
         WaitCommand(2.25).andThen(superstructure.groundIntakeCommand())
       ),
-      ParallelCommandGroup(
-        DrivePathCommand.createPathInFieldFrame(
-          drivetrain,
-          {
-            listOf(
-              FieldWaypoint(
-                Translation2d(8.27.meters + 2.feet, 7.45.meters).translation2d,
-                null,
-                180.degrees.inRotation2ds
-              ),
-              FieldWaypoint(
-                Translation2d(3.9.meters, 6.45.meters).translation2d,
-                null,
-                (180 + 13.856).degrees.inRotation2ds
-              ),
-            )
-          }
-        ),
-        WaitCommand(1.0)
-          .andThen(
-            superstructure
-              .prepManualSpeakerCommand(
-                -7.degrees, 4000.rotations.perMinute
+      ConditionalCommand(
+        ParallelCommandGroup(
+          DrivePathCommand.createPathInFieldFrame(
+            drivetrain,
+            {
+              listOf(
+                FieldWaypoint(
+                  Translation2d(7.0.meters, 6.65.meters).translation2d,
+                  null,
+                  180.degrees.inRotation2ds
+                ),
+                FieldWaypoint(
+                  Translation2d(3.9.meters, 6.45.meters).translation2d,
+                  null,
+                  (180 + 13.856).degrees.inRotation2ds
+                ),
               )
-              .withTimeout(1.0)
-          )
-      ),
-      superstructure.scoreCommand().withTimeout(0.5),
-      ParallelCommandGroup(
-        DrivePathCommand.createPathInFieldFrame(
-          drivetrain,
-          {
-            listOf(
-              FieldWaypoint(
-                Translation2d(3.9.meters, 6.45.meters).translation2d,
-                null,
-                (180 + 13.856).degrees.inRotation2ds
-              ),
-              FieldWaypoint(
-                Translation2d((3.9 + 8.27).meters / 2, (6.45 + 7.45).meters / 2)
-                  .translation2d,
-                null,
-                ((180 + 13.856 + 165).degrees / 2).inRotation2ds
-              ),
-              FieldWaypoint(
-                Translation2d(8.27.meters, 5.78.meters).translation2d,
-                null,
-                160.degrees.inRotation2ds
-              ),
+            }
+          ),
+          WaitCommand(1.0)
+            .andThen(
+              superstructure
+                .prepManualSpeakerCommand(-7.degrees, 4000.rotations.perMinute)
+                .withTimeout(1.0)
             )
-          }
-        ),
-        WaitCommand(
-          1.0).andThen(superstructure.groundIntakeCommand())
-      ),
-      ParallelCommandGroup(
-        DrivePathCommand.createPathInFieldFrame(
-          drivetrain,
-          {
-            listOf(
-              FieldWaypoint(
-                Translation2d(8.27.meters, 5.78.meters).translation2d,
-                null,
-                160.degrees.inRotation2ds
-              ),
-              FieldWaypoint(
-                Translation2d((3.9 + 8.27).meters / 2, (6.45 + 7.45).meters / 2)
-                  .translation2d,
-                null,
-                ((180 + 13.856 + 160).degrees / 2).inRotation2ds
-              ),
-              FieldWaypoint(
-                Translation2d(3.9.meters, 6.45.meters).translation2d,
-                null,
-                (180 + 13.856).degrees.inRotation2ds
-              ),
-            )
-          }
-        ),
-        WaitCommand(1.0)
+        )
+          .andThen(superstructure.scoreCommand().withTimeout(0.5))
           .andThen(
-            superstructure.prepManualSpeakerCommand(-7.degrees, 4000.rotations.perMinute)
-          )
-      ),
-      superstructure.scoreCommand().withTimeout(0.5),
-      ParallelCommandGroup(
-        DrivePathCommand.createPathInFieldFrame(
-          drivetrain,
-          {
-            listOf(
-              FieldWaypoint(
-                Translation2d(3.9.meters, 6.45.meters).translation2d,
-                null,
-                (180 + 13.856).degrees.inRotation2ds
+            ParallelCommandGroup(
+              DrivePathCommand.createPathInFieldFrame(
+                drivetrain,
+                {
+                  listOf(
+                    FieldWaypoint(
+                      Translation2d(3.9.meters, 6.45.meters).translation2d,
+                      null,
+                      (180 + 13.856).degrees.inRotation2ds
+                    ),
+                    FieldWaypoint(
+                      Translation2d(
+                        (3.9 + 8.27).meters / 2, (6.45 + 7.45).meters / 2
+                      )
+                        .translation2d,
+                      null,
+                      ((180 + 13.856 + 165).degrees / 2).inRotation2ds
+                    ),
+                    FieldWaypoint(
+                      Translation2d(8.27.meters, 5.78.meters).translation2d,
+                      null,
+                      160.degrees.inRotation2ds
+                    ),
+                    FieldWaypoint(
+                      Translation2d(7.0.meters, 5.7.meters).translation2d,
+                      null,
+                      160.degrees.inRotation2ds
+                    )
+                  )
+                }
               ),
-              FieldWaypoint(
-                Translation2d((3.9 + 8.27).meters / 2, (6.45 + 7.45).meters / 2)
-                  .translation2d,
-                null,
-                ((180 + 13.856 + 165).degrees / 2).inRotation2ds
-              ),
-              FieldWaypoint(
-                Translation2d(8.27.meters, 4.11.meters).translation2d,
-                null,
-                140.degrees.inRotation2ds
-              ),
+              WaitCommand(1.0).andThen(superstructure.groundIntakeCommand())
             )
-          }
+          ),
+        ParallelCommandGroup(
+          DrivePathCommand.createPathInFieldFrame(
+            drivetrain,
+            {
+              listOf(
+                FieldWaypoint(
+                  Translation2d(7.0.meters, 6.65.meters).translation2d,
+                  null,
+                  180.degrees.inRotation2ds
+                ),
+                FieldWaypoint(
+                  Translation2d(8.27.meters, 5.78.meters).translation2d,
+                  null,
+                  160.degrees.inRotation2ds
+                ),
+                FieldWaypoint(
+                  Translation2d(7.0.meters, 5.7.meters).translation2d,
+                  null,
+                  160.degrees.inRotation2ds
+                )
+              )
+            }
+          ),
+          superstructure.groundIntakeCommand()
         ),
-        WaitCommand(1.0).andThen(superstructure.groundIntakeCommand())
+        { superstructure.holdingNote }
       ),
-      ParallelCommandGroup(
-        DrivePathCommand.createPathInFieldFrame(
-          drivetrain,
-          {
-            listOf(
-              FieldWaypoint(
-                Translation2d(8.27.meters, 4.11.meters).translation2d,
-                null,
-                140.degrees.inRotation2ds
-              ),
-              FieldWaypoint(
-                Translation2d((3.9 + 8.27).meters / 2, (6.45 + 7.45).meters / 2)
-                  .translation2d,
-                null,
-                ((180 + 13.856 + 160).degrees / 2).inRotation2ds
-              ),
-              FieldWaypoint(
-                Translation2d(3.9.meters, 6.45.meters).translation2d,
-                null,
-                (180 + 13.856).degrees.inRotation2ds
-              ),
-            )
-          }
-        ),
-        WaitCommand(1.0)
+      ConditionalCommand(
+        ParallelCommandGroup(
+          DrivePathCommand.createPathInFieldFrame(
+            drivetrain,
+            {
+              listOf(
+                FieldWaypoint(
+                  Translation2d(7.0.meters, 5.7.meters).translation2d,
+                  null,
+                  160.degrees.inRotation2ds
+                ),
+                FieldWaypoint(
+                  Translation2d((3.9 + 8.27).meters / 2, (5.7 + 7.45).meters / 2)
+                    .translation2d,
+                  null,
+                  ((180 + 13.856 + 160).degrees / 2).inRotation2ds
+                ),
+                FieldWaypoint(
+                  Translation2d(3.9.meters, 6.45.meters).translation2d,
+                  null,
+                  (180 + 13.856).degrees.inRotation2ds
+                ),
+              )
+            }
+          ),
+          superstructure.prepManualSpeakerCommand(-7.degrees, 4000.rotations.perMinute)
+        )
+          .andThen(superstructure.scoreCommand().withTimeout(0.5))
           .andThen(
-            superstructure.prepManualSpeakerCommand(-5.5.degrees, 4000.rotations.perMinute)
-          )
-      ),
-      superstructure.scoreCommand()
+            ParallelCommandGroup(
+              DrivePathCommand.createPathInFieldFrame(
+                drivetrain,
+                {
+                  listOf(
+                    FieldWaypoint(
+                      Translation2d(3.9.meters, 6.45.meters).translation2d,
+                      null,
+                      (180 + 13.856).degrees.inRotation2ds
+                    ),
+                    FieldWaypoint(
+                      Translation2d(
+                        (3.9 + 8.27).meters / 2, (5.7 + 7.45).meters / 2
+                      )
+                        .translation2d,
+                      null,
+                      ((180 + 13.856 + 165).degrees / 2).inRotation2ds
+                    ),
+                    FieldWaypoint(
+                      Translation2d(8.27.meters, 4.11.meters).translation2d,
+                      null,
+                      140.degrees.inRotation2ds
+                    ),
+                    FieldWaypoint(
+                      Translation2d(7.5.meters, 2.0.meters).translation2d,
+                      null,
+                      140.degrees.inRotation2ds
+                    ),
+                    FieldWaypoint(
+                      Translation2d(5.5.meters, 1.85.meters).translation2d,
+                      null,
+                      (180 - 35.02902884839783).degrees.inRotation2ds
+                    )
+                  )
+                }
+              ),
+              WaitCommand(1.0)
+                .andThen(superstructure.groundIntakeCommand())
+                .andThen(WaitCommand(2.0))
+                .andThen(
+                  superstructure.prepManualSpeakerCommand(
+                    -2.0.degrees, 4400.rotations.perMinute
+                  )
+                )
+            )
+              .andThen(superstructure.scoreCommand())
+          ),
+        ParallelCommandGroup(
+          DrivePathCommand.createPathInFieldFrame(
+            drivetrain,
+            {
+              listOf(
+                FieldWaypoint(
+                  Translation2d(7.0.meters, 5.7.meters).translation2d,
+                  null,
+                  160.degrees.inRotation2ds
+                ),
+                FieldWaypoint(
+                  Translation2d(8.27.meters, 4.11.meters).translation2d,
+                  null,
+                  140.degrees.inRotation2ds
+                ),
+                FieldWaypoint(
+                  Translation2d(7.5.meters, 2.0.meters).translation2d,
+                  null,
+                  140.degrees.inRotation2ds
+                ),
+                FieldWaypoint(
+                  Translation2d(5.5.meters, 1.85.meters).translation2d,
+                  null,
+                  (180 - 35.02902884839783).degrees.inRotation2ds
+                )
+              )
+            }
+          ),
+          superstructure
+            .groundIntakeCommand()
+            .andThen(WaitCommand(2.0))
+            .andThen(
+              superstructure.prepManualSpeakerCommand(
+                -2.0.degrees, 4400.rotations.perMinute
+              )
+            )
+        )
+          .andThen(superstructure.scoreCommand()),
+        { superstructure.holdingNote }
+      )
     )
   }
 

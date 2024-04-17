@@ -13,7 +13,7 @@ object IntakeConstants {
   val CENTER_WHEEL_INERTIA = 0.002459315
   val VOLTAGE_COMPENSATION = 12.0.volts
 
-  val SIM_INTAKE_DISTANCE = 8.inches
+  val SIM_INTAKE_DISTANCE = 16.inches
 
   val INTAKE_TRANSFORM = Transform2d(Translation2d(-18.0.inches, 0.0.inches), 0.0.degrees)
 

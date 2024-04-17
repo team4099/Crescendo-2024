@@ -1,7 +1,6 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.lib.logging.LoggedTunableValue
-import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.feeder.Feeder
@@ -125,20 +124,18 @@ class TargetNoteCommand(
 
     if (!feeder.hasNote && limelight.inputs.gamePieceTargets.size > 0) {
       val driveVector = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)
-      var autoDriveVector = hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
+      var autoDriveVector =
+        hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
       if (DriverStation.getAlliance().isPresent &&
-        DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-        autoDriveVector =-hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
+        DriverStation.getAlliance().get() == DriverStation.Alliance.Blue
+      ) {
+        autoDriveVector =
+          -hypot(driveVector.first.inMetersPerSecond, driveVector.second.inMetersPerSecond)
       }
       drivetrain.currentRequest =
         Request.DrivetrainRequest.OpenLoop(
           thetaFeedback,
-          Pair(
-            autoDriveVector
-              .meters
-              .perSecond,
-            0.0.meters.perSecond
-          ),
+          Pair(autoDriveVector.meters.perSecond, 0.0.meters.perSecond),
           fieldOriented = false
         )
     } else {
@@ -147,7 +144,6 @@ class TargetNoteCommand(
 
       drivetrain.currentRequest = Request.DrivetrainRequest.OpenLoop(rotation, speed)
     }
-
   }
 
   override fun isFinished(): Boolean {

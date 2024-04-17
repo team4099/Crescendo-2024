@@ -73,7 +73,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
     this.speakerVisionConsumer = speakerVisionMeasurementConsumer
   }
 
-  fun getShotConfidence(): Boolean{
+  fun getShotConfidence(): Boolean {
     return Clock.realTimestamp - lastDetectionTime < 4.seconds &&
       trustedRobotDistanceToTarget < 210.inches
   }
@@ -112,12 +112,12 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
 
             robotDistanceToTarget =
               PhotonUtils.calculateDistanceToTargetMeters(
-                cameraPoses[instance].translation.z.inMeters,
-                57.125.inches.inMeters,
-                22.42.degrees.inRadians,
-                tag.pitch.degrees.inRadians
-              )
-                .meters + 4.inches
+              cameraPoses[instance].translation.z.inMeters,
+              57.125.inches.inMeters,
+              22.42.degrees.inRadians,
+              tag.pitch.degrees.inRadians
+            )
+              .meters + 4.inches
 
             lastDetectionTime = Clock.realTimestamp
 
@@ -133,8 +133,7 @@ class Vision(vararg cameras: CameraIO) : SubsystemBase() {
                 )
               )
 
-            robotTSpeaker =
-              Translation3d(cameraTspeaker2d.x, cameraTspeaker2d.y, 0.meters)
+            robotTSpeaker = Translation3d(cameraTspeaker2d.x, cameraTspeaker2d.y, 0.meters)
 
             val timestampedTrigVisionUpdate =
               TimestampedTrigVisionUpdate(

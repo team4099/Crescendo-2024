@@ -46,6 +46,8 @@ object AutonomousSelector {
 
     autonomousModeChooser.addOption("Four Note Wing Auto", AutonomousMode.FOUR_NOTE_AUTO_PATH)
 
+    /*
+
     autonomousModeChooser.addOption(
       "Four Note Right Auto(1 Wing + 2 Centerline)", AutonomousMode.FOUR_NOTE_RIGHT_AUTO_PATH
     )
@@ -55,9 +57,14 @@ object AutonomousSelector {
     autonomousModeChooser.addOption(
       "Four Note LEFT Auto(1 Wing + 2 Centerline)", AutonomousMode.FOUR_NOTE_LEFT_AUTO_PATH
     )
+
+     */
+
     autonomousModeChooser.addOption(
       "Five Note Auto from Center Subwoofer", AutonomousMode.FIVE_NOTE_AUTO_PATH
     )
+
+    /*
     autonomousModeChooser.addOption(
       "Two Note Centerline Auto from Source Side of Subwoofer",
       AutonomousMode.TWO_NOTE_CENTERLINE_FROM_SOURCE
@@ -67,8 +74,11 @@ object AutonomousSelector {
       "Two Note Centerline Auto from Amp Side of Subwoofer",
       AutonomousMode.TWO_NOTE_CENTERLINE_FROM_AMP
     )
+
+     */
+
     autonomousModeChooser.addOption(
-      "Three Note Centerline Auto from Amp Side of Subwoofer",
+      "Three Note + Pickup Centerline Auto from Amp Side of Subwoofer",
       AutonomousMode.THREE_NOTE_CENTERLINE_FROM_AMP
     )
     autonomousModeChooser.addOption(
@@ -88,10 +98,14 @@ object AutonomousSelector {
       AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER
     )
 
+    /*
+
     autonomousModeChooser.addOption("Six Note Path", AutonomousMode.SIX_NOTE_AUTO_PATH)
     autonomousModeChooser.addOption(
       "Six Note Path with Pickup", AutonomousMode.SIX_NOTE_WITH_PICKUP_PATH
     )
+
+     */
     autonomousModeChooser.addOption("Test Auto Path", AutonomousMode.TEST_AUTO_PATH)
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
