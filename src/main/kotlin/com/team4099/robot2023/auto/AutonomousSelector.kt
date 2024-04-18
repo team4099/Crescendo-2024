@@ -15,6 +15,7 @@ import com.team4099.robot2023.auto.mode.ThreeNoteAndPickupCenterlineSourceAutoPa
 import com.team4099.robot2023.auto.mode.ThreeNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromSourceAutoPath
+import com.team4099.robot2023.commands.drivetrain.FollowChoreoPathCommand
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.util.AllianceFlipUtil
@@ -25,9 +26,11 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
+import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.seconds
+import org.team4099.lib.units.derived.degrees
 
 object AutonomousSelector {
   //  private var orientationChooser: SendableChooser<Angle> = SendableChooser()
@@ -120,145 +123,148 @@ object AutonomousSelector {
     get() = secondaryWaitInAuto.getDouble(0.0).seconds
 
   fun getCommand(drivetrain: Drivetrain, superstructure: Superstructure): Command {
-    val mode = autonomousModeChooser.get()
-
-    when (mode) {
-      AutonomousMode.TEST_AUTO_PATH ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            drivetrain.tempZeroGyroYaw(TestAutoPath.startingPose.rotation)
-            drivetrain.resetFieldFrameEstimator(
-              AllianceFlipUtil.apply(TestAutoPath.startingPose)
-            )
-          })
-          .andThen(TestAutoPath(drivetrain, superstructure))
-      AutonomousMode.SIX_NOTE_AUTO_PATH ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            drivetrain.tempZeroGyroYaw(TestAutoPath.startingPose.rotation)
-            drivetrain.resetFieldFrameEstimator(
-              AllianceFlipUtil.apply(TestAutoPath.startingPose)
-            )
-          })
-          .andThen(SixNoteAutoPath(drivetrain, superstructure))
-      AutonomousMode.FOUR_NOTE_AUTO_PATH ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            val flippedPose = AllianceFlipUtil.apply(FourNoteAutoPath.startingPose)
-            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
-            drivetrain.resetFieldFrameEstimator(flippedPose)
-          })
-          .andThen(FourNoteAutoPath(drivetrain, superstructure))
-      AutonomousMode.FOUR_NOTE_RIGHT_AUTO_PATH ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            val flippedPose = AllianceFlipUtil.apply(FourNoteRightCenterLine.startingPose)
-            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
-            drivetrain.resetFieldFrameEstimator(flippedPose)
-          })
-          .andThen(FourNoteRightCenterLine(drivetrain, superstructure))
-      AutonomousMode.FOUR_NOTE_MIDDLE_AUTO_PATH ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            val flippedPose = AllianceFlipUtil.apply(FourNoteMiddleCenterLine.startingPose)
-            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
-            drivetrain.resetFieldFrameEstimator(flippedPose)
-          })
-          .andThen(FourNoteMiddleCenterLine(drivetrain, superstructure))
-      AutonomousMode.FOUR_NOTE_LEFT_AUTO_PATH ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            val flippedPose = AllianceFlipUtil.apply(FourNoteLeftCenterLine.startingPose)
-            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
-            drivetrain.resetFieldFrameEstimator(flippedPose)
-          })
-          .andThen(FourNoteMiddleCenterLine(drivetrain, superstructure))
-      AutonomousMode.FIVE_NOTE_AUTO_PATH ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            val flippedPose = AllianceFlipUtil.apply(FiveNoteAutoPath.startingPose)
-            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
-            drivetrain.resetFieldFrameEstimator(flippedPose)
-          })
-          .andThen(FiveNoteAutoPath(drivetrain, superstructure))
-      AutonomousMode.TWO_NOTE_CENTERLINE_FROM_SOURCE ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            val flippedPose =
-              AllianceFlipUtil.apply(TwoNoteCenterlineFromSourceAutoPath.startingPose)
-            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
-            drivetrain.resetFieldFrameEstimator(flippedPose)
-          })
-          .andThen(TwoNoteCenterlineFromSourceAutoPath(drivetrain, superstructure))
-      AutonomousMode.TWO_NOTE_CENTERLINE_FROM_AMP ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            val flippedPose =
-              AllianceFlipUtil.apply(TwoNoteCenterlineFromAmpAutoPath.startingPose)
-            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
-            drivetrain.resetFieldFrameEstimator(flippedPose)
-          })
-          .andThen(TwoNoteCenterlineFromAmpAutoPath(drivetrain, superstructure))
-      AutonomousMode.THREE_NOTE_CENTERLINE_FROM_AMP ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            val flippedPose =
-              AllianceFlipUtil.apply(TwoNoteCenterlineFromAmpAutoPath.startingPose)
-            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
-            drivetrain.resetFieldFrameEstimator(flippedPose)
-          })
-          .andThen(ThreeNoteCenterlineFromAmpAutoPath(drivetrain, superstructure))
-      AutonomousMode.THREE_NOTE_AND_PICKUP_CENTERLINE_FROM_SOURCE ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            val flippedPose =
-              AllianceFlipUtil.apply(ThreeNoteAndPickupCenterlineSourceAutoPath.startingPose)
-            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
-            drivetrain.resetFieldFrameEstimator(flippedPose)
-          })
-          .andThen(ThreeNoteAndPickupCenterlineSourceAutoPath(drivetrain, superstructure))
-      AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            val flippedPose =
-              AllianceFlipUtil.apply(PreloadAndLeaveFromAmpSubwooferAutoPath.startingPose)
-            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
-            drivetrain.resetFieldFrameEstimator(flippedPose)
-          })
-          .andThen(
-            PreloadAndLeaveFromAmpSubwooferAutoPath(
-              drivetrain, superstructure, secondaryWaitTime
-            )
-          )
-      AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            val flippedPose =
-              AllianceFlipUtil.apply(PreloadAndLeaveFromSourceSubwooferAutoPath.startingPose)
-            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
-            drivetrain.resetFieldFrameEstimator(flippedPose)
-          })
-          .andThen(
-            PreloadAndLeaveFromSourceSubwooferAutoPath(
-              drivetrain, superstructure, secondaryWaitTime
-            )
-          )
-      AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER ->
-        return WaitCommand(waitTime.inSeconds)
-          .andThen({
-            val flippedPose =
-              AllianceFlipUtil.apply(PreloadAndLeaveCenterSubwooferAutoPath.startingPose)
-            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
-            drivetrain.resetFieldFrameEstimator(flippedPose)
-          })
-          .andThen(
-            PreloadAndLeaveCenterSubwooferAutoPath(
-              drivetrain, superstructure, secondaryWaitTime
-            )
-          )
-      else -> println("ERROR: unexpected auto mode: $mode")
-    }
-    return InstantCommand()
+    drivetrain.tempZeroGyroYaw(PathStore.examplePath.initialPose.rotation.degrees.degrees)
+    drivetrain.resetFieldFrameEstimator(Pose2d(PathStore.examplePath.initialPose))
+    return FollowChoreoPathCommand(drivetrain, PathStore.examplePath)
+//    val mode = autonomousModeChooser.get()
+//
+//    when (mode) {
+//      AutonomousMode.TEST_AUTO_PATH ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            drivetrain.tempZeroGyroYaw(TestAutoPath.startingPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(
+//              AllianceFlipUtil.apply(TestAutoPath.startingPose)
+//            )
+//          })
+//          .andThen(TestAutoPath(drivetrain, superstructure))
+//      AutonomousMode.SIX_NOTE_AUTO_PATH ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            drivetrain.tempZeroGyroYaw(TestAutoPath.startingPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(
+//              AllianceFlipUtil.apply(TestAutoPath.startingPose)
+//            )
+//          })
+//          .andThen(SixNoteAutoPath(drivetrain, superstructure))
+//      AutonomousMode.FOUR_NOTE_AUTO_PATH ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            val flippedPose = AllianceFlipUtil.apply(FourNoteAutoPath.startingPose)
+//            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(flippedPose)
+//          })
+//          .andThen(FourNoteAutoPath(drivetrain, superstructure))
+//      AutonomousMode.FOUR_NOTE_RIGHT_AUTO_PATH ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            val flippedPose = AllianceFlipUtil.apply(FourNoteRightCenterLine.startingPose)
+//            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(flippedPose)
+//          })
+//          .andThen(FourNoteRightCenterLine(drivetrain, superstructure))
+//      AutonomousMode.FOUR_NOTE_MIDDLE_AUTO_PATH ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            val flippedPose = AllianceFlipUtil.apply(FourNoteMiddleCenterLine.startingPose)
+//            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(flippedPose)
+//          })
+//          .andThen(FourNoteMiddleCenterLine(drivetrain, superstructure))
+//      AutonomousMode.FOUR_NOTE_LEFT_AUTO_PATH ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            val flippedPose = AllianceFlipUtil.apply(FourNoteLeftCenterLine.startingPose)
+//            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(flippedPose)
+//          })
+//          .andThen(FourNoteMiddleCenterLine(drivetrain, superstructure))
+//      AutonomousMode.FIVE_NOTE_AUTO_PATH ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            val flippedPose = AllianceFlipUtil.apply(FiveNoteAutoPath.startingPose)
+//            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(flippedPose)
+//          })
+//          .andThen(FiveNoteAutoPath(drivetrain, superstructure))
+//      AutonomousMode.TWO_NOTE_CENTERLINE_FROM_SOURCE ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            val flippedPose =
+//              AllianceFlipUtil.apply(TwoNoteCenterlineFromSourceAutoPath.startingPose)
+//            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(flippedPose)
+//          })
+//          .andThen(TwoNoteCenterlineFromSourceAutoPath(drivetrain, superstructure))
+//      AutonomousMode.TWO_NOTE_CENTERLINE_FROM_AMP ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            val flippedPose =
+//              AllianceFlipUtil.apply(TwoNoteCenterlineFromAmpAutoPath.startingPose)
+//            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(flippedPose)
+//          })
+//          .andThen(TwoNoteCenterlineFromAmpAutoPath(drivetrain, superstructure))
+//      AutonomousMode.THREE_NOTE_CENTERLINE_FROM_AMP ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            val flippedPose =
+//              AllianceFlipUtil.apply(TwoNoteCenterlineFromAmpAutoPath.startingPose)
+//            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(flippedPose)
+//          })
+//          .andThen(ThreeNoteCenterlineFromAmpAutoPath(drivetrain, superstructure))
+//      AutonomousMode.THREE_NOTE_AND_PICKUP_CENTERLINE_FROM_SOURCE ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            val flippedPose =
+//              AllianceFlipUtil.apply(ThreeNoteAndPickupCenterlineSourceAutoPath.startingPose)
+//            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(flippedPose)
+//          })
+//          .andThen(ThreeNoteAndPickupCenterlineSourceAutoPath(drivetrain, superstructure))
+//      AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            val flippedPose =
+//              AllianceFlipUtil.apply(PreloadAndLeaveFromAmpSubwooferAutoPath.startingPose)
+//            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(flippedPose)
+//          })
+//          .andThen(
+//            PreloadAndLeaveFromAmpSubwooferAutoPath(
+//              drivetrain, superstructure, secondaryWaitTime
+//            )
+//          )
+//      AutonomousMode.PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            val flippedPose =
+//              AllianceFlipUtil.apply(PreloadAndLeaveFromSourceSubwooferAutoPath.startingPose)
+//            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(flippedPose)
+//          })
+//          .andThen(
+//            PreloadAndLeaveFromSourceSubwooferAutoPath(
+//              drivetrain, superstructure, secondaryWaitTime
+//            )
+//          )
+//      AutonomousMode.PRELOAD_AND_LEAVE_CENTER_SUBWOOFER ->
+//        return WaitCommand(waitTime.inSeconds)
+//          .andThen({
+//            val flippedPose =
+//              AllianceFlipUtil.apply(PreloadAndLeaveCenterSubwooferAutoPath.startingPose)
+//            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+//            drivetrain.resetFieldFrameEstimator(flippedPose)
+//          })
+//          .andThen(
+//            PreloadAndLeaveCenterSubwooferAutoPath(
+//              drivetrain, superstructure, secondaryWaitTime
+//            )
+//          )
+//      else -> println("ERROR: unexpected auto mode: $mode")
+//    }
+//    return InstantCommand()
   }
 
   fun getLoadingCommand(drivetrain: Drivetrain): Command {

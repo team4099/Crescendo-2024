@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Translation2d
-import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
@@ -110,8 +109,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
             )
           }
         ),
-        WaitCommand(1.0)
-          .andThen(superstructure.groundIntakeCommand())
+        WaitCommand(1.0).andThen(superstructure.groundIntakeCommand())
       ),
       superstructure.prepManualSpeakerCommand(-2.2.degrees, 4000.rotations.perMinute),
       superstructure.scoreCommand(),

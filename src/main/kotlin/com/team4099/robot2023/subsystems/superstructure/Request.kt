@@ -50,7 +50,7 @@ sealed interface Request {
 
     class PassingShot() : SuperstructureRequest
 
-    class UnderStageShot(): SuperstructureRequest
+    class UnderStageShot() : SuperstructureRequest
 
     class Tuning() : SuperstructureRequest
   }

@@ -5,7 +5,6 @@ import com.team4099.robot2023.commands.drivetrain.DrivePathCommand
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.team4099.lib.geometry.Pose2d
@@ -77,9 +76,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
         WaitCommand(1.0)
           .andThen(
             superstructure
-              .prepManualSpeakerCommand(
-                -7.degrees, 4000.rotations.perMinute
-              )
+              .prepManualSpeakerCommand(-7.degrees, 4000.rotations.perMinute)
               .withTimeout(1.0)
           )
       ),
@@ -108,8 +105,7 @@ class ThreeNoteCenterlineFromAmpAutoPath(
             )
           }
         ),
-        WaitCommand(
-          1.0).andThen(superstructure.groundIntakeCommand())
+        WaitCommand(1.0).andThen(superstructure.groundIntakeCommand())
       ),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -193,7 +189,9 @@ class ThreeNoteCenterlineFromAmpAutoPath(
         ),
         WaitCommand(1.0)
           .andThen(
-            superstructure.prepManualSpeakerCommand(-5.5.degrees, 4000.rotations.perMinute)
+            superstructure.prepManualSpeakerCommand(
+              -5.5.degrees, 4000.rotations.perMinute
+            )
           )
       ),
       superstructure.scoreCommand()

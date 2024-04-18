@@ -29,11 +29,12 @@ class Leds(val io: LedIO) {
     if (DriverStation.getAlliance().isEmpty) {
       io.batteryVoltage = RobotController.getBatteryVoltage().volts
 
-      state = if (io.batteryVoltage < 12.3.volts) {
-        LEDConstants.CandleState.LOW_BATTERY_WARNING
-      } else {
-        LEDConstants.CandleState.GOLD
-      }
+      state =
+        if (io.batteryVoltage < 12.3.volts) {
+          LEDConstants.CandleState.LOW_BATTERY_WARNING
+        } else {
+          LEDConstants.CandleState.GOLD
+        }
     } else if (DriverStation.isDisabled() && DriverStation.getAlliance().isPresent) {
       if (FMSData.isBlue) {
         state = LEDConstants.CandleState.BLUE

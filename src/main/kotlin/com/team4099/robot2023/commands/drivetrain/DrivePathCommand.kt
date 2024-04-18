@@ -24,8 +24,6 @@ import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.PIDController
-import org.team4099.lib.controller.ProfiledPIDController
-import org.team4099.lib.controller.TrapezoidProfile
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Pose2dWPILIB
 import org.team4099.lib.geometry.Transform2d
@@ -194,12 +192,7 @@ private constructor(
 
     xPID = PIDController(poskP.get(), poskI.get(), poskD.get())
     yPID = PIDController(poskP.get(), poskI.get(), poskD.get())
-    thetaPID =
-      PIDController(
-        thetakP.get(),
-        thetakI.get(),
-        thetakD.get()
-      )
+    thetaPID = PIDController(thetakP.get(), thetakI.get(), thetakD.get())
 
     thetaPID.enableContinuousInput(-PI.radians, PI.radians)
 

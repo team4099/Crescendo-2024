@@ -86,8 +86,8 @@ object DrivetrainConstants {
 
   val FRONT_LEFT_MODULE_ZERO = 3.285.radians + PI.radians // good
   val FRONT_RIGHT_MODULE_ZERO = 2.91.radians + PI.radians // good
-  val BACK_LEFT_MODULE_ZERO = 5.665.radians + PI.radians// good
-  val BACK_RIGHT_MODULE_ZERO = 3.50.radians + PI.radians// good
+  val BACK_LEFT_MODULE_ZERO = 5.665.radians + PI.radians // good
+  val BACK_RIGHT_MODULE_ZERO = 3.50.radians + PI.radians // good
 
   val STEERING_COMPENSATION_VOLTAGE = 10.volts
   val DRIVE_COMPENSATION_VOLTAGE = 12.volts
@@ -144,7 +144,7 @@ object DrivetrainConstants {
     val TELEOP_ALIGN_PID_KD =
       (0.3.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
 
-    val SIM_AUTO_THETA_PID_KP = 4.0.degrees.perSecond / 1.degrees
+    val SIM_AUTO_THETA_PID_KP = 4.0.radians.perSecond / 1.radians
     val SIM_AUTO_THETA_PID_KI = 0.0.degrees.perSecond / (1.degrees * 1.seconds)
     val SIM_AUTO_THETA_PID_KD =
       (0.degrees.perSecond / (1.degrees / 1.seconds)).radiansPerSecondPerRadiansPerSecond
