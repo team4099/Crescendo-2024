@@ -23,7 +23,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
     addCommands(
       superstructure.prepSpeakerLowCommand(),
       superstructure.scoreCommand().withTimeout(0.5),
-      WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds),
+      WaitCommand(0.5),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
@@ -56,9 +56,8 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           .withTimeout(3.235 + 0.5),
         WaitCommand(0.5)
           .andThen(superstructure.groundIntakeCommand())
-          .andThen(WaitCommand(1.75))
-          .andThen(superstructure.prepSpeakerLowCommand())
       ),
+      superstructure.prepSpeakerLowCommand(),
       superstructure
         .scoreCommand()
         .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.5),
@@ -94,9 +93,8 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           .withTimeout(3.235 + 0.5),
         WaitCommand(0.5)
           .andThen(superstructure.groundIntakeCommand())
-          .andThen(WaitCommand(1.75))
-          .andThen(superstructure.prepSpeakerLowCommand())
       ),
+      superstructure.prepSpeakerLowCommand(),
       superstructure
         .scoreCommand()
         .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.5),
@@ -114,7 +112,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               FieldWaypoint(
                 Translation2d(
                   ((1.43.meters) + (2.34.meters + 0.3.meters)) / 2 +
-                    0.25.meters,
+                          0.25.meters,
                   5.55.meters
                 )
                   .translation2d,
@@ -130,7 +128,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               FieldWaypoint(
                 Translation2d(
                   ((1.43.meters) + (2.34.meters + 0.3.meters)) / 2 +
-                    0.25.meters,
+                          0.25.meters,
                   5.45.meters
                 )
                   .translation2d,
@@ -148,20 +146,18 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           .withTimeout(3.235 + 0.5),
         WaitCommand(0.3)
           .andThen(superstructure.groundIntakeCommand())
-          .andThen(WaitCommand(1.75))
-          .andThen(superstructure.prepSpeakerLowCommand())
       ),
+      superstructure.prepSpeakerLowCommand(),
       superstructure
         .scoreCommand()
         .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.5),
-      WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
           {
             listOf(
               FieldWaypoint(
-                startingPose.translation.translation2d, null, 180.degrees.inRotation2ds
+                FourNoteAutoPath.startingPose.translation.translation2d, null, 180.degrees.inRotation2ds
               ),
               FieldWaypoint(
                 Translation2d(4.45.meters, 4.89.meters).translation2d,
@@ -190,3 +186,5 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
     val startingPose = Pose2d(Translation2d(1.42.meters, 5.535.meters), 180.degrees)
   }
 }
+
+

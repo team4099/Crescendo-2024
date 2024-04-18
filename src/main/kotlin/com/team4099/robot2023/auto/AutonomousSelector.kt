@@ -12,7 +12,9 @@ import com.team4099.robot2023.auto.mode.PreloadAndLeaveFromSourceSubwooferAutoPa
 import com.team4099.robot2023.auto.mode.SixNoteAutoPath
 import com.team4099.robot2023.auto.mode.TestAutoPath
 import com.team4099.robot2023.auto.mode.ThreeNoteAndPickupCenterlineSourceAutoPath
+import com.team4099.robot2023.auto.mode.ThreeNoteAndPickupCenterlineWithoutFirstNoteSourceAutoPath
 import com.team4099.robot2023.auto.mode.ThreeNoteCenterlineFromAmpAutoPath
+import com.team4099.robot2023.auto.mode.ThreeNoteCenterlineWithoutFirstNoteAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromSourceAutoPath
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
@@ -81,10 +83,22 @@ object AutonomousSelector {
       "Three Note + Pickup Centerline Auto from Amp Side of Subwoofer",
       AutonomousMode.THREE_NOTE_CENTERLINE_FROM_AMP
     )
+
+    autonomousModeChooser.addOption(
+      "Three Note + Pickup Centerline WITHOUT First Note Auto from Amp Side of Subwoofer",
+      AutonomousMode.THREE_NOTE_CENTERLINE_WITHOUT_FIRST_NOTE_FROM_AMP
+    )
+
     autonomousModeChooser.addOption(
       "Three Note + Pickup Centerline Auto from Source Side of Subwoofer",
       AutonomousMode.THREE_NOTE_AND_PICKUP_CENTERLINE_FROM_SOURCE
     )
+
+    autonomousModeChooser.addOption(
+      "Three Note + Pickup Centerline WITHOUT First Note Auto from Source Side of Subwoofer",
+      AutonomousMode.THREE_NOTE_AND_PICKUP_CENTERLINE_WITHOUT_FIRST_NOTE_FROM_SOURCE
+    )
+
     autonomousModeChooser.addOption(
       "Preload + Leave from Amp Side of Subwoofer",
       AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER
@@ -222,6 +236,17 @@ object AutonomousSelector {
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(ThreeNoteCenterlineFromAmpAutoPath(drivetrain, superstructure))
+      AutonomousMode.THREE_NOTE_CENTERLINE_WITHOUT_FIRST_NOTE_FROM_AMP ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            val flippedPose =
+              AllianceFlipUtil.apply(
+                ThreeNoteCenterlineWithoutFirstNoteAmpAutoPath.startingPose
+              )
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
+          })
+          .andThen(ThreeNoteCenterlineWithoutFirstNoteAmpAutoPath(drivetrain, superstructure))
       AutonomousMode.THREE_NOTE_AND_PICKUP_CENTERLINE_FROM_SOURCE ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
@@ -231,6 +256,21 @@ object AutonomousSelector {
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(ThreeNoteAndPickupCenterlineSourceAutoPath(drivetrain, superstructure))
+      AutonomousMode.THREE_NOTE_AND_PICKUP_CENTERLINE_WITHOUT_FIRST_NOTE_FROM_SOURCE ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            val flippedPose =
+              AllianceFlipUtil.apply(
+                ThreeNoteAndPickupCenterlineWithoutFirstNoteSourceAutoPath.startingPose
+              )
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
+          })
+          .andThen(
+            ThreeNoteAndPickupCenterlineWithoutFirstNoteSourceAutoPath(
+              drivetrain, superstructure
+            )
+          )
       AutonomousMode.PRELOAD_AND_LEAVE_LEFT_SUBWOOFER ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
@@ -288,7 +328,9 @@ object AutonomousSelector {
     TWO_NOTE_CENTERLINE_FROM_SOURCE,
     TWO_NOTE_CENTERLINE_FROM_AMP,
     THREE_NOTE_CENTERLINE_FROM_AMP,
+    THREE_NOTE_CENTERLINE_WITHOUT_FIRST_NOTE_FROM_AMP,
     THREE_NOTE_AND_PICKUP_CENTERLINE_FROM_SOURCE,
+    THREE_NOTE_AND_PICKUP_CENTERLINE_WITHOUT_FIRST_NOTE_FROM_SOURCE,
     PRELOAD_AND_LEAVE_LEFT_SUBWOOFER,
     PRELOAD_AND_LEAVE_RIGHT_SUBWOOFER,
     PRELOAD_AND_LEAVE_CENTER_SUBWOOFER,

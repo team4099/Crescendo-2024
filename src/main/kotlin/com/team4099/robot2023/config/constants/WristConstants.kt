@@ -38,7 +38,7 @@ object WristConstants {
     (
       97.72227856659904.degrees - 35.degrees + 1.90.degrees -
         0.5.degrees -
-        1.4.degrees - // add to drop angle
+        1.0.degrees - // add to drop angle
         1.degrees -
         96.3.degrees
       ) * ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO

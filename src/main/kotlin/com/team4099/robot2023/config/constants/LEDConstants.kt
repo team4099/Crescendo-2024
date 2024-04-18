@@ -1,6 +1,7 @@
 package com.team4099.robot2023.config.constants
 
 import com.ctre.phoenix.led.Animation
+import com.ctre.phoenix.led.StrobeAnimation
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.derived.volts
 
@@ -33,6 +34,7 @@ object LEDConstants {
     // Yellow
     BATTERY_DISPLAY(null, 255, 105, 0),
     LOW_BATTERY_WARNING(null, 67, 36, 255),
+    TUNING_MODE_WARNING(StrobeAnimation(255, 0, 0), 0, 0, 0),
     WHITE(null, 255, 255, 255),
 
     // Green

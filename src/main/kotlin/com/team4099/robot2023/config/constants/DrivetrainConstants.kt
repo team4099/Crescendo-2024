@@ -33,7 +33,7 @@ object DrivetrainConstants {
   const val FOC_ENABLED = true
   const val MINIMIZE_SKEW = false
 
-  const val TELEOP_TURNING_SPEED_PERCENT = 0.7
+  const val TELEOP_TURNING_SPEED_PERCENT = 0.85
 
   const val OMOMETRY_UPDATE_FREQUENCY = 250.0
 
@@ -76,8 +76,8 @@ object DrivetrainConstants {
   val ALLOWED_STEERING_ANGLE_ERROR = 1.degrees
 
   val STEERING_SUPPLY_CURRENT_LIMIT = 20.0.amps
-  val DRIVE_SUPPLY_CURRENT_LIMIT = 80.0.amps
-  val DRIVE_THRESHOLD_CURRENT_LIMIT = 80.0.amps
+  val DRIVE_SUPPLY_CURRENT_LIMIT = 70.0.amps
+  val DRIVE_THRESHOLD_CURRENT_LIMIT = 70.0.amps
   val DRIVE_TRIGGER_THRESHOLD_TIME = 0.1.seconds
 
   val DRIVE_STATOR_CURRENT_LIMIT = 80.0.amps

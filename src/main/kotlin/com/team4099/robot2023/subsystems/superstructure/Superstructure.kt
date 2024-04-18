@@ -150,7 +150,7 @@ class Superstructure(
       notes.forEach { it.currentState = NoteSimulation.NoteStates.STAGED }
 
       notes[0].currentState = NoteSimulation.NoteStates.IN_ROBOT
-      notes[7].currentState = NoteSimulation.NoteStates.OFF_FIELD
+      // notes[7].currentState = NoteSimulation.NoteStates.OFF_FIELD
       noteHoldingID = 0
     }
   }
@@ -161,6 +161,10 @@ class Superstructure(
     leds.isAmping =
       (currentState == SuperstructureStates.WRIST_AMP_PREP) ||
       (currentState == SuperstructureStates.ELEVATOR_AMP_PREP)
+    leds.isPreping =
+      (currentState == SuperstructureStates.PASSING_SHOT_PREP) ||
+      (currentState == SuperstructureStates.SCORE_SPEAKER_LOW_PREP) ||
+      (currentState == SuperstructureStates.SCORE_SPEAKER_HIGH_PREP)
     leds.subsystemsAtPosition =
       wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity && elevator.isAtTargetedPosition
     leds.seesGamePiece = limelight.inputs.gamePieceTargets.size > 0
@@ -483,14 +487,9 @@ class Superstructure(
         Logger.recordOutput("AutoAim/FlywheelSpeed", targetFlywheelSpeed.inRotationsPerMinute)
         Logger.recordOutput("AutoAim/WristAngle", targetWristAngle.inDegrees)
 
-        if (drivetrain.fieldVelocity.magnitude.absoluteValue < 0.1.meters.perSecond) {
-          flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(targetFlywheelSpeed)
-          wrist.currentRequest = Request.WristRequest.TargetingPosition(targetWristAngle)
-        } else {
-          flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(targetFlywheelSpeed)
-          wrist.currentRequest =
-            Request.WristRequest.TargetingPosition(targetWristAngle, 2.0.degrees)
-        }
+        flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(targetFlywheelSpeed)
+        wrist.currentRequest = Request.WristRequest.TargetingPosition(targetWristAngle)
+
 
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {

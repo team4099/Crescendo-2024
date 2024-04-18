@@ -116,6 +116,7 @@ class TargetNoteCommand(
   override fun execute() {
 
     drivetrain.defaultCommand.end(true)
+
     Logger.recordOutput("ActiveCommands/TargetNoteCommand", true)
 
     val thetaFeedback = thetaPID.calculate(limelight.targetGamePieceTx ?: 0.0.degrees, 0.0.degrees)
