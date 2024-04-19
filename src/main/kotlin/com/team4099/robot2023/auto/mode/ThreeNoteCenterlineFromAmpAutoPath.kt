@@ -101,9 +101,9 @@ class ThreeNoteCenterlineFromAmpAutoPath(
                 ((180 + 13.856 + 165).degrees / 2).inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(8.27.meters, 5.78.meters).translation2d,
+                Translation2d(8.5.meters, 5.6.meters).translation2d,
                 null,
-                160.degrees.inRotation2ds
+                150.degrees.inRotation2ds
               ),
             )
           }
@@ -117,9 +117,9 @@ class ThreeNoteCenterlineFromAmpAutoPath(
           {
             listOf(
               FieldWaypoint(
-                Translation2d(8.27.meters, 5.78.meters).translation2d,
+                Translation2d(8.5.meters, 5.6.meters).translation2d,
                 null,
-                160.degrees.inRotation2ds
+                150.degrees.inRotation2ds
               ),
               FieldWaypoint(
                 Translation2d((3.9 + 8.27).meters / 2, (6.45 + 7.45).meters / 2)

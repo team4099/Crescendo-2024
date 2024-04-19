@@ -67,7 +67,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
           )
         }
       ),
-      superstructure.prepManualSpeakerCommand(-2.2.degrees, 4000.rotations.perMinute),
+      superstructure.prepManualSpeakerCommand(-2.5.degrees, 4400.rotations.perMinute),
       superstructure.scoreCommand(),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
@@ -113,7 +113,7 @@ class ThreeNoteAndPickupCenterlineSourceAutoPath(
         WaitCommand(1.0)
           .andThen(superstructure.groundIntakeCommand())
       ),
-      superstructure.prepManualSpeakerCommand(-2.2.degrees, 4000.rotations.perMinute),
+      superstructure.prepManualSpeakerCommand(-2.5.degrees, 44000.rotations.perMinute),
       superstructure.scoreCommand(),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(

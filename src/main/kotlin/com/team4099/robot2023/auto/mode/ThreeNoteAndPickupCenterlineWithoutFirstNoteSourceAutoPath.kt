@@ -44,23 +44,22 @@ class ThreeNoteAndPickupCenterlineWithoutFirstNoteSourceAutoPath(
                 Translation2d(8.32.meters, 0.78.meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
-              ),
-              FieldWaypoint(
-                Translation2d(6.89.meters, 1.73.meters).translation2d,
-                null,
-                180.degrees.inRotation2ds
               )
             )
           }
         ),
         WaitCommand(1.5).andThen(superstructure.groundIntakeCommand())
       ),
-      ConditionalCommand(
         ParallelCommandGroup(
           DrivePathCommand.createPathInFieldFrame(
             drivetrain,
             {
               listOf(
+                FieldWaypoint(
+                  Translation2d(8.32.meters, 0.78.meters).translation2d,
+                  null,
+                  180.degrees.inRotation2ds
+                ),
                 FieldWaypoint(
                   Translation2d(6.89.meters, 1.73.meters).translation2d,
                   null,
@@ -101,11 +100,6 @@ class ThreeNoteAndPickupCenterlineWithoutFirstNoteSourceAutoPath(
                       Translation2d(8.32.meters, 2.44.meters).translation2d,
                       null,
                       220.degrees.inRotation2ds
-                    ),
-                    FieldWaypoint(
-                      Translation2d(7.0.meters, 2.40.meters).translation2d,
-                      null,
-                      220.degrees.inRotation2ds
                     )
                   )
                 }
@@ -119,35 +113,7 @@ class ThreeNoteAndPickupCenterlineWithoutFirstNoteSourceAutoPath(
             {
               listOf(
                 FieldWaypoint(
-                  Translation2d(6.89.meters, 1.73.meters).translation2d,
-                  null,
-                  180.degrees.inRotation2ds
-                ),
-                FieldWaypoint(
                   Translation2d(8.32.meters, 2.44.meters).translation2d,
-                  null,
-                  220.degrees.inRotation2ds
-                ),
-                FieldWaypoint(
-                  Translation2d(7.0.meters, 2.40.meters).translation2d,
-                  null,
-                  220.degrees.inRotation2ds
-                )
-              )
-            }
-          ),
-          superstructure.groundIntakeCommand()
-        ),
-        { superstructure.holdingNote }
-      ),
-      ConditionalCommand(
-        ParallelCommandGroup(
-          DrivePathCommand.createPathInFieldFrame(
-            drivetrain,
-            {
-              listOf(
-                FieldWaypoint(
-                  Translation2d(7.0.meters, 2.40.meters).translation2d,
                   null,
                   220.degrees.inRotation2ds
                 ),
@@ -215,47 +181,7 @@ class ThreeNoteAndPickupCenterlineWithoutFirstNoteSourceAutoPath(
                 )
             )
               .andThen(superstructure.scoreCommand())
-          ),
-        ParallelCommandGroup(
-          DrivePathCommand.createPathInFieldFrame(
-            drivetrain,
-            {
-              listOf(
-                FieldWaypoint(
-                  Translation2d(7.0.meters, 2.40.meters).translation2d,
-                  null,
-                  220.degrees.inRotation2ds
-                ),
-                FieldWaypoint(
-                  Translation2d(8.2.meters, 4.06.meters).translation2d,
-                  null,
-                  220.degrees.inRotation2ds
-                ),
-                FieldWaypoint(
-                  Translation2d(7.5.meters, 2.0.meters).translation2d,
-                  null,
-                  180.degrees.inRotation2ds
-                ),
-                FieldWaypoint(
-                  Translation2d(5.5.meters, 1.85.meters).translation2d,
-                  null,
-                  (180 - 35.02902884839783).degrees.inRotation2ds
-                )
-              )
-            }
-          ),
-          superstructure
-            .groundIntakeCommand()
-            .andThen(WaitCommand(2.0))
-            .andThen(
-              superstructure.prepManualSpeakerCommand(
-                -2.0.degrees, 4400.rotations.perMinute
-              )
-            )
-        )
-          .andThen(superstructure.scoreCommand()),
-        { superstructure.holdingNote }
-      )
+          )
     )
   }
 

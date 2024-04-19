@@ -718,7 +718,7 @@ class Superstructure(
       SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP -> {
         flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(flywheelToShootAt)
         wrist.currentRequest =
-          Request.WristRequest.TargetingPosition(wristAngleToShootAt, 1.5.degrees)
+          Request.WristRequest.TargetingPosition(wristAngleToShootAt, 0.5.degrees)
         if (wrist.isAtTargetedPosition &&
           flywheel.isAtTargetedVelocity &&
           currentRequest is Request.SuperstructureRequest.ScoreSpeaker

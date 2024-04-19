@@ -28,7 +28,15 @@ object ControlBoard {
     get() = -driver.leftYAxis
 
   val turn: Double
-    get() = driver.rightXAxis * DrivetrainConstants.TELEOP_TURNING_SPEED_PERCENT
+    get() {
+      return if (driver.rightXAxis < 0.85) {
+        driver.rightXAxis * DrivetrainConstants.TELEOP_TURNING_SPEED_PERCENT
+      } else {
+        driver.rightXAxis
+      }
+    }
+
+
 
   val slowMode: Boolean
     get() = driver.leftShoulderButton
