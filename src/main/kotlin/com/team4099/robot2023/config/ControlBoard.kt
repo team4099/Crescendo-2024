@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import org.team4099.lib.joystick.XboxOneGamepad
 import java.util.function.Consumer
+import kotlin.math.absoluteValue
 
 /**
  * Maps buttons on the driver and operator controllers to specific actions with meaningful variable
@@ -29,7 +30,7 @@ object ControlBoard {
 
   val turn: Double
     get() {
-      return if (driver.rightXAxis < 0.85) {
+      return if (driver.rightXAxis.absoluteValue < 0.80) {
         driver.rightXAxis * DrivetrainConstants.TELEOP_TURNING_SPEED_PERCENT
       } else {
         driver.rightXAxis

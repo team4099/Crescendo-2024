@@ -40,11 +40,11 @@ class ThreeNoteAndPickupCenterlineWithoutFirstNoteSourceAutoPath(
                 null,
                 180.degrees.inRotation2ds
               ),
-              FieldWaypoint(
-                Translation2d(8.32.meters, 0.78.meters).translation2d,
-                null,
-                180.degrees.inRotation2ds
-              )
+            FieldWaypoint(
+              Translation2d(8.32.meters, 2.44.meters).translation2d,
+              null,
+              220.degrees.inRotation2ds
+            )
             )
           }
         ),
@@ -56,9 +56,9 @@ class ThreeNoteAndPickupCenterlineWithoutFirstNoteSourceAutoPath(
             {
               listOf(
                 FieldWaypoint(
-                  Translation2d(8.32.meters, 0.78.meters).translation2d,
+                  Translation2d(8.32.meters, 2.44.meters).translation2d,
                   null,
-                  180.degrees.inRotation2ds
+                  220.degrees.inRotation2ds
                 ),
                 FieldWaypoint(
                   Translation2d(6.89.meters, 1.73.meters).translation2d,
@@ -73,68 +73,7 @@ class ThreeNoteAndPickupCenterlineWithoutFirstNoteSourceAutoPath(
               )
             }
           ),
-          superstructure.prepManualSpeakerCommand(-2.2.degrees, 4000.rotations.perMinute)
-        )
-          .andThen(superstructure.scoreCommand())
-          .andThen(
-            ParallelCommandGroup(
-              DrivePathCommand.createPathInFieldFrame(
-                drivetrain,
-                {
-                  listOf(
-                    FieldWaypoint(
-                      Translation2d(4.33.meters, 1.67.meters).translation2d,
-                      null,
-                      (180 - 43.3758).degrees.inRotation2ds
-                    ),
-                    FieldWaypoint(
-                      Translation2d(
-                        (4.33.meters + 8.32.meters) / 2,
-                        (2.44 + 0.78).meters / 2 - 0.1.meters
-                      )
-                        .translation2d,
-                      null,
-                      ((180 - 43.3758 + 220) / 2 + 10).degrees.inRotation2ds,
-                    ),
-                    FieldWaypoint(
-                      Translation2d(8.32.meters, 2.44.meters).translation2d,
-                      null,
-                      220.degrees.inRotation2ds
-                    )
-                  )
-                }
-              ),
-              WaitCommand(1.0).andThen(superstructure.groundIntakeCommand()),
-            )
-          ),
-        ParallelCommandGroup(
-          DrivePathCommand.createPathInFieldFrame(
-            drivetrain,
-            {
-              listOf(
-                FieldWaypoint(
-                  Translation2d(8.32.meters, 2.44.meters).translation2d,
-                  null,
-                  220.degrees.inRotation2ds
-                ),
-                FieldWaypoint(
-                  Translation2d(
-                    (4.33.meters + 8.32.meters) / 2,
-                    (2.44 + 0.78).meters / 2 + 0.1.meters
-                  )
-                    .translation2d,
-                  null,
-                  ((180 - 43.3758 + 220) / 2 + 10).degrees.inRotation2ds,
-                ),
-                FieldWaypoint(
-                  Translation2d(4.33.meters, 1.67.meters).translation2d,
-                  null,
-                  (180 - 43.3758).degrees.inRotation2ds
-                )
-              )
-            }
-          ),
-          superstructure.prepManualSpeakerCommand(-2.2.degrees, 4000.rotations.perMinute)
+          superstructure.prepManualSpeakerCommand(-4.5.degrees, 4000.rotations.perMinute)
         )
           .andThen(superstructure.scoreCommand())
           .andThen(
@@ -164,9 +103,9 @@ class ThreeNoteAndPickupCenterlineWithoutFirstNoteSourceAutoPath(
                       180.degrees.inRotation2ds
                     ),
                     FieldWaypoint(
-                      Translation2d(5.5.meters, 1.85.meters).translation2d,
+                      Translation2d(4.33.meters, 1.67.meters).translation2d,
                       null,
-                      (180 - 35.02902884839783).degrees.inRotation2ds
+                      (180 - 43.37583640633171).degrees.inRotation2ds
                     )
                   )
                 }
@@ -176,7 +115,7 @@ class ThreeNoteAndPickupCenterlineWithoutFirstNoteSourceAutoPath(
                 .andThen(WaitCommand(2.0))
                 .andThen(
                   superstructure.prepManualSpeakerCommand(
-                    -2.0.degrees, 4400.rotations.perMinute
+                    -4.5.degrees, 4000.rotations.perMinute
                   )
                 )
             )

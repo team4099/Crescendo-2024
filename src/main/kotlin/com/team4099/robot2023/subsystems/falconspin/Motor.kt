@@ -23,6 +23,8 @@ interface MotorType
 
 typealias REVNeo = MotorType
 
+typealias Kraken = MotorType
+
 typealias Falcon = MotorType
 
 typealias SimMotor = MotorType
