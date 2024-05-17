@@ -55,8 +55,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           }
         )
           .withTimeout(3.235 + 0.5),
-        WaitCommand(0.5)
-          .andThen(superstructure.groundIntakeCommand())
+        WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
       superstructure.prepSpeakerLowCommand(),
       superstructure
@@ -92,8 +91,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           }
         )
           .withTimeout(3.235 + 0.5),
-        WaitCommand(0.5)
-          .andThen(superstructure.groundIntakeCommand())
+        WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
       superstructure.prepSpeakerLowCommand(),
       superstructure
@@ -113,7 +111,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               FieldWaypoint(
                 Translation2d(
                   ((1.43.meters) + (2.34.meters + 0.3.meters)) / 2 +
-                          0.25.meters,
+                    0.25.meters,
                   5.55.meters
                 )
                   .translation2d,
@@ -129,7 +127,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
               FieldWaypoint(
                 Translation2d(
                   ((1.43.meters) + (2.34.meters + 0.3.meters)) / 2 +
-                          0.25.meters,
+                    0.25.meters,
                   5.45.meters
                 )
                   .translation2d,
@@ -145,8 +143,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           }
         )
           .withTimeout(3.235 + 0.5),
-        WaitCommand(0.3)
-          .andThen(superstructure.groundIntakeCommand())
+        WaitCommand(0.3).andThen(superstructure.groundIntakeCommand())
       ),
       superstructure.prepSpeakerLowCommand(),
       superstructure
@@ -187,5 +184,3 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
     val startingPose = Pose2d(Translation2d(1.42.meters - 3.inches, 5.535.meters), 180.degrees)
   }
 }
-
-

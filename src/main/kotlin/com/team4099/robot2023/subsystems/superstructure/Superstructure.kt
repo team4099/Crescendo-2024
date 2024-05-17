@@ -37,7 +37,6 @@ import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inRotationsPerMinute
 import org.team4099.lib.units.perMinute
-import org.team4099.lib.units.perSecond
 
 class Superstructure(
   private val intake: Intake,
@@ -489,7 +488,6 @@ class Superstructure(
 
         flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(targetFlywheelSpeed)
         wrist.currentRequest = Request.WristRequest.TargetingPosition(targetWristAngle)
-
 
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
