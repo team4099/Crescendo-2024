@@ -2,10 +2,7 @@ package com.team4099.robot2023.subsystems.drivetrain.swervemodule
 
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
-import org.team4099.lib.units.AngularAcceleration
-import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Fraction
-import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.Value
 import org.team4099.lib.units.Velocity
@@ -19,12 +16,10 @@ import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.DerivativeGain
-import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
-import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
@@ -35,58 +30,56 @@ import org.team4099.lib.units.inRadiansPerSecond
 import org.team4099.lib.units.perSecond
 
 interface SwerveModuleIO {
-  class SwerveModuleIOInputs : LoggableInputs {
-    var driveAppliedVoltage = 0.0.volts
-    var steeringAppliedVoltage = 0.0.volts
 
-    var driveStatorCurrent = 0.0.amps
-    var driveSupplyCurrent = 0.0.amps
-    var steeringStatorCurrent = 0.0.amps
-    var steeringSupplyCurrent = 0.0.amps
+  class SwerveModuleIOInputs : LoggableInputs {
+
+    var driveAppliedVoltage = 0.0.volts
+    var swerveAppliedVoltage = 0.0.volts
+
+    var statorCurrentDrive = 0.0.amps
+    var supplyCurrentDrive = 0.0.amps
+    var statorCurrentSteer = 0.0.amps
+    var supplyCurrentSteer = 0.0.amps
 
     var drivePosition = 0.0.meters
-    var steeringPosition = 0.0.degrees
+    var steerPosition = 0.0.radians
 
     var driveVelocity = 0.0.meters.perSecond
-    var steeringVelocity = 0.0.degrees.perSecond
+    var steerVelocity = 0.0.radians.perSecond
 
+    var steerTemp = 0.0.celsius
     var driveTemp = 0.0.celsius
-    var steeringTemp = 0.0.celsius
 
-    var odometryDrivePositions = listOf<Length>()
-    var odometrySteeringPositions = listOf<Angle>()
-
-    var potentiometerOutputRaw = 0.0
-    var potentiometerOutputRadians = 0.0.radians
+    var steerOdometryPos = listOf<Angle>()
+    var driveOdometryPos = listOf<Length>()
 
     var drift = 0.0.meters
 
     override fun toLog(table: LogTable?) {
       table?.put("driveAppliedVoltage", driveAppliedVoltage.inVolts)
-      table?.put("steeringAppliedVoltage", steeringAppliedVoltage.inVolts)
-      table?.put("driveStatorCurrentAmps", driveStatorCurrent.inAmperes)
-      table?.put("driveSupplyCurrentAmps", driveSupplyCurrent.inAmperes)
-      table?.put("steeringStatorCurrentAmps", steeringStatorCurrent.inAmperes)
-      table?.put("steeringSupplyCurrentAmps", steeringSupplyCurrent.inAmperes)
-      table?.put("drivePositionMeters", drivePosition.inMeters)
-      table?.put("steeringPositionRadians", steeringPosition.inRadians)
-      table?.put("driveVelocityMetersPerSecond", driveVelocity.inMetersPerSecond)
-      table?.put("steeringVelocityRadiansPerSecond", steeringVelocity.inRadiansPerSecond)
-      table?.put("driveTempCelcius", driveTemp.inCelsius)
-      table?.put("steeringTempCelcius", steeringTemp.inCelsius)
-      table?.put("potentiometerOutputRaw", potentiometerOutputRaw)
-      table?.put("potentiometerOutputRadians", potentiometerOutputRadians.inRadians)
-      table?.put("driftPositionMeters", drift.inMeters)
+      table?.put("swerveAppliedVoltage", swerveAppliedVoltage.inVolts)
+      table?.put("statorCurrentDrive", statorCurrentDrive.inAmperes)
+      table?.put("supplyCurrentDrive", supplyCurrentDrive.inAmperes)
+      table?.put("statorCurrentSteer", statorCurrentSteer.inAmperes)
+      table?.put("supplyCurrentSteer", supplyCurrentSteer.inAmperes)
+      table?.put("drivePosition", drivePosition.inMeters)
+      table?.put("steerPosition", steerPosition.inRadians)
+      table?.put("steerTemp", steerTemp.inCelsius)
+      table?.put("driveTemp", driveTemp.inCelsius)
+      table?.put("driveVelocity", driveVelocity.inMetersPerSecond)
+      table?.put("steerVelocity", steerVelocity.inRadiansPerSecond)
+      table?.put("drift", drift.inMeters)
 
-      if (odometryDrivePositions.size > 0) {
-        table?.put("odometryDrivePositionsMeters", odometryDrivePositions[0].inMeters)
+      if (driveOdometryPos.size > 0) {
+        table?.put("odometryDrivePositionsMeters", driveOdometryPos[0].inMeters)
       } else {
         table?.put("odometryDrivePositionsMeters", 0.0)
       }
-      if (odometrySteeringPositions.size > 0) {
-        table?.put("odometrySteeringPositionsDegrees", odometrySteeringPositions[0].inDegrees)
+
+      if (steerOdometryPos.size > 0) {
+        table?.put("odometrySteerPositionsDegrees", steerOdometryPos[0].inDegrees)
       } else {
-        table?.put("odometrySteeringPositionsDegrees", 0.0)
+        table?.put("odometrySteerPositionsDegrees", 0.0)
       }
     }
 
@@ -94,71 +87,43 @@ interface SwerveModuleIO {
       table?.get("driveAppliedVoltage", driveAppliedVoltage.inVolts)?.let {
         driveAppliedVoltage = it.volts
       }
-      table?.get("steeringAppliedVoltage", steeringAppliedVoltage.inVolts)?.let {
-        steeringAppliedVoltage = it.volts
+      table?.get("swerveAppliedVoltage", swerveAppliedVoltage.inVolts)?.let {
+        swerveAppliedVoltage = it.volts
       }
-      table?.get("driveStatorCurrentAmps", driveStatorCurrent.inAmperes)?.let {
-        driveStatorCurrent = it.amps
+      table?.get("statorCurrentDrive", statorCurrentDrive.inAmperes)?.let {
+        statorCurrentDrive = it.amps
       }
-      table?.get("driveSupplyCurrentAmps", driveSupplyCurrent.inAmperes)?.let {
-        driveSupplyCurrent = it.amps
+      table?.get("supplyCurrentDrive", supplyCurrentDrive.inAmperes)?.let {
+        supplyCurrentDrive = it.amps
       }
-      table?.get("steeringStatorCurrentAmps", steeringStatorCurrent.inAmperes)?.let {
-        steeringStatorCurrent = it.amps
+      table?.get("statorCurrentSteer", statorCurrentSteer.inAmperes)?.let {
+        statorCurrentSteer = it.amps
       }
-      table?.get("steeringSupplyCurrentAmps", steeringSupplyCurrent.inAmperes)?.let {
-        steeringSupplyCurrent = it.amps
+      table?.get("supplyCurrentSteer", supplyCurrentSteer.inAmperes)?.let {
+        supplyCurrentSteer = it.amps
       }
-      table?.get("drivePositionMeters", drivePosition.inMeters)?.let { drivePosition = it.meters }
-      table?.get("steeringPositionRadians", steeringPosition.inRadians)?.let {
-        steeringPosition = it.radians
-      }
-      table?.get("driveVelocityMetersPerSecond", driveVelocity.inMetersPerSecond)?.let {
+      table?.get("steerTemp", steerTemp.inCelsius)?.let { steerTemp = it.celsius }
+      table?.get("driveTemp", driveTemp.inCelsius)?.let { driveTemp = it.celsius }
+      table?.get("drivePosition", drivePosition.inMeters)?.let { drivePosition = it.meters }
+      table?.get("steerPosition", steerPosition.inRadians)?.let { steerPosition = it.radians }
+      table?.get("driveVelocity", driveVelocity.inMetersPerSecond)?.let {
         driveVelocity = it.meters.perSecond
       }
-      table?.get("steeringVelocityRadiansPerSecond", steeringVelocity.inRadiansPerSecond)?.let {
-        steeringVelocity = it.radians.perSecond
+      table?.get("steerVelocity", steerVelocity.inRadiansPerSecond)?.let {
+        steerVelocity = it.radians.perSecond
       }
-      table?.get("driveTempCelcius", driveTemp.inCelsius)?.let { driveTemp = it.celsius }
-      table?.get("steeringTempCelcius", steeringTemp.inCelsius)?.let { steeringTemp = it.celsius }
-      table?.get("potentiometerOutputRaw", potentiometerOutputRaw)?.let {
-        potentiometerOutputRaw = it
-      }
-      table?.get("potentiometerOutputRaw", potentiometerOutputRadians.inRadians)?.let {
-        potentiometerOutputRadians = it.radians
-      }
-      table?.get("driftPositionMeters", drift.inMeters)?.let { drift = it.meters }
+      table?.get("drift", drift.inMeters)?.let { drift = it.meters }
     }
   }
-
-  val label: String
+  var label: String
 
   fun updateInputs(inputs: SwerveModuleIOInputs) {}
 
-  fun setSteeringSetpoint(angle: Angle) {}
-  fun setClosedLoop(steering: Angle, speed: LinearVelocity, acceleration: LinearAcceleration) {}
-  fun setOpenLoop(steering: Angle, speed: LinearVelocity) {}
-  fun runCharacterization(input: ElectricalPotential) {}
+  fun setOpenLoop(angle: Angle, speed: LinearVelocity)
 
-  fun resetModuleZero() {}
-  fun zeroSteering(isInAutonomous: Boolean = false) {}
-  fun zeroDrive() {}
+  fun configSteerPID(kP: ProportionalGain<Radian, Volt>,
+                     kI: IntegralGain <Radian, Volt>,
+                     kD: DerivativeGain <Radian, Volt>){}
 
-  fun setDriveBrakeMode(brake: Boolean) {}
-
-  fun setSteeringBrakeMode(brake: Boolean) {}
-
-  fun configureDrivePID(
-    kP: ProportionalGain<Velocity<Meter>, Volt>,
-    kI: IntegralGain<Velocity<Meter>, Volt>,
-    kD: DerivativeGain<Velocity<Meter>, Volt>,
-    kV: Value<Fraction<Volt, Velocity<Meter>>>,
-    kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
-  ) {}
-  fun configureSteeringPID(
-    kP: ProportionalGain<Radian, Volt>,
-    kI: IntegralGain<Radian, Volt>,
-    kD: DerivativeGain<Radian, Volt>
-  ) {}
-  fun configureSteeringMotionMagic(maxVel: AngularVelocity, maxAccel: AngularAcceleration) {}
+  fun configDrivePID (kP: ProportionalGain<Velocity<Meter>, Volt>, kI: IntegralGain<Velocity<Meter>,Volt>, kD:DerivativeGain<Velocity<Meter>,Volt>, kV:Value<Fraction<Volt, Velocity<Meter>>>, kA:Value<Fraction<Volt, Velocity<Velocity<Meter>>>>)
 }
