@@ -10,6 +10,82 @@ import org.littletonrobotics.junction.Logger
 
 class DebugLogger {
   companion object {
+    inline fun <E : Enum<E>> recordOutput(key: String, value: E) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun <T : WPISerializable> recordOutput(key: String, value: T) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun <U : edu.wpi.first.units.Unit<U>> recordOutput(key: String, value: Measure<U>) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun <T> recordOutput(key: String, value: Struct<T>) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun <T : StructSerializable> recordOutput(key: String, vararg value: T) {
+      Logger.recordOutput(key, *value)
+    }
+
+    inline fun recordOutput(key: String, value: Mechanism2d) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: Array<String>) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: BooleanArray) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: Boolean) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: ByteArray) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: DoubleArray) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: Double) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: Float) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: FloatArray) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: Int) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: IntArray) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: Long) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: LongArray) {
+      Logger.recordOutput(key, value)
+    }
+
+    inline fun recordOutput(key: String, value: String) {
+      Logger.recordOutput(key, value)
+    }
+
     inline fun <E : Enum<E>> recordDebugOutput(key: String, value: E) {
       if (Constants.Tuning.DEBUGING_MODE) {
         Logger.recordOutput(key, value)
