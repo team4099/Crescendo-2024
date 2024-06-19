@@ -40,344 +40,198 @@ import kotlin.math.abs
 import kotlin.math.withSign
 
 class SwerveModule(val io: SwerveModuleIO) {
-  val inputs = SwerveModuleIO.SwerveModuleIOInputs()
 
-  var modulePosition = SwerveModulePosition()
+  private val inputs = SwerveModuleIO.SwerveModuleIOInputs()
 
-  var positionDeltas = mutableListOf<SwerveModulePosition>()
+  private var modulePosition = SwerveModulePosition()
 
-  private var speedSetPoint: LinearVelocity = 0.feet.perSecond
-  private var accelerationSetPoint: LinearAcceleration = 0.feet.perSecond.perSecond
+  private var posDeltas = mutableListOf<SwerveModulePosition>()
 
-  private var steeringSetPoint: Angle = 0.degrees
+  private var velocitySetpoint: LinearVelocity = 0.0.meters.perSecond
 
-  private var lastDrivePosition = 0.meters
+  private var accelerationSetpoint: LinearAcceleration = 0.0.meters.perSecond.perSecond
 
-  private var shouldInvert = false
+  private var steeringSetpoint: Angle = 0.0.degrees
 
-  private val driveKV =
+  private var lastDrivePos = 0.0.meters
+
+  private val steerkP =
     LoggedTunableValue(
-      "Drivetrain/kV",
-      DrivetrainConstants.PID.DRIVE_KV,
-      Pair({ it.inVoltsPerMetersPerSecond }, { it.volts.perMeterPerSecond })
+      "Drivetrain/modulesteerkP", Pair({ it.inVoltsPerDegree }, { it.volts.perDegree })
     )
-  private val driveKA =
+  private val steerkI =
     LoggedTunableValue(
-      "Drivetrain/kA",
-      DrivetrainConstants.PID.DRIVE_KA,
-      Pair({ it.inVoltsPerMetersPerSecondPerSecond }, { it.volts.perMeterPerSecondPerSecond })
-    )
-
-  private val steeringkP =
-    LoggedTunableValue(
-      "Drivetrain/moduleSteeringkP", Pair({ it.inVoltsPerDegree }, { it.volts.perDegree })
-    )
-  private val steeringkI =
-    LoggedTunableValue(
-      "Drivetrain/moduleSteeringkI",
+      "Drivetrain/modulesteerkI",
       Pair({ it.inVoltsPerDegreeSeconds }, { it.volts.perDegreeSeconds })
     )
-  private val steeringkD =
+  private val steerkD =
     LoggedTunableValue(
-      "Drivetrain/moduleSteeringkD",
+      "Drivetrain/modulesteerkD",
       Pair({ it.inVoltsPerDegreePerSecond }, { it.volts.perDegreePerSecond })
-    )
-
-  private val steeringMaxVel =
-    LoggedTunableValue(
-      "Drivetrain/moduleSteeringMaxVelRadPerSec", DrivetrainConstants.STEERING_VEL_MAX
-    )
-  private val steeringMaxAccel =
-    LoggedTunableValue(
-      "Drivetrain/moduleSteeringMaxAccelRadPerSecSq", DrivetrainConstants.STEERING_ACCEL_MAX
     )
 
   private val drivekP =
     LoggedTunableValue(
-      "Drivetrain/moduleDrivekP",
+      "Drivetrain/drivekP",
       Pair({ it.inVoltsPerMetersPerSecond }, { it.volts.perMeterPerSecond })
     )
-
   private val drivekI =
     LoggedTunableValue(
-      "Drivetrain/moduleDrivekI",
+      "Drivetrain/drivekI",
       Pair({ it.inVoltsPerMeters }, { it.volts / (1.meters.perSecond * 1.seconds) })
     )
-
   private val drivekD =
     LoggedTunableValue(
-      "Drivetrain/moduleDrivekD",
+      "Drivetrain/drivekD",
       Pair({ it.inVoltsPerMetersPerSecondPerSecond }, { it.volts.perMeterPerSecondPerSecond })
     )
 
-  init {
+  private val drivekV =
+    LoggedTunableValue(
+      "Drivetrain/drivekV",
+      Pair({ it.inVoltsPerMetersPerSecond }, { it.volts.perMeterPerSecond })
+    )
+
+  private val drivekA =
+    LoggedTunableValue(
+      "Drivetrain/driveka",
+      Pair({ it.inVoltsPerMetersPerSecondPerSecond }, { it.volts.perMeterPerSecondPerSecond })
+    )
+
+  private val steerMaxAccel =
+    LoggedTunableValue("Drivetrain/steerMaxAcceleration", DrivetrainConstants.STEERING_ACCEL_MAX)
+  private val steerMaxVelo =
+    LoggedTunableValue("Drivetrain/steerMaxVelocity", DrivetrainConstants.STEERING_VEL_MAX)
+
+  fun init() {
     if (isReal()) {
-      steeringkP.initDefault(DrivetrainConstants.PID.STEERING_KP)
-      steeringkI.initDefault(DrivetrainConstants.PID.STEERING_KI)
-      steeringkD.initDefault(DrivetrainConstants.PID.STEERING_KD)
+      steerkP.initDefault(DrivetrainConstants.PID.STEERING_KP)
+      steerkI.initDefault(DrivetrainConstants.PID.STEERING_KI)
+      steerkD.initDefault(DrivetrainConstants.PID.STEERING_KD)
 
       drivekP.initDefault(DrivetrainConstants.PID.DRIVE_KP)
       drivekI.initDefault(DrivetrainConstants.PID.DRIVE_KI)
       drivekD.initDefault(DrivetrainConstants.PID.DRIVE_KD)
     } else {
-      steeringkP.initDefault(DrivetrainConstants.PID.SIM_STEERING_KP)
-      steeringkI.initDefault(DrivetrainConstants.PID.SIM_STEERING_KI)
-      steeringkD.initDefault(DrivetrainConstants.PID.SIM_STEERING_KD)
+      steerkP.initDefault(DrivetrainConstants.PID.SIM_STEERING_KP)
+      steerkI.initDefault(DrivetrainConstants.PID.SIM_STEERING_KI)
+      steerkD.initDefault(DrivetrainConstants.PID.SIM_STEERING_KD)
 
       drivekP.initDefault(DrivetrainConstants.PID.SIM_DRIVE_KP)
       drivekI.initDefault(DrivetrainConstants.PID.SIM_DRIVE_KI)
       drivekD.initDefault(DrivetrainConstants.PID.SIM_DRIVE_KD)
     }
-
-    driveKV.initDefault(DrivetrainConstants.PID.DRIVE_KV)
-    driveKA.initDefault(DrivetrainConstants.PID.DRIVE_KA)
+    drivekV.initDefault(DrivetrainConstants.PID.DRIVE_KV)
+    drivekA.initDefault(DrivetrainConstants.PID.DRIVE_KA)
   }
 
   fun updateInputs() {
     io.updateInputs(inputs)
   }
-
   fun periodic() {
-    positionDeltas.add(
+    posDeltas.add(
       SwerveModulePosition(
-        (inputs.drivePosition - lastDrivePosition).inMeters,
-        inputs.steeringPosition.inRotation2ds
+        (inputs.drivePosition - lastDrivePos).inMeters, inputs.steerPosition.inRotation2ds
       )
     )
-    lastDrivePosition = inputs.drivePosition
-
-    //    val deltaCount =
-    //      Math.min(inputs.odometryDrivePositions.size, inputs.odometrySteeringPositions.size)
-    //
-    //    for (i in 0 until deltaCount) {
-    //      val newDrivePosition = inputs.odometryDrivePositions[i]
-    //      val newSteeringAngle = inputs.odometrySteeringPositions[i]
-    //      positionDeltas.add(
-    //        SwerveModulePosition(
-    //          (newDrivePosition - lastDrivePosition).inMeters, newSteeringAngle.inRotation2ds
-    //        )
-    //      )
-    //      lastDrivePosition = newDrivePosition
-    //    }
-    //
-    //    if (positionDeltas.size > 0) {
-    //      Logger.recordOutput("Drivetrain/PositionDeltas", positionDeltas[0].distanceMeters)
-    //    } else {
-    //      Logger.recordOutput("Drivetrain/PositionDeltas", -1337)
-    //  }
-
-    // Updating SwerveModulePosition every loop cycle
-    modulePosition.distanceMeters = inputs.drivePosition.inMeters
-    modulePosition.angle = inputs.steeringPosition.inRotation2ds
-
-    if (steeringkP.hasChanged() || steeringkI.hasChanged() || steeringkD.hasChanged()) {
-      io.configureSteeringPID(steeringkP.get(), steeringkI.get(), steeringkD.get())
-    }
-
-    if (steeringMaxVel.hasChanged() || steeringMaxAccel.hasChanged()) {
-      io.configureSteeringMotionMagic(steeringMaxVel.get(), steeringMaxAccel.get())
-    }
-
-    if (drivekP.hasChanged() ||
-      drivekI.hasChanged() ||
-      drivekD.hasChanged() ||
-      driveKV.hasChanged() ||
-      driveKA.hasChanged()
-    ) {
-      io.configureDrivePID(
-        drivekP.get(), drivekI.get(), drivekD.get(), driveKV.get(), driveKA.get()
-      )
-    }
 
     Logger.processInputs(io.label, inputs)
-    Logger.recordOutput(
-      "${io.label}/driveSpeedSetpointMetersPerSecond",
-      if (!shouldInvert) speedSetPoint.inMetersPerSecond else -speedSetPoint.inMetersPerSecond
-    )
-    Logger.recordOutput(
-      "${io.label}/driveAccelSetpointMetersPerSecondSq",
-      accelerationSetPoint.inMetersPerSecondPerSecond
-    )
-    Logger.recordOutput("${io.label}/steeringSetpointRadians", steeringSetPoint.inRadians)
-    Logger.recordOutput(
-      "${io.label}/steeringValueDegreesWithMod", inputs.steeringPosition.inDegrees.IEEErem(360.0)
-    )
+    DebugLogger.recordDebugOutput("${io.label}/lastDrivePos", lastDrivePos.inMeters)
 
-    Logger.recordOutput("SwerveModule/SpeedSetPoint", speedSetPoint.inMetersPerSecond)
-    Logger.recordOutput("SwerveModule/SteeringSetPoint", steeringSetPoint.inRadians)
-    Logger.recordOutput(
-      "SwerveModule/AccelerationSetPoint", accelerationSetPoint.inMetersPerSecondPerSecond
-    )
-    Logger.recordOutput(
-      "SwerveModule/SteeringError", (steeringSetPoint - inputs.steeringPosition).inRadians
-    )
-  }
+    DebugLogger.recordDebugOutput("${io.label}/velocitySetpoint", velocitySetpoint.inMetersPerSecond)
+    DebugLogger.recordDebugOutput("${io.label}/accelerationSetpoint", accelerationSetpoint.inMetersPerSecondPerSecond)
+    DebugLogger.recordDebugOutput("${io.label}/steeringSetpoint", steeringSetpoint.inDegrees)
+    DebugLogger.recordDebugOutput("${io.label}/lastDrivePos", lastDrivePos.inMeters)
 
-  /**
-   * Sets the swerve module to the specified angular and X & Y velocities using feed forward.
-   *
-   * @param steering The angular position desired for the swerve module to be set to
-   * @param speed The speed desired for the swerve module to reach
-   * @param acceleration The linear acceleration used to calculate how to reach the desired speed
-   */
-  fun set(
-    steering: Angle,
-    speed: LinearVelocity,
-    acceleration: LinearAcceleration = 0.0.meters.perSecond.perSecond,
-    optimize: Boolean = true
-  ) {
-    if (speed == 0.feet.perSecond) {
-      io.setOpenLoop(steeringSetPoint, 0.0.meters.perSecond)
-      return
-    }
-    var steeringDifference =
-      (steering - inputs.steeringPosition).inRadians.IEEErem(2 * Math.PI).radians
+    Logger.recordOutput("${io.label}/driveAppliedVoltage", inputs.driveAppliedVoltage.inVolts)
+    Logger.recordOutput("${io.label}/swerveAppliedVoltage", inputs.swerveAppliedVoltage.inVolts)
 
-    shouldInvert = (steeringDifference.absoluteValue > (Math.PI / 2).radians) && optimize
+    Logger.recordOutput("${io.label}/drivePosition", inputs.drivePosition.inMeters)
+    Logger.recordOutput("${io.label}/steerPosition", inputs.steerPosition.inRadians)
+    Logger.recordOutput("${io.label}/driveVelocity", inputs.driveVelocity.inMetersPerSecond)
+    Logger.recordOutput("${io.label}/steerVelocity", inputs.steerVelocity.inRadiansPerSecond)
+    Logger.recordOutput("${io.label}/driveTemp", inputs.driveTemp.inCelsius)
+    Logger.recordOutput("${io.label}/steerTemp", inputs.steerTemp.inCelsius)
+    DebugLogger.recordDebugOutput("${io.label}/drift", inputs.drift.inMeters)
 
-    if (shouldInvert) {
-      steeringDifference -= Math.PI.withSign(steeringDifference.inRadians).radians
-    }
-
-    speedSetPoint =
-      if (shouldInvert) {
-        speed * -1
-      } else {
-        speed
-      }
-    accelerationSetPoint =
-      if (shouldInvert) {
-        acceleration * -1
-      } else {
-        acceleration
-      }
-    steeringSetPoint = inputs.steeringPosition + steeringDifference
-
-    //    io.setClosedLoop(steeringSetPoint, speedSetPoint, accelerationSetPoint)
-    io.setClosedLoop(steeringSetPoint, speedSetPoint, accelerationSetPoint)
-  }
-
-  fun setOpenLoop(steering: Angle, speed: LinearVelocity, optimize: Boolean = true) {
-    var steeringDifference =
-      (steering - inputs.steeringPosition).inRadians.IEEErem(2 * Math.PI).radians
-    shouldInvert = steeringDifference.absoluteValue > (Math.PI / 2).radians && optimize
-    if (shouldInvert) {
-      steeringDifference -= Math.PI.withSign(steeringDifference.inRadians).radians
-    }
-    val outputSpeed =
-      if (shouldInvert) {
-        speed * -1
-      } else {
-        speed
-      }
-    steeringSetPoint = inputs.steeringPosition + steeringDifference
-    io.setOpenLoop(steeringSetPoint, outputSpeed)
-  }
-
-  /**
-   * Sets the swerve module to the specified angular and X & Y velocities using open loop control.
-   *
-   * @param desiredState The desired SwerveModuleState. Contains desired angle as well as X and Y
-   * velocities
-   */
-  fun setPositionOpenLoop(desiredState: SwerveModuleState, optimize: Boolean = true) {
-    if (optimize) {
-      Logger.recordOutput("${io.label}/desiredAngleRadians", desiredState.angle.radians)
-      //      val adjustedState: SwerveModuleState
-      //      if ((inputs.steeringPosition +
-      // 360.degrees).minus(desiredState.angle.degrees.degrees).absoluteValue <=
-      // (inputs.steeringPosition).minus(desiredState.angle.degrees.degrees).absoluteValue){
-      //        adjustedState = SwerveModuleState(desiredState.speedMetersPerSecond,
-      // desiredState.angle)
-      //      } else {
-      //        adjustedState = desiredState
-      //      }
-      Logger.recordOutput(
-        "${io.label}/minimizedDeltaRadians", (inputs.steeringPosition + 360.degrees).inRadians
+    posDeltas.add(
+      SwerveModulePosition(
+        (inputs.drivePosition - lastDrivePos).inMeters, inputs.steerPosition.inRotation2ds
       )
+    )
 
+    lastDrivePos = inputs.drivePosition
+
+    modulePosition.distanceMeters = inputs.drivePosition.inMeters
+    modulePosition.angle = inputs.steerPosition.inRotation2ds
+
+    if (steerkD.hasChanged() || steerkP.hasChanged() || steerkI.hasChanged()) {
+      io.configSteerPID(steerkP.get(), steerkI.get(), steerkD.get())
+    }
+
+    if (drivekD.hasChanged() ||
+      drivekP.hasChanged() ||
+      drivekI.hasChanged() ||
+      drivekA.hasChanged() ||
+      drivekV.hasChanged()
+    ) {
+      io.configDrivePID(drivekP.get(), drivekI.get(), drivekD.get(), drivekV.get(), drivekA.get())
+    }
+  }
+  fun openLoop(desiredState: SwerveModuleState, optimize: Boolean) {
+    if (optimize) {
       val optimizedState =
-        SwerveModuleState.optimize(desiredState, inputs.steeringPosition.inRotation2ds)
+        SwerveModuleState.optimize(desiredState, inputs.steerPosition.inRotation2ds)
       io.setOpenLoop(
         optimizedState.angle.angle,
         optimizedState.speedMetersPerSecond.meters.perSecond *
-          Math.cos(
-            abs(
-              (optimizedState.angle.angle - inputs.steeringPosition)
-                .inRadians
-            )
-          ) // consider desaturating wheel speeds here if it doesn't work
-        // from drivetrain
+                cos(abs((optimizedState.angle.angle - inputs.steerPosition).inRadians))
       )
-      Logger.recordOutput("${io.label}/steeringSetpointOptimized", optimizedState.angle.degrees)
     } else {
       io.setOpenLoop(
         desiredState.angle.angle,
         desiredState.speedMetersPerSecond.meters.perSecond *
-          Math.cos(abs((desiredState.angle.angle - inputs.steeringPosition).inRadians))
+                cos(abs((desiredState.angle.angle - inputs.steerPosition).inRadians))
       )
-      Logger.recordOutput("${io.label}/steeringSetpointNonOptimized", desiredState.angle.degrees)
     }
   }
-
-  /**
-   * Sets the swerve module to the specified angular and X & Y velocities using feed forward.
-   *
-   * @param desiredVelState The desired SwerveModuleState. Contains desired angle as well as X and Y
-   * velocities
-   * @param desiredAccelState The desired SwerveModuleState that contains desired acceleration
-   * vectors.
-   * @param optimize Whether velocity and acceleration vectors should be optimized (if possible)
-   */
-  fun setPositionClosedLoop(
-    desiredVelState: SwerveModuleState,
+  fun closedLoop(
     desiredAccelState: SwerveModuleState,
-    optimize: Boolean = true
+    desiredVeloState: SwerveModuleState,
+    optimize: Boolean
   ) {
     if (optimize) {
-      val optimizedVelState =
-        SwerveModuleState.optimize(desiredVelState, inputs.steeringPosition.inRotation2ds)
-      val optimizedAccelState =
-        SwerveModuleState.optimize(desiredAccelState, inputs.steeringPosition.inRotation2ds)
+      val optmizedVeloState =
+        SwerveModuleState.optimize(desiredVeloState, inputs.steerPosition.inRotation2ds)
+      val optmizedAccelState =
+        SwerveModuleState.optimize(desiredAccelState, inputs.steerPosition.inRotation2ds)
 
-      steeringSetPoint = optimizedVelState.angle.angle
-      speedSetPoint = optimizedVelState.speedMetersPerSecond.meters.perSecond
-      accelerationSetPoint = optimizedAccelState.speedMetersPerSecond.meters.perSecond.perSecond
+      steeringSetpoint = optmizedVeloState.angle.angle
+      velocitySetpoint = optmizedVeloState.speedMetersPerSecond.meters.perSecond
+      accelerationSetpoint = optmizedAccelState.speedMetersPerSecond.meters.perSecond.perSecond
 
-      io.setClosedLoop(steeringSetPoint, speedSetPoint, accelerationSetPoint)
+      io.setClosedLoop(steeringSetpoint, velocitySetpoint, accelerationSetpoint)
     } else {
-      steeringSetPoint = desiredVelState.angle.angle
-      speedSetPoint = desiredVelState.speedMetersPerSecond.meters.perSecond
-      accelerationSetPoint = desiredAccelState.speedMetersPerSecond.meters.perSecond.perSecond
+      steeringSetpoint = desiredVeloState.angle.angle
+      velocitySetpoint = desiredVeloState.speedMetersPerSecond.meters.perSecond
+      accelerationSetpoint = desiredAccelState.speedMetersPerSecond.meters.perSecond.perSecond
 
-      io.setClosedLoop(steeringSetPoint, speedSetPoint, accelerationSetPoint)
+      io.setClosedLoop(steeringSetpoint, velocitySetpoint, accelerationSetpoint)
     }
   }
-
-  /** Creates event of the current potentiometer value as needs to be manually readjusted. */
   fun resetModuleZero() {
     io.resetModuleZero()
   }
-
-  /** Zeros the steering motor */
-  fun zeroSteering(isInAutonomous: Boolean = false) {
-    io.zeroSteering(isInAutonomous)
+  fun zeroSteer(isInAuto: Boolean) {
+    io.zeroSteering()
   }
-
-  /** Zeros the drive motor */
-  fun zeroDrive() {
-    io.zeroDrive()
-  }
-
   fun setDriveBrakeMode(brake: Boolean) {
     io.setDriveBrakeMode(brake)
   }
-
   fun setSteeringBrakeMode(brake: Boolean) {
     io.setSteeringBrakeMode(brake)
   }
-
-  fun runCharacterization(input: ElectricalPotential) {
-    io.runCharacterization(input)
+  fun zeroDrive() {
+    io.zeroDrive()
   }
 }
