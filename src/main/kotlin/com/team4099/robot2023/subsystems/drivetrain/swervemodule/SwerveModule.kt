@@ -103,7 +103,7 @@ class SwerveModule(val io: SwerveModuleIO) {
   private val steerMaxVelo =
     LoggedTunableValue("Drivetrain/steerMaxVelocity", DrivetrainConstants.STEERING_VEL_MAX)
 
-  fun init() {
+  init{
     if (isReal()) {
       steerkP.initDefault(DrivetrainConstants.PID.STEERING_KP)
       steerkI.initDefault(DrivetrainConstants.PID.STEERING_KI)
