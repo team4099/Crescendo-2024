@@ -2,6 +2,7 @@ package com.team4099.robot2023.subsystems.drivetrain.swervemodule
 
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
+import com.team4099.robot2023.util.DebugLogger
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.RobotBase.isReal
@@ -9,6 +10,7 @@ import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.base.feet
+import org.team4099.lib.units.base.inCelsius
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
@@ -19,6 +21,7 @@ import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inRotation2ds
+import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.inVoltsPerDegree
 import org.team4099.lib.units.derived.inVoltsPerDegreePerSecond
 import org.team4099.lib.units.derived.inVoltsPerDegreeSeconds
@@ -34,9 +37,11 @@ import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.inMetersPerSecondPerSecond
+import org.team4099.lib.units.inRadiansPerSecond
 import org.team4099.lib.units.perSecond
 import kotlin.math.IEEErem
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.withSign
 
 class SwerveModule(val io: SwerveModuleIO) {
@@ -145,14 +150,6 @@ class SwerveModule(val io: SwerveModuleIO) {
 
     Logger.recordOutput("${io.label}/driveAppliedVoltage", inputs.driveAppliedVoltage.inVolts)
     Logger.recordOutput("${io.label}/swerveAppliedVoltage", inputs.swerveAppliedVoltage.inVolts)
-
-    Logger.recordOutput("${io.label}/drivePosition", inputs.drivePosition.inMeters)
-    Logger.recordOutput("${io.label}/steerPosition", inputs.steerPosition.inRadians)
-    Logger.recordOutput("${io.label}/driveVelocity", inputs.driveVelocity.inMetersPerSecond)
-    Logger.recordOutput("${io.label}/steerVelocity", inputs.steerVelocity.inRadiansPerSecond)
-    Logger.recordOutput("${io.label}/driveTemp", inputs.driveTemp.inCelsius)
-    Logger.recordOutput("${io.label}/steerTemp", inputs.steerTemp.inCelsius)
-    DebugLogger.recordDebugOutput("${io.label}/drift", inputs.drift.inMeters)
 
     posDeltas.add(
       SwerveModulePosition(
