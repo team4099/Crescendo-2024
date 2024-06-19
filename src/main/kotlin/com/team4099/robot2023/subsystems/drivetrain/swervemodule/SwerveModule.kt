@@ -24,6 +24,8 @@ import org.team4099.lib.units.derived.inVoltsPerMeters
 import org.team4099.lib.units.derived.inVoltsPerMetersPerSecond
 import org.team4099.lib.units.derived.inVoltsPerMetersPerSecondPerSecond
 import org.team4099.lib.units.derived.perDegree
+import org.team4099.lib.units.derived.inDegrees
+import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.perDegreePerSecond
 import org.team4099.lib.units.derived.perDegreeSeconds
 import org.team4099.lib.units.derived.perMeterPerSecond
@@ -31,16 +33,19 @@ import org.team4099.lib.units.derived.perMeterPerSecondPerSecond
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
 import org.littletonrobotics.junction.Logger
-import org.team4099.lib.units.*
 import org.team4099.lib.units.base.inCelsius
+import org.team4099.lib.units.inMetersPerSecond
+import org.team4099.lib.units.inMetersPerSecondPerSecond
+import org.team4099.lib.units.inRadiansPerSecond
+import kotlin.math.cos
 
 class SwerveModule(val io: SwerveModuleIO) {
 
-  val inputs = SwerveModuleIO.SwerveModuleIOInputs()
+  private val inputs = SwerveModuleIO.SwerveModuleIOInputs()
 
-  var modulePosition = SwerveModulePosition()
+  private var modulePosition = SwerveModulePosition()
 
-  var posDeltas = mutableListOf<SwerveModulePosition>()
+  private var posDeltas = mutableListOf<SwerveModulePosition>()
 
   private var velocitySetpoint: LinearVelocity = 0.0.meters.perSecond
 
@@ -48,9 +53,7 @@ class SwerveModule(val io: SwerveModuleIO) {
 
   private var steeringSetpoint: Angle = 0.0.degrees
 
-  var lastDrivePos = 0.0.meters
-
-  var invert: Boolean = false
+  private var lastDrivePos = 0.0.meters
 
   private val steerkP =
     LoggedTunableValue(
@@ -177,18 +180,18 @@ class SwerveModule(val io: SwerveModuleIO) {
   }
   fun openLoop(desiredState: SwerveModuleState, optimize: Boolean) {
     if (optimize) {
-      var optimizedState =
+      val optimizedState =
         SwerveModuleState.optimize(desiredState, inputs.steerPosition.inRotation2ds)
       io.setOpenLoop(
         optimizedState.angle.angle,
         optimizedState.speedMetersPerSecond.meters.perSecond *
-          Math.cos(abs((optimizedState.angle.angle - inputs.steerPosition).inRadians))
+          cos(abs((optimizedState.angle.angle - inputs.steerPosition).inRadians))
       )
     } else {
       io.setOpenLoop(
         desiredState.angle.angle,
         desiredState.speedMetersPerSecond.meters.perSecond *
-          Math.cos(abs((desiredState.angle.angle - inputs.steerPosition).inRadians))
+          cos(abs((desiredState.angle.angle - inputs.steerPosition).inRadians))
       )
     }
   }
