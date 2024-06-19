@@ -2,7 +2,7 @@ package com.team4099.robot2023.subsystems.led
 
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.LEDConstants
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import com.team4099.robot2023.util.FMSData
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotController
@@ -71,6 +71,6 @@ class Leds(val io: LedIO) {
     }
 
     Logger.processInputs("LED", inputs)
-    DebugLogger.recordDebugOutput("LED/state", state.name)
+    CustomLogger.recordDebugOutput("LED/state", state.name)
   }
 }

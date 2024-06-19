@@ -8,7 +8,7 @@ import edu.wpi.first.util.struct.StructSerializable
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d
 import org.littletonrobotics.junction.Logger
 
-class DebugLogger {
+class CustomLogger {
   companion object {
     inline fun <E : Enum<E>> recordOutput(key: String, value: E) {
       Logger.recordOutput(key, value)

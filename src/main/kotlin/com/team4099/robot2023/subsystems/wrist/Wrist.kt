@@ -5,7 +5,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
@@ -417,7 +417,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
       }
     }
 
-    DebugLogger.recordDebugOutput("Wrist/profileIsOutOfBounds", isOutOfBounds(setPoint.velocity))
+    CustomLogger.recordDebugOutput("Wrist/profileIsOutOfBounds", isOutOfBounds(setPoint.velocity))
     Logger.recordOutput("Wrist/armFeedForward", feedforward.inVolts)
     Logger.recordOutput("Wrist/armTargetPosition", setPoint.position.inDegrees)
     Logger.recordOutput("Wrist/armTargetVelocity", setPoint.velocity.inDegreesPerSecond)

@@ -11,7 +11,7 @@ import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.util.AllianceFlipUtil
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import com.team4099.robot2023.util.FrameType
 import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -384,7 +384,7 @@ private constructor(
     Logger.recordOutput("Pathfollow/isAtReference", swerveDriveController.atReference())
     Logger.recordOutput("Pathfollow/trajectoryTimeSeconds", trajectory.totalTimeSeconds)
 
-    DebugLogger.recordDebugOutput("ActiveCommands/DrivePathCommand", true)
+    CustomLogger.recordDebugOutput("ActiveCommands/DrivePathCommand", true)
 
     if (thetakP.hasChanged()) thetaPID.proportionalGain = thetakP.get()
     if (thetakI.hasChanged()) thetaPID.integralGain = thetakI.get()
@@ -414,7 +414,7 @@ private constructor(
   }
 
   override fun end(interrupted: Boolean) {
-    DebugLogger.recordDebugOutput("ActiveCommands/DrivePathCommand", false)
+    CustomLogger.recordDebugOutput("ActiveCommands/DrivePathCommand", false)
     if (interrupted) {
       DriverStation.reportError(errorString, true)
       // Stop where we are if interrupted
