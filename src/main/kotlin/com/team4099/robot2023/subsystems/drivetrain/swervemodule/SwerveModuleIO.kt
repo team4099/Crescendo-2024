@@ -3,6 +3,7 @@ package com.team4099.robot2023.subsystems.drivetrain.swervemodule
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.team4099.lib.units.Fraction
+import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.Value
 import org.team4099.lib.units.Velocity
@@ -121,9 +122,30 @@ interface SwerveModuleIO {
 
   fun setOpenLoop(angle: Angle, speed: LinearVelocity)
 
-  fun configSteerPID(kP: ProportionalGain<Radian, Volt>,
-                     kI: IntegralGain <Radian, Volt>,
-                     kD: DerivativeGain <Radian, Volt>){}
+  fun setClosedLoop(angle: Angle, speed: LinearVelocity, acceleration: LinearAcceleration)
 
-  fun configDrivePID (kP: ProportionalGain<Velocity<Meter>, Volt>, kI: IntegralGain<Velocity<Meter>,Volt>, kD:DerivativeGain<Velocity<Meter>,Volt>, kV:Value<Fraction<Volt, Velocity<Meter>>>, kA:Value<Fraction<Volt, Velocity<Velocity<Meter>>>>)
+  fun resetModuleZero() {}
+
+  fun zeroSteering(isInAuto: Boolean = false) {}
+
+  fun zeroDrive() {}
+
+  fun setDriveBrakeMode(brake: Boolean) {}
+
+  fun setSteeringBrakeMode(brake: Boolean) {}
+
+  fun configSteerPID(
+    kP: ProportionalGain<Radian, Volt>,
+    kI: IntegralGain<Radian, Volt>,
+    kD: DerivativeGain<Radian, Volt>
+  ) {}
+
+  fun configDrivePID(
+    kP: ProportionalGain<Velocity<Meter>, Volt>,
+    kI: IntegralGain<Velocity<Meter>, Volt>,
+    kD: DerivativeGain<Velocity<Meter>, Volt>,
+    kV: Value<Fraction<Volt, Velocity<Meter>>>,
+    kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
+  )
+
 }
