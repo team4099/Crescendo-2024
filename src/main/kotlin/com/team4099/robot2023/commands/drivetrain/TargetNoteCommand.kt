@@ -6,7 +6,7 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.feeder.Feeder
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.superstructure.Request
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import com.team4099.robot2023.util.driver.DriverProfile
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
@@ -116,11 +116,12 @@ class TargetNoteCommand(
   override fun execute() {
 
     drivetrain.defaultCommand.end(true)
+
     Logger.recordOutput("ActiveCommands/TargetNoteCommand", true)
 
     val thetaFeedback = thetaPID.calculate(limelight.targetGamePieceTx ?: 0.0.degrees, 0.0.degrees)
-    DebugLogger.recordDebugOutput("NoteAlignment/error", thetaPID.error.inDegrees)
-    DebugLogger.recordDebugOutput("NoteAlignment/thetaFeedback", thetaFeedback.inDegreesPerSecond)
+    CustomLogger.recordDebugOutput("NoteAlignment/error", thetaPID.error.inDegrees)
+    CustomLogger.recordDebugOutput("NoteAlignment/thetaFeedback", thetaFeedback.inDegreesPerSecond)
 
     if (!feeder.hasNote && limelight.inputs.gamePieceTargets.size > 0) {
       val driveVector = driver.driveSpeedClampedSupplier(driveX, driveY, slowMode)

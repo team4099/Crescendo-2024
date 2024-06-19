@@ -37,7 +37,6 @@ import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inRotationsPerMinute
 import org.team4099.lib.units.perMinute
-import org.team4099.lib.units.perSecond
 
 class Superstructure(
   private val intake: Intake,
@@ -150,7 +149,7 @@ class Superstructure(
       notes.forEach { it.currentState = NoteSimulation.NoteStates.STAGED }
 
       notes[0].currentState = NoteSimulation.NoteStates.IN_ROBOT
-      notes[7].currentState = NoteSimulation.NoteStates.OFF_FIELD
+      // notes[7].currentState = NoteSimulation.NoteStates.OFF_FIELD
       noteHoldingID = 0
     }
   }
@@ -161,6 +160,10 @@ class Superstructure(
     leds.isAmping =
       (currentState == SuperstructureStates.WRIST_AMP_PREP) ||
       (currentState == SuperstructureStates.ELEVATOR_AMP_PREP)
+    leds.isPreping =
+      (currentState == SuperstructureStates.PASSING_SHOT_PREP) ||
+      (currentState == SuperstructureStates.SCORE_SPEAKER_LOW_PREP) ||
+      (currentState == SuperstructureStates.SCORE_SPEAKER_HIGH_PREP)
     leds.subsystemsAtPosition =
       wrist.isAtTargetedPosition && flywheel.isAtTargetedVelocity && elevator.isAtTargetedPosition
     leds.seesGamePiece = limelight.inputs.gamePieceTargets.size > 0
@@ -286,8 +289,6 @@ class Superstructure(
       }
       SuperstructureStates.IDLE -> {
 
-        intake.currentRequest = Request.IntakeRequest.OpenLoop(0.0.volts, 0.0.volts)
-
         feeder.currentRequest =
           Request.FeederRequest.OpenLoopIntake(Feeder.TunableFeederStates.idleVoltage.get())
 
@@ -313,6 +314,9 @@ class Superstructure(
               Intake.TunableIntakeStates.idleCenterWheelVoltage.get()
             )
         } else {
+
+          intake.currentRequest = Request.IntakeRequest.OpenLoop(0.0.volts, 0.0.volts)
+
           wrist.currentRequest =
             Request.WristRequest.TargetingPosition(Wrist.TunableWristStates.idleAngle.get())
         }
@@ -482,14 +486,8 @@ class Superstructure(
         Logger.recordOutput("AutoAim/FlywheelSpeed", targetFlywheelSpeed.inRotationsPerMinute)
         Logger.recordOutput("AutoAim/WristAngle", targetWristAngle.inDegrees)
 
-        if (drivetrain.fieldVelocity.magnitude.absoluteValue < 0.1.meters.perSecond) {
-          flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(targetFlywheelSpeed)
-          wrist.currentRequest = Request.WristRequest.TargetingPosition(targetWristAngle)
-        } else {
-          flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(targetFlywheelSpeed)
-          wrist.currentRequest =
-            Request.WristRequest.TargetingPosition(targetWristAngle, 2.0.degrees)
-        }
+        flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(targetFlywheelSpeed)
+        wrist.currentRequest = Request.WristRequest.TargetingPosition(targetWristAngle)
 
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
@@ -718,7 +716,7 @@ class Superstructure(
       SuperstructureStates.MANUAL_SCORE_SPEAKER_PREP -> {
         flywheel.currentRequest = Request.FlywheelRequest.TargetingVelocity(flywheelToShootAt)
         wrist.currentRequest =
-          Request.WristRequest.TargetingPosition(wristAngleToShootAt, 1.5.degrees)
+          Request.WristRequest.TargetingPosition(wristAngleToShootAt, 0.5.degrees)
         if (wrist.isAtTargetedPosition &&
           flywheel.isAtTargetedVelocity &&
           currentRequest is Request.SuperstructureRequest.ScoreSpeaker

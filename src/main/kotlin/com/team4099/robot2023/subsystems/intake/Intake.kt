@@ -5,7 +5,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.IntakeConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
@@ -109,7 +109,7 @@ class Intake(val io: IntakeIO) : SubsystemBase() {
       Logger.recordOutput(
         "Intake/isAtCommandedState", currentState.equivalentToRequest(currentRequest)
       )
-      DebugLogger.recordDebugOutput(
+      CustomLogger.recordDebugOutput(
         "Intake/timeProfileGeneratedAt", timeProfileGeneratedAt.inSeconds
       )
       Logger.recordOutput("Intake/rollerVoltageTarget", rollerVoltageTarget.inVolts)

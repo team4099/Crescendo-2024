@@ -8,7 +8,7 @@ import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.util.Alert
 import com.team4099.robot2023.util.Alert.AlertType
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import com.team4099.robot2023.util.FMSData
 import com.team4099.robot2023.util.NTSafePublisher
 import edu.wpi.first.hal.AllianceStationID
@@ -197,7 +197,7 @@ object Robot : LoggedRobot() {
       "LoggedRobot/RemainingRamMB", Runtime.getRuntime().freeMemory() / 1024 / 1024
     )
 
-    DebugLogger.recordDebugOutput(
+    CustomLogger.recordDebugOutput(
       "LoggedRobot/totalMS", (Clock.realTimestamp - startTime).inMilliseconds
     )
 
@@ -213,7 +213,6 @@ object Robot : LoggedRobot() {
   }
 
   override fun teleopInit() {
-    FMSData.allianceColor = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
     RobotContainer.zeroSensors(isInAutonomous = false)
     RobotContainer.mapTeleopControls()
     RobotContainer.getAutonomousCommand().cancel()

@@ -1,7 +1,8 @@
 package com.team4099.robot2023.subsystems.led
 
+import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.LEDConstants
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import com.team4099.robot2023.util.FMSData
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotController
@@ -15,8 +16,10 @@ class Leds(val io: LedIO) {
   var subsystemsAtPosition = false
   var isAutoAiming = false
   var isAmping = false
+  var isPreping = false
   var seesGamePiece = false
   var seesTag = true
+  var isTuningDebugging = Constants.Tuning.TUNING_MODE || Constants.Tuning.DEBUGING_MODE
 
   var state = LEDConstants.CandleState.NO_NOTE
     set(value) {
@@ -32,6 +35,8 @@ class Leds(val io: LedIO) {
       state =
         if (io.batteryVoltage < 12.3.volts) {
           LEDConstants.CandleState.LOW_BATTERY_WARNING
+        } else if (isTuningDebugging) {
+          LEDConstants.CandleState.TUNING_MODE_WARNING
         } else {
           LEDConstants.CandleState.GOLD
         }
@@ -50,7 +55,7 @@ class Leds(val io: LedIO) {
         } else {
           state = LEDConstants.CandleState.CAN_SHOOT
         }
-      } else if (isAmping) {
+      } else if (isAmping || isPreping) {
         if (subsystemsAtPosition) {
           state = LEDConstants.CandleState.CAN_SHOOT
         } else {
@@ -66,6 +71,6 @@ class Leds(val io: LedIO) {
     }
 
     Logger.processInputs("LED", inputs)
-    DebugLogger.recordDebugOutput("LED/state", state.name)
+    CustomLogger.recordDebugOutput("LED/state", state.name)
   }
 }

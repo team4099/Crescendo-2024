@@ -385,6 +385,10 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
         // Transitions
         nextState = fromRequestToState(currentRequest)
       }
+      DrivetrainState.LOCK_WHEELS -> {
+        lockWheels()
+        nextState = fromRequestToState(currentRequest)
+      }
     }
 
     currentState = nextState
@@ -755,18 +759,10 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   }
 
   fun lockWheels() {
-    DrivetrainIOReal.getSwerveModules()[1].setOpenLoop(
-      DrivetrainConstants.FL_LOCKING_ANGLE, 0.meters.perSecond, true
-    )
-    DrivetrainIOReal.getSwerveModules()[1].setOpenLoop(
-      DrivetrainConstants.FR_LOCKING_ANGLE, 0.meters.perSecond, true
-    )
-    DrivetrainIOReal.getSwerveModules()[1].setOpenLoop(
-      DrivetrainConstants.BL_LOCKING_ANGLE, 0.meters.perSecond, true
-    )
-    DrivetrainIOReal.getSwerveModules()[1].setOpenLoop(
-      DrivetrainConstants.BR_LOCKING_ANGLE, 0.meters.perSecond, true
-    )
+    swerveModules[0].setOpenLoop(DrivetrainConstants.FL_LOCKING_ANGLE, 0.meters.perSecond, true)
+    swerveModules[1].setOpenLoop(DrivetrainConstants.FR_LOCKING_ANGLE, 0.meters.perSecond, true)
+    swerveModules[2].setOpenLoop(DrivetrainConstants.BL_LOCKING_ANGLE, 0.meters.perSecond, true)
+    swerveModules[3].setOpenLoop(DrivetrainConstants.BR_LOCKING_ANGLE, 0.meters.perSecond, true)
   }
 
   fun lockWheelsCommand(): Command {

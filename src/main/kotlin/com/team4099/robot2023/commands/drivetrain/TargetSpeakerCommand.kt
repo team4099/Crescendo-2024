@@ -124,7 +124,6 @@ class TargetSpeakerCommand(
     }
 
     drivetrain.defaultCommand.end(true)
-    superstructure.defaultCommand.end(true)
     Logger.recordOutput("ActiveCommands/TargetAngleCommand", true)
     Logger.recordOutput(
       "Testing/CurrentDrivetrainRotation", drivetrain.odomTRobot.rotation.inDegrees

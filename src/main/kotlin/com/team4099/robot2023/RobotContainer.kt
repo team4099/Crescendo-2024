@@ -2,11 +2,8 @@ package com.team4099.robot2023
 
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.auto.AutonomousSelector
-import com.team4099.robot2023.commands.drivetrain.LockDriveCommand
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
 import com.team4099.robot2023.commands.drivetrain.TargetAngleCommand
-import com.team4099.robot2023.commands.drivetrain.TargetNoteCommand
-import com.team4099.robot2023.commands.drivetrain.TargetSpeakerCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
@@ -38,7 +35,7 @@ import com.team4099.robot2023.subsystems.vision.camera.CameraIOPhotonvision
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
 import com.team4099.robot2023.subsystems.wrist.WristIOTalon
-import com.team4099.robot2023.util.driver.Ryan
+import com.team4099.robot2023.util.driver.Jessika
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
@@ -113,16 +110,13 @@ object RobotContainer {
 
     drivetrain.defaultCommand =
       TeleopDriveCommand(
-        driver = Ryan(),
+        driver = Jessika(),
         { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
         { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
         { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
         { ControlBoard.slowMode },
         drivetrain
       )
-
-    superstructure.defaultCommand = superstructure.forceIdleIfAutoAimCommand()
-
     /*
     module steeing tuning
 
@@ -170,11 +164,15 @@ object RobotContainer {
     limelight.limelightState = LimelightVision.LimelightStates.TARGETING_GAME_PIECE
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain))
+
+    ControlBoard.intake.whileTrue(superstructure.groundIntakeCommand())
+
+    /*
     ControlBoard.intake.whileTrue(
       ParallelCommandGroup(
         superstructure.groundIntakeCommand(),
         TargetNoteCommand(
-          driver = Ryan(),
+          driver = Jessika(),
           { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
           { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
           { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
@@ -186,11 +184,13 @@ object RobotContainer {
       )
     )
 
+     */
+
     ControlBoard.prepAmp.whileTrue(superstructure.prepAmpCommand())
 
     ControlBoard.passingShotAlignment.whileTrue(
       TargetAngleCommand(
-        driver = Ryan(),
+        driver = Jessika(),
         { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
         { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
         { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
@@ -214,7 +214,7 @@ object RobotContainer {
       ParallelCommandGroup(
         superstructure.prepSpeakerMidCommand(),
         TargetAngleCommand(
-          driver = Ryan(),
+          driver = Jessika(),
           { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
           { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
           { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
@@ -240,9 +240,10 @@ object RobotContainer {
     ControlBoard.passingShot.whileTrue(superstructure.passingShotCommand())
     ControlBoard.underStagePassingShot.whileTrue(superstructure.underStageCommand())
 
+    /*
     ControlBoard.targetAmp.whileTrue(
       TargetAngleCommand(
-        driver = Ryan(),
+        driver = Jessika(),
         { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
         { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
         { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
@@ -251,6 +252,8 @@ object RobotContainer {
         ampAngle
       )
     )
+
+     */
 
     ControlBoard.climbAlignFar.whileTrue(
       runOnce({
@@ -286,7 +289,7 @@ object RobotContainer {
     )
     ControlBoard.climbAutoAlign.whileTrue(
       TargetAngleCommand(
-        driver = Ryan(),
+        driver = Jessika(),
         { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
         { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
         { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
@@ -297,7 +300,7 @@ object RobotContainer {
     )
     //    ControlBoard.climbAlignLeft.whileTrue(
     //      TargetAngleCommand(
-    //        driver = Ryan(),
+    //        driver = Jessika(),
     //        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
     //        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
     //        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
@@ -313,7 +316,7 @@ object RobotContainer {
     //
     //    ControlBoard.climbAlignRight.whileTrue(
     //      TargetAngleCommand(
-    //        driver = Ryan(),
+    //        driver = Jessika(),
     //        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
     //        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
     //        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
@@ -327,10 +330,12 @@ object RobotContainer {
     //      )
     //    )
 
+    /*
+
     ControlBoard.targetSpeaker.whileTrue(
       ParallelCommandGroup(
         TargetSpeakerCommand(
-          driver = Ryan(),
+          driver = Jessika(),
           { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
           { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
           { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
@@ -343,7 +348,9 @@ object RobotContainer {
       )
     )
 
-    ControlBoard.lockWheels.whileTrue(LockDriveCommand(drivetrain))
+     */
+
+    // ControlBoard.lockWheels.whileTrue(LockDriveCommand(drivetrain))
 
     //    ControlBoard.characterizeSubsystem.whileTrue(
     //      WheelRadiusCharacterizationCommand(

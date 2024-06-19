@@ -1,6 +1,6 @@
 package com.team4099.robot2023.subsystems.falconspin
 
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.inAmperes
@@ -27,7 +27,7 @@ object MotorChecker {
   }
 
   fun periodic() {
-    DebugLogger.recordDebugOutput(
+    CustomLogger.recordDebugOutput(
       "MotorChecker/subsystemNames", subsystemHardware.keys.toTypedArray()
     )
 
@@ -69,7 +69,7 @@ object MotorChecker {
           }
         }
       }
-      DebugLogger.recordDebugOutput(
+      CustomLogger.recordDebugOutput(
         "MotorChecker/$subsystemName/motorNames", motorNames.toTypedArray()
       )
 
@@ -89,57 +89,57 @@ object MotorChecker {
 
 // not clean but whatever
 fun logMotor(subsystemName: String, motor: Motor<MotorType>) {
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/AppliedVoltageVolts", motor.appliedVoltage.inVolts
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/BusVoltageVolts", motor.busVoltage.inVolts
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/TemperatureCelsius", motor.temperature.inCelsius
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/StatorCurrentAmps", motor.statorCurrent.inAmperes
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/SupplyCurrentAmps", motor.supplyCurrent.inAmperes
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/CurrentLimitStage", motor.currentLimitStage.name
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/BaseCurrentLimitAmps",
     motor.baseCurrentLimit.inAmperes
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/FirstStageTemperatureLimitCelsius",
     motor.firstStageTemperatureLimit.inCelsius
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/FirstStageCurrentLimitAmps",
     motor.firstStageCurrentLimit.inAmperes
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/MotorShutDownThresholdCelsius",
     motor.motorShutDownThreshold.inCelsius
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/CurrentLimitInUseAmps",
     motor.currentLimitInUse.inAmperes
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/MotorID", motor.id.toLong()
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/Errors", motor.errors.toTypedArray()
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/Warnings", motor.warnings.toTypedArray()
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/Info", motor.info.toTypedArray()
   )
-  DebugLogger.recordDebugOutput(
+  CustomLogger.recordDebugOutput(
     "MotorChecker/$subsystemName/${motor.name}/StickyFaults", motor.stickyFaults.toTypedArray()
   )
 }

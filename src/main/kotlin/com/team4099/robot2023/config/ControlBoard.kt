@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import org.team4099.lib.joystick.XboxOneGamepad
 import java.util.function.Consumer
+import kotlin.math.absoluteValue
 
 /**
  * Maps buttons on the driver and operator controllers to specific actions with meaningful variable
@@ -28,7 +29,13 @@ object ControlBoard {
     get() = -driver.leftYAxis
 
   val turn: Double
-    get() = driver.rightXAxis * DrivetrainConstants.TELEOP_TURNING_SPEED_PERCENT
+    get() {
+      return if (driver.rightXAxis.absoluteValue < 0.90) {
+        driver.rightXAxis * DrivetrainConstants.TELEOP_TURNING_SPEED_PERCENT
+      } else {
+        driver.rightXAxis
+      }
+    }
 
   val slowMode: Boolean
     get() = driver.leftShoulderButton
@@ -73,7 +80,7 @@ object ControlBoard {
   val targetSpeaker = Trigger { driver.xButton } // TODO: switch back to climbAlignLeft
   val climbAutoAlign = Trigger { driver.bButton }
 
-  val lockWheels = Trigger { driver.selectButton }
+  val lockWheels = Trigger { driver.startButton }
 
   // week0 controls
 }

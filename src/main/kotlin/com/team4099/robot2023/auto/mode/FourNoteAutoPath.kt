@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.units.base.inSeconds
+import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inRotation2ds
@@ -23,7 +24,7 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
     addCommands(
       superstructure.prepSpeakerLowCommand(),
       superstructure.scoreCommand().withTimeout(0.5),
-      WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds),
+      WaitCommand(0.5),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
@@ -54,11 +55,9 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           }
         )
           .withTimeout(3.235 + 0.5),
-        WaitCommand(0.5)
-          .andThen(superstructure.groundIntakeCommand())
-          .andThen(WaitCommand(1.75))
-          .andThen(superstructure.prepSpeakerLowCommand())
+        WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
+      superstructure.prepSpeakerLowCommand(),
       superstructure
         .scoreCommand()
         .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.5),
@@ -92,11 +91,9 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           }
         )
           .withTimeout(3.235 + 0.5),
-        WaitCommand(0.5)
-          .andThen(superstructure.groundIntakeCommand())
-          .andThen(WaitCommand(1.75))
-          .andThen(superstructure.prepSpeakerLowCommand())
+        WaitCommand(0.5).andThen(superstructure.groundIntakeCommand())
       ),
+      superstructure.prepSpeakerLowCommand(),
       superstructure
         .scoreCommand()
         .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.5),
@@ -146,15 +143,12 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
           }
         )
           .withTimeout(3.235 + 0.5),
-        WaitCommand(0.3)
-          .andThen(superstructure.groundIntakeCommand())
-          .andThen(WaitCommand(1.75))
-          .andThen(superstructure.prepSpeakerLowCommand())
+        WaitCommand(0.3).andThen(superstructure.groundIntakeCommand())
       ),
+      superstructure.prepSpeakerLowCommand(),
       superstructure
         .scoreCommand()
         .withTimeout(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds + 0.5),
-      WaitCommand(FlywheelConstants.SPEAKER_SCORE_TIME.inSeconds),
       ParallelCommandGroup(
         DrivePathCommand.createPathInFieldFrame(
           drivetrain,
@@ -164,12 +158,12 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
                 startingPose.translation.translation2d, null, 180.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(4.45.meters, 4.89.meters).translation2d,
+                Translation2d(4.35.meters, 4.85.meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
               ),
               FieldWaypoint(
-                Translation2d(5.92.meters, 4.0.meters).translation2d,
+                Translation2d(5.92.meters, 3.9.meters).translation2d,
                 null,
                 180.degrees.inRotation2ds
               ),
@@ -187,6 +181,6 @@ class FourNoteAutoPath(val drivetrain: Drivetrain, val superstructure: Superstru
   }
 
   companion object {
-    val startingPose = Pose2d(Translation2d(1.42.meters, 5.535.meters), 180.degrees)
+    val startingPose = Pose2d(Translation2d(1.42.meters - 3.inches, 5.535.meters), 180.degrees)
   }
 }
