@@ -7,9 +7,14 @@ import edu.wpi.first.util.struct.Struct
 import edu.wpi.first.util.struct.StructSerializable
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d
 import org.littletonrobotics.junction.Logger
+import org.littletonrobotics.junction.inputs.LoggableInputs
 
 class CustomLogger {
   companion object {
+    inline fun processInputs(key: String, inputs: LoggableInputs) {
+      Logger.processInputs(key, inputs)
+    }
+
     inline fun <E : Enum<E>> recordOutput(key: String, value: E) {
       Logger.recordOutput(key, value)
     }
