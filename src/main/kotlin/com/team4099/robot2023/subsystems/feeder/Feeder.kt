@@ -5,7 +5,7 @@ import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.FeederConstants
 import com.team4099.robot2023.subsystems.superstructure.Request
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import edu.wpi.first.math.filter.Debouncer
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
@@ -146,7 +146,7 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
       Logger.recordOutput(
         "Feeder/isAtCommandedState", currentState.equivalentToRequest(currentRequest)
       )
-      DebugLogger.recordDebugOutput(
+      CustomLogger.recordDebugOutput(
         "Feeder/timeProfileGeneratedAt", timeProfileGeneratedAt.inSeconds
       )
       Logger.recordOutput("Feeder/feederVoltageTarget", feederTargetVoltage.inVolts)

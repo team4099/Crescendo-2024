@@ -9,7 +9,7 @@ import com.team4099.lib.logging.LoggedTunableNumber
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -22,7 +22,6 @@ import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.rotations
 import kotlin.math.hypot
-import kotlin.time.times
 
 class WheelRadiusCharacterizationCommand(
   val drivetrain: Drivetrain,
@@ -84,16 +83,16 @@ class WheelRadiusCharacterizationCommand(
     averageWheelPositionDelta /= 4.0
     currentEffectiveWheelRadius =
       (accumGyroYawRads * driveRadius / averageWheelPositionDelta).meters
-    DebugLogger.recordDebugOutput(
+    CustomLogger.recordDebugOutput(
       "Drivetrain/RadiusCharacterization/DrivePosition", averageWheelPositionDelta.inRadians
     )
-    DebugLogger.recordDebugOutput(
+    CustomLogger.recordDebugOutput(
       "Drivetrain/RadiusCharacterization/AccumGyroYawRads", accumGyroYawRads.inRadians
     )
-    DebugLogger.recordDebugOutput(
+    CustomLogger.recordDebugOutput(
       "Drivetrain/RadiusCharacterization/LastGyroYawRads", lastGyroYawRads.inRadians
     )
-    DebugLogger.recordDebugOutput(
+    CustomLogger.recordDebugOutput(
       "Drivetrain/RadiusCharacterization/CurrentWheelRadiusInches",
       currentEffectiveWheelRadius.inInches
     )
@@ -101,12 +100,12 @@ class WheelRadiusCharacterizationCommand(
 
   override fun end(interrupted: Boolean) {
     if (accumGyroYawRads <= (Math.PI * 2.0).radians) {
-      DebugLogger.recordDebugOutput(
+      CustomLogger.recordDebugOutput(
         "Drivetrain/radiansOffFromWheelRadius",
         ((Math.PI * 2.0).radians - accumGyroYawRads).inRadians
       )
     } else {
-      DebugLogger.recordDebugOutput(
+      CustomLogger.recordDebugOutput(
         "Drivetrain/effectiveWheelRadius", currentEffectiveWheelRadius.inInches
       )
     }

@@ -1,7 +1,7 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import com.team4099.robot2023.util.driver.DriverProfile
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.Command
@@ -28,7 +28,7 @@ class TeleopDriveCommand(
       val rotation = driver.rotationSpeedClampedSupplier(turn, slowMode)
 
       drivetrain.currentRequest = DrivetrainRequest.OpenLoop(rotation, speed)
-      DebugLogger.recordDebugOutput("ActiveCommands/TeleopDriveCommand", true)
+      CustomLogger.recordDebugOutput("ActiveCommands/TeleopDriveCommand", true)
     }
   }
   override fun isFinished(): Boolean {
@@ -36,6 +36,6 @@ class TeleopDriveCommand(
   }
 
   override fun end(interrupted: Boolean) {
-    DebugLogger.recordDebugOutput("ActiveCommands/TeleopDriveCommand", false)
+    CustomLogger.recordDebugOutput("ActiveCommands/TeleopDriveCommand", false)
   }
 }

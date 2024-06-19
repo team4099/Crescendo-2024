@@ -19,7 +19,7 @@ import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Velocity
@@ -200,10 +200,10 @@ object FlywheelIOTalon : FlywheelIO {
   override fun setFlywheelVelocity(velocity: AngularVelocity, feedforward: ElectricalPotential) {
     val error = velocity - flywheelLeftSensor.velocity
 
-    DebugLogger.recordDebugOutput(
+    CustomLogger.recordDebugOutput(
       "Flywheel/premotionTargetedVelocity", velocity.inRotationsPerMinute
     )
-    DebugLogger.recordDebugOutput(
+    CustomLogger.recordDebugOutput(
       "Flywheel/motionTargetedVelocity", flywheelLeftSensor.velocityToRawUnits(velocity)
     )
     //    flywheelRightTalon.setControl(
