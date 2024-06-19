@@ -3,6 +3,7 @@ package com.team4099.robot2023.subsystems.drivetrain.swervemodule
 import com.sun.org.apache.xalan.internal.lib.ExsltMath.abs
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
+import com.team4099.robot2023.util.DebugLogger
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.RobotBase.isReal
@@ -29,6 +30,9 @@ import org.team4099.lib.units.derived.perMeterPerSecond
 import org.team4099.lib.units.derived.perMeterPerSecondPerSecond
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.perSecond
+import org.littletonrobotics.junction.Logger
+import org.team4099.lib.units.*
+import org.team4099.lib.units.base.inCelsius
 
 class SwerveModule(val io: SwerveModuleIO) {
 
@@ -122,6 +126,31 @@ class SwerveModule(val io: SwerveModuleIO) {
     io.updateInputs(inputs)
   }
   fun periodic() {
+    posDeltas.add(
+      SwerveModulePosition(
+        (inputs.drivePosition - lastDrivePos).inMeters, inputs.steerPosition.inRotation2ds
+      )
+    )
+
+    Logger.processInputs(io.label, inputs)
+    DebugLogger.recordDebugOutput("${io.label}/lastDrivePos", lastDrivePos.inMeters)
+
+    DebugLogger.recordDebugOutput("${io.label}/velocitySetpoint", velocitySetpoint.inMetersPerSecond)
+    DebugLogger.recordDebugOutput("${io.label}/accelerationSetpoint", accelerationSetpoint.inMetersPerSecondPerSecond)
+    DebugLogger.recordDebugOutput("${io.label}/steeringSetpoint", steeringSetpoint.inDegrees)
+    DebugLogger.recordDebugOutput("${io.label}/lastDrivePos", lastDrivePos.inMeters)
+
+    Logger.recordOutput("${io.label}/driveAppliedVoltage", inputs.driveAppliedVoltage.inVolts)
+    Logger.recordOutput("${io.label}/swerveAppliedVoltage", inputs.swerveAppliedVoltage.inVolts)
+
+    Logger.recordOutput("${io.label}/drivePosition", inputs.drivePosition.inMeters)
+    Logger.recordOutput("${io.label}/steerPosition", inputs.steerPosition.inRadians)
+    Logger.recordOutput("${io.label}/driveVelocity", inputs.driveVelocity.inMetersPerSecond)
+    Logger.recordOutput("${io.label}/steerVelocity", inputs.steerVelocity.inRadiansPerSecond)
+    Logger.recordOutput("${io.label}/driveTemp", inputs.driveTemp.inCelsius)
+    Logger.recordOutput("${io.label}/steerTemp", inputs.steerTemp.inCelsius)
+    DebugLogger.recordDebugOutput("${io.label}/drift", inputs.drift.inMeters)
+
     posDeltas.add(
       SwerveModulePosition(
         (inputs.drivePosition - lastDrivePos).inMeters, inputs.steerPosition.inRotation2ds
