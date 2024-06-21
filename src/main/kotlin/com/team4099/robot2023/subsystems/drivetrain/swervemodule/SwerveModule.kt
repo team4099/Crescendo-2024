@@ -41,11 +41,11 @@ import kotlin.math.cos
 
 class SwerveModule(val io: SwerveModuleIO) {
 
-  private val inputs = SwerveModuleIO.SwerveModuleIOInputs()
+  val inputs = SwerveModuleIO.SwerveModuleIOInputs()
 
-  private var modulePosition = SwerveModulePosition()
+  var modulePosition = SwerveModulePosition()
 
-  private var posDeltas = mutableListOf<SwerveModulePosition>()
+  var positionDeltas = mutableListOf<SwerveModulePosition>()
 
   private var velocitySetpoint: LinearVelocity = 0.0.meters.perSecond
 
@@ -129,9 +129,9 @@ class SwerveModule(val io: SwerveModuleIO) {
     io.updateInputs(inputs)
   }
   fun periodic() {
-    posDeltas.add(
+    positionDeltas.add(
       SwerveModulePosition(
-        (inputs.drivePosition - lastDrivePos).inMeters, inputs.steerPosition.inRotation2ds
+        (inputs.drivePosition - lastDrivePos).inMeters, inputs.steeringPosition.inRotation2ds
       )
     )
 
@@ -147,23 +147,23 @@ class SwerveModule(val io: SwerveModuleIO) {
     Logger.recordOutput("${io.label}/swerveAppliedVoltage", inputs.swerveAppliedVoltage.inVolts)
 
     Logger.recordOutput("${io.label}/drivePosition", inputs.drivePosition.inMeters)
-    Logger.recordOutput("${io.label}/steerPosition", inputs.steerPosition.inRadians)
+    Logger.recordOutput("${io.label}/steerPosition", inputs.steeringPosition.inRadians)
     Logger.recordOutput("${io.label}/driveVelocity", inputs.driveVelocity.inMetersPerSecond)
     Logger.recordOutput("${io.label}/steerVelocity", inputs.steerVelocity.inRadiansPerSecond)
     Logger.recordOutput("${io.label}/driveTemp", inputs.driveTemp.inCelsius)
     Logger.recordOutput("${io.label}/steerTemp", inputs.steerTemp.inCelsius)
     DebugLogger.recordDebugOutput("${io.label}/drift", inputs.drift.inMeters)
 
-    posDeltas.add(
+    positionDeltas.add(
       SwerveModulePosition(
-        (inputs.drivePosition - lastDrivePos).inMeters, inputs.steerPosition.inRotation2ds
+        (inputs.drivePosition - lastDrivePos).inMeters, inputs.steeringPosition.inRotation2ds
       )
     )
 
     lastDrivePos = inputs.drivePosition
 
     modulePosition.distanceMeters = inputs.drivePosition.inMeters
-    modulePosition.angle = inputs.steerPosition.inRotation2ds
+    modulePosition.angle = inputs.steeringPosition.inRotation2ds
 
     if (steerkD.hasChanged() || steerkP.hasChanged() || steerkI.hasChanged()) {
       io.configSteerPID(steerkP.get(), steerkI.get(), steerkD.get())
@@ -181,17 +181,17 @@ class SwerveModule(val io: SwerveModuleIO) {
   fun openLoop(desiredState: SwerveModuleState, optimize: Boolean) {
     if (optimize) {
       val optimizedState =
-        SwerveModuleState.optimize(desiredState, inputs.steerPosition.inRotation2ds)
+        SwerveModuleState.optimize(desiredState, inputs.steeringPosition.inRotation2ds)
       io.setOpenLoop(
         optimizedState.angle.angle,
         optimizedState.speedMetersPerSecond.meters.perSecond *
-          cos(abs((optimizedState.angle.angle - inputs.steerPosition).inRadians))
+          cos(abs((optimizedState.angle.angle - inputs.steeringPosition).inRadians))
       )
     } else {
       io.setOpenLoop(
         desiredState.angle.angle,
         desiredState.speedMetersPerSecond.meters.perSecond *
-          cos(abs((desiredState.angle.angle - inputs.steerPosition).inRadians))
+          cos(abs((desiredState.angle.angle - inputs.steeringPosition).inRadians))
       )
     }
   }
@@ -202,9 +202,9 @@ class SwerveModule(val io: SwerveModuleIO) {
   ) {
     if (optimize) {
       val optmizedVeloState =
-        SwerveModuleState.optimize(desiredVeloState, inputs.steerPosition.inRotation2ds)
+        SwerveModuleState.optimize(desiredVeloState, inputs.steeringPosition.inRotation2ds)
       val optmizedAccelState =
-        SwerveModuleState.optimize(desiredAccelState, inputs.steerPosition.inRotation2ds)
+        SwerveModuleState.optimize(desiredAccelState, inputs.steeringPosition.inRotation2ds)
 
       steeringSetpoint = optmizedVeloState.angle.angle
       velocitySetpoint = optmizedVeloState.speedMetersPerSecond.meters.perSecond

@@ -43,7 +43,7 @@ interface SwerveModuleIO {
     var supplyCurrentSteer = 0.0.amps
 
     var drivePosition = 0.0.meters
-    var steerPosition = 0.0.radians
+    var steeringPosition = 0.0.radians
 
     var driveVelocity = 0.0.meters.perSecond
     var steerVelocity = 0.0.radians.perSecond
@@ -64,7 +64,7 @@ interface SwerveModuleIO {
       table?.put("statorCurrentSteer", statorCurrentSteer.inAmperes)
       table?.put("supplyCurrentSteer", supplyCurrentSteer.inAmperes)
       table?.put("drivePosition", drivePosition.inMeters)
-      table?.put("steerPosition", steerPosition.inRadians)
+      table?.put("steerPosition", steeringPosition.inRadians)
       table?.put("steerTemp", steerTemp.inCelsius)
       table?.put("driveTemp", driveTemp.inCelsius)
       table?.put("driveVelocity", driveVelocity.inMetersPerSecond)
@@ -106,7 +106,7 @@ interface SwerveModuleIO {
       table?.get("steerTemp", steerTemp.inCelsius)?.let { steerTemp = it.celsius }
       table?.get("driveTemp", driveTemp.inCelsius)?.let { driveTemp = it.celsius }
       table?.get("drivePosition", drivePosition.inMeters)?.let { drivePosition = it.meters }
-      table?.get("steerPosition", steerPosition.inRadians)?.let { steerPosition = it.radians }
+      table?.get("steerPosition", steeringPosition.inRadians)?.let { steeringPosition = it.radians }
       table?.get("driveVelocity", driveVelocity.inMetersPerSecond)?.let {
         driveVelocity = it.meters.perSecond
       }
