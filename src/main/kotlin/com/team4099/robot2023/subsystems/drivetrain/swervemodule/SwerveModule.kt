@@ -2,20 +2,17 @@ package com.team4099.robot2023.subsystems.drivetrain.swervemodule
 
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
-import com.team4099.robot2023.util.DebugLogger
+import com.team4099.robot2023.util.CustomLogger
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.RobotBase.isReal
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
-import org.team4099.lib.units.base.feet
-import org.team4099.lib.units.base.inCelsius
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.Angle
-import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.angle
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -33,22 +30,18 @@ import org.team4099.lib.units.derived.perDegreePerSecond
 import org.team4099.lib.units.derived.perDegreeSeconds
 import org.team4099.lib.units.derived.perMeterPerSecond
 import org.team4099.lib.units.derived.perMeterPerSecondPerSecond
-import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.inMetersPerSecondPerSecond
-import org.team4099.lib.units.inRadiansPerSecond
 import org.team4099.lib.units.perSecond
-import kotlin.math.IEEErem
 import kotlin.math.abs
 import kotlin.math.cos
-import kotlin.math.withSign
 
 class SwerveModule(val io: SwerveModuleIO) {
 
-  private val inputs = SwerveModuleIO.SwerveModuleIOInputs()
+  val inputs = SwerveModuleIO.SwerveModuleIOInputs()
 
-  private var modulePosition = SwerveModulePosition()
+  var modulePosition = SwerveModulePosition()
 
   private var posDeltas = mutableListOf<SwerveModulePosition>()
 
@@ -108,7 +101,7 @@ class SwerveModule(val io: SwerveModuleIO) {
   private val steerMaxVelo =
     LoggedTunableValue("Drivetrain/steerMaxVelocity", DrivetrainConstants.STEERING_VEL_MAX)
 
-  init{
+  init {
     if (isReal()) {
       steerkP.initDefault(DrivetrainConstants.PID.STEERING_KP)
       steerkI.initDefault(DrivetrainConstants.PID.STEERING_KI)
@@ -141,12 +134,16 @@ class SwerveModule(val io: SwerveModuleIO) {
     )
 
     Logger.processInputs(io.label, inputs)
-    DebugLogger.recordDebugOutput("${io.label}/lastDrivePos", lastDrivePos.inMeters)
+    CustomLogger.recordDebugOutput("${io.label}/lastDrivePos", lastDrivePos.inMeters)
 
-    DebugLogger.recordDebugOutput("${io.label}/velocitySetpoint", velocitySetpoint.inMetersPerSecond)
-    DebugLogger.recordDebugOutput("${io.label}/accelerationSetpoint", accelerationSetpoint.inMetersPerSecondPerSecond)
-    DebugLogger.recordDebugOutput("${io.label}/steeringSetpoint", steeringSetpoint.inDegrees)
-    DebugLogger.recordDebugOutput("${io.label}/lastDrivePos", lastDrivePos.inMeters)
+    CustomLogger.recordDebugOutput(
+      "${io.label}/velocitySetpoint", velocitySetpoint.inMetersPerSecond
+    )
+    CustomLogger.recordDebugOutput(
+      "${io.label}/accelerationSetpoint", accelerationSetpoint.inMetersPerSecondPerSecond
+    )
+    CustomLogger.recordDebugOutput("${io.label}/steeringSetpoint", steeringSetpoint.inDegrees)
+    CustomLogger.recordDebugOutput("${io.label}/lastDrivePos", lastDrivePos.inMeters)
 
     Logger.recordOutput("${io.label}/driveAppliedVoltage", inputs.driveAppliedVoltage.inVolts)
     Logger.recordOutput("${io.label}/swerveAppliedVoltage", inputs.swerveAppliedVoltage.inVolts)
@@ -166,6 +163,7 @@ class SwerveModule(val io: SwerveModuleIO) {
       io.configSteerPID(steerkP.get(), steerkI.get(), steerkD.get())
     }
 
+
     if (drivekD.hasChanged() ||
       drivekP.hasChanged() ||
       drivekI.hasChanged() ||
@@ -182,13 +180,13 @@ class SwerveModule(val io: SwerveModuleIO) {
       io.setOpenLoop(
         optimizedState.angle.angle,
         optimizedState.speedMetersPerSecond.meters.perSecond *
-                cos(abs((optimizedState.angle.angle - inputs.steerPosition).inRadians))
+          cos(abs((optimizedState.angle.angle - inputs.steerPosition).inRadians))
       )
     } else {
       io.setOpenLoop(
         desiredState.angle.angle,
         desiredState.speedMetersPerSecond.meters.perSecond *
-                cos(abs((desiredState.angle.angle - inputs.steerPosition).inRadians))
+          cos(abs((desiredState.angle.angle - inputs.steerPosition).inRadians))
       )
     }
   }

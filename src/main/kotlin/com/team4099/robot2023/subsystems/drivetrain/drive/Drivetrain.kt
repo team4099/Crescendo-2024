@@ -20,13 +20,14 @@ import org.team4099.lib.units.perSecond
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.geometry.Transform2d
-import edu.wpi.first.math.kinematics.ChassisSpeeds
+import org.team4099.lib.kinematics.ChassisSpeeds
+import org.team4099.lib.units.inMetersPerSecond
 
 class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemBase() {
   // TODO: Add default values
-  private val gyroNotConnected = Alert("Failed to connect gyro", Alert.AlertType.ERROR)
+  private val gyroNotConnectedAlert = Alert("Failed to connect gyro", Alert.AlertType.ERROR)
 
-  private val swerveModule = swerveModuleIOs.getSwerveModules()
+  private val swerveModules = swerveModuleIOs.getSwerveModules()
 
   private val gyroYawOffset = 0.0.radians
 
@@ -34,13 +35,13 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
 
   private val fieldFrameEstimator = FieldFrameEstimator(VecBuilder.fill(0.003, 0.003, 0.0001))
 
-  private val angularVelocity = 0.0.radians.perSecond
+  private val angularVelocityTarget = 0.0.radians.perSecond
 
   private val targetedDriveVector = Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
 
   private val isFieldOriented = true
 
-  private val isInAuto = false
+  var isInAuto = false
 
   private val frontLeftLocation =
     Translation2d(DrivetrainConstants.DRIVETRAIN_LENGTH / 2, DrivetrainConstants.DRIVETRAIN_WIDTH / 2)
@@ -54,11 +55,11 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   private val backRightLocation =
     Translation2d(-DrivetrainConstants.DRIVETRAIN_LENGTH / 2, -DrivetrainConstants.DRIVETRAIN_WIDTH/2)
 
-  private val targetedChassisVelocity = ChassisSpeeds(
+  var targetedChassisSpeeds = edu.wpi.first.math.kinematics.ChassisSpeeds(
     0.0, 0.0, 0.0
   )
 
-  private val targetedChassisAcceleration = ChassisSpeeds(
+  var targetedChassisAccels = edu.wpi.first.math.kinematics.ChassisSpeeds(
     0.0, 0.0, 0.0
   )
 
@@ -72,44 +73,67 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   private var swerveDriveOdometry: SwerveDriveOdometry = SwerveDriveOdometry (
     swerveDriveKinematics,
     gyroInputs.gyroYaw.inRotation2ds,
-    swerveModule.map{it.modulePosition}.toTypedArray()
+    swerveModules.map{it.modulePosition}.toTypedArray()
   )
 
   private var undriftedSwerveDriveOdometry: SwerveDriveOdometry = SwerveDriveOdometry (
     swerveDriveKinematics,
     gyroInputs.gyroYaw.inRotation2ds,
-    swerveModule.map{it.modulePosition}.toTypedArray()
+    swerveModules.map{it.modulePosition}.toTypedArray()
   )
   private var setpointStates = mutableListOf(SwerveModuleState(), SwerveModuleState(), SwerveModuleState(), SwerveModuleState())
 
-  val odometryToRobot: Pose2d get() = Pose2d(swerveDriveOdometry.poseMeters)
+  val odomTRobot: Pose2d get() = Pose2d(swerveDriveOdometry.poseMeters)
 
-  val odometryFieldToRobot: Pose2d get() =
-    (fieldFrameEstimator.getLatestOdometryTField().inverse() + odometryToRobot.asTransform2d())
+  val fieldTRobot: Pose2d get() =
+    (fieldFrameEstimator.getLatestOdometryTField().inverse() + odomTRobot.asTransform2d())
       .asPose2d()
 
-  val odometryToField: Transform2d get() = fieldFrameEstimator.getLatestOdometryTField()
+  val odomTField: Transform2d get() = fieldFrameEstimator.getLatestOdometryTField()
 
-  val odometryToSpeaker: Transform2d get() = fieldFrameEstimator.getLatestOdometryTSpeaker()
+  val odomTSpeaker: Transform2d get() = fieldFrameEstimator.getLatestOdometryTSpeaker()
 
-  private val lastModulePositions = arrayOf(SwerveModuleState(), SwerveModuleState(), SwerveModuleState(), SwerveModuleState(), )
+  private val lastModulePositions = arrayOf(
+    SwerveModuleState(),
+    SwerveModuleState(),
+    SwerveModuleState(), SwerveModuleState())
 
+  private var rawGryoAngle = odomTRobot.rotation
   init {
     zeroSteer()
   }
 
   fun zeroSteer(isAuto: Boolean = false) {
-    swerveModule.forEach { it.zeroSteer(isAuto) }
+    swerveModules.forEach { it.zeroSteer(isAuto) }
   }
 
-  fun updateInputs() {
-    gyroIO.updateInputs(gyroInputs)
-  }
+
 
   override fun periodic() {
     CustomLogger.processInputs("Drivetrain", gyroInputs)
 
+    gyroIO.updateInputs(gyroInputs)
 
     val timeProfiledGeneratedAt = Clock.realTimestamp
+
+    swerveModules.forEach {it.updateInputs()}
+
+    gyroNotConnectedAlert.set(!gyroInputs.gyroConnected)
+
+    swerveModules.forEach { it.periodic() }
+
+    val measuredStates = arrayOfNulls<SwerveModuleState>(4)
+    for (i in 0..3) {
+      measuredStates[i] =
+        SwerveModuleState(
+          swerveModules[i].inputs.driveVelocity.inMetersPerSecond,
+          swerveModules[i].inputs.steerPosition.inRotation2ds
+        )
+    }
+    val chassisState: ChassisSpeeds = ChassisSpeeds(swerveDriveKinematics.toChassisSpeeds(*measuredStates))
+    val fieldVelCalculated =
+      Translation2d(
+        chassisState.vx.inMetersPerSecond.meters, chassisState.vy.inMetersPerSecond.meters
+      )
   }
 }

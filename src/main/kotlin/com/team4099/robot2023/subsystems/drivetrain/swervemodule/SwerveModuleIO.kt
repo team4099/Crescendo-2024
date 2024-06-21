@@ -2,8 +2,6 @@ package com.team4099.robot2023.subsystems.drivetrain.swervemodule
 
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
-import org.team4099.lib.units.AngularAcceleration
-import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Fraction
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
@@ -19,12 +17,10 @@ import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.DerivativeGain
-import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
-import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
@@ -151,5 +147,4 @@ interface SwerveModuleIO {
     kV: Value<Fraction<Volt, Velocity<Meter>>>,
     kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
   )
-
 }
