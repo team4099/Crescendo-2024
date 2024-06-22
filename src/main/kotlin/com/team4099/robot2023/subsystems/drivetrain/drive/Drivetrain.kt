@@ -243,7 +243,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     swerveModules.forEach { it.updateInputs() }
     //    odometryLock.unlock()
 
-    Logger.processInputs("Gyro", gyroInputs)
+    CustomLogger.processInputs("Gyro", gyroInputs)
 
     gyroNotConnectedAlert.set(!gyroInputs.gyroConnected)
 
@@ -364,12 +364,12 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
       }
       DrivetrainState.OPEN_LOOP -> {
         // Outputs
-        setOpenLoop(angularVelocityTarget, targetedDriveVector., isFieldOriented)
+        setOpenLoop(angularVelocityTarget, targetedDriveVector, isFieldOriented)
         CustomLogger.recordOutput(
-          "Drivetrain/TargetVelocityXInMPS", targetedDriveVector.first.inMetersPerSecond
+          "Drivetrain/TargetVelocityXInMPS", targetedDriveVector.x.inMetersPerSecond
         )
         CustomLogger.recordOutput(
-          "Drivetrain/TargetVelocityYInMPS", targetedDriveVector.second.inMetersPerSecond
+          "Drivetrain/TargetVelocityYInMPS", targetedDriveVector.y.inMetersPerSecond
         )
         // Transitions
         nextState = fromRequestToState(currentRequest)
@@ -439,7 +439,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
         ChassisSpeeds.fromFieldRelativeSpeeds(
           driveVectorRespectiveToAlliance.x,
           driveVectorRespectiveToAlliance.y,
-          angularVelocity
+          angularVelocity,
           odomTRobot.rotation
         )
     } else {

@@ -1,6 +1,7 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.robot2023.config.constants.WristConstants
+import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.LinearVelocity
@@ -58,7 +59,7 @@ sealed interface Request {
   sealed interface DrivetrainRequest : Request {
     class OpenLoop(
       val angularVelocity: AngularVelocity,
-      val driveVector: Pair<LinearVelocity, LinearVelocity>,
+      val driveVector: Velocity2d,
       val fieldOriented: Boolean = true
     ) : DrivetrainRequest
 
