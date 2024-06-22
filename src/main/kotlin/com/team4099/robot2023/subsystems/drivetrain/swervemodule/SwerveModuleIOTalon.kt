@@ -210,13 +210,12 @@ class SwerveModuleIOTalon(
     updateSignals()
 
     inputs.driveAppliedVoltage = (driveFalcon.get() * RobotController.getBatteryVoltage()).volts
-    inputs.steeringAppliedVoltage =
-      (steeringFalcon.get() * RobotController.getBatteryVoltage()).volts
+    inputs.steerAppliedVoltage = (steeringFalcon.get() * RobotController.getBatteryVoltage()).volts
 
-    inputs.driveStatorCurrent = driveStatorCurrentSignal.value.amps
-    inputs.driveSupplyCurrent = driveSupplyCurrentSignal.value.amps
-    inputs.steeringStatorCurrent = steeringStatorCurrentSignal.value.amps
-    inputs.steeringSupplyCurrent = steeringSupplyCurrentSignal.value.amps
+    inputs.statorCurrentDrive = driveStatorCurrentSignal.value.amps
+    inputs.supplyCurrentDrive = driveSupplyCurrentSignal.value.amps
+    inputs.statorCurrentSteer = steeringStatorCurrentSignal.value.amps
+    inputs.supplyCurrentSteer = steeringSupplyCurrentSignal.value.amps
 
     Logger.recordOutput(
       "$label/drivePosition",
@@ -227,21 +226,21 @@ class SwerveModuleIOTalon(
     )
     Logger.recordOutput("$label/drivePositionUnits", driveSensor.position.inMeters)
     inputs.drivePosition = driveSensor.position
-    inputs.steeringPosition = steeringSensor.position
+    inputs.steerPosition = steeringSensor.position
     Logger.recordOutput("$label/rawSteeringValue", steeringFalcon.position.value)
     Logger.recordOutput("$label/rawSteeringValue", steeringFalcon.position.value)
 
     steeringFalcon.position.value
 
     inputs.driveVelocity = driveSensor.velocity
-    inputs.steeringVelocity = steeringSensor.velocity
+    inputs.steerVelocity = steeringSensor.velocity
 
     // processor temp is also something we may want to log ?
     inputs.driveTemp = driveTempSignal.value.celsius
-    inputs.steeringTemp = steeringTempSignal.value.celsius
+    inputs.steerTemp = steeringTempSignal.value.celsius
 
-    inputs.odometryDrivePositions = listOf(inputs.drivePosition)
-    inputs.odometrySteeringPositions = listOf(inputs.steeringPosition)
+    inputs.driveOdometryPos = listOf(inputs.drivePosition)
+    inputs.steerOdometryPos = listOf(inputs.steerPosition)
 
     //    inputs.odometryDrivePositions =
     //      drivePositionQueue
@@ -377,7 +376,7 @@ class SwerveModuleIOTalon(
     driveFalcon.configurator.apply(PIDConfig)
   }
 
-  override fun configSteeringPID(
+  override fun configSteerPID(
     kP: ProportionalGain<Radian, Volt>,
     kI: IntegralGain<Radian, Volt>,
     kD: DerivativeGain<Radian, Volt>
@@ -392,10 +391,7 @@ class SwerveModuleIOTalon(
     steeringFalcon.configurator.apply(PIDConfig)
   }
 
-  override fun configureSteeringMotionMagic(
-    maxVel: AngularVelocity,
-    maxAccel: AngularAcceleration
-  ) {
+  override fun configSteerMotionMagic(maxVel: AngularVelocity, maxAccel: AngularAcceleration) {
 
     val motionMagicConfig = MotionMagicConfigs()
 

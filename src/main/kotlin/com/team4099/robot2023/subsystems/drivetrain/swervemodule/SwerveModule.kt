@@ -13,6 +13,7 @@ import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.Angle
+import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.angle
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
@@ -151,7 +152,7 @@ class SwerveModule(val io: SwerveModuleIO) {
     CustomLogger.recordDebugOutput("${io.label}/lastDrivePos", lastDrivePos.inMeters)
 
     Logger.recordOutput("${io.label}/driveAppliedVoltage", inputs.driveAppliedVoltage.inVolts)
-    Logger.recordOutput("${io.label}/swerveAppliedVoltage", inputs.swerveAppliedVoltage.inVolts)
+    Logger.recordOutput("${io.label}/swerveAppliedVoltage", inputs.steerAppliedVoltage.inVolts)
 
     posDeltas.add(
       SwerveModulePosition(
@@ -168,7 +169,6 @@ class SwerveModule(val io: SwerveModuleIO) {
       io.configSteerPID(steerkP.get(), steerkI.get(), steerkD.get())
     }
 
-
     if (drivekD.hasChanged() ||
       drivekP.hasChanged() ||
       drivekI.hasChanged() ||
@@ -176,6 +176,9 @@ class SwerveModule(val io: SwerveModuleIO) {
       drivekV.hasChanged()
     ) {
       io.configDrivePID(drivekP.get(), drivekI.get(), drivekD.get(), drivekV.get(), drivekA.get())
+    }
+    if (steerMaxVelo.hasChanged() || steerMaxAccel.hasChanged()) {
+      io.configSteerMotionMagic(steerMaxVelo.get(), steerMaxAccel.get())
     }
   }
 
@@ -251,5 +254,8 @@ class SwerveModule(val io: SwerveModuleIO) {
   }
   fun zeroDrive() {
     io.zeroDrive()
+  }
+  fun runCharacterization(input: ElectricalPotential) {
+    io.runCharacterization(input)
   }
 }

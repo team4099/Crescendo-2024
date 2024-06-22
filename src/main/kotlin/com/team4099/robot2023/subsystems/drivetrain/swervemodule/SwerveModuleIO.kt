@@ -2,6 +2,8 @@ package com.team4099.robot2023.subsystems.drivetrain.swervemodule
 
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
+import org.team4099.lib.units.AngularAcceleration
+import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.Fraction
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
@@ -17,6 +19,7 @@ import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.DerivativeGain
+import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
@@ -30,12 +33,12 @@ import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.inRadiansPerSecond
 import org.team4099.lib.units.perSecond
 
-interface SwerveModuleIO{
+interface SwerveModuleIO {
 
   class SwerveModuleIOInputs : LoggableInputs {
 
     var driveAppliedVoltage = 0.0.volts
-    var swerveAppliedVoltage = 0.0.volts
+    var steerAppliedVoltage = 0.0.volts
 
     var statorCurrentDrive = 0.0.amps
     var supplyCurrentDrive = 0.0.amps
@@ -54,11 +57,14 @@ interface SwerveModuleIO{
     var steerOdometryPos = listOf<Angle>()
     var driveOdometryPos = listOf<Length>()
 
+    var potentiometerOutputRaw = 0.0
+    var potentiometerOutputRadians = 0.0.radians
+
     var drift = 0.0.meters
 
     override fun toLog(table: LogTable?) {
       table?.put("driveAppliedVoltage", driveAppliedVoltage.inVolts)
-      table?.put("swerveAppliedVoltage", swerveAppliedVoltage.inVolts)
+      table?.put("swerveAppliedVoltage", steerAppliedVoltage.inVolts)
       table?.put("statorCurrentDrive", statorCurrentDrive.inAmperes)
       table?.put("supplyCurrentDrive", supplyCurrentDrive.inAmperes)
       table?.put("statorCurrentSteer", statorCurrentSteer.inAmperes)
@@ -70,6 +76,8 @@ interface SwerveModuleIO{
       table?.put("driveVelocity", driveVelocity.inMetersPerSecond)
       table?.put("steerVelocity", steerVelocity.inRadiansPerSecond)
       table?.put("drift", drift.inMeters)
+      table?.put("potentiometerOutputRaw", potentiometerOutputRaw)
+      table?.put("potentiometerOutputRadians", potentiometerOutputRadians.inRadians)
 
       if (driveOdometryPos.size > 0) {
         table?.put("odometryDrivePositionsMeters", driveOdometryPos[0].inMeters)
@@ -88,8 +96,8 @@ interface SwerveModuleIO{
       table?.get("driveAppliedVoltage", driveAppliedVoltage.inVolts)?.let {
         driveAppliedVoltage = it.volts
       }
-      table?.get("swerveAppliedVoltage", swerveAppliedVoltage.inVolts)?.let {
-        swerveAppliedVoltage = it.volts
+      table?.get("swerveAppliedVoltage", steerAppliedVoltage.inVolts)?.let {
+        steerAppliedVoltage = it.volts
       }
       table?.get("statorCurrentDrive", statorCurrentDrive.inAmperes)?.let {
         statorCurrentDrive = it.amps
@@ -114,15 +122,21 @@ interface SwerveModuleIO{
         steerVelocity = it.radians.perSecond
       }
       table?.get("drift", drift.inMeters)?.let { drift = it.meters }
+      table?.get("potentiometerOutputRaw", potentiometerOutputRaw)?.let {
+        potentiometerOutputRaw = it
+      }
+      table?.get("potentiometerOutputRaw", potentiometerOutputRadians.inRadians)?.let {
+        potentiometerOutputRadians = it.radians
+      }
     }
   }
-  var label: String
+  val label: String
 
   fun updateInputs(inputs: SwerveModuleIOInputs) {}
 
-  fun setOpenLoop(angle: Angle, speed: LinearVelocity)
+  fun setOpenLoop(steering: Angle, speed: LinearVelocity) {}
 
-  fun setClosedLoop(angle: Angle, speed: LinearVelocity, acceleration: LinearAcceleration)
+  fun setClosedLoop(angle: Angle, speed: LinearVelocity, acceleration: LinearAcceleration) {}
 
   fun resetModuleZero() {}
 
@@ -133,6 +147,10 @@ interface SwerveModuleIO{
   fun setDriveBrakeMode(brake: Boolean) {}
 
   fun setSteeringBrakeMode(brake: Boolean) {}
+
+  fun runCharacterization(input: ElectricalPotential) {}
+
+  fun setSteeringSetpoint(angle: Angle) {}
 
   fun configSteerPID(
     kP: ProportionalGain<Radian, Volt>,
@@ -146,5 +164,7 @@ interface SwerveModuleIO{
     kD: DerivativeGain<Velocity<Meter>, Volt>,
     kV: Value<Fraction<Volt, Velocity<Meter>>>,
     kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
-  )
+  ) {}
+
+  fun configSteerMotionMagic(maxVel: AngularVelocity, maxAccel: AngularAcceleration) {}
 }
