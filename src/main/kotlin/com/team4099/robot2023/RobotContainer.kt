@@ -10,8 +10,6 @@ import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOReal
 import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIONavx
-import com.team4099.robot2023.subsystems.limelight.LimelightVision
-import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.vision.camera.CameraIONorthstar
 import com.team4099.robot2023.util.driver.Ryan
@@ -23,8 +21,6 @@ import org.team4099.lib.units.derived.degrees
 object RobotContainer {
   private val drivetrain: Drivetrain
   private val vision: Vision
-  private val limelight: LimelightVision
-
   init {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
@@ -40,7 +36,6 @@ object RobotContainer {
           //        CameraIONorthstar("right"),
           //        CameraIONorthstar("backward")
         )
-      limelight = LimelightVision(object : LimelightVisionIO {})
     } else {
       // Simulation implementations
       drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
@@ -50,11 +45,9 @@ object RobotContainer {
           CameraIONorthstar("northstar_2"),
           CameraIONorthstar("northstar_3"),
         )
-      limelight = LimelightVision(object : LimelightVisionIO {})
     }
 
     vision.setDataInterfaces({ drivetrain.odometryPose }, { drivetrain.addVisionData(it) })
-    limelight.poseSupplier = { drivetrain.odometryPose }
   }
 
   fun mapDefaultCommands() {
