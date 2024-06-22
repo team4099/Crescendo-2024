@@ -71,7 +71,6 @@ sealed interface Request {
     class ZeroSensors(val isInAutonomous: Boolean = false) : DrivetrainRequest
     class Idle : DrivetrainRequest
 
-    class LockWheels : DrivetrainRequest
     class Characterize(val voltage: ElectricalPotential) : DrivetrainRequest
   }
 

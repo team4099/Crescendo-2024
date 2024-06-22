@@ -30,12 +30,15 @@ import org.team4099.lib.units.derived.perDegreePerSecond
 import org.team4099.lib.units.derived.perDegreeSeconds
 import org.team4099.lib.units.derived.perMeterPerSecond
 import org.team4099.lib.units.derived.perMeterPerSecondPerSecond
+import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.inMetersPerSecondPerSecond
 import org.team4099.lib.units.perSecond
+import kotlin.math.IEEErem
 import kotlin.math.abs
 import kotlin.math.cos
+import kotlin.math.withSign
 
 class SwerveModule(val io: SwerveModuleIO) {
 
@@ -52,6 +55,8 @@ class SwerveModule(val io: SwerveModuleIO) {
   private var steeringSetpoint: Angle = 0.0.degrees
 
   private var lastDrivePos = 0.0.meters
+
+  private var shouldInvert = false
 
   private val steerkP =
     LoggedTunableValue(
@@ -173,7 +178,25 @@ class SwerveModule(val io: SwerveModuleIO) {
       io.configDrivePID(drivekP.get(), drivekI.get(), drivekD.get(), drivekV.get(), drivekA.get())
     }
   }
-  fun openLoop(desiredState: SwerveModuleState, optimize: Boolean) {
+
+  fun setOpenLoop(steering: Angle, speed: LinearVelocity, optimize: Boolean = true) {
+    var steeringDifference =
+      (steering - inputs.steerPosition).inRadians.IEEErem(2 * Math.PI).radians
+    shouldInvert = steeringDifference.absoluteValue > (Math.PI / 2).radians && optimize
+    if (shouldInvert) {
+      steeringDifference -= Math.PI.withSign(steeringDifference.inRadians).radians
+    }
+    val outputSpeed =
+      if (shouldInvert) {
+        speed * -1
+      } else {
+        speed
+      }
+    steeringSetpoint = inputs.steerPosition + steeringDifference
+    io.setOpenLoop(steeringSetpoint, outputSpeed)
+  }
+
+  fun setPositionOpenLoop(desiredState: SwerveModuleState, optimize: Boolean = true) {
     if (optimize) {
       val optimizedState =
         SwerveModuleState.optimize(desiredState, inputs.steerPosition.inRotation2ds)
@@ -193,7 +216,7 @@ class SwerveModule(val io: SwerveModuleIO) {
   fun closedLoop(
     desiredAccelState: SwerveModuleState,
     desiredVeloState: SwerveModuleState,
-    optimize: Boolean
+    optimize: Boolean = true
   ) {
     if (optimize) {
       val optmizedVeloState =

@@ -359,7 +359,7 @@ class SwerveModuleIOTalon(
     steeringPositionQueue.clear()
   }
 
-  override fun configureDrivePID(
+  override fun configDrivePID(
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
     kD: DerivativeGain<Velocity<Meter>, Volt>,
@@ -377,7 +377,7 @@ class SwerveModuleIOTalon(
     driveFalcon.configurator.apply(PIDConfig)
   }
 
-  override fun configureSteeringPID(
+  override fun configSteeringPID(
     kP: ProportionalGain<Radian, Volt>,
     kI: IntegralGain<Radian, Volt>,
     kD: DerivativeGain<Radian, Volt>

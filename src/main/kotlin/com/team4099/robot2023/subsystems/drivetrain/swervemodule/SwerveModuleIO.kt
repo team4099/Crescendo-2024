@@ -30,7 +30,7 @@ import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.inRadiansPerSecond
 import org.team4099.lib.units.perSecond
 
-interface SwerveModuleIO {
+interface SwerveModuleIO{
 
   class SwerveModuleIOInputs : LoggableInputs {
 
