@@ -243,7 +243,7 @@ class SwerveModule(val io: SwerveModuleIO) {
   fun resetModuleZero() {
     io.resetModuleZero()
   }
-  fun zeroSteer(isInAuto: Boolean) {
+  fun zeroSteer(isInAuto: Boolean = false) {
     io.zeroSteering()
   }
   fun setDriveBrakeMode(brake: Boolean) {
