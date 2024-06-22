@@ -9,7 +9,7 @@ import java.util.function.Consumer
 import kotlin.math.absoluteValue
 
 /**
- * Maps buttons on the driver and operator controllers to specific actions with meaningful variable
+, * Maps buttons on the driver and operator controllers to specific actions with meaningful variable
  * names.
  */
 object ControlBoard {
@@ -55,7 +55,8 @@ object ControlBoard {
   // val score = Trigger {driver.leftTriggerAxis > 0.5}
   // val intake = Trigger { driver.rightShoulderButton}
 
-  val targetAmp = Trigger { driver.aButton }
+  // TODO: uncomment
+  //val targetAmp = Trigger { driver.aButton }
   val prepAmp = Trigger { operator.aButton }
   val prepLow = Trigger { operator.xButton }
   val prepHighProtected = Trigger { operator.bButton }
