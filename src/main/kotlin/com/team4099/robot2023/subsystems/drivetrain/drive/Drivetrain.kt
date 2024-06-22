@@ -31,27 +31,38 @@ import org.team4099.lib.geometry.Rotation3d
 import org.team4099.lib.geometry.Transform2d
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.kinematics.ChassisSpeeds
-import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.*
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.meters
-import org.team4099.lib.units.derived.Angle
-import org.team4099.lib.units.derived.degrees
-import org.team4099.lib.units.derived.inDegrees
-import org.team4099.lib.units.derived.inRadians
-import org.team4099.lib.units.derived.inRotation2ds
-import org.team4099.lib.units.derived.radians
-import org.team4099.lib.units.derived.volts
-import org.team4099.lib.units.inDegreesPerSecond
-import org.team4099.lib.units.inMetersPerSecond
-import org.team4099.lib.units.inRadiansPerSecond
-import org.team4099.lib.units.perSecond
+import org.team4099.lib.units.derived.*
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemBase() {
+  object TunableDriveStates {
+    val testXVelocity =
+      LoggedTunableValue(
+        "Drivetrain/testXVelocity",
+        DrivetrainConstants.testXVelocity,
+        Pair( { it.inMetersPerSecond }, { it.meters.perSecond })
+      )
+    val testYVelocity =
+      LoggedTunableValue(
+        "Drivetrain/testYVelocity",
+        DrivetrainConstants.testYVelocity,
+        Pair( { it.inMetersPerSecond }, { it.meters.perSecond })
+      )
+    val testOmega =
+      LoggedTunableValue(
+        "Drivetrain/testOmega",
+        DrivetrainConstants.testOmega,
+        Pair( { it.inRadiansPerSecond }, { it.radians.perSecond })
+      )
+  }
+
   private val gyroNotConnectedAlert =
     Alert(
       "Gyro is not connected, field relative driving will be significantly worse.",

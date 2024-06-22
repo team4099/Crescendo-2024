@@ -240,6 +240,7 @@ object RobotContainer {
     ControlBoard.passingShot.whileTrue(superstructure.passingShotCommand())
     ControlBoard.underStagePassingShot.whileTrue(superstructure.underStageCommand())
     ControlBoard.testWrist.whileTrue(superstructure.testWristCommand())
+    ControlBoard.testDriveVelocity.whileTrue(superstructure.testDriveVelocityCommand())
 
     /*
     ControlBoard.targetAmp.whileTrue(

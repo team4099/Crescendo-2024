@@ -55,8 +55,7 @@ object ControlBoard {
   // val score = Trigger {driver.leftTriggerAxis > 0.5}
   // val intake = Trigger { driver.rightShoulderButton}
 
-  // TODO: uncomment
-  //val targetAmp = Trigger { driver.aButton }
+  val targetAmp = Trigger { driver.aButton }
   val prepAmp = Trigger { operator.aButton }
   val prepLow = Trigger { operator.xButton }
   val prepHighProtected = Trigger { operator.bButton }
@@ -71,6 +70,8 @@ object ControlBoard {
   val ejectGamePiece = Trigger { driver.rightTriggerAxis > 0.5 }
 
   val testWrist = Trigger { driver.aButton }
+
+  val testDriveVelocity = Trigger { driver.aButton }
 
   val characterizeWrist = Trigger { driver.rightShoulderButton }
 
