@@ -16,6 +16,7 @@ import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.util.NoteSimulation
+import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
@@ -1171,11 +1172,10 @@ class Superstructure(
     val returnCommand = runOnce {
       currentRequest= Request.SuperstructureRequest.Tuning()
       drivetrain.currentRequest =
-        Request.DrivetrainRequest.ClosedLoop(edu.wpi.first.math.kinematics.ChassisSpeeds(
-          DrivetrainConstants.testXVelocity.inMetersPerSecond,
-          DrivetrainConstants.testYVelocity.inMetersPerSecond,
-          DrivetrainConstants.testOmega.inRadiansPerSecond
-        ))
+        Request.DrivetrainRequest.OpenLoop(
+          DrivetrainConstants.testOmega,
+          Velocity2d(DrivetrainConstants.testXVelocity, DrivetrainConstants.testYVelocity)
+        )
     }
     returnCommand.name = "TestDriveVelocityCommand"
     return returnCommand

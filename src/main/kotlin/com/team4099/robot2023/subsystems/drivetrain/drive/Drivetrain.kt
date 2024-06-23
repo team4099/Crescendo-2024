@@ -92,7 +92,6 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
   var targetPose: Pose2d = Pose2d(0.0.meters, 0.0.meters, 0.0.radians)
 
   var fieldVelocity = Velocity2d()
-    private set
 
   var robotVelocity = Velocity2d()
 
@@ -284,16 +283,16 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
     )
 
     CustomLogger.recordOutput(
-      "Drivetrain/xRobotVelocityMetersPerSecondInMPS", robotVelocity.x.inMetersPerSecond
+      "Drivetrain/xRobotVelocityMetersPerSecond", robotVelocity.x.inMetersPerSecond
     )
     CustomLogger.recordOutput(
-      "Drivetrain/xRobotVelocityMetersPerSecondInMPS", robotVelocity.x.inMetersPerSecond
+      "Drivetrain/yRobotVelocityMetersPerSecond", robotVelocity.y.inMetersPerSecond
     )
     CustomLogger.recordOutput(
-      "Drivetrain/xFieldVelocityMetersPerSecondInMPS", fieldVelocity.x.inMetersPerSecond
+      "Drivetrain/xFieldVelocityMetersPerSecond", fieldVelocity.x.inMetersPerSecond
     )
     CustomLogger.recordOutput(
-      "Drivetrain/yFieldVelocityMetersPerSecondInMPS", fieldVelocity.y.inMetersPerSecond
+      "Drivetrain/yFieldVelocityMetersPerSecond", fieldVelocity.y.inMetersPerSecond
     )
 
     CustomLogger.processInputs("Drivetrain/Gyro", gyroInputs)

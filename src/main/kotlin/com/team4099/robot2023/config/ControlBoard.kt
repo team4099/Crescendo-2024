@@ -9,7 +9,7 @@ import java.util.function.Consumer
 import kotlin.math.absoluteValue
 
 /**
-, * Maps buttons on the driver and operator controllers to specific actions with meaningful variable
+ * Maps buttons on the driver and operator controllers to specific actions with meaningful variable
  * names.
  */
 object ControlBoard {
@@ -71,7 +71,7 @@ object ControlBoard {
 
   val testWrist = Trigger { driver.aButton }
 
-  val testDriveVelocity = Trigger { driver.aButton }
+  val testDriveVelocity = Trigger { driver.bButton }
 
   val characterizeWrist = Trigger { driver.rightShoulderButton }
 
@@ -80,7 +80,8 @@ object ControlBoard {
   val climbAlignRight = Trigger { driver.dPadRight }
 
   val targetSpeaker = Trigger { driver.xButton } // TODO: switch back to climbAlignLeft
-  val climbAutoAlign = Trigger { driver.bButton }
+  // TODO : change back to driver.bButton
+  val climbAutoAlign = Trigger { driver.aButton }
 
   val lockWheels = Trigger { driver.startButton }
 
