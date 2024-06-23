@@ -1173,8 +1173,11 @@ class Superstructure(
       currentRequest= Request.SuperstructureRequest.Tuning()
       drivetrain.currentRequest =
         Request.DrivetrainRequest.OpenLoop(
-          DrivetrainConstants.testOmega,
-          Velocity2d(DrivetrainConstants.testXVelocity, DrivetrainConstants.testYVelocity)
+          Drivetrain.TunableDriveStates.testOmega.get(),
+          Velocity2d(
+            Drivetrain.TunableDriveStates.testXVelocity.get(),
+            Drivetrain.TunableDriveStates.testYVelocity.get()
+          )
         )
     }
     returnCommand.name = "TestDriveVelocityCommand"
