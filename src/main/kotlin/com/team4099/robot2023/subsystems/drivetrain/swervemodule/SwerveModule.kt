@@ -216,7 +216,7 @@ class SwerveModule(val io: SwerveModuleIO) {
       )
     }
   }
-  fun closedLoop(
+  fun setPositionClosedLoop(
     desiredAccelState: SwerveModuleState,
     desiredVeloState: SwerveModuleState,
     optimize: Boolean = true

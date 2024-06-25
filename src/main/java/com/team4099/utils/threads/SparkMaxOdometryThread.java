@@ -35,7 +35,7 @@ public class SparkMaxOdometryThread {
     private SparkMaxOdometryThread() {
         notifier = new edu.wpi.first.wpilibj.Notifier(this::periodic);
         notifier.setName("SparkMaxOdometryThread");
-        notifier.startPeriodic(1.0 / com.team4099.robot2023.config.constants.DrivetrainConstants.OMOMETRY_UPDATE_FREQUENCY );
+        notifier.startPeriodic(1.0 / com.team4099.robot2023.config.constants.DrivetrainConstants.ODOMETRY_UPDATE_FREQUENCY);
     }
 
     public java.util.Queue<Double> registerSignal(java.util.function.DoubleSupplier signal) {

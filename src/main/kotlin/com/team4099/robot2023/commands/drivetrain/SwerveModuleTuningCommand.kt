@@ -14,7 +14,7 @@ class SwerveModuleTuningCommand(val drivetrain: Drivetrain, val steeringPosition
 
   override fun execute() {
     for (module in drivetrain.swerveModules) {
-      module.closedLoop(
+      module.setPositionClosedLoop(
         SwerveModuleState(0.0, steeringPosition().inRotation2ds),
         SwerveModuleState(0.0, steeringPosition().inRotation2ds),
         false

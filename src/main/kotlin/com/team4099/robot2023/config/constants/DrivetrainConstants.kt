@@ -35,7 +35,7 @@ object DrivetrainConstants {
 
   const val TELEOP_TURNING_SPEED_PERCENT = 0.6
 
-  const val OMOMETRY_UPDATE_FREQUENCY = 250.0
+  const val ODOMETRY_UPDATE_FREQUENCY = 250.0
 
   const val WHEEL_COUNT = 4
   val WHEEL_DIAMETER = (2.083 * 2).inches

@@ -230,8 +230,8 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
   ) {
     Logger.recordOutput("$label/desiredDriveSpeedMPS", speed.inMetersPerSecond)
     val feedforward = driveFeedForward.calculate(speed, acceleration)
-    setDriveVoltage(feedforward + driveFeedback.calculate(driveVelocity, speed))
 
+    setDriveVoltage(feedforward + driveFeedback.calculate(driveVelocity, speed))
     setSteeringSetpoint(steering)
   }
 

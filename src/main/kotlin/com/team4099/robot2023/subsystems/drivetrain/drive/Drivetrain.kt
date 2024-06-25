@@ -494,6 +494,7 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
       edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
   ) {
     var chassisSpeeds = chassisSpeeds
+
     // If theres skew consider slowing down
     if (DrivetrainConstants.MINIMIZE_SKEW) {
       chassisSpeeds =
@@ -519,8 +520,8 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
     // Once we have all of our states obtained for both velocity and acceleration, apply these
     // states to each swerve module
     for (moduleIndex in 0 until DrivetrainConstants.WHEEL_COUNT) {
-      swerveModules[moduleIndex].closedLoop(
-        velSwerveModuleStates[moduleIndex], accelSwerveModuleStates[moduleIndex]
+      swerveModules[moduleIndex].setPositionClosedLoop(
+        accelSwerveModuleStates[moduleIndex], velSwerveModuleStates[moduleIndex]
       )
     }
   }
