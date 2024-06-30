@@ -105,7 +105,7 @@ class Intake(val io: IntakeIO) : SubsystemBase() {
     Logger.recordOutput("Intake/requestedState", currentRequest.javaClass.simpleName)
     Logger.recordOutput("Intake/isZeroed", isZeroed)
 
-    if (Constants.Tuning.DEBUGING_MODE) {
+    if (Constants.Tuning.DEBUGGING_MODE) {
       Logger.recordOutput(
         "Intake/isAtCommandedState", currentState.equivalentToRequest(currentRequest)
       )

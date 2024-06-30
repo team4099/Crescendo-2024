@@ -46,19 +46,19 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
     val testXVelocity =
       LoggedTunableValue(
         "Drivetrain/testXVelocity",
-        DrivetrainConstants.testXVelocity,
+        DrivetrainConstants.TEST_X_VELOCITY,
         Pair( { it.inMetersPerSecond }, { it.meters.perSecond })
       )
     val testYVelocity =
       LoggedTunableValue(
         "Drivetrain/testYVelocity",
-        DrivetrainConstants.testYVelocity,
+        DrivetrainConstants.TEST_Y_VELOCITY,
         Pair( { it.inMetersPerSecond }, { it.meters.perSecond })
       )
     val testOmega =
       LoggedTunableValue(
         "Drivetrain/testOmega",
-        DrivetrainConstants.testOmega,
+        DrivetrainConstants.TEST_OMEGA,
         Pair( { it.inRadiansPerSecond }, { it.radians.perSecond })
       )
   }
