@@ -71,7 +71,7 @@ object ControlBoard {
 
   val testWrist = Trigger { driver.aButton }
 
-  val testDriveVelocity = Trigger { driver.bButton }
+
 
   val characterizeWrist = Trigger { driver.rightShoulderButton }
 
