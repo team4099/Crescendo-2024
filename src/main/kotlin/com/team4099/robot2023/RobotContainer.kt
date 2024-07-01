@@ -240,7 +240,7 @@ object RobotContainer {
     ControlBoard.passingShot.whileTrue(superstructure.passingShotCommand())
     ControlBoard.underStagePassingShot.whileTrue(superstructure.underStageCommand())
     ControlBoard.testWrist.whileTrue(superstructure.testWristCommand())
-    ControlBoard.testDriveVelocity.whileTrue(superstructure.testDriveVelocityCommand())
+    //ControlBoard.testDriveVelocity.whileTrue(superstructure.testDriveVelocityCommand())
 
     /*
     ControlBoard.targetAmp.whileTrue(
@@ -289,17 +289,17 @@ object RobotContainer {
           else 240.degrees
       })
     )
-    ControlBoard.climbAutoAlign.whileTrue(
-      TargetAngleCommand(
-        driver = Jessika(),
-        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
-        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
-        { ControlBoard.slowMode },
-        drivetrain,
-        climbAngle
-      )
-    )
+//    ControlBoard.climbAutoAlign.whileTrue(
+//      TargetAngleCommand(
+//        driver = Jessika(),
+//        { ControlBoard.forward.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+//        { ControlBoard.strafe.smoothDeadband(Constants.Joysticks.THROTTLE_DEADBAND) },
+//        { ControlBoard.turn.smoothDeadband(Constants.Joysticks.TURN_DEADBAND) },
+//        { ControlBoard.slowMode },
+//        drivetrain,
+//        climbAngle
+//      )
+//    )
     //    ControlBoard.climbAlignLeft.whileTrue(
     //      TargetAngleCommand(
     //        driver = Jessika(),

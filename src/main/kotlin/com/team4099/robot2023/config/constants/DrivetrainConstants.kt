@@ -2,14 +2,7 @@ package com.team4099.robot2023.config.constants
 
 import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.units.Velocity
-import org.team4099.lib.units.base.Meter
-import org.team4099.lib.units.base.amps
-import org.team4099.lib.units.base.feet
-import org.team4099.lib.units.base.grams
-import org.team4099.lib.units.base.inMeters
-import org.team4099.lib.units.base.inches
-import org.team4099.lib.units.base.meters
-import org.team4099.lib.units.base.seconds
+import org.team4099.lib.units.base.*
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.IntegralGain
@@ -35,7 +28,7 @@ object DrivetrainConstants {
 
   const val TELEOP_TURNING_SPEED_PERCENT = 0.6
 
-  const val ODOMETRY_UPDATE_FREQUENCY = 250.0
+  val ODOMETRY_UPDATE_FREQUENCY = 250.0.hertz
 
   const val WHEEL_COUNT = 4
   val WHEEL_DIAMETER = (2.083 * 2).inches
