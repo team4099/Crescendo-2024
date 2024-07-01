@@ -80,9 +80,6 @@ object ControlBoard {
   val climbAlignRight = Trigger { driver.dPadRight }
 
   val targetSpeaker = Trigger { driver.xButton } // TODO: switch back to climbAlignLeft
-  // TODO : change back to driver.bButton
-  val climbAutoAlign = Trigger { driver.aButton }
-
   val lockWheels = Trigger { driver.startButton }
 
   // week0 controls
