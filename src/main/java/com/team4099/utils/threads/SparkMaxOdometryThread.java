@@ -1,4 +1,5 @@
-package com.team4099.utils.threads;// Copyright 2021-2023 FRC 6328
+package com.team4099.utils.threads;
+// Copyright 2021-2023 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -37,7 +38,7 @@ public class SparkMaxOdometryThread {
     private SparkMaxOdometryThread() {
         notifier = new edu.wpi.first.wpilibj.Notifier(this::periodic);
         notifier.setName("SparkMaxOdometryThread");
-        notifier.startPeriodic(1.0 / DrivetrainConstants.INSTANCE.getODOMETRY_UPDATE_FREQUENCY());
+        notifier.startPeriodic(1.0 / DrivetrainConstants.INSTANCE.getOdometryUpdateFrequency());
     }
 
     public java.util.Queue<Double> registerSignal(java.util.function.DoubleSupplier signal) {

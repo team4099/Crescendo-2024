@@ -1,4 +1,5 @@
-package com.team4099.utils.threads;// Copyright 2021-2023 FRC 6328
+package com.team4099.utils.threads;
+// Copyright 2021-2023 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -68,13 +69,13 @@ public class PhoenixOdometryThread extends Thread {
             signalsLock.lock();
             try {
                 if (isCANFD && signals.length > 0) {
-                    com.ctre.phoenix6.BaseStatusSignal.waitForAll(2.0 / DrivetrainConstants.INSTANCE.getODOMETRY_UPDATE_FREQUENCY(), signals);
+                    com.ctre.phoenix6.BaseStatusSignal.waitForAll(2.0 / DrivetrainConstants.INSTANCE.getOdometryUpdateFrequency(), signals);
                 } else {
                     // "waitForAll" does not support blocking on multiple
                     // signals with a bus that is not CAN FD, regardless
                     // of Pro licensing. No reasoning for this behavior
                     // is provided by the documentation.
-                    Thread.sleep((long) (1000.0 / DrivetrainConstants.INSTANCE.getODOMETRY_UPDATE_FREQUENCY()));
+                    Thread.sleep((long) (1000.0 / DrivetrainConstants.INSTANCE.getOdometryUpdateFrequency()));
                     com.ctre.phoenix6.BaseStatusSignal.refreshAll(signals);
                 }
             } catch (InterruptedException e) {

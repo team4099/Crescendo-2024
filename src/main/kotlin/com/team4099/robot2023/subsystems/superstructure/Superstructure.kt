@@ -1,7 +1,6 @@
 package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.hal.Clock
-import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.config.constants.FieldConstants
 import com.team4099.robot2023.config.constants.FlywheelConstants
 import com.team4099.robot2023.config.constants.WristConstants
@@ -16,7 +15,6 @@ import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.vision.Vision
 import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.util.NoteSimulation
-import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
@@ -26,8 +24,7 @@ import org.team4099.lib.geometry.Pose3d
 import org.team4099.lib.geometry.Rotation3d
 import org.team4099.lib.geometry.Transform3d
 import org.team4099.lib.geometry.Translation3d
-import org.team4099.lib.kinematics.ChassisSpeeds
-import org.team4099.lib.units.*
+import org.team4099.lib.units.AngularVelocity
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.inSeconds
@@ -38,6 +35,8 @@ import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.rotations
 import org.team4099.lib.units.derived.volts
+import org.team4099.lib.units.inRotationsPerMinute
+import org.team4099.lib.units.perMinute
 
 class Superstructure(
   private val intake: Intake,
