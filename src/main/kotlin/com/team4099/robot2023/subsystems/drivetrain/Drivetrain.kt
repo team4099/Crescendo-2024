@@ -69,7 +69,7 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
 
   private var angularVelocityTarget = 0.degrees.perSecond
 
-  private var targetedDriveVector = Velocity2d()
+  private var targetedDriveVector = Velocity2d.ZERO_VELOCITY_VECTOR
 
   private var isFieldOriented = true
 
@@ -81,10 +81,10 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
 
   var targetPose: Pose2d = Pose2d(0.0.meters, 0.0.meters, 0.0.radians)
 
-  var fieldVelocity = Velocity2d()
+  var fieldVelocity = Velocity2d.ZERO_VELOCITY_VECTOR
     private set
 
-  var robotVelocity = Velocity2d()
+  var robotVelocity = Velocity2d.ZERO_VELOCITY_VECTOR
     private set
 
   private var omegaVelocity = 0.0.radians.perSecond

@@ -13,7 +13,8 @@ class DriveBrakeModeCommand(val drivetrain: Drivetrain) : Command() {
   }
 
   override fun execute() {
-    drivetrain.currentRequest = DrivetrainRequest.OpenLoop(0.0.radians.perSecond, Velocity2d())
+    drivetrain.currentRequest =
+      DrivetrainRequest.OpenLoop(0.0.radians.perSecond, Velocity2d.ZERO_VELOCITY_VECTOR)
     drivetrain.swerveModules.forEach() { it.setDriveBrakeMode(true) }
   }
 
