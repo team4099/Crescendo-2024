@@ -12,6 +12,8 @@ package com.team4099.utils.threads;// Copyright 2021-2023 FRC 6328
 // GNU General Public License for more details.
 
 
+import com.team4099.robot2023.config.constants.DrivetrainConstants;
+
 /**
  * Provides an interface for asynchronously reading high-frequency measurements to a set of queues.
  *
@@ -35,7 +37,7 @@ public class SparkMaxOdometryThread {
     private SparkMaxOdometryThread() {
         notifier = new edu.wpi.first.wpilibj.Notifier(this::periodic);
         notifier.setName("SparkMaxOdometryThread");
-        notifier.startPeriodic(1.0 / com.team4099.robot2023.config.constants.DrivetrainConstants.ODOMETRY_UPDATE_FREQUENCY);
+        notifier.startPeriodic(1.0 / DrivetrainConstants.INSTANCE.getODOMETRY_UPDATE_FREQUENCY());
     }
 
     public java.util.Queue<Double> registerSignal(java.util.function.DoubleSupplier signal) {

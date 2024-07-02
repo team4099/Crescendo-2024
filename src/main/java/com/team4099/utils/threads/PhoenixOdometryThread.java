@@ -12,6 +12,8 @@ package com.team4099.utils.threads;// Copyright 2021-2023 FRC 6328
 // GNU General Public License for more details.
 
 
+import com.team4099.robot2023.config.constants.DrivetrainConstants;
+
 /**
  * Provides an interface for asynchronously reading high-frequency measurements to a set of queues.
  *
@@ -66,13 +68,13 @@ public class PhoenixOdometryThread extends Thread {
             signalsLock.lock();
             try {
                 if (isCANFD && signals.length > 0) {
-                    com.ctre.phoenix6.BaseStatusSignal.waitForAll(2.0 / com.team4099.robot2023.config.constants.DrivetrainConstants.ODOMETRY_UPDATE_FREQUENCY, signals);
+                    com.ctre.phoenix6.BaseStatusSignal.waitForAll(2.0 / DrivetrainConstants.INSTANCE.getODOMETRY_UPDATE_FREQUENCY(), signals);
                 } else {
                     // "waitForAll" does not support blocking on multiple
                     // signals with a bus that is not CAN FD, regardless
                     // of Pro licensing. No reasoning for this behavior
                     // is provided by the documentation.
-                    Thread.sleep((long) (1000.0 / com.team4099.robot2023.config.constants.DrivetrainConstants.ODOMETRY_UPDATE_FREQUENCY));
+                    Thread.sleep((long) (1000.0 / DrivetrainConstants.INSTANCE.getODOMETRY_UPDATE_FREQUENCY()));
                     com.ctre.phoenix6.BaseStatusSignal.refreshAll(signals);
                 }
             } catch (InterruptedException e) {
