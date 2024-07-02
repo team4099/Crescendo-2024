@@ -166,7 +166,7 @@ class SwerveModule(val io: SwerveModuleIO) {
     modulePosition.angle = inputs.steerPosition.inRotation2ds
 
     if (steerkD.hasChanged() || steerkP.hasChanged() || steerkI.hasChanged()) {
-      io.configSteerPID(steerkP.get(), steerkI.get(), steerkD.get())
+      io.configureSteerPID(steerkP.get(), steerkI.get(), steerkD.get())
     }
 
     if (drivekD.hasChanged() ||
@@ -175,7 +175,7 @@ class SwerveModule(val io: SwerveModuleIO) {
       drivekA.hasChanged() ||
       drivekV.hasChanged()
     ) {
-      io.configDrivePID(drivekP.get(), drivekI.get(), drivekD.get(), drivekV.get(), drivekA.get())
+      io.configureDrivePID(drivekP.get(), drivekI.get(), drivekD.get(), drivekV.get(), drivekA.get())
     }
     if (steerMaxVelo.hasChanged() || steerMaxAccel.hasChanged()) {
       io.configSteerMotionMagic(steerMaxVelo.get(), steerMaxAccel.get())

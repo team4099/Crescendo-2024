@@ -254,7 +254,7 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     turnAbsolutePosition = 0.0.radians
   }
 
-  override fun configDrivePID(
+  override fun configureDrivePID(
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
     kD: DerivativeGain<Velocity<Meter>, Volt>,
@@ -264,7 +264,7 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     driveFeedback.setPID(kP, kI, kD)
   }
 
-  override fun configSteerPID(
+  override fun configureSteerPID(
     kP: ProportionalGain<Radian, Volt>,
     kI: IntegralGain<Radian, Volt>,
     kD: DerivativeGain<Radian, Volt>

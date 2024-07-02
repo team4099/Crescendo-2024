@@ -1168,24 +1168,6 @@ class Superstructure(
     return returnCommand
   }
 
-  fun testDriveVelocityCommand(): Command {
-    val returnCommand = runOnce {
-      currentRequest= Request.SuperstructureRequest.Tuning()
-      drivetrain.currentRequest =
-        Request.DrivetrainRequest.OpenLoop(
-          Drivetrain.TunableDriveStates.testOmega.get(),
-          Velocity2d(
-            Drivetrain.TunableDriveStates.testXVelocity.get(),
-            Drivetrain.TunableDriveStates.testYVelocity.get()
-          )
-        )
-    }
-    returnCommand.name = "TestDriveVelocityCommand"
-    return returnCommand
-  }
-
-  // TODO: Test Drivetrain Steer Command
-
   companion object {
     enum class SuperstructureStates {
       UNINITIALIZED,

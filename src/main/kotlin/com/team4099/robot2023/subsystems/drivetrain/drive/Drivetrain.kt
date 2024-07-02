@@ -31,38 +31,27 @@ import org.team4099.lib.geometry.Rotation3d
 import org.team4099.lib.geometry.Transform2d
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.kinematics.ChassisSpeeds
-import org.team4099.lib.units.*
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inMilliseconds
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.meters
-import org.team4099.lib.units.derived.*
+import org.team4099.lib.units.inMetersPerSecond
+import org.team4099.lib.units.inRadiansPerSecond
+import org.team4099.lib.units.perSecond
+import org.team4099.lib.units.inDegreesPerSecond
+import org.team4099.lib.units.AngularVelocity
+import org.team4099.lib.units.derived.radians
+import org.team4099.lib.units.derived.degrees
+import org.team4099.lib.units.derived.volts
+import org.team4099.lib.units.derived.inDegrees
+import org.team4099.lib.units.derived.inRotation2ds
+import org.team4099.lib.units.derived.Angle
+import org.team4099.lib.units.derived.inRadians
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemBase() {
-  object TunableDriveStates {
-    val testXVelocity =
-      LoggedTunableValue(
-        "Drivetrain/testXVelocity",
-        DrivetrainConstants.TEST_X_VELOCITY,
-        Pair( { it.inMetersPerSecond }, { it.meters.perSecond })
-      )
-    val testYVelocity =
-      LoggedTunableValue(
-        "Drivetrain/testYVelocity",
-        DrivetrainConstants.TEST_Y_VELOCITY,
-        Pair( { it.inMetersPerSecond }, { it.meters.perSecond })
-      )
-    val testOmega =
-      LoggedTunableValue(
-        "Drivetrain/testOmega",
-        DrivetrainConstants.TEST_OMEGA,
-        Pair( { it.inRadiansPerSecond }, { it.radians.perSecond })
-      )
-  }
-
   private val gyroNotConnectedAlert =
     Alert(
       "Gyro is not connected, field relative driving will be significantly worse.",
@@ -92,8 +81,10 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
   var targetPose: Pose2d = Pose2d(0.0.meters, 0.0.meters, 0.0.radians)
 
   var fieldVelocity = Velocity2d()
+    private set
 
   var robotVelocity = Velocity2d()
+    private set
 
   private var omegaVelocity = 0.0.radians.perSecond
 
@@ -300,7 +291,7 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
       VisionConstants.POSE_TOPIC_NAME,
       doubleArrayOf(odomTRobot.x.inMeters, odomTRobot.y.inMeters, odomTRobot.rotation.inRadians)
     )
-    CustomLogger.recordOutput("FieldRelativePose/robotPose", fieldTRobot.pose2d)
+    CustomLogger.recordOutput("FieldFrameEstimator/robotPose", fieldTRobot.pose2d)
 
     CustomLogger.recordOutput("Drivetrain/ModuleStates", *measuredStates.toTypedArray())
     CustomLogger.recordOutput("Drivetrain/setPointStates", *setPointStates.toTypedArray())

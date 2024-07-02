@@ -152,13 +152,13 @@ interface SwerveModuleIO {
 
   fun setSteeringSetpoint(angle: Angle) {}
 
-  fun configSteerPID(
+  fun configureSteerPID(
     kP: ProportionalGain<Radian, Volt>,
     kI: IntegralGain<Radian, Volt>,
     kD: DerivativeGain<Radian, Volt>
   ) {}
 
-  fun configDrivePID(
+  fun configureDrivePID(
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
     kD: DerivativeGain<Velocity<Meter>, Volt>,

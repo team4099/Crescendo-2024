@@ -51,10 +51,6 @@ object DrivetrainConstants {
 
   const val GYRO_RATE_COEFFICIENT = 0.0 // TODO: Change this value
 
-  val TEST_X_VELOCITY = 10.0.meters.perSecond
-  val TEST_Y_VELOCITY = 10.0.meters.perSecond
-  val TEST_OMEGA = 5.0.radians.perSecond
-
   val SLOW_AUTO_VEL = 2.meters.perSecond
   val SLOW_AUTO_ACCEL = 2.0.meters.perSecond.perSecond
 
