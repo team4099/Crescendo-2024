@@ -43,24 +43,24 @@ public class SparkMaxOdometryThread {
 
     public java.util.Queue<Double> registerSignal(java.util.function.DoubleSupplier signal) {
         java.util.Queue<Double> queue = new java.util.concurrent.ArrayBlockingQueue<>(100);
-        com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(true);
+        com.team4099.robot2023.subsystems.drivetrain.Drivetrain.Companion.setOdometryLock(true);
         try {
             signals.add(signal);
             queues.add(queue);
         } finally {
-            com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(false);
+            com.team4099.robot2023.subsystems.drivetrain.Drivetrain.Companion.setOdometryLock(false);
         }
         return queue;
     }
 
     private void periodic() {
-        com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(true);
+        com.team4099.robot2023.subsystems.drivetrain.Drivetrain.Companion.setOdometryLock(true);
         try {
             for (int i = 0; i < signals.size(); i++) {
                 queues.get(i).offer(signals.get(i).getAsDouble());
             }
         } finally {
-            com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(false);
+            com.team4099.robot2023.subsystems.drivetrain.Drivetrain.Companion.setOdometryLock(false);
         }
     }
 }

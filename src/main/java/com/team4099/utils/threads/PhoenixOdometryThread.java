@@ -85,13 +85,13 @@ public class PhoenixOdometryThread extends Thread {
             }
 
             // Save new data to queues
-            com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(true);
+            com.team4099.robot2023.subsystems.drivetrain.Drivetrain.Companion.setOdometryLock(true);
             try {
                 for (int i = 0; i < signals.length; i++) {
                     queues.get(i).offer(signals[i].getValueAsDouble());
                 }
             } finally {
-                com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(false);
+                com.team4099.robot2023.subsystems.drivetrain.Drivetrain.Companion.setOdometryLock(false);
             }
         }
     }

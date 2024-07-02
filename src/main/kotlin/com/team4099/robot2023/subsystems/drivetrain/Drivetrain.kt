@@ -1,4 +1,4 @@
-package com.team4099.robot2023.subsystems.drivetrain.drive
+package com.team4099.robot2023.subsystems.drivetrain
 
 import com.team4099.lib.hal.Clock
 import com.team4099.lib.logging.LoggedTunableValue
@@ -10,6 +10,7 @@ import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.config.constants.VisionConstants
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveModule
 import com.team4099.robot2023.subsystems.superstructure.Request
 import com.team4099.robot2023.util.Alert
 import com.team4099.robot2023.util.CustomLogger
@@ -51,13 +52,13 @@ import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
-class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemBase() {
+class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModule>) :
+  SubsystemBase() {
   private val gyroNotConnectedAlert =
     Alert(
       "Gyro is not connected, field relative driving will be significantly worse.",
       Alert.AlertType.ERROR
     )
-  val swerveModules = swerveModuleIOs.getSwerveModules() // FL, FR, BL, BR
 
   private val gyroInputs = GyroIO.GyroIOInputs()
 

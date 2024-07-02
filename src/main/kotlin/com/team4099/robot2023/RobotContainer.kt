@@ -1,5 +1,6 @@
 package com.team4099.robot2023
 
+import com.ctre.phoenix6.hardware.TalonFX
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.auto.AutonomousSelector
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
@@ -7,11 +8,15 @@ import com.team4099.robot2023.commands.drivetrain.TargetAngleCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
 import com.team4099.robot2023.config.constants.Constants
-import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
-import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOReal
-import com.team4099.robot2023.subsystems.drivetrain.drive.DrivetrainIOSim
+import com.team4099.robot2023.config.constants.Constants.Universal.CANIVORE_NAME
+import com.team4099.robot2023.config.constants.DrivetrainConstants
+import com.team4099.robot2023.subsystems.drivetrain.Drivetrain
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveModule
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveModuleIO
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveModuleIOSim
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveModuleIOTalon
 import com.team4099.robot2023.subsystems.elevator.Elevator
 import com.team4099.robot2023.subsystems.elevator.ElevatorIONEO
 import com.team4099.robot2023.subsystems.elevator.ElevatorIOSim
@@ -36,6 +41,7 @@ import com.team4099.robot2023.subsystems.wrist.Wrist
 import com.team4099.robot2023.subsystems.wrist.WristIOSim
 import com.team4099.robot2023.subsystems.wrist.WristIOTalon
 import com.team4099.robot2023.util.driver.Jessika
+import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
@@ -70,12 +76,60 @@ object RobotContainer {
       "Defense/PodiumShotAngle", 25.0.degrees, Pair({ it.inDegrees }, { it.degrees })
     )
 
+  private val SWERVE_MODULES_REAL: List<SwerveModule> =
+    listOf(
+      SwerveModule(
+        SwerveModuleIOTalon(
+          TalonFX(Constants.Drivetrain.FRONT_LEFT_STEERING_ID, CANIVORE_NAME),
+          TalonFX(Constants.Drivetrain.FRONT_LEFT_DRIVE_ID, CANIVORE_NAME),
+          AnalogInput(Constants.Drivetrain.FRONT_LEFT_ANALOG_POTENTIOMETER),
+          DrivetrainConstants.FRONT_LEFT_MODULE_ZERO,
+          Constants.Drivetrain.FRONT_LEFT_MODULE_NAME
+        )
+      ),
+      SwerveModule(
+        SwerveModuleIOTalon(
+          TalonFX(Constants.Drivetrain.FRONT_RIGHT_STEERING_ID, CANIVORE_NAME),
+          TalonFX(Constants.Drivetrain.FRONT_RIGHT_DRIVE_ID, CANIVORE_NAME),
+          AnalogInput(Constants.Drivetrain.FRONT_RIGHT_ANALOG_POTENTIOMETER),
+          DrivetrainConstants.FRONT_RIGHT_MODULE_ZERO,
+          Constants.Drivetrain.FRONT_RIGHT_MODULE_NAME
+        )
+      ),
+      SwerveModule(
+        SwerveModuleIOTalon(
+          TalonFX(Constants.Drivetrain.BACK_LEFT_STEERING_ID, CANIVORE_NAME),
+          TalonFX(Constants.Drivetrain.BACK_LEFT_DRIVE_ID, CANIVORE_NAME),
+          AnalogInput(Constants.Drivetrain.BACK_LEFT_ANALOG_POTENTIOMETER),
+          DrivetrainConstants.BACK_LEFT_MODULE_ZERO,
+          Constants.Drivetrain.BACK_LEFT_MODULE_NAME
+        )
+      ),
+      SwerveModule(
+        SwerveModuleIOTalon(
+          TalonFX(Constants.Drivetrain.BACK_RIGHT_STEERING_ID, CANIVORE_NAME),
+          TalonFX(Constants.Drivetrain.BACK_RIGHT_DRIVE_ID, CANIVORE_NAME),
+          AnalogInput(Constants.Drivetrain.BACK_RIGHT_ANALOG_POTENTIOMETER),
+          DrivetrainConstants.BACK_RIGHT_MODULE_ZERO,
+          Constants.Drivetrain.BACK_RIGHT_MODULE_NAME
+        )
+      )
+    )
+
+  private val SWERVE_MODULES_SIM: List<SwerveModule> =
+    listOf(
+      SwerveModule(SwerveModuleIOSim("Front Left Wheel")),
+      SwerveModule(SwerveModuleIOSim("Front Right Wheel")),
+      SwerveModule(SwerveModuleIOSim("Back Left Wheel")),
+      SwerveModule(SwerveModuleIOSim("Back Right Wheel"))
+    )
+
   init {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
 
-      drivetrain = Drivetrain(GyroIOPigeon2, DrivetrainIOReal)
+      drivetrain = Drivetrain(GyroIOPigeon2, SWERVE_MODULES_REAL)
       vision = Vision(object : CameraIO {}, CameraIOPhotonvision("parakeet_2"))
       limelight = LimelightVision(LimelightVisionIOReal)
       intake = Intake(IntakeIOFalconNEO)
@@ -85,7 +139,7 @@ object RobotContainer {
       wrist = Wrist(WristIOTalon)
     } else {
       // Simulation implementations
-      drivetrain = Drivetrain(object : GyroIO {}, DrivetrainIOSim)
+      drivetrain = Drivetrain(object : GyroIO {}, SWERVE_MODULES_SIM)
       vision = Vision(object : CameraIO {})
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIOSim)
@@ -158,6 +212,27 @@ object RobotContainer {
 
   fun requestIdle() {
     superstructure.currentRequest = Request.SuperstructureRequest.Idle()
+  }
+
+  fun getSwerveModules(): List<SwerveModule> {
+    return listOf(
+      SwerveModule(
+        object : SwerveModuleIO {
+          override val label = "Front Left Wheel"
+        }),
+      SwerveModule(
+        object : SwerveModuleIO {
+          override val label = "Front Right Wheel"
+        }),
+      SwerveModule(
+        object : SwerveModuleIO {
+          override val label = "Back Left Wheel"
+        }),
+      SwerveModule(
+        object : SwerveModuleIO {
+          override val label = "Back Right Wheel"
+        })
+    )
   }
 
   fun mapTeleopControls() {

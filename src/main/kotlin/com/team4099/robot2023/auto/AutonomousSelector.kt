@@ -17,7 +17,7 @@ import com.team4099.robot2023.auto.mode.ThreeNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.ThreeNoteCenterlineWithoutFirstNoteAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromSourceAutoPath
-import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.drivetrain.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.util.AllianceFlipUtil
 import edu.wpi.first.networktables.GenericEntry
