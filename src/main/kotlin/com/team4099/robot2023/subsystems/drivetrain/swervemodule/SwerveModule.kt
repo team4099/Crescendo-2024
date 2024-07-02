@@ -6,7 +6,6 @@ import com.team4099.robot2023.util.CustomLogger
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.RobotBase.isReal
-import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.base.inMeters
@@ -19,7 +18,6 @@ import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inRotation2ds
-import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.inVoltsPerDegree
 import org.team4099.lib.units.derived.inVoltsPerDegreePerSecond
 import org.team4099.lib.units.derived.inVoltsPerDegreeSeconds
@@ -46,6 +44,7 @@ class SwerveModule(val io: SwerveModuleIO) {
   val inputs = SwerveModuleIO.SwerveModuleIOInputs()
 
   var modulePosition = SwerveModulePosition()
+    private set
 
   private var posDeltas = mutableListOf<SwerveModulePosition>()
 
@@ -98,7 +97,7 @@ class SwerveModule(val io: SwerveModuleIO) {
 
   private val drivekA =
     LoggedTunableValue(
-      "Drivetrain/driveka",
+      "Drivetrain/drivekA",
       Pair({ it.inVoltsPerMetersPerSecondPerSecond }, { it.volts.perMeterPerSecondPerSecond })
     )
 
@@ -139,7 +138,7 @@ class SwerveModule(val io: SwerveModuleIO) {
       )
     )
 
-    Logger.processInputs(io.label, inputs)
+    CustomLogger.processInputs(io.label, inputs)
     CustomLogger.recordDebugOutput("${io.label}/lastDrivePos", lastDrivePos.inMeters)
 
     CustomLogger.recordDebugOutput(
@@ -150,9 +149,6 @@ class SwerveModule(val io: SwerveModuleIO) {
     )
     CustomLogger.recordDebugOutput("${io.label}/steeringSetpoint", steeringSetpoint.inDegrees)
     CustomLogger.recordDebugOutput("${io.label}/lastDrivePos", lastDrivePos.inMeters)
-
-    Logger.recordOutput("${io.label}/driveAppliedVoltage", inputs.driveAppliedVoltage.inVolts)
-    Logger.recordOutput("${io.label}/swerveAppliedVoltage", inputs.steerAppliedVoltage.inVolts)
 
     posDeltas.add(
       SwerveModulePosition(
@@ -245,7 +241,7 @@ class SwerveModule(val io: SwerveModuleIO) {
   fun resetModuleZero() {
     io.resetModuleZero()
   }
-  fun zeroSteer(isInAuto: Boolean = false) {
+  fun zeroSteer() {
     io.zeroSteering()
   }
   fun setDriveBrakeMode(brake: Boolean) {

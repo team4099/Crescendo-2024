@@ -75,7 +75,6 @@ interface SwerveModuleIO {
       table?.put("driveTemp", driveTemp.inCelsius)
       table?.put("driveVelocity", driveVelocity.inMetersPerSecond)
       table?.put("steerVelocity", steerVelocity.inRadiansPerSecond)
-      table?.put("drift", drift.inMeters)
       table?.put("potentiometerOutputRaw", potentiometerOutputRaw)
       table?.put("potentiometerOutputRadians", potentiometerOutputRadians.inRadians)
 
@@ -121,7 +120,6 @@ interface SwerveModuleIO {
       table?.get("steerVelocity", steerVelocity.inRadiansPerSecond)?.let {
         steerVelocity = it.radians.perSecond
       }
-      table?.get("drift", drift.inMeters)?.let { drift = it.meters }
       table?.get("potentiometerOutputRaw", potentiometerOutputRaw)?.let {
         potentiometerOutputRaw = it
       }

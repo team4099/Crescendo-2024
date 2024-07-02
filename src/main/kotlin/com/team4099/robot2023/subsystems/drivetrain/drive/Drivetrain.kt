@@ -264,13 +264,10 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
     // updating odometry every loop cycle
     updateOdometry()
 
-    CustomLogger.recordOutput(
-      "FieldFrameEstimator/odomTSpeaker",
-      fieldFrameEstimator.getLatestOdometryTSpeaker().transform2d
-    )
+    CustomLogger.recordOutput("FieldFrameEstimator/odomTSpeaker", odomTSpeaker.transform2d)
 
     CustomLogger.recordOutput(
-      "Drivetrain/OdometryGyroRotationValueInDegrees", odomTRobot.rotation.inDegrees
+      "Drivetrain/odomTRobotRotationInDegrees", odomTRobot.rotation.inDegrees
     )
 
     CustomLogger.recordOutput(
@@ -285,8 +282,6 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
     CustomLogger.recordOutput(
       "Drivetrain/yFieldVelocityMetersPerSecond", fieldVelocity.y.inMetersPerSecond
     )
-
-    CustomLogger.processInputs("Drivetrain/Gyro", gyroInputs)
     CustomLogger.recordOutput(
       VisionConstants.POSE_TOPIC_NAME,
       doubleArrayOf(odomTRobot.x.inMeters, odomTRobot.y.inMeters, odomTRobot.rotation.inRadians)
@@ -294,7 +289,7 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
     CustomLogger.recordOutput("FieldFrameEstimator/robotPose", fieldTRobot.pose2d)
 
     CustomLogger.recordOutput("Drivetrain/ModuleStates", *measuredStates.toTypedArray())
-    CustomLogger.recordOutput("Drivetrain/setPointStates", *setPointStates.toTypedArray())
+    CustomLogger.recordOutput("Drivetrain/SetpointStates", *setPointStates.toTypedArray())
 
     CustomLogger.recordOutput("Odometry/pose", odomTRobot.pose2d)
     CustomLogger.recordOutput(
@@ -311,11 +306,6 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
     CustomLogger.recordOutput("FieldFrameEstimator/odomTField", odomTField.transform2d)
 
     CustomLogger.recordOutput("Odometry/targetPose", targetPose.pose2d)
-
-    CustomLogger.recordOutput(
-      "LoggedRobot/Subsystems/DrivetrainLoopTimeMS",
-      (Clock.realTimestamp - startTime).inMilliseconds
-    )
 
     // Log the current state
     CustomLogger.recordOutput("Drivetrain/currentState", currentState.toString())
@@ -341,10 +331,10 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
       DrivetrainState.OPEN_LOOP -> {
         // Outputs
         setOpenLoop(angularVelocityTarget, targetedDriveVector, isFieldOriented)
-        CustomLogger.recordOutput(
+        CustomLogger.recordDebugOutput(
           "Drivetrain/TargetVelocityXInMPS", targetedDriveVector.x.inMetersPerSecond
         )
-        CustomLogger.recordOutput(
+        CustomLogger.recordDebugOutput(
           "Drivetrain/TargetVelocityYInMPS", targetedDriveVector.y.inMetersPerSecond
         )
         // Transitions
@@ -367,6 +357,11 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
         nextState = fromRequestToState(currentRequest)
       }
     }
+
+    CustomLogger.recordOutput(
+      "LoggedRobot/Subsystems/DrivetrainLoopTimeMS",
+      (Clock.realTimestamp - startTime).inMilliseconds
+    )
 
     currentState = nextState
   }
@@ -394,18 +389,17 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
     driveVector: Velocity2d,
     fieldOriented: Boolean = true
   ) {
-
-    CustomLogger.recordOutput("Drivetrain/isFieldOriented", fieldOriented)
+    CustomLogger.recordDebugOutput("Drivetrain/isFieldOriented", fieldOriented)
     // flip the direction based on alliance color
     val driveVectorRespectiveToAlliance =
       if (FMSData.allianceColor == DriverStation.Alliance.Blue) driveVector
       else driveVector.unaryMinus()
 
-    CustomLogger.recordOutput(
+    CustomLogger.recordDebugOutput(
       "Drivetrain/driveVectorRespectiveToAllianceXInMPS",
       driveVectorRespectiveToAlliance.x.inMetersPerSecond
     )
-    CustomLogger.recordOutput(
+    CustomLogger.recordDebugOutput(
       "Drivetrain/driveVectorRespectiveToAllianceYInMPS",
       driveVectorRespectiveToAlliance.y.inMetersPerSecond
     )
@@ -593,7 +587,7 @@ class Drivetrain(private val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : Su
 
   /** Zeros the steering motors for each swerve module. */
   fun zeroSteering(isInAutonomous: Boolean = false) {
-    swerveModules.forEach { it.zeroSteer(isInAutonomous) }
+    swerveModules.forEach { it.zeroSteer() }
   }
 
   /** Zeros the drive motors for each swerve module. */
