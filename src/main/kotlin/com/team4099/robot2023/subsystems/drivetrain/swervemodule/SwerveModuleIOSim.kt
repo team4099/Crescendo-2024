@@ -166,37 +166,37 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
         .radians
         .inRotations +
       loopCycleDrift // adding a random amount of drift
-    inputs.steeringPosition = turnAbsolutePosition
+    inputs.steerPosition = turnAbsolutePosition
     inputs.drift = drift
 
     inputs.driveVelocity = driveVelocity
-    inputs.steeringVelocity = steerMotorSim.angularVelocityRadPerSec.radians.perSecond
+    inputs.steerVelocity = steerMotorSim.angularVelocityRadPerSec.radians.perSecond
 
     inputs.driveAppliedVoltage = driveAppliedVolts
-    inputs.driveSupplyCurrent = driveMotorSim.currentDrawAmps.amps
-    inputs.driveStatorCurrent =
+    inputs.supplyCurrentDrive = driveMotorSim.currentDrawAmps.amps
+    inputs.statorCurrentDrive =
       (-1337).amps // no way to get applied voltage to motor so can't actually calculate stator
     // current
 
     inputs.driveTemp = (-1337).celsius
-    inputs.steeringTemp = (-1337).celsius
+    inputs.steerTemp = (-1337).celsius
 
-    inputs.steeringAppliedVoltage = turnAppliedVolts
-    inputs.steeringSupplyCurrent = steerMotorSim.currentDrawAmps.amps
-    inputs.steeringStatorCurrent =
+    inputs.steerAppliedVoltage = turnAppliedVolts
+    inputs.supplyCurrentSteer = steerMotorSim.currentDrawAmps.amps
+    inputs.statorCurrentSteer =
       (-1337).amps // no way to get applied voltage to motor so can't actually calculate stator
     // current
 
     inputs.potentiometerOutputRadians = turnAbsolutePosition
     inputs.potentiometerOutputRaw = turnAbsolutePosition.inRadians
 
-    inputs.odometryDrivePositions = listOf(inputs.drivePosition)
-    inputs.odometrySteeringPositions = listOf(inputs.steeringPosition)
+    inputs.driveOdometryPos = listOf(inputs.drivePosition)
+    inputs.steerOdometryPos = listOf(inputs.steerPosition)
 
     // Setting a more accurate simulated voltage under load
     RoboRioSim.setVInVoltage(
       BatterySim.calculateDefaultBatteryLoadedVoltage(
-        inputs.driveSupplyCurrent.inAmperes + inputs.steeringSupplyCurrent.inAmperes
+        inputs.supplyCurrentDrive.inAmperes + inputs.supplyCurrentSteer.inAmperes
       )
     )
   }
@@ -230,8 +230,8 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
   ) {
     Logger.recordOutput("$label/desiredDriveSpeedMPS", speed.inMetersPerSecond)
     val feedforward = driveFeedForward.calculate(speed, acceleration)
-    setDriveVoltage(feedforward + driveFeedback.calculate(driveVelocity, speed))
 
+    setDriveVoltage(feedforward + driveFeedback.calculate(driveVelocity, speed))
     setSteeringSetpoint(steering)
   }
 
@@ -264,7 +264,7 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     driveFeedback.setPID(kP, kI, kD)
   }
 
-  override fun configureSteeringPID(
+  override fun configureSteerPID(
     kP: ProportionalGain<Radian, Volt>,
     kI: IntegralGain<Radian, Volt>,
     kD: DerivativeGain<Radian, Volt>
@@ -276,10 +276,7 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     println("Can't set brake mode in simulation")
   }
 
-  override fun configureSteeringMotionMagic(
-    maxVel: AngularVelocity,
-    maxAccel: AngularAcceleration
-  ) {
+  override fun configSteerMotionMagic(maxVel: AngularVelocity, maxAccel: AngularAcceleration) {
     println("Can't configure motion magic in simulation")
   }
 

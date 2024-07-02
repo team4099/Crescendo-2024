@@ -37,7 +37,7 @@ class FeedForwardCharacterizationCommand(
   }
 
   override fun execute() {
-    drivetrain.swerveModules.forEach { it.zeroSteering() }
+    drivetrain.swerveModules.forEach { it.zeroSteer() }
 
     if (timer.get() < startDelay.inSeconds) {
       voltageConsumer.accept(0.volts)

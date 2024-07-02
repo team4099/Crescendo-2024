@@ -6,6 +6,8 @@ import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.feet
 import org.team4099.lib.units.base.grams
+import org.team4099.lib.units.base.hertz
+import org.team4099.lib.units.base.inHertz
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
@@ -31,11 +33,11 @@ import kotlin.math.sqrt
 
 object DrivetrainConstants {
   const val FOC_ENABLED = true
-  const val MINIMIZE_SKEW = false
+  const val MINIMIZE_SKEW = true
 
   const val TELEOP_TURNING_SPEED_PERCENT = 0.6
 
-  const val OMOMETRY_UPDATE_FREQUENCY = 250.0
+  val ODOMETRY_UPDATE_FREQUENCY = 250.0.hertz
 
   const val WHEEL_COUNT = 4
   val WHEEL_DIAMETER = (2.083 * 2).inches
@@ -99,6 +101,11 @@ object DrivetrainConstants {
   val FR_LOCKING_ANGLE: Angle = 315.degrees
   val BL_LOCKING_ANGLE: Angle = 135.degrees
   val BR_LOCKING_ANGLE: Angle = 225.degrees
+
+  // Java getter to allow 6328 Java code to access odometry data
+  fun getOdometryUpdateFrequency(): Double {
+    return ODOMETRY_UPDATE_FREQUENCY.inHertz
+  }
 
   object PID {
     val AUTO_POS_KP: ProportionalGain<Meter, Velocity<Meter>>

@@ -1,6 +1,7 @@
 package com.team4099.robot2023.commands.drivetrain
 
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.wpilibj2.command.Command
 import org.team4099.lib.units.base.feet
 import org.team4099.lib.units.derived.degrees
@@ -16,7 +17,7 @@ class OpenLoopReverseCommand(val drivetrain: Drivetrain) : Command() {
     drivetrain.currentRequest =
       DrivetrainRequest.OpenLoop(
         0.degrees.perSecond,
-        Pair(-5.0.feet.perSecond, 0.0.feet.perSecond),
+        Velocity2d(-5.0.feet.perSecond, 0.0.feet.perSecond),
         fieldOriented = false
       )
   }

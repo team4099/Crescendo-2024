@@ -232,7 +232,7 @@ class Flywheel(val io: FlywheelIO) : SubsystemBase() {
     Logger.recordOutput(
       "Flywheel/FlywheelLeftTargetVelocity", flywheelLeftTargetVelocity.inRotationsPerMinute
     )
-    if (Constants.Tuning.DEBUGING_MODE) {
+    if (Constants.Tuning.DEBUGGING_MODE) {
 
       Logger.recordOutput("Flywheel/FlywheelLastVoltage", lastRightFlywheelVoltage.inVolts)
     }

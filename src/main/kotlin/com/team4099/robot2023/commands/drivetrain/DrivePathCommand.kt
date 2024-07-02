@@ -420,16 +420,14 @@ private constructor(
       // Stop where we are if interrupted
       drivetrain.currentRequest =
         DrivetrainRequest.OpenLoop(
-          0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
+          0.0.radians.perSecond,
+          Velocity2d.fromVelocityVectorToVelocity2d(0.0.meters.perSecond, 0.0.radians)
         )
     } else {
       // Execute one last time to end up in the final state of the trajectory
       // Since we weren't interrupted, we know curTime > endTime
       execute()
-      drivetrain.currentRequest =
-        DrivetrainRequest.OpenLoop(
-          0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
-        )
+      drivetrain.currentRequest = DrivetrainRequest.OpenLoop(0.0.radians.perSecond, Velocity2d())
     }
   }
 

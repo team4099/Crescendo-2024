@@ -92,115 +92,115 @@ class CustomLogger {
     }
 
     inline fun <E : Enum<E>> recordDebugOutput(key: String, value: E) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun <T : WPISerializable> recordDebugOutput(key: String, value: T) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun <U : edu.wpi.first.units.Unit<U>> recordDebugOutput(key: String, value: Measure<U>) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun <T> recordDebugOutput(key: String, value: Struct<T>) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun <T : StructSerializable> recordDebugOutput(key: String, vararg value: T) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, *value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: Mechanism2d) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: Array<String>) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: BooleanArray) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: Boolean) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: ByteArray) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: DoubleArray) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: Double) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: Float) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: FloatArray) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: Int) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: IntArray) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: Long) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: LongArray) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }
 
     inline fun recordDebugOutput(key: String, value: String) {
-      if (Constants.Tuning.DEBUGING_MODE) {
+      if (Constants.Tuning.DEBUGGING_MODE) {
         Logger.recordOutput(key, value)
       }
     }

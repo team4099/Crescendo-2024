@@ -142,7 +142,7 @@ class Feeder(val io: FeederIO) : SubsystemBase() {
     Logger.recordOutput("Feeder/currentState", currentState)
     Logger.recordOutput("Feeder/requestedState", currentRequest.javaClass.simpleName)
 
-    if (Constants.Tuning.DEBUGING_MODE) {
+    if (Constants.Tuning.DEBUGGING_MODE) {
       Logger.recordOutput(
         "Feeder/isAtCommandedState", currentState.equivalentToRequest(currentRequest)
       )
