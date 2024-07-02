@@ -138,8 +138,6 @@ object AutonomousSelector {
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
     autoTab.add("Mode", autonomousModeChooser.sendableChooser).withSize(4, 2).withPosition(2, 0)
-
-
   }
 
   val waitTime: Time

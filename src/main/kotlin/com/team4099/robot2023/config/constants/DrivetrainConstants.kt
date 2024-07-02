@@ -2,7 +2,16 @@ package com.team4099.robot2023.config.constants
 
 import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.units.Velocity
-import org.team4099.lib.units.base.*
+import org.team4099.lib.units.base.Meter
+import org.team4099.lib.units.base.amps
+import org.team4099.lib.units.base.feet
+import org.team4099.lib.units.base.grams
+import org.team4099.lib.units.base.hertz
+import org.team4099.lib.units.base.inHertz
+import org.team4099.lib.units.base.inMeters
+import org.team4099.lib.units.base.inches
+import org.team4099.lib.units.base.meters
+import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.IntegralGain
@@ -92,6 +101,11 @@ object DrivetrainConstants {
   val FR_LOCKING_ANGLE: Angle = 315.degrees
   val BL_LOCKING_ANGLE: Angle = 135.degrees
   val BR_LOCKING_ANGLE: Angle = 225.degrees
+
+  // Java getter to allow 6328 Java code to access odometry data
+  fun getOdometryUpdateFrequency(): Double {
+    return ODOMETRY_UPDATE_FREQUENCY.inHertz
+  }
 
   object PID {
     val AUTO_POS_KP: ProportionalGain<Meter, Velocity<Meter>>
