@@ -8,6 +8,7 @@ import com.team4099.robot2023.subsystems.falconspin.MotorCollection
 import com.team4099.robot2023.subsystems.falconspin.SimulatedMotor
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.system.plant.DCMotor
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.simulation.BatterySim
 import edu.wpi.first.wpilibj.simulation.FlywheelSim
 import edu.wpi.first.wpilibj.simulation.RoboRioSim
@@ -273,11 +274,11 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
   }
 
   override fun setDriveBrakeMode(brake: Boolean) {
-    println("Can't set brake mode in simulation")
+    DriverStation.reportError("Can't set brake mode in simulation", true)
   }
 
   override fun configSteerMotionMagic(maxVel: AngularVelocity, maxAccel: AngularAcceleration) {
-    println("Can't configure motion magic in simulation")
+    DriverStation.reportError("Can't configure motion magic in simulation", true)
   }
 
   override fun runCharacterization(input: ElectricalPotential) {

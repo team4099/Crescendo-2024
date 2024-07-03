@@ -224,9 +224,7 @@ class SwerveModuleIOTalon(
         DrivetrainConstants.WHEEL_DIAMETER.inMeters *
         DrivetrainConstants.DRIVE_SENSOR_GEAR_RATIO
     )
-    Logger.recordOutput("$label/drivePositionUnits", driveSensor.position.inMeters)
     inputs.drivePosition = driveSensor.position
-    inputs.steerPosition = steeringSensor.position
     Logger.recordOutput("$label/rawSteeringValue", steeringFalcon.position.value)
     Logger.recordOutput("$label/rawSteeringValue", steeringFalcon.position.value)
 
