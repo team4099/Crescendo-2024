@@ -54,6 +54,11 @@ import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainReques
 
 class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModule>) :
   SubsystemBase() {
+  object TunableDriveStates {
+    // empty right now because testX, testY, and testZ are unneccessary and removed
+    // this just exists in case we need to use it
+    // https://github.com/team4099/Crescendo-2024/pull/53#discussion_r1652914017
+  }
   private val gyroNotConnectedAlert =
     Alert(
       "Gyro is not connected, field relative driving will be significantly worse.",
