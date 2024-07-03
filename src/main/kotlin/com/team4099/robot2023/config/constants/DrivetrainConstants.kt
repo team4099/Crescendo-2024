@@ -1,6 +1,7 @@
 package com.team4099.robot2023.config.constants
 
 import edu.wpi.first.wpilibj.RobotBase
+import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
@@ -12,7 +13,6 @@ import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
 import org.team4099.lib.units.base.seconds
-import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.DerivativeGain
 import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
@@ -43,6 +43,12 @@ object DrivetrainConstants {
   val WHEEL_DIAMETER = (2.083 * 2).inches
   val DRIVETRAIN_LENGTH = 22.750.inches
   val DRIVETRAIN_WIDTH = 22.750.inches
+
+  val FRONT_RIGHT_LOCATION = Translation2d(11.3750.inches, (-11.3750).inches)
+  val FRONT_LEFT_LOCATION = Translation2d(11.3750.inches, 11.3750.inches)
+  val BACK_RIGHT_LOCATION = Translation2d((-11.3750).inches, (-11.3750).inches)
+  val BACK_LEFT_LOCATION = Translation2d((-11.3750).inches, 11.3750.inches)
+
 
   val DOCKING_GYRO_SETPOINT = 0.0.degrees
   val DOCKING_GYRO_TOLERANCE = 2.5.degrees
@@ -96,11 +102,6 @@ object DrivetrainConstants {
 
   val DRIVE_WHEEL_INERTIA = 0.025.kilo.grams.meterSquared
   val STEERING_WHEEL_INERTIA = 0.004096955.kilo.grams.meterSquared
-
-  val FL_LOCKING_ANGLE: Angle = 45.degrees
-  val FR_LOCKING_ANGLE: Angle = 315.degrees
-  val BL_LOCKING_ANGLE: Angle = 135.degrees
-  val BR_LOCKING_ANGLE: Angle = 225.degrees
 
   // Java getter to allow 6328 Java code to access odometry data
   fun getOdometryUpdateFrequency(): Double {

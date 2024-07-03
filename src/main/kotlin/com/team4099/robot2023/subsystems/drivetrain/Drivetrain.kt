@@ -127,38 +127,21 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
       field = value
     }
 
-  // At this point could we js make constants for wheel locations?
-  private val frontLeftWheelLocation =
-    Translation2d(
-      DrivetrainConstants.DRIVETRAIN_LENGTH / 2, DrivetrainConstants.DRIVETRAIN_WIDTH / 2
-    )
-  private val frontRightWheelLocation =
-    Translation2d(
-      DrivetrainConstants.DRIVETRAIN_LENGTH / 2, -DrivetrainConstants.DRIVETRAIN_WIDTH / 2
-    )
-  private val backLeftWheelLocation =
-    Translation2d(
-      -DrivetrainConstants.DRIVETRAIN_LENGTH / 2, DrivetrainConstants.DRIVETRAIN_WIDTH / 2
-    )
-  private val backRightWheelLocation =
-    Translation2d(
-      -DrivetrainConstants.DRIVETRAIN_LENGTH / 2, -DrivetrainConstants.DRIVETRAIN_WIDTH / 2
-    )
 
   val moduleTranslations =
     listOf(
-      frontLeftWheelLocation,
-      frontRightWheelLocation,
-      backLeftWheelLocation,
-      backRightWheelLocation
+      DrivetrainConstants.FRONT_LEFT_LOCATION,
+      DrivetrainConstants.FRONT_RIGHT_LOCATION,
+      DrivetrainConstants.BACK_LEFT_LOCATION,
+      DrivetrainConstants.BACK_RIGHT_LOCATION
     )
 
   private val swerveDriveKinematics =
     SwerveDriveKinematics(
-      frontLeftWheelLocation.translation2d,
-      frontRightWheelLocation.translation2d,
-      backLeftWheelLocation.translation2d,
-      backRightWheelLocation.translation2d
+      DrivetrainConstants.FRONT_LEFT_LOCATION.translation2d,
+      DrivetrainConstants.FRONT_RIGHT_LOCATION.translation2d,
+      DrivetrainConstants.BACK_LEFT_LOCATION.translation2d,
+      DrivetrainConstants.BACK_RIGHT_LOCATION.translation2d
     )
 
   private var swerveDriveOdometry =
@@ -168,12 +151,6 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
       swerveModules.map { it.modulePosition }.toTypedArray()
     )
 
-  private var undriftedSwerveDriveOdometry =
-    SwerveDriveOdometry(
-      swerveDriveKinematics,
-      gyroInputs.gyroYaw.inRotation2ds,
-      swerveModules.map { it.modulePosition }.toTypedArray()
-    )
 
   private var setPointStates =
     mutableListOf(
@@ -194,16 +171,6 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
 
   val odomTSpeaker: Transform2d
     get() = fieldFrameEstimator.getLatestOdometryTSpeaker()
-
-  private var undriftedPose: Pose2d
-    get() = Pose2d(undriftedSwerveDriveOdometry.poseMeters)
-    set(value) {
-      undriftedSwerveDriveOdometry.resetPosition(
-        gyroInputs.gyroYaw.inRotation2ds,
-        swerveModules.map { it.modulePosition }.toTypedArray(),
-        value.pose2d
-      )
-    }
 
   private var rawGyroAngle = odomTRobot.rotation
 
@@ -554,16 +521,10 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
    */
   fun zeroGyroYaw(toAngle: Angle = 0.degrees) {
     // TODO(parth): This feels incorrect -- I think the first arg should be the gyro angle and the
-    // undrifted pose should be updated to toAngle
     if (RobotBase.isSimulation()) {
       // NOTE(parth): The gyro itself should never need to be reset in-match on a real robot, the
       // odometry can be updated directly
       gyroIO.zeroGyroYaw(toAngle)
-      undriftedSwerveDriveOdometry.resetPosition(
-        toAngle.inRotation2ds,
-        swerveModules.map { it.modulePosition }.toTypedArray(),
-        undriftedPose.pose2d
-      )
     }
 
     // TODO(parth): Update the field frame estimator's transform here too, otherwise it will need to
