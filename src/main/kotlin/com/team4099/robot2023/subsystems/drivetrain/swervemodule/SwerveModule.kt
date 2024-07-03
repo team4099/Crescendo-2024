@@ -39,7 +39,7 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.withSign
 
-class SwerveModule(val io: SwerveModuleIO) {
+class SwerveModule(private val io: SwerveModuleIO) {
 
   val inputs = SwerveModuleIO.SwerveModuleIOInputs()
 
@@ -55,8 +55,6 @@ class SwerveModule(val io: SwerveModuleIO) {
   private var steeringSetpoint: Angle = 0.0.degrees
 
   private var lastDrivePos = 0.0.meters
-
-  private var shouldInvert = false
 
   private val steerkP =
     LoggedTunableValue(
@@ -150,12 +148,6 @@ class SwerveModule(val io: SwerveModuleIO) {
     CustomLogger.recordDebugOutput("${io.label}/steeringSetpoint", steeringSetpoint.inDegrees)
     CustomLogger.recordDebugOutput("${io.label}/lastDrivePos", lastDrivePos.inMeters)
 
-    posDeltas.add(
-      SwerveModulePosition(
-        (inputs.drivePosition - lastDrivePos).inMeters, inputs.steerPosition.inRotation2ds
-      )
-    )
-
     lastDrivePos = inputs.drivePosition
 
     modulePosition.distanceMeters = inputs.drivePosition.inMeters
@@ -183,7 +175,7 @@ class SwerveModule(val io: SwerveModuleIO) {
   fun setOpenLoop(steering: Angle, speed: LinearVelocity, optimize: Boolean = true) {
     var steeringDifference =
       (steering - inputs.steerPosition).inRadians.IEEErem(2 * Math.PI).radians
-    shouldInvert = steeringDifference.absoluteValue > (Math.PI / 2).radians && optimize
+    val shouldInvert = steeringDifference.absoluteValue > (Math.PI / 2).radians && optimize
     if (shouldInvert) {
       steeringDifference -= Math.PI.withSign(steeringDifference.inRadians).radians
     }

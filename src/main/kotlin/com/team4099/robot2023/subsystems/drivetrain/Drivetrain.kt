@@ -78,9 +78,13 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
 
   private var isFieldOriented = true
 
-  private var targetedChassisSpeeds = edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
+  private var targetedChassisSpeeds =
+    ChassisSpeeds(0.0.meters.perSecond, 0.0.meters.perSecond, 0.0.radians.perSecond)
+      .chassisSpeedsWPILIB
 
-  private var targetedChassisAccels = edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
+  private var targetedChassisAccels =
+    ChassisSpeeds(0.0.meters.perSecond, 0.0.meters.perSecond, 0.0.radians.perSecond)
+      .chassisSpeedsWPILIB
 
   private var isInAutonomous = false
 
@@ -484,6 +488,7 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
     chassisAccels: edu.wpi.first.math.kinematics.ChassisSpeeds =
       edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
   ) {
+    // Allows parameter chassisSpeeds to have its value reassigned
     var chassisSpeeds = chassisSpeeds
 
     // If theres skew consider slowing down
