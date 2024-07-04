@@ -361,14 +361,22 @@ class SwerveModuleIOTalon(
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
     kD: DerivativeGain<Velocity<Meter>, Volt>,
-    kV: Value<Fraction<Volt, Velocity<Meter>>>,
-    kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
   ) {
     val PIDConfig = Slot0Configs()
 
     PIDConfig.kP = driveSensor.proportionalVelocityGainToRawUnits(kP)
     PIDConfig.kI = driveSensor.integralVelocityGainToRawUnits(kI)
     PIDConfig.kD = driveSensor.derivativeVelocityGainToRawUnits(kD)
+
+    driveFalcon.configurator.apply(PIDConfig)
+  }
+
+  override fun configureDriveFeedForward(
+    kV: Value<Fraction<Volt, Velocity<Meter>>>,
+    kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
+  ) {
+    val PIDConfig = Slot0Configs()
+
     PIDConfig.kV = kV.inVoltsPerMetersPerSecond
     PIDConfig.kA = kA.inVoltsPerMetersPerSecondPerSecond
 
