@@ -1,7 +1,16 @@
 package com.team4099.robot2023.subsystems.drivetrain.swervemodule
 
-import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.DrivetrainConstants
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveTunableValues.drivekA
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveTunableValues.drivekD
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveTunableValues.drivekI
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveTunableValues.drivekP
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveTunableValues.drivekV
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveTunableValues.steerMaxAccel
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveTunableValues.steerMaxVelo
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveTunableValues.steerkD
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveTunableValues.steerkI
+import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveTunableValues.steerkP
 import com.team4099.robot2023.util.CustomLogger
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
@@ -10,7 +19,6 @@ import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.meters
-import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.ElectricalPotential
 import org.team4099.lib.units.derived.angle
@@ -18,26 +26,11 @@ import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inRotation2ds
-import org.team4099.lib.units.derived.inVoltsPerDegree
-import org.team4099.lib.units.derived.inVoltsPerDegreePerSecond
-import org.team4099.lib.units.derived.inVoltsPerDegreeSeconds
-import org.team4099.lib.units.derived.inVoltsPerMeters
-import org.team4099.lib.units.derived.inVoltsPerMetersPerSecond
-import org.team4099.lib.units.derived.inVoltsPerMetersPerSecondPerSecond
-import org.team4099.lib.units.derived.perDegree
-import org.team4099.lib.units.derived.perDegreePerSecond
-import org.team4099.lib.units.derived.perDegreeSeconds
-import org.team4099.lib.units.derived.perMeterPerSecond
-import org.team4099.lib.units.derived.perMeterPerSecondPerSecond
-import org.team4099.lib.units.derived.radians
-import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.inMetersPerSecondPerSecond
 import org.team4099.lib.units.perSecond
-import kotlin.math.IEEErem
 import kotlin.math.abs
 import kotlin.math.cos
-import kotlin.math.withSign
 
 class SwerveModule(private val io: SwerveModuleIO) {
 
@@ -55,54 +48,6 @@ class SwerveModule(private val io: SwerveModuleIO) {
   private var steeringSetpoint: Angle = 0.0.degrees
 
   private var lastDrivePos = 0.0.meters
-
-  private val steerkP =
-    LoggedTunableValue(
-      "Drivetrain/modulesteerkP", Pair({ it.inVoltsPerDegree }, { it.volts.perDegree })
-    )
-  private val steerkI =
-    LoggedTunableValue(
-      "Drivetrain/modulesteerkI",
-      Pair({ it.inVoltsPerDegreeSeconds }, { it.volts.perDegreeSeconds })
-    )
-  private val steerkD =
-    LoggedTunableValue(
-      "Drivetrain/modulesteerkD",
-      Pair({ it.inVoltsPerDegreePerSecond }, { it.volts.perDegreePerSecond })
-    )
-
-  private val drivekP =
-    LoggedTunableValue(
-      "Drivetrain/drivekP",
-      Pair({ it.inVoltsPerMetersPerSecond }, { it.volts.perMeterPerSecond })
-    )
-  private val drivekI =
-    LoggedTunableValue(
-      "Drivetrain/drivekI",
-      Pair({ it.inVoltsPerMeters }, { it.volts / (1.meters.perSecond * 1.seconds) })
-    )
-  private val drivekD =
-    LoggedTunableValue(
-      "Drivetrain/drivekD",
-      Pair({ it.inVoltsPerMetersPerSecondPerSecond }, { it.volts.perMeterPerSecondPerSecond })
-    )
-
-  private val drivekV =
-    LoggedTunableValue(
-      "Drivetrain/drivekV",
-      Pair({ it.inVoltsPerMetersPerSecond }, { it.volts.perMeterPerSecond })
-    )
-
-  private val drivekA =
-    LoggedTunableValue(
-      "Drivetrain/drivekA",
-      Pair({ it.inVoltsPerMetersPerSecondPerSecond }, { it.volts.perMeterPerSecondPerSecond })
-    )
-
-  private val steerMaxAccel =
-    LoggedTunableValue("Drivetrain/steerMaxAcceleration", DrivetrainConstants.STEERING_ACCEL_MAX)
-  private val steerMaxVelo =
-    LoggedTunableValue("Drivetrain/steerMaxVelocity", DrivetrainConstants.STEERING_VEL_MAX)
 
   init {
     if (isReal()) {
@@ -172,24 +117,11 @@ class SwerveModule(private val io: SwerveModuleIO) {
     }
   }
 
-  fun setOpenLoop(steering: Angle, speed: LinearVelocity, optimize: Boolean = true) {
-    var steeringDifference =
-      (steering - inputs.steerPosition).inRadians.IEEErem(2 * Math.PI).radians
-    val shouldInvert = steeringDifference.absoluteValue > (Math.PI / 2).radians && optimize
-    if (shouldInvert) {
-      steeringDifference -= Math.PI.withSign(steeringDifference.inRadians).radians
-    }
-    val outputSpeed =
-      if (shouldInvert) {
-        speed * -1
-      } else {
-        speed
-      }
-    steeringSetpoint = inputs.steerPosition + steeringDifference
-    io.setOpenLoop(steeringSetpoint, outputSpeed)
-  }
-
-  fun setPositionOpenLoop(desiredState: SwerveModuleState, optimize: Boolean = true) {
+  fun setOpenLoop(desiredState: SwerveModuleState, optimize: Boolean = true) {
+    // optimizing means checking if we could just use a combination of negative
+    // acceleration and turning rather than just turning IE we need to turn 180 use -1 acceleration
+    // rather than
+    // turning the wheels 180
     if (optimize) {
       val optimizedState =
         SwerveModuleState.optimize(desiredState, inputs.steerPosition.inRotation2ds)
@@ -206,7 +138,7 @@ class SwerveModule(private val io: SwerveModuleIO) {
       )
     }
   }
-  fun setPositionClosedLoop(
+  fun setClosedLoop(
     desiredAccelState: SwerveModuleState,
     desiredVeloState: SwerveModuleState,
     optimize: Boolean = true

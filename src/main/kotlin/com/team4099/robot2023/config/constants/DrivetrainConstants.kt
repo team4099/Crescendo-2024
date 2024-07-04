@@ -49,7 +49,6 @@ object DrivetrainConstants {
   val BACK_RIGHT_LOCATION = Translation2d((-11.3750).inches, (-11.3750).inches)
   val BACK_LEFT_LOCATION = Translation2d((-11.3750).inches, 11.3750.inches)
 
-
   val DOCKING_GYRO_SETPOINT = 0.0.degrees
   val DOCKING_GYRO_TOLERANCE = 2.5.degrees
   val DOCKING_TIME_THRESHOLD = 1.0.seconds

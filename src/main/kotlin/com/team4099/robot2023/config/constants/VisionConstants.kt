@@ -14,9 +14,6 @@ object VisionConstants {
   const val BACK_CAMERA_NAME = "thing2"
   const val SIDE_CAMERA_NAME = "thing3"
 
-  const val SIM_POSE_TOPIC_NAME = "Odometry/groundTruthPose"
-  const val POSE_TOPIC_NAME = "Odometry/pose"
-
   const val NUM_OF_CAMERAS = 2
 
   val TRUSTED_CAMERA_ORDER = arrayOf<Int>(1, 0)
