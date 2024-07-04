@@ -1,5 +1,7 @@
 package com.team4099.robot2023.config.constants
 
+import com.team4099.robot2023.util.Velocity2d
+import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj.RobotBase
 import org.team4099.lib.geometry.Translation2d
 import org.team4099.lib.units.Velocity
@@ -38,6 +40,9 @@ object DrivetrainConstants {
   const val TELEOP_TURNING_SPEED_PERCENT = 0.6
 
   val ODOMETRY_UPDATE_FREQUENCY = 250.0.hertz
+
+  val ZERO_VELOCITY_VECTOR = Velocity2d(0.0.meters.perSecond, 0.0.meters.perSecond)
+  val ZERO_CHASSIS_SPEED = ChassisSpeeds(0.0, 0.0, 0.0)
 
   const val WHEEL_COUNT = 4
   val WHEEL_DIAMETER = (2.083 * 2).inches

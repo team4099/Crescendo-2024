@@ -71,26 +71,22 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
 
   private var angularVelocityTarget = 0.degrees.perSecond
 
-  private var targetedDriveVector = Velocity2d.ZERO_VELOCITY_VECTOR
+  private var targetedDriveVector = DrivetrainConstants.ZERO_VELOCITY_VECTOR
 
   private var isFieldOriented = true
 
-  private var targetedChassisSpeeds =
-    ChassisSpeeds(0.0.meters.perSecond, 0.0.meters.perSecond, 0.0.radians.perSecond)
-      .chassisSpeedsWPILIB
+  private var targetedChassisSpeeds = DrivetrainConstants.ZERO_CHASSIS_SPEED
 
-  private var targetedChassisAccels =
-    ChassisSpeeds(0.0.meters.perSecond, 0.0.meters.perSecond, 0.0.radians.perSecond)
-      .chassisSpeedsWPILIB
+  private var targetedChassisAccels = DrivetrainConstants.ZERO_CHASSIS_SPEED
 
   private var isInAutonomous = false
 
   var targetPose: Pose2d = Pose2d(0.0.meters, 0.0.meters, 0.0.radians)
 
-  var fieldVelocity = Velocity2d.ZERO_VELOCITY_VECTOR
+  var fieldVelocity = DrivetrainConstants.ZERO_VELOCITY_VECTOR
     private set
 
-  var robotVelocity = Velocity2d.ZERO_VELOCITY_VECTOR
+  var robotVelocity = DrivetrainConstants.ZERO_VELOCITY_VECTOR
     private set
 
   private var omegaVelocity = 0.0.radians.perSecond
@@ -444,7 +440,7 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
   fun setClosedLoop(
     chassisSpeeds: edu.wpi.first.math.kinematics.ChassisSpeeds,
     chassisAccels: edu.wpi.first.math.kinematics.ChassisSpeeds =
-      edu.wpi.first.math.kinematics.ChassisSpeeds(0.0, 0.0, 0.0)
+      DrivetrainConstants.ZERO_CHASSIS_SPEED
   ) {
     // Allows parameter chassisSpeeds to have its value reassigned
     var chassisSpeeds = chassisSpeeds

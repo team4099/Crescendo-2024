@@ -19,8 +19,6 @@ data class Velocity2d(val x: LinearVelocity, val y: LinearVelocity) {
   val heading: Angle = velocity2dWPIlib.angle.angle
 
   companion object {
-    val ZERO_VELOCITY_VECTOR = Velocity2d(0.0.meters.perSecond, 0.0.meters.perSecond)
-
     fun fromVelocityVectorToVelocity2d(speed: LinearVelocity, heading: Angle): Velocity2d {
       return Velocity2d(speed * heading.cos, speed * heading.sin)
     }

@@ -1,5 +1,6 @@
 package com.team4099.robot2023.subsystems.superstructure
 
+import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -64,7 +65,7 @@ sealed interface Request {
 
     class ClosedLoop(
       var chassisSpeeds: ChassisSpeeds,
-      val chassisAccels: ChassisSpeeds = ChassisSpeeds(0.0, 0.0, 0.0)
+      val chassisAccels: ChassisSpeeds = DrivetrainConstants.ZERO_CHASSIS_SPEED
     ) : DrivetrainRequest
 
     class ZeroSensors(val isInAutonomous: Boolean = false) : DrivetrainRequest

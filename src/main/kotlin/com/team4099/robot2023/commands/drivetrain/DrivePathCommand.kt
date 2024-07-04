@@ -73,7 +73,7 @@ private constructor(
   val flipForAlliances: Boolean = true,
   val endPathOnceAtReference: Boolean = true,
   val leaveOutYAdjustment: Boolean = false,
-  val endVelocity: Velocity2d = Velocity2d.ZERO_VELOCITY_VECTOR,
+  val endVelocity: Velocity2d = DrivetrainConstants.ZERO_VELOCITY_VECTOR,
   var stateFrame: FrameType = FrameType.ODOMETRY,
   var pathFrame: FrameType = FrameType.FIELD,
 ) : Command() {
@@ -428,7 +428,9 @@ private constructor(
       // Since we weren't interrupted, we know curTime > endTime
       execute()
       drivetrain.currentRequest =
-        DrivetrainRequest.OpenLoop(0.0.radians.perSecond, Velocity2d.ZERO_VELOCITY_VECTOR)
+        DrivetrainRequest.OpenLoop(
+          0.0.radians.perSecond, DrivetrainConstants.ZERO_VELOCITY_VECTOR
+        )
     }
   }
 
@@ -444,7 +446,7 @@ private constructor(
       flipForAlliances: Boolean = true,
       endPathOnceAtReference: Boolean = true,
       leaveOutYAdjustment: Boolean = false,
-      endVelocity: Velocity2d = Velocity2d.ZERO_VELOCITY_VECTOR,
+      endVelocity: Velocity2d = DrivetrainConstants.ZERO_VELOCITY_VECTOR,
       stateFrame: FrameType = FrameType.ODOMETRY,
     ): DrivePathCommand<OdometryWaypoint> =
       DrivePathCommand(
@@ -468,7 +470,7 @@ private constructor(
       flipForAlliances: Boolean = true,
       endPathOnceAtReference: Boolean = true,
       leaveOutYAdjustment: Boolean = false,
-      endVelocity: Velocity2d = Velocity2d.ZERO_VELOCITY_VECTOR,
+      endVelocity: Velocity2d = DrivetrainConstants.ZERO_VELOCITY_VECTOR,
       stateFrame: FrameType = FrameType.ODOMETRY,
     ): DrivePathCommand<FieldWaypoint> =
       DrivePathCommand(
