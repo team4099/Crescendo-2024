@@ -17,10 +17,8 @@ import org.team4099.lib.controller.PIDController
 import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.AngularAcceleration
 import org.team4099.lib.units.AngularVelocity
-import org.team4099.lib.units.Fraction
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
-import org.team4099.lib.units.Value
 import org.team4099.lib.units.Velocity
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
@@ -244,8 +242,8 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
     kD: DerivativeGain<Velocity<Meter>, Volt>,
-    kV: Value<Fraction<Volt, Velocity<Meter>>>,
-    kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
+    // kV: Value<Fraction<Volt, Velocity<Meter>>>,
+    // kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
   ) {
     driveFeedback.setPID(kP, kI, kD)
   }

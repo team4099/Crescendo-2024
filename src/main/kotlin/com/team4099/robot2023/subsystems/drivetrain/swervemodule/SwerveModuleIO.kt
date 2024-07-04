@@ -65,16 +65,16 @@ interface SwerveModuleIO {
     override fun toLog(table: LogTable?) {
       table?.put("driveAppliedVoltage", driveAppliedVoltage.inVolts)
       table?.put("swerveAppliedVoltage", steerAppliedVoltage.inVolts)
-      table?.put("statorCurrentDrive", statorCurrentDrive.inAmperes)
-      table?.put("supplyCurrentDrive", supplyCurrentDrive.inAmperes)
-      table?.put("statorCurrentSteer", statorCurrentSteer.inAmperes)
-      table?.put("supplyCurrentSteer", supplyCurrentSteer.inAmperes)
-      table?.put("drivePosition", drivePosition.inMeters)
-      table?.put("steerPosition", steerPosition.inRadians)
-      table?.put("steerTemp", steerTemp.inCelsius)
-      table?.put("driveTemp", driveTemp.inCelsius)
-      table?.put("driveVelocity", driveVelocity.inMetersPerSecond)
-      table?.put("steerVelocity", steerVelocity.inRadiansPerSecond)
+      table?.put("statorCurrentDriveInAmperes", statorCurrentDrive.inAmperes)
+      table?.put("supplyCurrentDriveInAmperes", supplyCurrentDrive.inAmperes)
+      table?.put("statorCurrentSteerInAmperes", statorCurrentSteer.inAmperes)
+      table?.put("supplyCurrentSteerInAmperes", supplyCurrentSteer.inAmperes)
+      table?.put("drivePositionInMeters", drivePosition.inMeters)
+      table?.put("steerPositionInRadians", steerPosition.inRadians)
+      table?.put("steerTempInCelsius", steerTemp.inCelsius)
+      table?.put("driveTempInCelsius", driveTemp.inCelsius)
+      table?.put("driveVelocityInMetersPerSecond", driveVelocity.inMetersPerSecond)
+      table?.put("steerVelocityInRadiansPerSecond", steerVelocity.inRadiansPerSecond)
       table?.put("potentiometerOutputRaw", potentiometerOutputRaw)
       table?.put("potentiometerOutputRadians", potentiometerOutputRadians.inRadians)
 
@@ -160,6 +160,9 @@ interface SwerveModuleIO {
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
     kD: DerivativeGain<Velocity<Meter>, Volt>,
+  ) {}
+
+  fun configureDriveFeedForward(
     kV: Value<Fraction<Volt, Velocity<Meter>>>,
     kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
   ) {}

@@ -108,9 +108,8 @@ class SwerveModule(private val io: SwerveModuleIO) {
       drivekA.hasChanged() ||
       drivekV.hasChanged()
     ) {
-      io.configureDrivePID(
-        drivekP.get(), drivekI.get(), drivekD.get(), drivekV.get(), drivekA.get()
-      )
+      io.configureDrivePID(drivekP.get(), drivekI.get(), drivekD.get())
+      io.configureDriveFeedForward(drivekV.get(), drivekA.get())
     }
     if (steerMaxVelo.hasChanged() || steerMaxAccel.hasChanged()) {
       io.configSteerMotionMagic(steerMaxVelo.get(), steerMaxAccel.get())

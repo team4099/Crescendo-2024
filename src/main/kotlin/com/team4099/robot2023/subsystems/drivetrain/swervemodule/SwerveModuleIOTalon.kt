@@ -87,6 +87,9 @@ class SwerveModuleIOTalon(
       }
     }
 
+  // Shared configs between PID and FeedForward
+  private val slot0Configs = Slot0Configs()
+
   val driveStatorCurrentSignal: StatusSignal<Double>
   val driveSupplyCurrentSignal: StatusSignal<Double>
   val steeringStatorCurrentSignal: StatusSignal<Double>
@@ -361,18 +364,20 @@ class SwerveModuleIOTalon(
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
     kD: DerivativeGain<Velocity<Meter>, Volt>,
+  ) {
+    slot0Configs.kP = driveSensor.proportionalVelocityGainToRawUnits(kP)
+    slot0Configs.kI = driveSensor.integralVelocityGainToRawUnits(kI)
+    slot0Configs.kD = driveSensor.derivativeVelocityGainToRawUnits(kD)
+    driveFalcon.configurator.apply(slot0Configs)
+  }
+
+  override fun configureDriveFeedForward(
     kV: Value<Fraction<Volt, Velocity<Meter>>>,
     kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
   ) {
-    val PIDConfig = Slot0Configs()
-
-    PIDConfig.kP = driveSensor.proportionalVelocityGainToRawUnits(kP)
-    PIDConfig.kI = driveSensor.integralVelocityGainToRawUnits(kI)
-    PIDConfig.kD = driveSensor.derivativeVelocityGainToRawUnits(kD)
-    PIDConfig.kV = kV.inVoltsPerMetersPerSecond
-    PIDConfig.kA = kA.inVoltsPerMetersPerSecondPerSecond
-
-    driveFalcon.configurator.apply(PIDConfig)
+    slot0Configs.kV = kV.inVoltsPerMetersPerSecond
+    slot0Configs.kA = kA.inVoltsPerMetersPerSecondPerSecond
+    driveFalcon.configurator.apply(slot0Configs)
   }
 
   override fun configureSteerPID(
@@ -380,14 +385,11 @@ class SwerveModuleIOTalon(
     kI: IntegralGain<Radian, Volt>,
     kD: DerivativeGain<Radian, Volt>
   ) {
-    val PIDConfig = Slot0Configs()
-
-    PIDConfig.kP = steeringSensor.proportionalPositionGainToRawUnits(kP)
-    PIDConfig.kI = steeringSensor.integralPositionGainToRawUnits(kI)
-    PIDConfig.kD = steeringSensor.derivativePositionGainToRawUnits(kD)
-    PIDConfig.kV = 0.0
-
-    steeringFalcon.configurator.apply(PIDConfig)
+    slot0Configs.kP = steeringSensor.proportionalPositionGainToRawUnits(kP)
+    slot0Configs.kI = steeringSensor.integralPositionGainToRawUnits(kI)
+    slot0Configs.kD = steeringSensor.derivativePositionGainToRawUnits(kD)
+    slot0Configs.kV = 0.0
+    steeringFalcon.configurator.apply(slot0Configs)
   }
 
   override fun configSteerMotionMagic(maxVel: AngularVelocity, maxAccel: AngularAcceleration) {
