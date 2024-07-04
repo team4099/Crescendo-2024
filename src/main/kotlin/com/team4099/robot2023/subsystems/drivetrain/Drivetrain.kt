@@ -131,7 +131,6 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
       field = value
     }
 
-
   val moduleTranslations =
     listOf(
       DrivetrainConstants.FRONT_LEFT_LOCATION,
@@ -154,7 +153,6 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
       gyroInputs.gyroYaw.inRotation2ds,
       swerveModules.map { it.modulePosition }.toTypedArray()
     )
-
 
   private var setPointStates =
     mutableListOf(
