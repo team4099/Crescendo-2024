@@ -90,6 +90,8 @@ class SwerveModuleIOTalon(
   // Shared configs between PID and FeedForward
   private val slot0Configs = Slot0Configs()
 
+  val driveVoltageSignal: StatusSignal<Double>
+  val steeringVoltageSignal: StatusSignal<Double>
   val driveStatorCurrentSignal: StatusSignal<Double>
   val driveSupplyCurrentSignal: StatusSignal<Double>
   val steeringStatorCurrentSignal: StatusSignal<Double>
@@ -158,6 +160,8 @@ class SwerveModuleIOTalon(
     driveConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast
     driveFalcon.configurator.apply(driveConfiguration)
 
+    driveVoltageSignal = driveFalcon.motorVoltage
+    steeringVoltageSignal = steeringFalcon.motorVoltage
     driveStatorCurrentSignal = driveFalcon.statorCurrent
     driveSupplyCurrentSignal = driveFalcon.supplyCurrent
     steeringStatorCurrentSignal = steeringFalcon.statorCurrent
@@ -199,6 +203,8 @@ class SwerveModuleIOTalon(
 
   fun updateSignals() {
     BaseStatusSignal.refreshAll(
+      driveVoltageSignal,
+      steeringVoltageSignal,
       driveStatorCurrentSignal,
       driveSupplyCurrentSignal,
       steeringSupplyCurrentSignal,
@@ -212,8 +218,8 @@ class SwerveModuleIOTalon(
   override fun updateInputs(inputs: SwerveModuleIO.SwerveModuleIOInputs) {
     updateSignals()
 
-    inputs.driveAppliedVoltage = driveFalcon.motorVoltage.value.volts
-    inputs.steerAppliedVoltage = steeringFalcon.motorVoltage.value.volts
+    inputs.driveAppliedVoltage = driveVoltageSignal.value.volts
+    inputs.steerAppliedVoltage = steeringVoltageSignal.value.volts
     // inputs.driveAppliedVoltage = (driveFalcon.get() * RobotController.getBatteryVoltage()).volts
     // inputs.steerAppliedVoltage = (steeringFalcon.get() *
     // RobotController.getBatteryVoltage()).volts
