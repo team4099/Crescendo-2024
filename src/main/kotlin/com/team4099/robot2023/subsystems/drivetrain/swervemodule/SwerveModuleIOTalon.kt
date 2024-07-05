@@ -248,9 +248,6 @@ class SwerveModuleIOTalon(
     inputs.driveTemp = driveTempSignal.value.celsius
     inputs.steerTemp = steeringTempSignal.value.celsius
 
-    inputs.driveOdometryPos = listOf(inputs.drivePosition)
-    inputs.steerOdometryPos = listOf(inputs.steerPosition)
-
     //    inputs.odometryDrivePositions =
     //      drivePositionQueue
     //      .stream()

@@ -174,9 +174,6 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     inputs.potentiometerOutputRadians = turnAbsolutePosition
     inputs.potentiometerOutputRaw = turnAbsolutePosition.inRadians
 
-    inputs.driveOdometryPos = listOf(inputs.drivePosition)
-    inputs.steerOdometryPos = listOf(inputs.steerPosition)
-
     // Setting a more accurate simulated voltage under load
     RoboRioSim.setVInVoltage(
       BatterySim.calculateDefaultBatteryLoadedVoltage(

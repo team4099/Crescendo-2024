@@ -9,7 +9,6 @@ import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
 import org.team4099.lib.units.Value
 import org.team4099.lib.units.Velocity
-import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
@@ -24,7 +23,6 @@ import org.team4099.lib.units.derived.IntegralGain
 import org.team4099.lib.units.derived.ProportionalGain
 import org.team4099.lib.units.derived.Radian
 import org.team4099.lib.units.derived.Volt
-import org.team4099.lib.units.derived.inDegrees
 import org.team4099.lib.units.derived.inRadians
 import org.team4099.lib.units.derived.inVolts
 import org.team4099.lib.units.derived.radians
@@ -54,9 +52,6 @@ interface SwerveModuleIO {
     var steerTemp = 0.0.celsius
     var driveTemp = 0.0.celsius
 
-    var steerOdometryPos = listOf<Angle>()
-    var driveOdometryPos = listOf<Length>()
-
     var potentiometerOutputRaw = 0.0
     var potentiometerOutputRadians = 0.0.radians
 
@@ -77,18 +72,6 @@ interface SwerveModuleIO {
       table?.put("steerVelocityInRadiansPerSecond", steerVelocity.inRadiansPerSecond)
       table?.put("potentiometerOutputRaw", potentiometerOutputRaw)
       table?.put("potentiometerOutputRadians", potentiometerOutputRadians.inRadians)
-
-      if (driveOdometryPos.size > 0) {
-        table?.put("odometryDrivePositionsMeters", driveOdometryPos[0].inMeters)
-      } else {
-        table?.put("odometryDrivePositionsMeters", 0.0)
-      }
-
-      if (steerOdometryPos.size > 0) {
-        table?.put("odometrySteerPositionsDegrees", steerOdometryPos[0].inDegrees)
-      } else {
-        table?.put("odometrySteerPositionsDegrees", 0.0)
-      }
     }
 
     override fun fromLog(table: LogTable?) {
