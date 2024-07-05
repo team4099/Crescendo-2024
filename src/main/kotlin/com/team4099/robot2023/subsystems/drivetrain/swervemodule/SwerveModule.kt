@@ -33,7 +33,6 @@ import kotlin.math.abs
 import kotlin.math.cos
 
 class SwerveModule(private val io: SwerveModuleIO) {
-
   val inputs = SwerveModuleIO.SwerveModuleIOInputs()
 
   var modulePosition = SwerveModulePosition()
