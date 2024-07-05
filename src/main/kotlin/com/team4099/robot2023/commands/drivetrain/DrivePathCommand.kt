@@ -338,6 +338,8 @@ private constructor(
     drivetrain.targetPose =
       Pose2d(Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position))
 
+    CustomLogger.recordOutput("Odometry/targetPose", drivetrain.targetPose.pose2d)
+
     Logger.recordOutput(
       "Pathfollow/target",
       Pose2dWPILIB.struct,

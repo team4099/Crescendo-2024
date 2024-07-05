@@ -254,7 +254,6 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
     CustomLogger.recordOutput("Drivetrain/ModuleStates", *measuredStates.toTypedArray())
     CustomLogger.recordOutput("Drivetrain/SetpointStates", *setPointStates.toTypedArray())
 
-    CustomLogger.recordOutput("Odometry/pose", odomTRobot.pose2d)
     CustomLogger.recordOutput(
       "Odometry/pose3d",
       Pose3d(
@@ -267,8 +266,6 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
     )
 
     CustomLogger.recordOutput("FieldFrameEstimator/odomTField", odomTField.transform2d)
-
-    CustomLogger.recordOutput("Odometry/targetPose", targetPose.pose2d)
 
     // Log the current state
     CustomLogger.recordOutput("Drivetrain/currentState", currentState.toString())
@@ -558,6 +555,7 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
     fieldFrameEstimator.addVisionData(visionData)
   }
 
+  
   fun addSpeakerVisionData(visionData: TimestampedTrigVisionUpdate) {
     fieldFrameEstimator.addSpeakerVisionData(visionData)
   }
