@@ -212,8 +212,10 @@ class SwerveModuleIOTalon(
   override fun updateInputs(inputs: SwerveModuleIO.SwerveModuleIOInputs) {
     updateSignals()
 
-    inputs.driveAppliedVoltage = (driveFalcon.get() * RobotController.getBatteryVoltage()).volts
-    inputs.steerAppliedVoltage = (steeringFalcon.get() * RobotController.getBatteryVoltage()).volts
+    inputs.driveAppliedVoltage = driveFalcon.motorVoltage.value.volts
+    inputs.steerAppliedVoltage = steeringFalcon.motorVoltage.value.volts
+    //inputs.driveAppliedVoltage = (driveFalcon.get() * RobotController.getBatteryVoltage()).volts
+    //inputs.steerAppliedVoltage = (steeringFalcon.get() * RobotController.getBatteryVoltage()).volts
 
     inputs.statorCurrentDrive = driveStatorCurrentSignal.value.amps
     inputs.supplyCurrentDrive = driveSupplyCurrentSignal.value.amps
