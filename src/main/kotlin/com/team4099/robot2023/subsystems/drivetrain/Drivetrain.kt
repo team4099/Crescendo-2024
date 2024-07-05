@@ -481,7 +481,7 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
   fun zeroSensors(isInAutonomous: Boolean) {
     zeroGyroPitch()
     zeroGyroRoll()
-    zeroSteering(isInAutonomous)
+    zeroSteering()
 
     if (!isInAutonomous) {
       zeroDrive()
@@ -533,16 +533,26 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
     }
   }
 
+  /**
+   * Zeroes the pitch variable in the gyro interface.
+   *
+   * @param toAngle Angle required to zero the gyro pitch
+   */
   fun zeroGyroPitch(toAngle: Angle = 0.0.degrees) {
     gyroIO.zeroGyroPitch(toAngle)
   }
 
+  /**
+   * Zeros the roll variable in the gyro interface.
+   *
+   * @param toAngle Angle required to zero the gyro roll
+   */
   fun zeroGyroRoll(toAngle: Angle = 0.0.degrees) {
     gyroIO.zeroGyroRoll(toAngle)
   }
 
   /** Zeros the steering motors for each swerve module. */
-  fun zeroSteering(isInAutonomous: Boolean = false) {
+  fun zeroSteering() {
     swerveModules.forEach { it.zeroSteer() }
   }
 
@@ -551,11 +561,20 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
     swerveModules.forEach { it.zeroDrive() }
   }
 
+  /**
+   * Records a new set of vision updates.
+   *
+   * @param visionData List of timestamped vision updates
+   */
   fun addVisionData(visionData: List<TimestampedVisionUpdate>) {
     fieldFrameEstimator.addVisionData(visionData)
   }
 
-  
+  /**
+   * Records a new set of vision updates relative to the speaker.
+   *
+   * @param visionData Object of timestamped vision update
+   */
   fun addSpeakerVisionData(visionData: TimestampedTrigVisionUpdate) {
     fieldFrameEstimator.addSpeakerVisionData(visionData)
   }
