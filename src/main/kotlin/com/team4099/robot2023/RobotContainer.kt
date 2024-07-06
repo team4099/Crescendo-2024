@@ -26,7 +26,7 @@ import com.team4099.robot2023.subsystems.flywheel.Flywheel
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOSim
 import com.team4099.robot2023.subsystems.flywheel.FlywheelIOTalon
 import com.team4099.robot2023.subsystems.intake.Intake
-import com.team4099.robot2023.subsystems.intake.IntakeIOFalconNEO
+import com.team4099.robot2023.subsystems.intake.IntakeIO
 import com.team4099.robot2023.subsystems.intake.IntakeIOSim
 import com.team4099.robot2023.subsystems.limelight.LimelightVision
 import com.team4099.robot2023.subsystems.limelight.LimelightVisionIO
@@ -129,9 +129,9 @@ object RobotContainer {
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
 
       drivetrain = Drivetrain(GyroIOPigeon2, SWERVE_MODULES_REAL)
-      vision = Vision(object : CameraIO {}, CameraIOPhotonvision("parakeet_2"))
+      vision = Vision(object : CameraIO {})
       limelight = LimelightVision(LimelightVisionIOReal)
-      intake = Intake(IntakeIOFalconNEO)
+      intake = Intake(object : IntakeIO {})
       feeder = Feeder(FeederIONeo)
       elevator = Elevator(ElevatorIONEO)
       flywheel = Flywheel(FlywheelIOTalon)
