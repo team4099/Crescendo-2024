@@ -175,11 +175,6 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
       SwerveModulePosition()
     )
 
-  init {
-    // Wheel speeds
-    zeroSteering()
-  }
-
   override fun periodic() {
     val startTime = Clock.realTimestamp
     gyroIO.updateInputs(gyroInputs)
@@ -248,14 +243,14 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
     CustomLogger.recordOutput(
       "Drivetrain/yFieldVelocityMetersPerSecond", fieldVelocity.y.inMetersPerSecond
     )
-    CustomLogger.recordOutput("Odometry/pose", odomTRobot.pose2d)
+    CustomLogger.recordOutput("FieldFrameEstimator/pose", odomTRobot.pose2d)
     CustomLogger.recordOutput("FieldFrameEstimator/robotPose", fieldTRobot.pose2d)
 
     CustomLogger.recordOutput("Drivetrain/ModuleStates", *measuredStates.toTypedArray())
     CustomLogger.recordOutput("Drivetrain/SetpointStates", *setPointStates.toTypedArray())
 
     CustomLogger.recordOutput(
-      "Odometry/pose3d",
+      "FieldFrameEstimator/pose3d",
       Pose3d(
         odomTRobot.x,
         odomTRobot.y,
