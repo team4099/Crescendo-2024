@@ -17,6 +17,7 @@ import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
+import com.team4099.robot2023.util.CustomLogger
 import com.team4099.utils.threads.PhoenixOdometryThread
 import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj.RobotController
@@ -50,6 +51,7 @@ import org.team4099.lib.units.derived.inVoltsPerMetersPerSecond
 import org.team4099.lib.units.derived.inVoltsPerMetersPerSecondPerSecond
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
+import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.perSecond
 import java.lang.Math.PI
 import java.util.Queue
@@ -237,6 +239,8 @@ class SwerveModuleIOTalon(
         DrivetrainConstants.DRIVE_SENSOR_GEAR_RATIO
     )
     inputs.drivePosition = driveSensor.position
+    inputs.steerPosition = steeringSensor.position
+    Logger.recordOutput("$label/steeringplswork", steeringSensor.position.value)
     Logger.recordOutput("$label/rawSteeringValue", steeringFalcon.position.value)
 
     steeringFalcon.position.value

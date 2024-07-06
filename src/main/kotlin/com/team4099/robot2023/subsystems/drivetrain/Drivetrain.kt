@@ -391,11 +391,12 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
           )
         )
     }
+
     CustomLogger.recordDebugOutput(
       "Drivetrain/desiredChassisSpeedsVXInMPS", desiredChassisSpeeds.vx.inMetersPerSecond
     )
     CustomLogger.recordDebugOutput(
-      "Drivetrain/desiredChassisSpeedsVYInMPS", desiredChassisSpeeds.vx.inMetersPerSecond
+      "Drivetrain/desiredChassisSpeedsVYInMPS", desiredChassisSpeeds.vy.inMetersPerSecond
     )
     CustomLogger.recordDebugOutput(
       "Drivetrain/omegaDegreesPerSecond", desiredChassisSpeeds.omega.inDegreesPerSecond

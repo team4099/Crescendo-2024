@@ -129,7 +129,7 @@ object RobotContainer {
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
 
       drivetrain = Drivetrain(GyroIOPigeon2, SWERVE_MODULES_REAL)
-      vision = Vision(object : CameraIO {}, CameraIOPhotonvision("parakeet_2"))
+      vision = Vision(object : CameraIO {})
       limelight = LimelightVision(LimelightVisionIOReal)
       intake = Intake(IntakeIOFalconNEO)
       feeder = Feeder(FeederIONeo)
