@@ -14,7 +14,6 @@ import com.team4099.robot2023.subsystems.drivetrain.Drivetrain
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIO
 import com.team4099.robot2023.subsystems.drivetrain.gyro.GyroIOPigeon2
 import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveModule
-import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveModuleIO
 import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveModuleIOSim
 import com.team4099.robot2023.subsystems.drivetrain.swervemodule.SwerveModuleIOTalon
 import com.team4099.robot2023.subsystems.elevator.Elevator
@@ -212,27 +211,6 @@ object RobotContainer {
 
   fun requestIdle() {
     superstructure.currentRequest = Request.SuperstructureRequest.Idle()
-  }
-
-  fun getSwerveModules(): List<SwerveModule> {
-    return listOf(
-      SwerveModule(
-        object : SwerveModuleIO {
-          override val label = "Front Left Wheel"
-        }),
-      SwerveModule(
-        object : SwerveModuleIO {
-          override val label = "Front Right Wheel"
-        }),
-      SwerveModule(
-        object : SwerveModuleIO {
-          override val label = "Back Left Wheel"
-        }),
-      SwerveModule(
-        object : SwerveModuleIO {
-          override val label = "Back Right Wheel"
-        })
-    )
   }
 
   fun mapTeleopControls() {
