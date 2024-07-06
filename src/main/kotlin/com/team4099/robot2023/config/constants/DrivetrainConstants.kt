@@ -35,7 +35,7 @@ import kotlin.math.sqrt
 
 object DrivetrainConstants {
   const val FOC_ENABLED = true
-  const val MINIMIZE_SKEW = true
+  const val MINIMIZE_SKEW = false
 
   const val TELEOP_TURNING_SPEED_PERCENT = 0.6
 
