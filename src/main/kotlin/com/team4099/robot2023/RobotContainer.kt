@@ -128,7 +128,7 @@ object RobotContainer {
       // Real Hardware Implementations
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
 
-      drivetrain = Drivetrain(GyroIOPigeon2, SWERVE_MODULES_REAL)
+      drivetrain = Drivetrain(GyroIOPigeon2, { SWERVE_MODULES_REAL })
       vision = Vision(object : CameraIO {})
       limelight = LimelightVision(LimelightVisionIOReal)
       intake = Intake(IntakeIOFalconNEO)
@@ -138,7 +138,7 @@ object RobotContainer {
       wrist = Wrist(WristIOTalon)
     } else {
       // Simulation implementations
-      drivetrain = Drivetrain(object : GyroIO {}, SWERVE_MODULES_SIM)
+      drivetrain = Drivetrain(object : GyroIO {}, { SWERVE_MODULES_SIM })
       vision = Vision(object : CameraIO {})
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIOSim)

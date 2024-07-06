@@ -50,7 +50,7 @@ import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
-class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModule>) :
+class Drivetrain(private val gyroIO: GyroIO, val swerveModuleSupplier: () -> List<SwerveModule>) :
   SubsystemBase() {
   object TunableDriveStates {
 
@@ -98,6 +98,8 @@ class Drivetrain(private val gyroIO: GyroIO, val swerveModules: List<SwerveModul
 
   private val swerveModuleID =
     LoggedTunableValue("Drivetrain/testModule", 0.degrees, Pair({ it.inDegrees }, { it.degrees }))
+
+  val swerveModules = swerveModuleSupplier()
 
   var currentRequest: DrivetrainRequest = DrivetrainRequest.ZeroSensors()
     set(value) {
