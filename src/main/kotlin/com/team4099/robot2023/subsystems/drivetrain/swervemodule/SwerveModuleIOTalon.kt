@@ -240,7 +240,6 @@ class SwerveModuleIOTalon(
     )
     inputs.drivePosition = driveSensor.position
     inputs.steerPosition = steeringSensor.position
-    Logger.recordOutput("$label/steeringplswork", steeringSensor.position.value)
     Logger.recordOutput("$label/rawSteeringValue", steeringFalcon.position.value)
 
     steeringFalcon.position.value
