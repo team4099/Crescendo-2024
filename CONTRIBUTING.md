@@ -1,6 +1,6 @@
 # Contributing Practices
 ## Branching Practices
-The `main` branch should be treated as the branch with the last known working code (like for example, the code at the last competition which was known to work). 
+The `main` branch should be treated as the branch with the last known working code (like for example, the code at the last competition which was known to work).
 
 Branches containing individual features (like the rewrite of our drivetrain code) should branch off `main` for the most part, with the exception of feature branches that require code from other feature branches (like a feature branch that uses the newly written drivetrain code, in this case).
 
