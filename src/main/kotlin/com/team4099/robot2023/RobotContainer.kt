@@ -74,7 +74,7 @@ object RobotContainer {
       "Defense/PodiumShotAngle", 25.0.degrees, Pair({ it.inDegrees }, { it.degrees })
     )
 
-  private val SWERVE_MODULES_REAL: List<SwerveModule> =
+  private val SWERVE_MODULES_REAL_GETTER: () -> List<SwerveModule> = {
     listOf(
       SwerveModule(
         SwerveModuleIOTalon(
@@ -113,21 +113,23 @@ object RobotContainer {
         )
       )
     )
+  }
 
-  private val SWERVE_MODULES_SIM: List<SwerveModule> =
+  private val SWERVE_MODULES_SIM_GETTER: () -> List<SwerveModule> = {
     listOf(
       SwerveModule(SwerveModuleIOSim("Front Left Wheel")),
       SwerveModule(SwerveModuleIOSim("Front Right Wheel")),
       SwerveModule(SwerveModuleIOSim("Back Left Wheel")),
       SwerveModule(SwerveModuleIOSim("Back Right Wheel"))
     )
+  }
 
   init {
     if (RobotBase.isReal()) {
       // Real Hardware Implementations
       // drivetrain = Drivetrain(object: GyroIO {},object: DrivetrainIO {}
 
-      drivetrain = Drivetrain(GyroIOPigeon2, { SWERVE_MODULES_REAL })
+      drivetrain = Drivetrain(GyroIOPigeon2, SWERVE_MODULES_REAL_GETTER)
       vision = Vision(object : CameraIO {})
       limelight = LimelightVision(LimelightVisionIOReal)
       intake = Intake(object : IntakeIO {})
@@ -137,7 +139,7 @@ object RobotContainer {
       wrist = Wrist(WristIOTalon)
     } else {
       // Simulation implementations
-      drivetrain = Drivetrain(object : GyroIO {}, { SWERVE_MODULES_SIM })
+      drivetrain = Drivetrain(object : GyroIO {}, SWERVE_MODULES_SIM_GETTER)
       vision = Vision(object : CameraIO {})
       limelight = LimelightVision(object : LimelightVisionIO {})
       intake = Intake(IntakeIOSim)
