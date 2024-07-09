@@ -1,5 +1,7 @@
 package com.team4099.robot2023.commands.drivetrain
 
+import com.choreo.lib.Choreo
+import com.choreo.lib.ChoreoTrajectory
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.lib.math.asPose2d
 import com.team4099.lib.math.asTransform2d
