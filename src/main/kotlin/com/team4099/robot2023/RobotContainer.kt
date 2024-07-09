@@ -293,7 +293,6 @@ object RobotContainer {
     ControlBoard.ejectGamePiece.whileTrue(superstructure.ejectGamePieceCommand())
     ControlBoard.passingShot.whileTrue(superstructure.passingShotCommand())
     ControlBoard.underStagePassingShot.whileTrue(superstructure.underStageCommand())
-    ControlBoard.testWrist.whileTrue(superstructure.testWristCommand())
 
     /*
     ControlBoard.targetAmp.whileTrue(

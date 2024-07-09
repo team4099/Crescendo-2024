@@ -69,15 +69,13 @@ object ControlBoard {
 
   val ejectGamePiece = Trigger { driver.rightTriggerAxis > 0.5 }
 
-  val testWrist = Trigger { driver.aButton }
   val characterizeWrist = Trigger { driver.rightShoulderButton }
 
   val climbAlignFar = Trigger { driver.dPadUp }
   val climbAlignLeft = Trigger { driver.dPadLeft }
   val climbAlignRight = Trigger { driver.dPadRight }
 
-  // TODO: Check if this variable is necessary
-  // val climbAutoAlign = Trigger { driver.bButton }
+  val climbAutoAlign = Trigger { driver.bButton }
 
   val targetSpeaker = Trigger { driver.xButton }
   // TODO: switch back to climbAlignLeft
