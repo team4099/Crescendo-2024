@@ -8,6 +8,7 @@ import com.team4099.robot2023.subsystems.falconspin.MotorCollection
 import com.team4099.robot2023.subsystems.falconspin.SimulatedMotor
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.system.plant.DCMotor
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.simulation.BatterySim
 import edu.wpi.first.wpilibj.simulation.FlywheelSim
 import edu.wpi.first.wpilibj.simulation.RoboRioSim
@@ -16,12 +17,9 @@ import org.team4099.lib.controller.PIDController
 import org.team4099.lib.controller.SimpleMotorFeedforward
 import org.team4099.lib.units.AngularAcceleration
 import org.team4099.lib.units.AngularVelocity
-import org.team4099.lib.units.Fraction
 import org.team4099.lib.units.LinearAcceleration
 import org.team4099.lib.units.LinearVelocity
-import org.team4099.lib.units.Value
 import org.team4099.lib.units.Velocity
-import org.team4099.lib.units.base.Length
 import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
@@ -46,7 +44,6 @@ import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.perSecond
-import kotlin.random.Random
 
 class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
   // Use inverses of gear ratios because our standard is <1 is reduction
@@ -68,7 +65,6 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
   var turnAbsolutePosition =
     (Math.random() * 2.0 * Math.PI).radians // getting a random value that we zero to
   var driveVelocity = 0.0.meters.perSecond
-  var drift: Length = 0.0.meters
 
   private val driveFeedback =
     PIDController(
@@ -145,18 +141,8 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     driveVelocity =
       (DrivetrainConstants.WHEEL_DIAMETER / 2 * driveMotorSim.angularVelocityRadPerSec).perSecond
 
-    // simming drift
-    var loopCycleDrift = 0.0.meters
-    if (Constants.Tuning.SIMULATE_DRIFT && driveVelocity > 2.0.meters.perSecond) {
-      loopCycleDrift =
-        (Random.nextDouble() * Constants.Tuning.DRIFT_CONSTANT)
-          .meters // 0.0005 is just a nice number that ended up working out for drift
-    }
-    drift += loopCycleDrift
-
     // pi * d * rotations = distance travelled
-    inputs.drivePosition =
-      inputs.drivePosition +
+    inputs.drivePosition +=
       DrivetrainConstants.WHEEL_DIAMETER *
       Math.PI *
       (
@@ -164,39 +150,34 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
           Constants.Universal.LOOP_PERIOD_TIME.inSeconds
         )
         .radians
-        .inRotations +
-      loopCycleDrift // adding a random amount of drift
-    inputs.steeringPosition = turnAbsolutePosition
-    inputs.drift = drift
+        .inRotations
+    inputs.steerPosition = turnAbsolutePosition
 
     inputs.driveVelocity = driveVelocity
-    inputs.steeringVelocity = steerMotorSim.angularVelocityRadPerSec.radians.perSecond
+    inputs.steerVelocity = steerMotorSim.angularVelocityRadPerSec.radians.perSecond
 
     inputs.driveAppliedVoltage = driveAppliedVolts
-    inputs.driveSupplyCurrent = driveMotorSim.currentDrawAmps.amps
-    inputs.driveStatorCurrent =
+    inputs.supplyCurrentDrive = driveMotorSim.currentDrawAmps.amps
+    inputs.statorCurrentDrive =
       (-1337).amps // no way to get applied voltage to motor so can't actually calculate stator
     // current
 
     inputs.driveTemp = (-1337).celsius
-    inputs.steeringTemp = (-1337).celsius
+    inputs.steerTemp = (-1337).celsius
 
-    inputs.steeringAppliedVoltage = turnAppliedVolts
-    inputs.steeringSupplyCurrent = steerMotorSim.currentDrawAmps.amps
-    inputs.steeringStatorCurrent =
+    inputs.steerAppliedVoltage = turnAppliedVolts
+    inputs.supplyCurrentSteer = steerMotorSim.currentDrawAmps.amps
+    inputs.statorCurrentSteer =
       (-1337).amps // no way to get applied voltage to motor so can't actually calculate stator
     // current
 
     inputs.potentiometerOutputRadians = turnAbsolutePosition
     inputs.potentiometerOutputRaw = turnAbsolutePosition.inRadians
 
-    inputs.odometryDrivePositions = listOf(inputs.drivePosition)
-    inputs.odometrySteeringPositions = listOf(inputs.steeringPosition)
-
     // Setting a more accurate simulated voltage under load
     RoboRioSim.setVInVoltage(
       BatterySim.calculateDefaultBatteryLoadedVoltage(
-        inputs.driveSupplyCurrent.inAmperes + inputs.steeringSupplyCurrent.inAmperes
+        inputs.supplyCurrentDrive.inAmperes + inputs.supplyCurrentSteer.inAmperes
       )
     )
   }
@@ -230,8 +211,9 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
   ) {
     Logger.recordOutput("$label/desiredDriveSpeedMPS", speed.inMetersPerSecond)
     val feedforward = driveFeedForward.calculate(speed, acceleration)
-    setDriveVoltage(feedforward + driveFeedback.calculate(driveVelocity, speed))
+    val feedback = driveFeedback.calculate(driveVelocity, speed)
 
+    setDriveVoltage(feedforward + feedback)
     setSteeringSetpoint(steering)
   }
 
@@ -258,13 +240,13 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
     kD: DerivativeGain<Velocity<Meter>, Volt>,
-    kV: Value<Fraction<Volt, Velocity<Meter>>>,
-    kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
+    // kV: Value<Fraction<Volt, Velocity<Meter>>>,
+    // kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
   ) {
     driveFeedback.setPID(kP, kI, kD)
   }
 
-  override fun configureSteeringPID(
+  override fun configureSteerPID(
     kP: ProportionalGain<Radian, Volt>,
     kI: IntegralGain<Radian, Volt>,
     kD: DerivativeGain<Radian, Volt>
@@ -273,14 +255,11 @@ class SwerveModuleIOSim(override val label: String) : SwerveModuleIO {
   }
 
   override fun setDriveBrakeMode(brake: Boolean) {
-    println("Can't set brake mode in simulation")
+    DriverStation.reportError("Can't set brake mode in simulation", true)
   }
 
-  override fun configureSteeringMotionMagic(
-    maxVel: AngularVelocity,
-    maxAccel: AngularAcceleration
-  ) {
-    println("Can't configure motion magic in simulation")
+  override fun configSteerMotionMagic(maxVel: AngularVelocity, maxAccel: AngularAcceleration) {
+    DriverStation.reportError("Can't configure motion magic in simulation", true)
   }
 
   override fun runCharacterization(input: ElectricalPotential) {

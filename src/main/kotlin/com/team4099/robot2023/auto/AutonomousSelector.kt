@@ -17,7 +17,7 @@ import com.team4099.robot2023.auto.mode.ThreeNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.ThreeNoteCenterlineWithoutFirstNoteAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromAmpAutoPath
 import com.team4099.robot2023.auto.mode.TwoNoteCenterlineFromSourceAutoPath
-import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.drivetrain.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import com.team4099.robot2023.util.AllianceFlipUtil
 import edu.wpi.first.networktables.GenericEntry
@@ -33,13 +33,27 @@ import org.team4099.lib.units.base.seconds
 
 object AutonomousSelector {
   //  private var orientationChooser: SendableChooser<Angle> = SendableChooser()
-  private var autonomousModeChooser: LoggedDashboardChooser<AutonomousMode> =
-    LoggedDashboardChooser("AutonomousMode")
+  private var autonomousModeChooser: LoggedDashboardChooser<AutonomousMode>
   private var waitBeforeCommandSlider: GenericEntry
   private var secondaryWaitInAuto: GenericEntry
 
   init {
+    autonomousModeChooser = LoggedDashboardChooser("AutonomousMode")
     val autoTab = Shuffleboard.getTab("Pre-match")
+    waitBeforeCommandSlider =
+      autoTab
+        .add("Wait Time Before Shooting", 0)
+        .withSize(3, 2)
+        .withPosition(0, 2)
+        .withWidget(BuiltInWidgets.kTextView)
+        .entry
+    secondaryWaitInAuto =
+      autoTab
+        .add("Secondary Wait Time Between Shooting and Driving", 0)
+        .withSize(3, 2)
+        .withPosition(3, 2)
+        .withWidget(BuiltInWidgets.kTextView)
+        .entry
     //    orientationChooser.setDefaultOption("Forward", 0.degrees)
     //    orientationChooser.addOption("Backwards", 180.degrees)
     //    orientationChooser.addOption("Left", 90.degrees)
@@ -124,21 +138,6 @@ object AutonomousSelector {
     // autonomousModeChooser.addOption("Characterize Elevator",
     // AutonomousMode.ELEVATOR_CHARACTERIZE)
     autoTab.add("Mode", autonomousModeChooser.sendableChooser).withSize(4, 2).withPosition(2, 0)
-
-    waitBeforeCommandSlider =
-      autoTab
-        .add("Wait Time Before Shooting", 0)
-        .withSize(3, 2)
-        .withPosition(0, 2)
-        .withWidget(BuiltInWidgets.kTextView)
-        .entry
-    secondaryWaitInAuto =
-      autoTab
-        .add("Secondary Wait Time Between Shooting and Driving", 0)
-        .withSize(3, 2)
-        .withPosition(3, 2)
-        .withWidget(BuiltInWidgets.kTextView)
-        .entry
   }
 
   val waitTime: Time

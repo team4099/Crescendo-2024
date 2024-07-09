@@ -1,7 +1,7 @@
 package com.team4099.robot2023.auto.mode
 
 import com.team4099.robot2023.commands.drivetrain.ResetPoseCommand
-import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.drivetrain.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Superstructure
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.WaitCommand

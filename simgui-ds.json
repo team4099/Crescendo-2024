@@ -13,12 +13,12 @@
     {
       "axisConfig": [
         {
-          "decKey": 68,
-          "incKey": 65
+          "decKey": 65,
+          "incKey": 68
         },
         {
-          "decKey": 83,
-          "incKey": 87
+          "decKey": 87,
+          "incKey": 83
         },
         {
           "decKey": 69,
@@ -106,6 +106,9 @@
     },
     {
       "guid": "Keyboard1"
+    },
+    {
+      "guid": "03000000ac0500004f02000011010000"
     }
   ]
 }

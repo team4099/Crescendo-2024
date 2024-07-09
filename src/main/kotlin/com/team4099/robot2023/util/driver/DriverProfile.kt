@@ -1,8 +1,8 @@
 package com.team4099.robot2023.util.driver
 
 import com.team4099.robot2023.config.constants.DrivetrainConstants
+import com.team4099.robot2023.util.Velocity2d
 import org.team4099.lib.units.AngularVelocity
-import org.team4099.lib.units.LinearVelocity
 import java.util.function.BooleanSupplier
 import java.util.function.DoubleSupplier
 import kotlin.math.pow
@@ -22,7 +22,7 @@ abstract class DriverProfile(
     driveX: DoubleSupplier,
     driveY: DoubleSupplier,
     slowMode: BooleanSupplier
-  ): Pair<LinearVelocity, LinearVelocity> {
+  ): Velocity2d {
     var xSpeedCurve = driveX.asDouble.pow(sensitivityDrivePowerConstant) * invertDriveMultiplier
     var ySpeedCurve = driveY.asDouble.pow(sensitivityDrivePowerConstant) * invertDriveMultiplier
 
@@ -32,12 +32,12 @@ abstract class DriverProfile(
     }
 
     if (slowMode.asBoolean) {
-      return Pair(
+      return Velocity2d(
         DrivetrainConstants.DRIVE_SETPOINT_MAX * xSpeedCurve * slowModeClamp,
         DrivetrainConstants.DRIVE_SETPOINT_MAX * ySpeedCurve * slowModeClamp
       )
     } else {
-      return Pair(
+      return Velocity2d(
         DrivetrainConstants.DRIVE_SETPOINT_MAX * xSpeedCurve,
         DrivetrainConstants.DRIVE_SETPOINT_MAX * ySpeedCurve
       )

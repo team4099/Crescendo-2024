@@ -19,7 +19,7 @@ class Leds(val io: LedIO) {
   var isPreping = false
   var seesGamePiece = false
   var seesTag = true
-  var isTuningDebugging = Constants.Tuning.TUNING_MODE || Constants.Tuning.DEBUGING_MODE
+  var isTuningDebugging = Constants.Tuning.TUNING_MODE || Constants.Tuning.DEBUGGING_MODE
 
   var state = LEDConstants.CandleState.NO_NOTE
     set(value) {

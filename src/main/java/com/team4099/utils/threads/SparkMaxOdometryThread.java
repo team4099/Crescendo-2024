@@ -1,4 +1,5 @@
-package com.team4099.utils.threads;// Copyright 2021-2023 FRC 6328
+package com.team4099.utils.threads;
+// Copyright 2021-2023 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -11,6 +12,8 @@ package com.team4099.utils.threads;// Copyright 2021-2023 FRC 6328
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
+
+import com.team4099.robot2023.config.constants.DrivetrainConstants;
 
 /**
  * Provides an interface for asynchronously reading high-frequency measurements to a set of queues.
@@ -35,29 +38,29 @@ public class SparkMaxOdometryThread {
     private SparkMaxOdometryThread() {
         notifier = new edu.wpi.first.wpilibj.Notifier(this::periodic);
         notifier.setName("SparkMaxOdometryThread");
-        notifier.startPeriodic(1.0 / com.team4099.robot2023.config.constants.DrivetrainConstants.OMOMETRY_UPDATE_FREQUENCY );
+        notifier.startPeriodic(1.0 / DrivetrainConstants.INSTANCE.getOdometryUpdateFrequency());
     }
 
     public java.util.Queue<Double> registerSignal(java.util.function.DoubleSupplier signal) {
         java.util.Queue<Double> queue = new java.util.concurrent.ArrayBlockingQueue<>(100);
-        com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(true);
+        com.team4099.robot2023.subsystems.drivetrain.Drivetrain.Companion.setOdometryLock(true);
         try {
             signals.add(signal);
             queues.add(queue);
         } finally {
-            com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(false);
+            com.team4099.robot2023.subsystems.drivetrain.Drivetrain.Companion.setOdometryLock(false);
         }
         return queue;
     }
 
     private void periodic() {
-        com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(true);
+        com.team4099.robot2023.subsystems.drivetrain.Drivetrain.Companion.setOdometryLock(true);
         try {
             for (int i = 0; i < signals.size(); i++) {
                 queues.get(i).offer(signals.get(i).getAsDouble());
             }
         } finally {
-            com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(false);
+            com.team4099.robot2023.subsystems.drivetrain.Drivetrain.Companion.setOdometryLock(false);
         }
     }
 }
