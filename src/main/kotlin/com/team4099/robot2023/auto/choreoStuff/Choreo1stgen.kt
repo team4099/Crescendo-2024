@@ -7,14 +7,6 @@ import org.team4099.lib.geometry.Pose2d
 import java.util.function.Supplier
 
 class Choreo1stgen {
-    var pose: Pose2d = Pose2d();
-
-    var trajectory: ChoreoTrajectory = Choreo.getTrajectory("Trajectory");
-
-    init {
-        trajectory.sample(1.
-        ).
-    }
 
 
 }
