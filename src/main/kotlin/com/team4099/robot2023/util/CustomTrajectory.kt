@@ -68,10 +68,24 @@ class CustomTrajectory(
                             desiredState.curvatureRadPerMeter.radians.sin
                 val chassisAccels = ChassisAccels(xAccel, yAccel, 0.0.radians.perSecond.perSecond).chassisAccelsWPILIB
 
+                // Retrieve the target pose
+                val targetPose =
+                    AllianceFlipUtil.apply(
+                        Pose2d(
+                            desiredState.poseMeters.x.meters,
+                            desiredState.poseMeters.y.meters,
+                            desiredRotation.position.radians.radians
+                        )
+                    )
+
                 Request.DrivetrainRequest.ClosedLoop(chassisSpeeds, chassisAccels)
             }
             is ChoreoTrajectory -> {
                 val trajectoryState = trajectory.sample(time.inSeconds)
+
+                // Retrieve the target pose
+                val targetPose = Pose2d(trajectoryState.pose)
+
                 Request.DrivetrainRequest.ClosedLoop(trajectoryState.chassisSpeeds)
             }
             else -> {
