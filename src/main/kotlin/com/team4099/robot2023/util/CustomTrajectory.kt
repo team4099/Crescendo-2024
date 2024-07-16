@@ -11,6 +11,7 @@ import org.team4099.lib.kinematics.ChassisAccels
 import org.team4099.lib.units.base.Time
 import org.team4099.lib.units.base.inSeconds
 import org.team4099.lib.units.base.meters
+import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.cos
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.sin
@@ -22,6 +23,30 @@ class CustomTrajectory(
     val trajectoryGenerator: CustomTrajectoryGenerator,
     val swerveDriveController: CustomHolonomicDriveController
 ) {
+    val totalStates: Int
+        get() {
+            return when (trajectory) {
+                is Trajectory -> trajectory.states.size
+                is ChoreoTrajectory -> trajectory.samples.size
+                else -> {
+                    println("Unexpected trajectory type ${trajectory::javaClass}")
+                    return -1337
+                }
+            }
+        }
+
+    val timeAtFirstState: Time
+        get() {
+            return when (trajectory) {
+                is Trajectory -> trajectory.states[0].timeSeconds.seconds
+                is ChoreoTrajectory -> trajectory.initialState.timestamp.seconds
+                else -> {
+                    println("Unexpected trajectory type ${trajectory::javaClass}")
+                    return -1337.seconds
+                }
+            }
+        }
+
     fun sample(time: Time) : Request.DrivetrainRequest.ClosedLoop {
         return when (trajectory) {
             is Trajectory -> {

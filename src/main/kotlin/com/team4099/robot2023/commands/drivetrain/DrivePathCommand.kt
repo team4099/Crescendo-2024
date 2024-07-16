@@ -14,7 +14,9 @@ import com.team4099.robot2023.config.constants.DrivetrainConstants
 import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.util.AllianceFlipUtil
 import com.team4099.robot2023.util.CustomLogger
+import com.team4099.robot2023.util.CustomTrajectory
 import com.team4099.robot2023.util.FrameType
+import com.team4099.robot2023.util.TrajectoryTypes
 import com.team4099.robot2023.util.Velocity2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
@@ -69,7 +71,7 @@ import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainReques
 class DrivePathCommand<T : Waypoint>
 private constructor(
   val drivetrain: Drivetrain,
-  private val waypoints: Supplier<List<T>>,
+  private val trajectory: TrajectoryTypes,
   val resetPose: Boolean = false,
   val useLowerTolerance: Boolean = false,
   val flipForAlliances: Boolean = true,
@@ -89,6 +91,8 @@ private constructor(
 
   private var trajCurTime = 0.0.seconds
   private var trajStartTime = 0.0.seconds
+
+  private lateinit var generatedTrajectory: CustomTrajectory
 
   private var changeStartTimeOnExecute = true
 
@@ -218,47 +222,43 @@ private constructor(
       swerveDriveController.setTolerance(Pose2d(6.inches, 6.inches, 6.degrees).pose2d)
     }
 
-    // trajectory generation!
-    generate(waypoints.get())
+    // drop this all into the custom trajectory
+    generatedTrajectory = CustomTrajectory(
+      drivePoseSupplier,
+      trajectory,
+      trajectoryGenerator,
+      swerveDriveController
+    )
   }
 
   override fun initialize() {
-    val trajectory = trajectoryGenerator.driveTrajectory
-
-    if (trajectory.states.size <= 1) {
+    if (generatedTrajectory.totalStates <= 1) {
       return
     }
 
     odoTField = drivetrain.odomTField
-    pathTransform =
-      Transform2d(
-        Translation2d(waypoints.get()[0].translation),
-        waypoints.get()[0].holonomicRotation?.radians?.radians ?: drivePoseSupplier().rotation
-      )
 
     //    if (resetPose) {
     //      drivetrain.odometryPose = AllianceFlipUtil.apply(Pose2d(trajectory.initialPose))
     //    }
-    trajStartTime = Clock.fpgaTime + trajectory.states[0].timeSeconds.seconds
+    trajStartTime = Clock.fpgaTime + generatedTrajectory.timeAtFirstState
     thetaPID.reset()
     xPID.reset()
     yPID.reset()
   }
 
   override fun execute() {
-    val trajectory = trajectoryGenerator.driveTrajectory
-
-    if (trajectory.states.size <= 1) {
+    if (generatedTrajectory.totalStates <= 1) {
       return
     }
 
     if (changeStartTimeOnExecute) {
-      trajStartTime = Clock.fpgaTime + trajectory.states[0].timeSeconds.seconds
+      trajStartTime = Clock.fpgaTime + generatedTrajectory.timeAtFirstState
       changeStartTimeOnExecute = false
     }
 
     trajCurTime = Clock.fpgaTime - trajStartTime
-    var desiredState = trajectory.sample(trajCurTime.inSeconds)
+    var desiredState = generatedTrajectory.sample(trajCurTime)
 
     var desiredRotation =
       trajectoryGenerator.holonomicRotationSequence.sample(trajCurTime.inSeconds)
@@ -441,7 +441,7 @@ private constructor(
     }
     fun createPathInOdometryFrame(
       drivetrain: Drivetrain,
-      waypoints: Supplier<List<OdometryWaypoint>>,
+      trajectory: TrajectoryTypes,
       resetPose: Boolean = false,
       useLowerTolerance: Boolean = false,
       flipForAlliances: Boolean = true,
@@ -452,7 +452,7 @@ private constructor(
     ): DrivePathCommand<OdometryWaypoint> =
       DrivePathCommand(
         drivetrain,
-        waypoints,
+        trajectory,
         resetPose,
         useLowerTolerance,
         flipForAlliances,
@@ -465,7 +465,7 @@ private constructor(
 
     fun createPathInFieldFrame(
       drivetrain: Drivetrain,
-      waypoints: Supplier<List<FieldWaypoint>>,
+      trajectory: TrajectoryTypes,
       resetPose: Boolean = false,
       useLowerTolerance: Boolean = false,
       flipForAlliances: Boolean = true,
@@ -476,7 +476,7 @@ private constructor(
     ): DrivePathCommand<FieldWaypoint> =
       DrivePathCommand(
         drivetrain,
-        waypoints,
+        trajectory,
         resetPose,
         useLowerTolerance,
         flipForAlliances,
