@@ -31,17 +31,13 @@ object WristConstants {
 
   val ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO = 69.0 / 20.0
   val MOTOR_TO_ABSOLUTE_ENCODER_GEAR_RATIO =
-    5.0 / 1.0 * 4.0 / 1.0 * 54.0 / 34.0 * 90.0 / 33.0 * 1.0 / (69.0 / 20.0)
+    5.0 / 1.0 * 4.0 / 1.0 * 54.0 / 34.0 * 94.0 / 34.0 * 1.0 / (69.0 / 20.0)
+  val WRIST_OFFSET_FROM_CANCODER = -19.341.degrees - (-34.5.degrees)
 
   val VOLTAGE_COMPENSATION = 12.0.volts
   val ABSOLUTE_ENCODER_OFFSET =
     (
-      97.72227856659904.degrees - 35.degrees + 1.90.degrees -
-        0.55.degrees -
-        0.6.degrees - // add to drop angle
-        1.degrees -
-        0.5.degrees -
-        96.3.degrees
+     0.0.degrees
       ) * ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
   val WRIST_LENGTH = 18.6.inches
   val WRIST_INERTIA = 0.7181257183.kilo.grams * 1.0.meters.squared
@@ -60,7 +56,7 @@ object WristConstants {
   val WRIST_ZERO_SIM_OFFSET = 27.5.degrees
 
   val MAX_WRIST_VELOCITY = 300.degrees.perSecond
-  val MAX_WRIST_ACCELERATION = 1500.degrees.perSecond.perSecond
+  val MAX_WRIST_ACCELERATION = 500.degrees.perSecond.perSecond
 
   val HARDSTOP_OFFSET = 47.degrees
   object PID {
@@ -106,7 +102,7 @@ object WristConstants {
 
   val AMP_SCORE_ANGLE = -12.0.degrees
   val FAST_AMP_ANGLE = 27.degrees
-  val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = -33.5.degrees
+  val SUBWOOFER_SPEAKER_SHOT_ANGLE_LOW = -34.5.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_MID = 8.0.degrees
   val SUBWOOFER_SPEAKER_SHOT_ANGLE_HIGH = -2.degrees
   val CLIMB_ANGLE = 0.0.degrees

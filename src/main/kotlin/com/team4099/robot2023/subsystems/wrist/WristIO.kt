@@ -37,7 +37,7 @@ interface WristIO {
 
     var wristAcceleration = 0.0.degrees.perSecond.perSecond
 
-    var isSimulated = false
+    var isSimulated = true
 
     override fun toLog(table: LogTable) {
       table.put("wristPosition", wristPosition.inDegrees)

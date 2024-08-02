@@ -203,7 +203,7 @@ class Wrist(val io: WristIO) : SubsystemBase() {
           wristTargetVoltage = value.wristVoltage
         }
         is Request.WristRequest.TargetingPosition -> {
-          wristPositionTarget = value.wristPosition
+          wristPositionTarget = value.wristPosition + WristConstants.WRIST_OFFSET_FROM_CANCODER
           wristToleranceRequested = value.wristTolerance
         }
         else -> {}

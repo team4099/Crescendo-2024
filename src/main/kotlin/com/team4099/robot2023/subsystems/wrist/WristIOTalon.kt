@@ -25,6 +25,7 @@ import com.team4099.robot2023.config.constants.WristConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
 import com.team4099.robot2023.subsystems.falconspin.MotorChecker
 import com.team4099.robot2023.subsystems.falconspin.MotorCollection
+import com.team4099.robot2023.util.CustomLogger
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.celsius
@@ -324,6 +325,8 @@ object WristIOTalon : WristIO {
     inputs.wristStatorCurrent = statorCurrentSignal.value.amps
     inputs.wristSupplyCurrent = supplyCurrentSignal.value.amps
     inputs.wristTemperature = tempSignal.value.celsius
+
+    inputs.isSimulated = false
 
     if (inputs.wristPosition < WristConstants.WRIST_MIN_ROTATION) {
       zeroEncoder()

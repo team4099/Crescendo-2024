@@ -604,7 +604,7 @@ class Superstructure(
           )
         flywheel.currentRequest =
           Request.FlywheelRequest.TargetingVelocity(
-            Flywheel.TunableFlywheelStates.speakerVelocity.get()
+            FlywheelConstants.SPEAKER_VELOCITY
           )
         wrist.currentRequest =
           Request.WristRequest.TargetingPosition(
