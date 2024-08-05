@@ -139,10 +139,9 @@ object AutonomousSelector {
       AutonomousMode.TEST_AUTO_PATH ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
-            drivetrain.tempZeroGyroYaw(TestAutoPath.startingPose.rotation)
-            drivetrain.resetFieldFrameEstimator(
-              AllianceFlipUtil.apply(TestAutoPath.startingPose)
-            )
+            val flippedPose = AllianceFlipUtil.apply(TestAutoPath.startingPose)
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(TestAutoPath(drivetrain, superstructure))
       else -> println("ERROR: unexpected auto mode: $mode")

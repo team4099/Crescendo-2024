@@ -270,7 +270,7 @@ private constructor(
     drivetrain.targetPose =
       targetPose.relativeTo(drivetrain.odomTField.asPose2d())
 
-    CustomLogger.recordOutput(
+    CustomLogger.recordDebugOutput(
       "Pathfollow/targetPose",
       targetPose.pose2d
     )
