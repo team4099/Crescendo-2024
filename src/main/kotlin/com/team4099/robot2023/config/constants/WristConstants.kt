@@ -58,7 +58,6 @@ object WristConstants {
   val MAX_WRIST_VELOCITY = 300.degrees.perSecond
   val MAX_WRIST_ACCELERATION = 500.degrees.perSecond.perSecond
 
-  val HARDSTOP_OFFSET = 47.degrees
   object PID {
 
     val ARBITRARY_FEEDFORWARD = 0.03.volts

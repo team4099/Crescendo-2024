@@ -18,6 +18,7 @@ import com.team4099.robot2023.util.NoteSimulation
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.RepeatCommand
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.geometry.Pose3d
@@ -789,6 +790,8 @@ class Superstructure(
         }
       }
       SuperstructureStates.EJECT_GAME_PIECE -> {
+        leds.ejectingGamePiece = true
+
         intake.currentRequest =
           Request.IntakeRequest.OpenLoop(
             Intake.TunableIntakeStates.outtakeRolllerVoltage.get(),
@@ -800,7 +803,12 @@ class Superstructure(
 
         when (currentRequest) {
           is Request.SuperstructureRequest.Idle -> {
+            leds.ejectingGamePiece = false
             currentRequest = Request.SuperstructureRequest.Idle()
+            nextState = SuperstructureStates.IDLE
+          }
+          is Request.SuperstructureRequest.GroundIntake -> {
+            leds.ejectingGamePiece = false
             nextState = SuperstructureStates.IDLE
           }
         }
