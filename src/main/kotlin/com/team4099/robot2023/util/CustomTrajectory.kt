@@ -1,11 +1,19 @@
 package com.team4099.robot2023.util
 
-import com.choreo.lib.ChoreoTrajectory
+import com.team4099.lib.math.asPose2d
+import com.team4099.lib.math.asTransform2d
 import com.team4099.lib.trajectory.CustomHolonomicDriveController
 import com.team4099.lib.trajectory.CustomTrajectoryGenerator
+import com.team4099.lib.trajectory.Waypoint
+import com.team4099.robot2023.config.constants.DrivetrainConstants
+import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
 import com.team4099.robot2023.subsystems.superstructure.Request
 import edu.wpi.first.math.kinematics.ChassisSpeeds
-import edu.wpi.first.math.trajectory.Trajectory
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics
+import edu.wpi.first.math.trajectory.TrajectoryParameterizer
+import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint
+import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint
+import edu.wpi.first.wpilibj.DriverStation
 import org.team4099.lib.geometry.Pose2d
 import org.team4099.lib.kinematics.ChassisAccels
 import org.team4099.lib.units.base.Time
@@ -15,42 +23,47 @@ import org.team4099.lib.units.base.seconds
 import org.team4099.lib.units.derived.cos
 import org.team4099.lib.units.derived.radians
 import org.team4099.lib.units.derived.sin
+import org.team4099.lib.units.inMetersPerSecond
+import org.team4099.lib.units.inMetersPerSecondPerSecond
+import org.team4099.lib.units.inRadiansPerSecondPerSecond
 import org.team4099.lib.units.perSecond
 
 class CustomTrajectory(
+    val drivetrain: Drivetrain,
     val poseSupplier: () -> Pose2d,
     val trajectory: TrajectoryTypes,
     val trajectoryGenerator: CustomTrajectoryGenerator,
-    val swerveDriveController: CustomHolonomicDriveController
+    val swerveDriveController: CustomHolonomicDriveController,
+    val stateFrame: FrameType
 ) {
     val totalStates: Int
         get() {
             return when (trajectory) {
-                is Trajectory -> trajectory.states.size
-                is ChoreoTrajectory -> trajectory.samples.size
-                else -> {
-                    println("Unexpected trajectory type ${trajectory::javaClass}")
-                    return -1337
-                }
+                is TrajectoryTypes.WPILib -> trajectory.rawTrajectory.states.size
+                is TrajectoryTypes.Choreo -> trajectory.rawTrajectory.samples.size
             }
         }
 
     val timeAtFirstState: Time
         get() {
             return when (trajectory) {
-                is Trajectory -> trajectory.states[0].timeSeconds.seconds
-                is ChoreoTrajectory -> trajectory.initialState.timestamp.seconds
-                else -> {
-                    println("Unexpected trajectory type ${trajectory::javaClass}")
-                    return -1337.seconds
-                }
+                is TrajectoryTypes.WPILib -> trajectory.rawTrajectory.states[0].timeSeconds.seconds
+                is TrajectoryTypes.Choreo -> trajectory.rawTrajectory.initialState.timestamp.seconds
             }
         }
 
-    fun sample(time: Time) : Request.DrivetrainRequest.ClosedLoop {
+    val totalTime: Time
+        get() {
+            return when (trajectory) {
+                is TrajectoryTypes.WPILib -> trajectory.rawTrajectory.totalTimeSeconds.seconds
+                is TrajectoryTypes.Choreo -> trajectory.rawTrajectory.totalTime.seconds
+            }
+        }
+
+    fun sample(time: Time) : Pair<Request.DrivetrainRequest.ClosedLoop, Pose2d> {
         return when (trajectory) {
-            is Trajectory -> {
-                val desiredState = trajectory.sample(time.inSeconds)
+            is TrajectoryTypes.WPILib -> {
+                val desiredState = trajectory.rawTrajectory.sample(time.inSeconds)
                 val desiredRotation = trajectoryGenerator.holonomicRotationSequence.sample(time.inSeconds)
                 val nextDriveState = swerveDriveController.calculate(
                     poseSupplier().pose2d,
@@ -78,20 +91,64 @@ class CustomTrajectory(
                         )
                     )
 
-                Request.DrivetrainRequest.ClosedLoop(chassisSpeeds, chassisAccels)
+                Request.DrivetrainRequest.ClosedLoop(chassisSpeeds, chassisAccels) to targetPose
             }
-            is ChoreoTrajectory -> {
-                val trajectoryState = trajectory.sample(time.inSeconds)
+            is TrajectoryTypes.Choreo -> {
+                val desiredState = AllianceFlipUtil.apply(trajectory.rawTrajectory.sample(time.inSeconds))
+                val poseReference =
+                    if (stateFrame == FrameType.ODOMETRY) {
+                        drivetrain.odomTField.inverse().asPose2d().transformBy(poseSupplier().asTransform2d())
+                    } else {
+                        poseSupplier()
+                    }.pose2d
+
+                val nextDriveState = swerveDriveController.calculate(
+                    poseReference,
+                    desiredState
+                )
 
                 // Retrieve the target pose
-                val targetPose = Pose2d(trajectoryState.pose)
+                val targetPose = Pose2d(desiredState.pose)
 
-                Request.DrivetrainRequest.ClosedLoop(trajectoryState.chassisSpeeds)
+                Request.DrivetrainRequest.ClosedLoop(nextDriveState) to targetPose
             }
-            else -> {
-                println("Unexpected trajectory type ${trajectory::javaClass}")
-                Request.DrivetrainRequest.ClosedLoop(ChassisSpeeds(0.0, 0.0, 0.0))
+        }
+    }
+
+    companion object {
+        fun fromWaypoints(
+            drivetrain: Drivetrain,
+            waypoints: () -> List<Waypoint>,
+            constraints: List<TrajectoryConstraint> = listOf(),
+            endVelocity: Velocity2d = Velocity2d()
+        ) : CustomTrajectoryGenerator {
+            val trajectoryGenerator = CustomTrajectoryGenerator()
+            val config =
+                edu.wpi.first.math.trajectory.TrajectoryConfig(
+                    DrivetrainConstants.MAX_AUTO_VEL.inMetersPerSecond,
+                    DrivetrainConstants.MAX_AUTO_ACCEL.inMetersPerSecondPerSecond
+                )
+                    .setKinematics(
+                        SwerveDriveKinematics(
+                            *(drivetrain.moduleTranslations.map { it.translation2d }).toTypedArray()
+                        )
+                    )
+                    .setStartVelocity(drivetrain.fieldVelocity.magnitude.inMetersPerSecond)
+                    .setEndVelocity(endVelocity.magnitude.inMetersPerSecond)
+                    .addConstraint(
+                        CentripetalAccelerationConstraint(
+                            DrivetrainConstants.STEERING_ACCEL_MAX.inRadiansPerSecondPerSecond
+                        )
+                    )
+                    .addConstraints(constraints)
+
+            try {
+                trajectoryGenerator.generate(config, waypoints())
+            } catch (exception: TrajectoryParameterizer.TrajectoryGenerationException) {
+                DriverStation.reportError("Failed to generate trajectory.", true)
             }
+
+            return trajectoryGenerator
         }
     }
 }

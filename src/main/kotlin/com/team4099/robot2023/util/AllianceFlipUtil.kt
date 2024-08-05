@@ -1,5 +1,6 @@
 package com.team4099.robot2023.util
 
+import com.choreo.lib.ChoreoTrajectoryState
 import com.team4099.lib.math.Zone2d
 import com.team4099.lib.trajectory.FieldWaypoint
 import com.team4099.lib.trajectory.OdometryWaypoint
@@ -74,6 +75,15 @@ object AllianceFlipUtil {
     }
   }
 
+  fun apply(
+    choreoState: ChoreoTrajectoryState
+  ): ChoreoTrajectoryState {
+    return if (shouldFlip()) {
+      choreoState.flipped()
+    } else {
+      choreoState
+    }
+  }
   /*
   Don't flip an OdometryWaypoint because it's done relative to robot origin
    */
