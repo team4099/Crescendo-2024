@@ -267,14 +267,6 @@ private constructor(
       }
     }
 
-    drivetrain.targetPose =
-      targetPose.relativeTo(drivetrain.odomTField.asPose2d())
-
-    CustomLogger.recordDebugOutput(
-      "Pathfollow/targetPose",
-      targetPose.pose2d
-    )
-
     /*
     drivetrain.setOpenLoop(
         nextDriveState.omegaRadiansPerSecond.radians.perSecond,

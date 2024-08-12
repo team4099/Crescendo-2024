@@ -29,9 +29,14 @@ class ExamplePathAuto(val drivetrain: Drivetrain) : SequentialCommandGroup() {
               ),
               FieldWaypoint(
                 Translation2d(2.meters, 5.535.meters).translation2d,
-                null,
+                0.degrees.inRotation2ds,
                 startingPose.rotation.inRotation2ds
-              )
+              ),
+              FieldWaypoint(
+                Translation2d(5.meters, 7.535.meters).translation2d,
+                null,
+                90.degrees.inRotation2ds
+              ),
             )
           }
         )

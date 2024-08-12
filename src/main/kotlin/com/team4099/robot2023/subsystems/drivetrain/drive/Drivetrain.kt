@@ -84,8 +84,6 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   var isInAutonomous = false
     private set
 
-  var targetPose: Pose2d = Pose2d(0.0.meters, 0.0.meters, 0.0.radians)
-
   private var drift: Transform2d = Transform2d(Translation2d(), 0.0.radians)
 
   var fieldVelocity = Velocity2d(0.0.meters.perSecond, 0.0.meters.perSecond)
@@ -325,11 +323,6 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
     )
 
     Logger.recordOutput("FieldFrameEstimator/odomTField", odomTField.transform2d)
-
-    Logger.recordOutput(
-      "Odometry/targetPose",
-      doubleArrayOf(targetPose.x.inMeters, targetPose.y.inMeters, targetPose.rotation.inRadians)
-    )
 
     Logger.recordOutput(
       "LoggedRobot/Subsystems/DrivetrainLoopTimeMS",

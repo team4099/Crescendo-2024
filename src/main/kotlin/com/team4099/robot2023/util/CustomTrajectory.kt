@@ -65,10 +65,16 @@ class CustomTrajectory(
             is TrajectoryTypes.WPILib -> {
                 val desiredState = trajectory.rawTrajectory.sample(time.inSeconds)
                 val desiredRotation = trajectoryGenerator.holonomicRotationSequence.sample(time.inSeconds)
+                val poseReference = if (stateFrame == FrameType.ODOMETRY) {
+                    drivetrain.odomTField.inverse().asPose2d().transformBy(poseSupplier().asTransform2d())
+                } else {
+                    poseSupplier()
+                }.pose2d
+
                 val nextDriveState = swerveDriveController.calculate(
-                    poseSupplier().pose2d,
-                    desiredState,
-                    desiredRotation
+                    poseReference,
+                    AllianceFlipUtil.apply(desiredState),
+                    AllianceFlipUtil.apply(desiredRotation)
                 )
 
                 val chassisSpeeds = ChassisSpeeds(nextDriveState.vxMetersPerSecond, nextDriveState.vyMetersPerSecond, nextDriveState.omegaRadiansPerSecond)
