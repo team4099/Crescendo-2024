@@ -108,6 +108,7 @@ class Drivetrain(val gyroIO: GyroIO, swerveModuleIOs: DrivetrainIO) : SubsystemB
   private val swerveModuleID =
     LoggedTunableValue("Drivetrain/testModule", 0.degrees, Pair({ it.inDegrees }, { it.degrees }))
 
+  // Unused ?
   val closestAlignmentAngle: Angle
     get() {
       for (angle in -180..90 step 90) {
