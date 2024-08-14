@@ -4,6 +4,7 @@ import com.ctre.phoenix6.hardware.TalonFX
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.auto.AutonomousSelector
 import com.team4099.robot2023.commands.drivetrain.ResetGyroYawCommand
+import com.team4099.robot2023.commands.drivetrain.SetZeroCommand
 import com.team4099.robot2023.commands.drivetrain.TargetAngleCommand
 import com.team4099.robot2023.commands.drivetrain.TeleopDriveCommand
 import com.team4099.robot2023.config.ControlBoard
@@ -49,6 +50,7 @@ import org.team4099.lib.smoothDeadband
 import org.team4099.lib.units.derived.Angle
 import org.team4099.lib.units.derived.degrees
 import org.team4099.lib.units.derived.inDegrees
+import javax.naming.ldap.Control
 import com.team4099.robot2023.subsystems.superstructure.Request.DrivetrainRequest as DrivetrainRequest
 
 object RobotContainer {
@@ -218,6 +220,8 @@ object RobotContainer {
     limelight.limelightState = LimelightVision.LimelightStates.TARGETING_GAME_PIECE
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain))
+
+    ControlBoard.setZeroes.whileTrue(SetZeroCommand(drivetrain))
 
     ControlBoard.intake.whileTrue(superstructure.groundIntakeCommand())
 
