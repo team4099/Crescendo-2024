@@ -41,7 +41,6 @@ object ControlBoard {
     get() = driver.leftShoulderButton
 
   val resetGyro = Trigger { driver.startButton && driver.selectButton }
-  val setZeroes = Trigger { driver.leftJoystickButton && driver.selectButton }
 
   // sim triggers
   val score = Trigger { driver.leftTriggerAxis > 0.5 }

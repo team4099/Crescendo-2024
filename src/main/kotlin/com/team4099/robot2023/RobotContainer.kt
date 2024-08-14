@@ -221,8 +221,6 @@ object RobotContainer {
 
     ControlBoard.resetGyro.whileTrue(ResetGyroYawCommand(drivetrain))
 
-    ControlBoard.setZeroes.whileTrue(SetZeroCommand(drivetrain))
-
     ControlBoard.intake.whileTrue(superstructure.groundIntakeCommand())
 
     /*
