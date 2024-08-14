@@ -9,8 +9,6 @@ import org.team4099.lib.units.base.Meter
 import org.team4099.lib.units.base.amps
 import org.team4099.lib.units.base.feet
 import org.team4099.lib.units.base.grams
-import org.team4099.lib.units.base.hertz
-import org.team4099.lib.units.base.inHertz
 import org.team4099.lib.units.base.inMeters
 import org.team4099.lib.units.base.inches
 import org.team4099.lib.units.base.meters
@@ -39,7 +37,7 @@ object DrivetrainConstants {
 
   const val TELEOP_TURNING_SPEED_PERCENT = 0.6
 
-  val ODOMETRY_UPDATE_FREQUENCY = 250.0.hertz
+  val ODOMETRY_UPDATE_FREQUENCY = 250.0
 
   val ZERO_VELOCITY_VECTOR = Velocity2d(0.0.meters.perSecond, 0.0.meters.perSecond)
   val ZERO_CHASSIS_SPEED = ChassisSpeeds(0.0, 0.0, 0.0)
@@ -109,7 +107,7 @@ object DrivetrainConstants {
 
   // Java getter to allow 6328 Java code to access odometry data
   fun getOdometryUpdateFrequency(): Double {
-    return ODOMETRY_UPDATE_FREQUENCY.inHertz
+    return ODOMETRY_UPDATE_FREQUENCY
   }
 
   object PID {
