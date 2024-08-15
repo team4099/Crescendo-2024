@@ -9,7 +9,7 @@ import com.team4099.lib.trajectory.FieldWaypoint
 import com.team4099.lib.trajectory.OdometryWaypoint
 import com.team4099.lib.trajectory.Waypoint
 import com.team4099.robot2023.config.constants.DrivetrainConstants
-import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.drivetrain.Drivetrain
 import com.team4099.robot2023.util.AllianceFlipUtil
 import com.team4099.robot2023.util.CustomLogger
 import com.team4099.robot2023.util.FrameType
@@ -73,7 +73,7 @@ private constructor(
   val flipForAlliances: Boolean = true,
   val endPathOnceAtReference: Boolean = true,
   val leaveOutYAdjustment: Boolean = false,
-  val endVelocity: Velocity2d = Velocity2d(),
+  val endVelocity: Velocity2d = DrivetrainConstants.ZERO_VELOCITY_VECTOR,
   var stateFrame: FrameType = FrameType.ODOMETRY,
   var pathFrame: FrameType = FrameType.FIELD,
 ) : Command() {
@@ -338,6 +338,8 @@ private constructor(
     drivetrain.targetPose =
       Pose2d(Pose2dWPILIB(desiredState.poseMeters.translation, desiredRotation.position))
 
+    CustomLogger.recordOutput("FieldFrameEstimator/targetPose", drivetrain.targetPose.pose2d)
+
     Logger.recordOutput(
       "Pathfollow/target",
       Pose2dWPILIB.struct,
@@ -420,7 +422,8 @@ private constructor(
       // Stop where we are if interrupted
       drivetrain.currentRequest =
         DrivetrainRequest.OpenLoop(
-          0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
+          0.0.radians.perSecond,
+          Velocity2d.fromVelocityVectorToVelocity2d(0.0.meters.perSecond, 0.0.radians)
         )
     } else {
       // Execute one last time to end up in the final state of the trajectory
@@ -428,7 +431,7 @@ private constructor(
       execute()
       drivetrain.currentRequest =
         DrivetrainRequest.OpenLoop(
-          0.0.radians.perSecond, Pair(0.0.meters.perSecond, 0.0.meters.perSecond)
+          0.0.radians.perSecond, DrivetrainConstants.ZERO_VELOCITY_VECTOR
         )
     }
   }
@@ -445,7 +448,7 @@ private constructor(
       flipForAlliances: Boolean = true,
       endPathOnceAtReference: Boolean = true,
       leaveOutYAdjustment: Boolean = false,
-      endVelocity: Velocity2d = Velocity2d(),
+      endVelocity: Velocity2d = DrivetrainConstants.ZERO_VELOCITY_VECTOR,
       stateFrame: FrameType = FrameType.ODOMETRY,
     ): DrivePathCommand<OdometryWaypoint> =
       DrivePathCommand(
@@ -469,7 +472,7 @@ private constructor(
       flipForAlliances: Boolean = true,
       endPathOnceAtReference: Boolean = true,
       leaveOutYAdjustment: Boolean = false,
-      endVelocity: Velocity2d = Velocity2d(),
+      endVelocity: Velocity2d = DrivetrainConstants.ZERO_VELOCITY_VECTOR,
       stateFrame: FrameType = FrameType.ODOMETRY,
     ): DrivePathCommand<FieldWaypoint> =
       DrivePathCommand(

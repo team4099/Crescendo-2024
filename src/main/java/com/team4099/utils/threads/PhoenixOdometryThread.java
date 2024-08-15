@@ -1,4 +1,5 @@
-package com.team4099.utils.threads;// Copyright 2021-2023 FRC 6328
+package com.team4099.utils.threads;
+// Copyright 2021-2023 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -11,6 +12,8 @@ package com.team4099.utils.threads;// Copyright 2021-2023 FRC 6328
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
+
+import com.team4099.robot2023.config.constants.DrivetrainConstants;
 
 /**
  * Provides an interface for asynchronously reading high-frequency measurements to a set of queues.
@@ -66,13 +69,13 @@ public class PhoenixOdometryThread extends Thread {
             signalsLock.lock();
             try {
                 if (isCANFD && signals.length > 0) {
-                    com.ctre.phoenix6.BaseStatusSignal.waitForAll(2.0 / com.team4099.robot2023.config.constants.DrivetrainConstants.OMOMETRY_UPDATE_FREQUENCY, signals);
+                    com.ctre.phoenix6.BaseStatusSignal.waitForAll(2.0 / DrivetrainConstants.INSTANCE.getOdometryUpdateFrequency(), signals);
                 } else {
                     // "waitForAll" does not support blocking on multiple
                     // signals with a bus that is not CAN FD, regardless
                     // of Pro licensing. No reasoning for this behavior
                     // is provided by the documentation.
-                    Thread.sleep((long) (1000.0 / com.team4099.robot2023.config.constants.DrivetrainConstants.OMOMETRY_UPDATE_FREQUENCY));
+                    Thread.sleep((long) (1000.0 / DrivetrainConstants.INSTANCE.getOdometryUpdateFrequency()));
                     com.ctre.phoenix6.BaseStatusSignal.refreshAll(signals);
                 }
             } catch (InterruptedException e) {
@@ -82,13 +85,13 @@ public class PhoenixOdometryThread extends Thread {
             }
 
             // Save new data to queues
-            com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(true);
+            com.team4099.robot2023.subsystems.drivetrain.Drivetrain.Companion.setOdometryLock(true);
             try {
                 for (int i = 0; i < signals.length; i++) {
                     queues.get(i).offer(signals[i].getValueAsDouble());
                 }
             } finally {
-                com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain.Companion.setOdometryLock(false);
+                com.team4099.robot2023.subsystems.drivetrain.Drivetrain.Companion.setOdometryLock(false);
             }
         }
     }

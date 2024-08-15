@@ -87,6 +87,11 @@ class SwerveModuleIOTalon(
       }
     }
 
+  // Shared configs between PID and FeedForward
+  private val slot0Configs = Slot0Configs()
+
+  val driveVoltageSignal: StatusSignal<Double>
+  val steeringVoltageSignal: StatusSignal<Double>
   val driveStatorCurrentSignal: StatusSignal<Double>
   val driveSupplyCurrentSignal: StatusSignal<Double>
   val steeringStatorCurrentSignal: StatusSignal<Double>
@@ -155,6 +160,8 @@ class SwerveModuleIOTalon(
     driveConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast
     driveFalcon.configurator.apply(driveConfiguration)
 
+    driveVoltageSignal = driveFalcon.motorVoltage
+    steeringVoltageSignal = steeringFalcon.motorVoltage
     driveStatorCurrentSignal = driveFalcon.statorCurrent
     driveSupplyCurrentSignal = driveFalcon.supplyCurrent
     steeringStatorCurrentSignal = steeringFalcon.statorCurrent
@@ -196,6 +203,8 @@ class SwerveModuleIOTalon(
 
   fun updateSignals() {
     BaseStatusSignal.refreshAll(
+      driveVoltageSignal,
+      steeringVoltageSignal,
       driveStatorCurrentSignal,
       driveSupplyCurrentSignal,
       steeringSupplyCurrentSignal,
@@ -209,14 +218,16 @@ class SwerveModuleIOTalon(
   override fun updateInputs(inputs: SwerveModuleIO.SwerveModuleIOInputs) {
     updateSignals()
 
-    inputs.driveAppliedVoltage = (driveFalcon.get() * RobotController.getBatteryVoltage()).volts
-    inputs.steeringAppliedVoltage =
-      (steeringFalcon.get() * RobotController.getBatteryVoltage()).volts
+    inputs.driveAppliedVoltage = driveVoltageSignal.value.volts
+    inputs.steerAppliedVoltage = steeringVoltageSignal.value.volts
+    // inputs.driveAppliedVoltage = (driveFalcon.get() * RobotController.getBatteryVoltage()).volts
+    // inputs.steerAppliedVoltage = (steeringFalcon.get() *
+    // RobotController.getBatteryVoltage()).volts
 
-    inputs.driveStatorCurrent = driveStatorCurrentSignal.value.amps
-    inputs.driveSupplyCurrent = driveSupplyCurrentSignal.value.amps
-    inputs.steeringStatorCurrent = steeringStatorCurrentSignal.value.amps
-    inputs.steeringSupplyCurrent = steeringSupplyCurrentSignal.value.amps
+    inputs.statorCurrentDrive = driveStatorCurrentSignal.value.amps
+    inputs.supplyCurrentDrive = driveSupplyCurrentSignal.value.amps
+    inputs.statorCurrentSteer = steeringStatorCurrentSignal.value.amps
+    inputs.supplyCurrentSteer = steeringSupplyCurrentSignal.value.amps
 
     Logger.recordOutput(
       "$label/drivePosition",
@@ -225,23 +236,18 @@ class SwerveModuleIOTalon(
         DrivetrainConstants.WHEEL_DIAMETER.inMeters *
         DrivetrainConstants.DRIVE_SENSOR_GEAR_RATIO
     )
-    Logger.recordOutput("$label/drivePositionUnits", driveSensor.position.inMeters)
     inputs.drivePosition = driveSensor.position
-    inputs.steeringPosition = steeringSensor.position
-    Logger.recordOutput("$label/rawSteeringValue", steeringFalcon.position.value)
+    inputs.steerPosition = steeringSensor.position
     Logger.recordOutput("$label/rawSteeringValue", steeringFalcon.position.value)
 
     steeringFalcon.position.value
 
     inputs.driveVelocity = driveSensor.velocity
-    inputs.steeringVelocity = steeringSensor.velocity
+    inputs.steerVelocity = steeringSensor.velocity
 
     // processor temp is also something we may want to log ?
     inputs.driveTemp = driveTempSignal.value.celsius
-    inputs.steeringTemp = steeringTempSignal.value.celsius
-
-    inputs.odometryDrivePositions = listOf(inputs.drivePosition)
-    inputs.odometrySteeringPositions = listOf(inputs.steeringPosition)
+    inputs.steerTemp = steeringTempSignal.value.celsius
 
     //    inputs.odometryDrivePositions =
     //      drivePositionQueue
@@ -262,6 +268,7 @@ class SwerveModuleIOTalon(
     //      }
     //      .toList() as
     //      List<Angle>
+
     drivePositionQueue.clear()
     steeringPositionQueue.clear()
 
@@ -363,39 +370,35 @@ class SwerveModuleIOTalon(
     kP: ProportionalGain<Velocity<Meter>, Volt>,
     kI: IntegralGain<Velocity<Meter>, Volt>,
     kD: DerivativeGain<Velocity<Meter>, Volt>,
+  ) {
+    slot0Configs.kP = driveSensor.proportionalVelocityGainToRawUnits(kP)
+    slot0Configs.kI = driveSensor.integralVelocityGainToRawUnits(kI)
+    slot0Configs.kD = driveSensor.derivativeVelocityGainToRawUnits(kD)
+    driveFalcon.configurator.apply(slot0Configs)
+  }
+
+  override fun configureDriveFeedForward(
     kV: Value<Fraction<Volt, Velocity<Meter>>>,
     kA: Value<Fraction<Volt, Velocity<Velocity<Meter>>>>
   ) {
-    val PIDConfig = Slot0Configs()
-
-    PIDConfig.kP = driveSensor.proportionalVelocityGainToRawUnits(kP)
-    PIDConfig.kI = driveSensor.integralVelocityGainToRawUnits(kI)
-    PIDConfig.kD = driveSensor.derivativeVelocityGainToRawUnits(kD)
-    PIDConfig.kV = kV.inVoltsPerMetersPerSecond
-    PIDConfig.kA = kA.inVoltsPerMetersPerSecondPerSecond
-
-    driveFalcon.configurator.apply(PIDConfig)
+    slot0Configs.kV = kV.inVoltsPerMetersPerSecond
+    slot0Configs.kA = kA.inVoltsPerMetersPerSecondPerSecond
+    driveFalcon.configurator.apply(slot0Configs)
   }
 
-  override fun configureSteeringPID(
+  override fun configureSteerPID(
     kP: ProportionalGain<Radian, Volt>,
     kI: IntegralGain<Radian, Volt>,
     kD: DerivativeGain<Radian, Volt>
   ) {
-    val PIDConfig = Slot0Configs()
-
-    PIDConfig.kP = steeringSensor.proportionalPositionGainToRawUnits(kP)
-    PIDConfig.kI = steeringSensor.integralPositionGainToRawUnits(kI)
-    PIDConfig.kD = steeringSensor.derivativePositionGainToRawUnits(kD)
-    PIDConfig.kV = 0.0
-
-    steeringFalcon.configurator.apply(PIDConfig)
+    slot0Configs.kP = steeringSensor.proportionalPositionGainToRawUnits(kP)
+    slot0Configs.kI = steeringSensor.integralPositionGainToRawUnits(kI)
+    slot0Configs.kD = steeringSensor.derivativePositionGainToRawUnits(kD)
+    slot0Configs.kV = 0.0
+    steeringFalcon.configurator.apply(slot0Configs)
   }
 
-  override fun configureSteeringMotionMagic(
-    maxVel: AngularVelocity,
-    maxAccel: AngularAcceleration
-  ) {
+  override fun configSteerMotionMagic(maxVel: AngularVelocity, maxAccel: AngularAcceleration) {
 
     val motionMagicConfig = MotionMagicConfigs()
 

@@ -12,9 +12,6 @@ import org.team4099.lib.units.perSecond
 import kotlin.math.hypot
 
 data class Velocity2d(val x: LinearVelocity, val y: LinearVelocity) {
-
-  constructor() : this(0.0.meters.perSecond, 0.0.meters.perSecond)
-
   val velocity2dWPIlib = Translation2d(x.inMetersPerSecond, y.inMetersPerSecond)
 
   val magnitude = hypot(x.inMetersPerSecond, y.inMetersPerSecond).meters.perSecond

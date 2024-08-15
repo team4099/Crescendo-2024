@@ -2,7 +2,7 @@ package com.team4099.robot2023.subsystems.superstructure
 
 import com.team4099.lib.logging.LoggedTunableValue
 import com.team4099.robot2023.config.constants.SuperstructureConstants
-import com.team4099.robot2023.subsystems.drivetrain.drive.Drivetrain
+import com.team4099.robot2023.subsystems.drivetrain.Drivetrain
 import com.team4099.robot2023.subsystems.vision.Vision
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import edu.wpi.first.wpilibj.RobotBase

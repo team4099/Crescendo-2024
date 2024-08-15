@@ -136,7 +136,7 @@ $RECYCLE.BIN/
 *.lnk
 
 ### Gradle ###
-.gradle
+settings.gradle
 /build/
 BuildConstants.kt
 

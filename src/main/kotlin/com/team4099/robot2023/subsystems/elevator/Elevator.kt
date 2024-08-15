@@ -7,7 +7,6 @@ import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.ElevatorConstants
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.littletonrobotics.junction.Logger
 import org.team4099.lib.controller.ElevatorFeedforward
@@ -278,7 +277,7 @@ class Elevator(val io: ElevatorIO) : SubsystemBase() {
     )
     Logger.recordOutput("Elevator/requestedPosition", elevatorPositionTarget.inInches)
 
-    if (Constants.Tuning.DEBUGING_MODE) {
+    if (Constants.Tuning.DEBUGGING_MODE) {
       Logger.recordOutput("Elevator/isHomed", isHomed)
       Logger.recordOutput("Elevator/canContinueSafely", canContinueSafely)
 
