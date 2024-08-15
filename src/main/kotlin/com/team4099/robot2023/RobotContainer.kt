@@ -43,6 +43,8 @@ import com.team4099.robot2023.util.driver.Jessika
 import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
@@ -160,6 +162,13 @@ object RobotContainer {
     )
     vision.drivetrainOdometry = { drivetrain.odomTRobot }
     limelight.poseSupplier = { drivetrain.odomTRobot }
+
+    // TODO: Find a better way to implement this into Shuffleboard
+    Shuffleboard.getTab("Commands")
+      .add("Set Zero", SetZeroCommand(drivetrain) /* Command currently does nothing */)
+      .withSize(1, 1)
+      .withPosition(0, 0)
+      .withWidget(BuiltInWidgets.kCommand)
   }
 
   fun mapDefaultCommands() {
