@@ -168,6 +168,12 @@ object RobotContainer {
       .withSize(1, 1)
       .withPosition(0, 0)
       .withWidget(BuiltInWidgets.kCommand)
+
+    Shuffleboard.getTab("Commands")
+      .add("Reset Gyro Yaw", ResetGyroYawCommand(drivetrain))
+      .withSize(1, 1)
+      .withPosition(0, 1)
+      .withWidget(BuiltInWidgets.kCommand)
   }
 
   fun mapDefaultCommands() {
