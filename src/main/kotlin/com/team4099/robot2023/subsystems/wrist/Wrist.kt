@@ -379,7 +379,9 @@ class Wrist(val io: WristIO) : SubsystemBase() {
         }
         val timeElapsed = Clock.fpgaTime - timeProfileGeneratedAt
         val setPoint: TrapezoidProfile.State<Radian> = wristProfile.calculate(timeElapsed)
+
         setWristPosition(setPoint)
+
         Logger.recordOutput("Wrist/completedMotionProfile", wristProfile.isFinished(timeElapsed))
         Logger.recordOutput("Wrist/travelingUp", travelingUp)
         nextState = fromRequestToState(currentRequest)
