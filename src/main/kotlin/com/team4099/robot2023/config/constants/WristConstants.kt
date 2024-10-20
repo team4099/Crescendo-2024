@@ -35,9 +35,7 @@ object WristConstants {
 
   val VOLTAGE_COMPENSATION = 12.0.volts
   val ABSOLUTE_ENCODER_OFFSET =
-    (
-      -34.5.degrees + 3.95.degrees
-      ) * ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
+    (-34.5.degrees + 3.95.degrees) * ABSOLUTE_ENCODER_TO_MECHANISM_GEAR_RATIO
   val WRIST_LENGTH = 18.6.inches
   val WRIST_INERTIA = 0.7181257183.kilo.grams * 1.0.meters.squared
 
@@ -62,9 +60,9 @@ object WristConstants {
 
     val ARBITRARY_FEEDFORWARD = 0.03.volts
 
-    val REAL_KP: ProportionalGain<Radian, Volt> = 0.515.volts / 1.0.degrees
+    val REAL_KP: ProportionalGain<Radian, Volt> = 0.31.volts / 1.0.degrees
     val REAL_KI: IntegralGain<Radian, Volt> = 0.0.volts / (1.0.degrees * 1.0.seconds)
-    val REAL_KD: DerivativeGain<Radian, Volt> = 0.03.volts / 1.0.degrees.perSecond
+    val REAL_KD: DerivativeGain<Radian, Volt> = 0.05.volts / 1.0.degrees.perSecond
 
     val FIRST_STAGE_POS_SWITCH_THRESHOLD = 3.0.degrees
     val FIRST_STAGE_VEL_SWITCH_THRESHOLD = 3.0.degrees.perSecond
@@ -107,7 +105,7 @@ object WristConstants {
   val CLIMB_ANGLE = 0.0.degrees
 
   val TRAP_ANGLE = 35.degrees
-  val INTAKE_ANGLE = (-33.75).degrees
+  val INTAKE_ANGLE = (-33.25).degrees
   val IDLE_ANGLE_HAS_GAMEPEICE = -34.degrees
   val PASSING_SHOT_ANGLE = -34.degrees
 }

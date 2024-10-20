@@ -56,7 +56,7 @@ object ControlBoard {
   // val intake = Trigger { driver.rightShoulderButton}
 
   val targetAmp = Trigger { driver.aButton }
-  val prepAmp = Trigger { operator.aButton }
+  val prepAmp = Trigger { driver.aButton }
   val prepLow = Trigger { operator.xButton }
   val prepHighProtected = Trigger { operator.bButton }
   val prepHigh = Trigger { operator.yButton }

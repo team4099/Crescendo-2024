@@ -151,7 +151,6 @@ object WristIOTalon : WristIO {
     wristConfiguration.Voltage.PeakForwardVoltage = 3.0
     wristConfiguration.Voltage.PeakReverseVoltage = -3.0
 
-
     wristConfiguration.CurrentLimits.SupplyCurrentLimit =
       WristConstants.WRIST_SUPPLY_CURRENT_LIMIT.inAmperes
     wristConfiguration.CurrentLimits.SupplyCurrentThreshold =

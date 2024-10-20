@@ -26,7 +26,6 @@ import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.kilo
 import org.team4099.lib.units.perSecond
-import kotlin.math.PI
 import kotlin.math.sqrt
 
 object DrivetrainConstants {
