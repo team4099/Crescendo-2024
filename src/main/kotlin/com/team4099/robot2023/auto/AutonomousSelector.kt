@@ -3,6 +3,8 @@ package com.team4099.robot2023.auto
 import com.team4099.robot2023.auto.mode.ExamplePathAuto
 import com.team4099.robot2023.auto.mode.FiveNoteAutoPath
 import com.team4099.robot2023.auto.mode.FourNoteAutoPath
+import com.team4099.robot2023.auto.mode.FourNoteAutoPathWithFirstCenterSide
+import com.team4099.robot2023.auto.mode.FourNoteAutoPathWithFirstSourceSide
 import com.team4099.robot2023.auto.mode.FourNoteLeftCenterLine
 import com.team4099.robot2023.auto.mode.FourNoteMiddleCenterLine
 import com.team4099.robot2023.auto.mode.FourNoteRightCenterLine
@@ -46,7 +48,18 @@ object AutonomousSelector {
     //    orientationChooser.addOption("Right", 270.degrees)
     //    autoTab.add("Starting Orientation", orientationChooser)
 
-    autonomousModeChooser.addOption("Four Note Wing Auto", AutonomousMode.FOUR_NOTE_AUTO_PATH)
+    autonomousModeChooser.addOption(
+      "Four Note Wing Auto (Amp Side Note First, Default)",
+      AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_AMP_SIDE_FIRST
+    )
+    autonomousModeChooser.addOption(
+      "Four Note Wing Auto (Center Wing Note First)",
+      AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_CENTER_SIDE_FIRST
+    )
+    autonomousModeChooser.addOption(
+      "Four Note Wing Auto (Source Side Note First)",
+      AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_SOURCE_SIDE_FIRST
+    )
 
     /*
 
@@ -169,7 +182,7 @@ object AutonomousSelector {
             )
           })
           .andThen(SixNoteAutoPath(drivetrain, superstructure))
-      AutonomousMode.FOUR_NOTE_AUTO_PATH ->
+      AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_AMP_SIDE_FIRST ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
             val flippedPose = AllianceFlipUtil.apply(FourNoteAutoPath.startingPose)
@@ -177,6 +190,24 @@ object AutonomousSelector {
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
           .andThen(FourNoteAutoPath(drivetrain, superstructure))
+      AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_CENTER_SIDE_FIRST ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            val flippedPose =
+              AllianceFlipUtil.apply(FourNoteAutoPathWithFirstCenterSide.startingPose)
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
+          })
+          .andThen(FourNoteAutoPathWithFirstCenterSide(drivetrain, superstructure))
+      AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_SOURCE_SIDE_FIRST ->
+        return WaitCommand(waitTime.inSeconds)
+          .andThen({
+            val flippedPose =
+              AllianceFlipUtil.apply(FourNoteAutoPathWithFirstSourceSide.startingPose)
+            drivetrain.tempZeroGyroYaw(flippedPose.rotation)
+            drivetrain.resetFieldFrameEstimator(flippedPose)
+          })
+          .andThen(FourNoteAutoPathWithFirstSourceSide(drivetrain, superstructure))
       AutonomousMode.FOUR_NOTE_RIGHT_AUTO_PATH ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
@@ -321,7 +352,9 @@ object AutonomousSelector {
 
   private enum class AutonomousMode {
     TEST_AUTO_PATH,
-    FOUR_NOTE_AUTO_PATH,
+    FOUR_NOTE_AUTO_PATH_WITH_AMP_SIDE_FIRST,
+    FOUR_NOTE_AUTO_PATH_WITH_CENTER_SIDE_FIRST,
+    FOUR_NOTE_AUTO_PATH_WITH_SOURCE_SIDE_FIRST,
     FOUR_NOTE_RIGHT_AUTO_PATH,
     FOUR_NOTE_MIDDLE_AUTO_PATH,
     FOUR_NOTE_LEFT_AUTO_PATH,

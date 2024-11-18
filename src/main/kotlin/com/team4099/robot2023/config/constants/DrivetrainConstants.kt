@@ -26,7 +26,6 @@ import org.team4099.lib.units.derived.volts
 import org.team4099.lib.units.inMetersPerSecond
 import org.team4099.lib.units.kilo
 import org.team4099.lib.units.perSecond
-import kotlin.math.PI
 import kotlin.math.sqrt
 
 object DrivetrainConstants {
@@ -84,10 +83,10 @@ object DrivetrainConstants {
   val DRIVE_STATOR_THRESHOLD_CURRENT_LIMIT = 80.0.amps
   val DRIVE_STATOR_TRIGGER_THRESHOLD_TIME = 1.0.seconds
 
-  val FRONT_LEFT_MODULE_ZERO = 3.285.radians + PI.radians // good
-  val FRONT_RIGHT_MODULE_ZERO = 2.91.radians + PI.radians // good
-  val BACK_LEFT_MODULE_ZERO = 5.665.radians + PI.radians // good
-  val BACK_RIGHT_MODULE_ZERO = 3.50.radians + PI.radians // good
+  val FRONT_LEFT_MODULE_ZERO = 0.19.radians // good
+  val FRONT_RIGHT_MODULE_ZERO = 6.016.radians // good
+  val BACK_LEFT_MODULE_ZERO = 2.538.radians // good
+  val BACK_RIGHT_MODULE_ZERO = 1.25.radians // good
 
   val STEERING_COMPENSATION_VOLTAGE = 10.volts
   val DRIVE_COMPENSATION_VOLTAGE = 12.volts

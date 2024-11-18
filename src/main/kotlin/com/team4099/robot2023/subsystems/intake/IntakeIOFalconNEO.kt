@@ -10,7 +10,6 @@ import com.ctre.phoenix6.signals.InvertedValue
 import com.ctre.phoenix6.signals.NeutralModeValue
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
-import com.team4099.lib.math.clamp
 import com.team4099.robot2023.config.constants.Constants
 import com.team4099.robot2023.config.constants.IntakeConstants
 import com.team4099.robot2023.subsystems.falconspin.Falcon500
@@ -151,14 +150,14 @@ object IntakeIOFalconNEO : IntakeIO {
   ) {
     rollerFalcon.setControl(VoltageOut(rollerVoltage.inVolts))
 
-    centerWheelSparkMax.setVoltage(
-      clamp(
-        centerWheelVoltage,
-        -IntakeConstants.VOLTAGE_COMPENSATION,
-        IntakeConstants.VOLTAGE_COMPENSATION
-      )
-        .inVolts
-    )
+    //    centerWheelSparkMax.setVoltage(
+    //      clamp(
+    //        centerWheelVoltage,
+    //        -IntakeConstants.VOLTAGE_COMPENSATION,
+    //        IntakeConstants.VOLTAGE_COMPENSATION
+    //      )
+    //        .inVolts
+    //    )
   }
 
   /**

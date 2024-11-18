@@ -454,8 +454,9 @@ class Superstructure(
         }
       }
       SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_BACK -> {
-        feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(-1.0.volts)
-        intake.currentRequest = Request.IntakeRequest.OpenLoop(0.0.volts, 0.0.volts)
+        feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(-2.volts)
+        intake.currentRequest = Request.IntakeRequest.OpenLoop(-0.75.volts, 0.0.volts)
+
         if (!feeder.hasNote) {
           nextState = SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_FORWARD
         }
@@ -467,8 +468,8 @@ class Superstructure(
         }
       }
       SuperstructureStates.GROUND_INTAKE_CLEAN_UP_PUSH_FORWARD -> {
-        feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(1.0.volts)
-        intake.currentRequest = Request.IntakeRequest.OpenLoop(0.0.volts, 0.0.volts)
+        feeder.currentRequest = Request.FeederRequest.OpenLoopIntake(1.5.volts)
+        intake.currentRequest = Request.IntakeRequest.OpenLoop(0.5.volts, 0.0.volts)
         if (feeder.hasNote || RobotBase.isSimulation()) {
           currentRequest = Request.SuperstructureRequest.Idle()
           nextState = SuperstructureStates.IDLE
