@@ -48,9 +48,18 @@ object AutonomousSelector {
     //    orientationChooser.addOption("Right", 270.degrees)
     //    autoTab.add("Starting Orientation", orientationChooser)
 
-    autonomousModeChooser.addOption("Four Note Wing Auto (Amp Side Note First, Default)", AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_AMP_SIDE_FIRST)
-    autonomousModeChooser.addOption("Four Note Wing Auto (Center Wing Note First)", AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_CENTER_SIDE_FIRST)
-    autonomousModeChooser.addOption("Four Note Wing Auto (Source Side Note First)", AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_SOURCE_SIDE_FIRST)
+    autonomousModeChooser.addOption(
+      "Four Note Wing Auto (Amp Side Note First, Default)",
+      AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_AMP_SIDE_FIRST
+    )
+    autonomousModeChooser.addOption(
+      "Four Note Wing Auto (Center Wing Note First)",
+      AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_CENTER_SIDE_FIRST
+    )
+    autonomousModeChooser.addOption(
+      "Four Note Wing Auto (Source Side Note First)",
+      AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_SOURCE_SIDE_FIRST
+    )
 
     /*
 
@@ -184,7 +193,8 @@ object AutonomousSelector {
       AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_CENTER_SIDE_FIRST ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
-            val flippedPose = AllianceFlipUtil.apply(FourNoteAutoPathWithFirstCenterSide.startingPose)
+            val flippedPose =
+              AllianceFlipUtil.apply(FourNoteAutoPathWithFirstCenterSide.startingPose)
             drivetrain.tempZeroGyroYaw(flippedPose.rotation)
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })
@@ -192,7 +202,8 @@ object AutonomousSelector {
       AutonomousMode.FOUR_NOTE_AUTO_PATH_WITH_SOURCE_SIDE_FIRST ->
         return WaitCommand(waitTime.inSeconds)
           .andThen({
-            val flippedPose = AllianceFlipUtil.apply(FourNoteAutoPathWithFirstSourceSide.startingPose)
+            val flippedPose =
+              AllianceFlipUtil.apply(FourNoteAutoPathWithFirstSourceSide.startingPose)
             drivetrain.tempZeroGyroYaw(flippedPose.rotation)
             drivetrain.resetFieldFrameEstimator(flippedPose)
           })

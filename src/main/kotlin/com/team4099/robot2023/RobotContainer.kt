@@ -239,7 +239,6 @@ object RobotContainer {
     ControlBoard.passingShot.whileTrue(superstructure.passingShotCommand())
     ControlBoard.underStagePassingShot.whileTrue(superstructure.underStageCommand())
 
-    /*
     ControlBoard.targetAmp.whileTrue(
       TargetAngleCommand(
         driver = Jessika(),
@@ -251,8 +250,6 @@ object RobotContainer {
         ampAngle
       )
     )
-
-     */
 
     ControlBoard.climbAlignFar.whileTrue(
       runOnce({
